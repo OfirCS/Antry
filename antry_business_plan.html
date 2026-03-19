@@ -1,0 +1,112 @@
+
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: var(--font-sans); color: var(--color-text-primary); }
+  .doc { max-width: 680px; padding: 40px 40px 60px; }
+  .doc-header { border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 24px; margin-bottom: 32px; }
+  .doc-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .doc-title { font-size: 28px; font-weight: 500; margin-bottom: 6px; }
+  .doc-sub { font-size: 14px; color: var(--color-text-secondary); }
+  h2 { font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 36px 0 14px; }
+  h3 { font-size: 16px; font-weight: 500; margin: 20px 0 6px; }
+  p { font-size: 14px; line-height: 1.7; color: var(--color-text-secondary); margin-bottom: 10px; }
+  .section { border-left: 2px solid var(--color-border-tertiary); padding-left: 20px; margin: 12px 0 24px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+  .card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 16px; }
+  .card-num { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .card-label { font-size: 12px; color: var(--color-text-secondary); }
+  .layer-row { display: flex; gap: 12px; margin: 14px 0; }
+  .layer-badge { font-size: 11px; font-weight: 500; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; padding: 2px 8px; color: var(--color-text-secondary); white-space: nowrap; margin-top: 2px; }
+  .layer-content h3 { margin: 0 0 4px; font-size: 15px; }
+  .layer-content p { margin: 0; }
+  .timeline { margin: 14px 0; }
+  .t-row { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .t-row:last-child { border-bottom: none; }
+  .t-month { font-size: 12px; font-weight: 500; color: var(--color-text-tertiary); min-width: 60px; padding-top: 2px; }
+  .t-content { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+  .rev-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 14px; }
+  .rev-row:last-child { border-bottom: none; }
+  .rev-phase { font-size: 11px; background: var(--color-background-secondary); border-radius: 3px; padding: 2px 7px; color: var(--color-text-tertiary); }
+  @media (max-width: 520px) { .cards { grid-template-columns: 1fr 1fr; } }
+</style>
+
+<div class="doc">
+  <div class="doc-header">
+    <div class="doc-tag">Antry — Business Plan · March 2026</div>
+    <div class="doc-title">Building the colony for builders</div>
+    <div class="doc-sub">Community platform where developers prove skills through shipped projects, not resumes</div>
+  </div>
+
+  <h2>The problem</h2>
+  <p>Hiring in tech is broken. CVs don't reflect real ability. Developers who build AI agents and ship products fast have no dedicated place to showcase and be discovered. LinkedIn was built for credentials. GitHub is for code storage. Neither was designed for the "demo-first" era of AI-native builders.</p>
+
+  <h2>The solution</h2>
+  <p>Antry is a three-layer platform — each layer building on the last — designed to showcase talent, grow a community, and eventually incubate ideas.</p>
+
+  <div class="layer-row">
+    <div class="layer-badge">Layer 01</div>
+    <div class="layer-content">
+      <h3>Showcase</h3>
+      <p>Every builder gets a profile built around live demos, project walkthroughs, and shipped agents. Think Dribbble for builders — your work speaks, not your job title.</p>
+    </div>
+  </div>
+  <div class="layer-row">
+    <div class="layer-badge">Layer 02</div>
+    <div class="layer-content">
+      <h3>Community events</h3>
+      <p>Themed hackathons and sponsored build events. Companies like Anthropic, AWS, and OpenAI sponsor events to access talent. Builders compete, network, and gain visibility.</p>
+    </div>
+  </div>
+  <div class="layer-row">
+    <div class="layer-badge">Layer 03</div>
+    <div class="layer-content">
+      <h3>Launch studio</h3>
+      <p>Antry identifies high-potential builders and ideas from the community. Quick validation sprints. If viable, Antry co-builds and takes equity. Venture studio powered by community signal.</p>
+    </div>
+  </div>
+
+  <h2>One-liner</h2>
+  <div class="section">
+    <p style="font-size:16px; color: var(--color-text-primary); font-style:italic;">"We're building a community where developers prove their skills through projects and demos instead of resumes."</p>
+  </div>
+
+  <h2>Differentiation</h2>
+  <p>LinkedIn = credentials. GitHub = code. Devpost = hackathon-only. Product Hunt = launches only. Antry is the only platform combining showcase + community + studio in one place, purpose-built for the AI-native builder generation.</p>
+
+  <h2>Revenue model</h2>
+  <div>
+    <div class="rev-row"><span>Hackathon sponsorships</span><span class="rev-phase">Phase 1</span></div>
+    <div class="rev-row"><span>Talent placement fees</span><span class="rev-phase">Phase 1–2</span></div>
+    <div class="rev-row"><span>Premium builder profiles</span><span class="rev-phase">Phase 2</span></div>
+    <div class="rev-row"><span>Event ticket revenue</span><span class="rev-phase">Phase 2</span></div>
+    <div class="rev-row"><span>Studio equity stakes</span><span class="rev-phase">Phase 3</span></div>
+  </div>
+
+  <h2>Go-to-market</h2>
+  <p>Start lean: one landing page, one waitlist, one great hackathon. Use early signups as social proof to attract sponsors. Use hackathon demos as seed content for the portfolio platform. Everything compounds.</p>
+
+  <h2>Pilot timeline</h2>
+  <div class="timeline">
+    <div class="t-row"><div class="t-month">Month 1</div><div class="t-content">Landing page live, waitlist targeting 500 signups. Direct outreach to 50 builders in AI communities.</div></div>
+    <div class="t-row"><div class="t-month">Month 2</div><div class="t-content">First invite-only hackathon (AI agents theme). 1–2 sponsors secured. Heavy social media coverage.</div></div>
+    <div class="t-row"><div class="t-month">Month 3</div><div class="t-content">Platform MVP launches with hackathon demos as seed content. Builder profiles go live.</div></div>
+    <div class="t-row"><div class="t-month">Month 4–6</div><div class="t-content">Second and third hackathons. Grow to 500+ active builder profiles. First placement fees.</div></div>
+    <div class="t-row"><div class="t-month">Month 7+</div><div class="t-content">Studio layer pilots with 2–3 teams. Seek seed funding based on community traction.</div></div>
+  </div>
+
+  <h2>Key metrics</h2>
+  <div class="cards">
+    <div class="card"><div class="card-num">500</div><div class="card-label">Waitlist target (Month 1)</div></div>
+    <div class="card"><div class="card-num">50</div><div class="card-label">Builders at first hackathon</div></div>
+    <div class="card"><div class="card-num">2–3</div><div class="card-label">Sponsors for pilot event</div></div>
+    <div class="card"><div class="card-num">500+</div><div class="card-label">Active profiles (Month 6)</div></div>
+    <div class="card"><div class="card-num">3×</div><div class="card-label">Hackathons in Year 1</div></div>
+    <div class="card"><div class="card-num">10%</div><div class="card-label">Placement fee target</div></div>
+  </div>
+
+  <h2>Competitive landscape</h2>
+  <p>LinkedIn — too broad, credential-based. GitHub — code storage, no demo layer. Devpost — hackathon-only, no community. Product Hunt — launch platform, no builder identity. Antry owns the intersection of all four, with a studio layer none of them have.</p>
+
+  <h2>Why now</h2>
+  <p>AI agents are exploding. Companies are hiring based on shipped demos, not titles. The vibe-coding generation needs a home. Antry is that home — built for the moment when what you build matters more than where you've been.</p>
+</div>

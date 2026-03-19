@@ -1,0 +1,101 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .hero { padding: 80px 40px 60px; text-align: center; max-width: 720px; margin: 0 auto; }
+  .logo { font-size: 13px; font-weight: 500; letter-spacing: 0.12em; color: var(--color-text-secondary); text-transform: uppercase; margin-bottom: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .logo-dot { width: 6px; height: 6px; background: var(--color-text-primary); border-radius: 50%; }
+  h1 { font-size: 42px; font-weight: 500; line-height: 1.2; color: var(--color-text-primary); margin-bottom: 20px; }
+  h1 span { color: var(--color-text-secondary); }
+  .sub { font-size: 17px; color: var(--color-text-secondary); line-height: 1.6; max-width: 480px; margin: 0 auto 40px; }
+  .waitlist { display: flex; gap: 8px; max-width: 420px; margin: 0 auto 16px; }
+  .waitlist input { flex: 1; padding: 10px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; outline: none; }
+  .waitlist input:focus { border-color: var(--color-border-primary); }
+  .waitlist button { padding: 10px 20px; background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
+  .waitlist button:hover { opacity: 0.85; }
+  .count { font-size: 12px; color: var(--color-text-tertiary); }
+  .count strong { color: var(--color-text-secondary); }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 56px 40px; }
+  .layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--color-border-tertiary); max-width: 720px; margin: 0 auto; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .layer { background: var(--color-background-primary); padding: 28px 24px; }
+  .layer-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 12px; }
+  .layer h3 { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+  .layer p { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+  .ant-trail { display: flex; justify-content: center; gap: 4px; margin-bottom: 32px; }
+  .ant { width: 4px; height: 4px; border-radius: 50%; background: var(--color-text-tertiary); animation: march 1.8s ease-in-out infinite; }
+  .ant:nth-child(2) { animation-delay: 0.2s; }
+  .ant:nth-child(3) { animation-delay: 0.4s; }
+  .ant:nth-child(4) { animation-delay: 0.6s; }
+  .ant:nth-child(5) { animation-delay: 0.8s; }
+  @keyframes march { 0%, 100% { opacity: 0.2; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+  .bottom { text-align: center; padding: 40px; font-size: 12px; color: var(--color-text-tertiary); }
+  .confirm { font-size: 13px; color: var(--color-text-secondary); display: none; margin-top: 8px; }
+  .confirm.show { display: block; }
+  @media (max-width: 520px) { .layers { grid-template-columns: 1fr; } h1 { font-size: 30px; } .waitlist { flex-direction: column; } }
+</style>
+
+<div class="hero">
+  <div class="logo">
+    <span class="logo-dot"></span>
+    Antry
+    <span class="logo-dot"></span>
+  </div>
+
+  <div class="ant-trail">
+    <div class="ant"></div>
+    <div class="ant"></div>
+    <div class="ant"></div>
+    <div class="ant"></div>
+    <div class="ant"></div>
+  </div>
+
+  <h1>Don't tell us what you've done.<br><span>Show us what you built.</span></h1>
+  <p class="sub">A community for builders who iterate fast, ship demos, and turn ideas into real products. Your work speaks louder than your resume.</p>
+
+  <div class="waitlist">
+    <input type="email" id="email" placeholder="your@email.com" />
+    <button onclick="joinWaitlist()">Join the colony</button>
+  </div>
+  <p class="count"><strong id="counter">247</strong> builders already waiting</p>
+  <p class="confirm" id="confirm">You're in. We'll be in touch soon.</p>
+</div>
+
+<hr class="divider" />
+
+<div class="layers">
+  <div class="layer">
+    <div class="layer-tag">Layer 01</div>
+    <h3>Showcase</h3>
+    <p>Your profile is your portfolio. Live demos, project walkthroughs, and shipped agents — not bullet points.</p>
+  </div>
+  <div class="layer">
+    <div class="layer-tag">Layer 02</div>
+    <h3>Build together</h3>
+    <p>Hackathons and sponsored events where the best builders in AI gather, compete, and connect.</p>
+  </div>
+  <div class="layer">
+    <div class="layer-tag">Layer 03</div>
+    <h3>Launch fast</h3>
+    <p>From prototype to validated product. We help the best ideas iterate quickly and find their footing.</p>
+  </div>
+</div>
+
+<div class="bottom">
+  antry.co &nbsp;·&nbsp; Built by builders, for builders
+</div>
+
+<script>
+  let count = 247;
+  function joinWaitlist() {
+    const email = document.getElementById('email').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('email').style.borderColor = 'var(--color-border-danger)';
+      return;
+    }
+    document.getElementById('email').style.borderColor = '';
+    count++;
+    document.getElementById('counter').textContent = count;
+    document.getElementById('email').value = '';
+    document.getElementById('confirm').classList.add('show');
+  }
+</script>

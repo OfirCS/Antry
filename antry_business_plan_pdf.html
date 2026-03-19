@@ -1,0 +1,418 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { font-family: var(--font-sans); background: var(--color-background-primary); color: var(--color-text-primary); }
+
+  .print-btn {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--color-background-primary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    padding: 10px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .print-btn span { font-size: 12px; color: var(--color-text-secondary); }
+  .print-btn button {
+    font-size: 13px; font-weight: 500;
+    background: var(--color-text-primary); color: var(--color-background-primary);
+    border: none; border-radius: var(--border-radius-md);
+    padding: 7px 18px; cursor: pointer;
+  }
+  .print-btn button:hover { opacity: 0.85; }
+
+  .page { max-width: 760px; margin: 0 auto; padding: 60px 60px 80px; }
+
+  /* Cover */
+  .cover { border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 48px; margin-bottom: 48px; }
+  .cover-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+  .cover-tag::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+  .cover h1 { font-size: 38px; font-weight: 500; line-height: 1.15; margin-bottom: 16px; }
+  .cover h1 em { font-style: normal; color: var(--color-text-secondary); }
+  .cover-desc { font-size: 16px; color: var(--color-text-secondary); line-height: 1.6; max-width: 520px; margin-bottom: 32px; }
+  .cover-meta { display: flex; gap: 32px; }
+  .cover-meta-item label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); display: block; margin-bottom: 4px; }
+  .cover-meta-item span { font-size: 14px; font-weight: 500; }
+
+  /* Sections */
+  .section { margin-bottom: 48px; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  h2 { font-size: 22px; font-weight: 500; margin-bottom: 10px; }
+  h3 { font-size: 15px; font-weight: 500; margin: 20px 0 6px; }
+  p { font-size: 14px; line-height: 1.75; color: var(--color-text-secondary); margin-bottom: 10px; }
+  p strong { color: var(--color-text-primary); font-weight: 500; }
+
+  /* Callout */
+  .callout { border-left: 2px solid var(--color-border-primary); padding: 16px 20px; margin: 20px 0; background: var(--color-background-secondary); border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
+  .callout p { font-size: 15px; color: var(--color-text-primary); margin: 0; font-style: italic; }
+
+  /* Two col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .col-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 18px 20px; }
+  .col-card h3 { font-size: 14px; margin: 0 0 6px; }
+  .col-card p { font-size: 13px; margin: 0; }
+
+  /* Three col */
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 16px; }
+  .stat-num { font-size: 26px; font-weight: 500; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: var(--color-text-secondary); }
+
+  /* Layer rows */
+  .layer { display: flex; gap: 16px; padding: 18px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .layer:last-child { border-bottom: none; }
+  .layer-num { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); min-width: 56px; padding-top: 2px; }
+  .layer-body h3 { font-size: 15px; margin: 0 0 5px; }
+  .layer-body p { font-size: 13px; margin: 0; line-height: 1.6; }
+
+  /* Timeline */
+  .timeline-row { display: flex; gap: 16px; padding: 14px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .timeline-row:last-child { border-bottom: none; }
+  .tl-period { font-size: 12px; font-weight: 500; color: var(--color-text-tertiary); min-width: 80px; padding-top: 2px; }
+  .tl-content { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+  .tl-content strong { color: var(--color-text-primary); font-weight: 500; display: block; margin-bottom: 3px; }
+
+  /* Revenue table */
+  .rev-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  .rev-table th { text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); padding: 0 0 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .rev-table td { font-size: 14px; padding: 12px 0; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); vertical-align: top; }
+  .rev-table tr:last-child td { border-bottom: none; }
+  .rev-table td:first-child { font-weight: 500; color: var(--color-text-primary); width: 30%; }
+  .rev-table td:nth-child(2) { width: 40%; }
+  .rev-table td:nth-child(3) { width: 30%; color: var(--color-text-tertiary); font-size: 12px; padding-top: 14px; }
+
+  /* Competitive */
+  .comp-row { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-name { font-size: 14px; font-weight: 500; min-width: 100px; }
+  .comp-desc { font-size: 13px; color: var(--color-text-secondary); flex: 1; }
+  .comp-gap { font-size: 12px; color: var(--color-text-tertiary); min-width: 140px; text-align: right; font-style: italic; }
+
+  /* Marketing */
+  .mkt-phase { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 18px 20px; margin-bottom: 12px; }
+  .mkt-phase-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .mkt-phase h3 { font-size: 15px; margin: 0 0 6px; }
+  .mkt-phase p { font-size: 13px; margin: 0; }
+
+  /* Risks */
+  .risk-row { display: flex; gap: 16px; padding: 14px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-label { font-size: 13px; font-weight: 500; min-width: 140px; }
+  .risk-mit { font-size: 13px; color: var(--color-text-secondary); flex: 1; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 3px; margin-top: 2px; }
+  .badge-low { background: var(--color-background-success); color: var(--color-text-success); }
+  .badge-med { background: var(--color-background-warning); color: var(--color-text-warning); }
+
+  /* Footer */
+  .doc-footer { margin-top: 60px; padding-top: 24px; border-top: 0.5px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; }
+  .doc-footer span { font-size: 12px; color: var(--color-text-tertiary); }
+
+  @media print {
+    .print-btn { display: none; }
+    .page { padding: 40px; }
+    body { background: white; color: black; }
+  }
+  @media (max-width: 580px) {
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    .page { padding: 32px 24px; }
+    .cover h1 { font-size: 26px; }
+    .cover-meta { flex-direction: column; gap: 16px; }
+    .comp-gap { display: none; }
+  }
+</style>
+
+<div class="print-btn">
+  <span>Antry — Business Plan 2026</span>
+  <button onclick="window.print()">Save as PDF ↓</button>
+</div>
+
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-tag">Antry · Business Plan</div>
+    <h1>Building the colony<br><em>for builders who ship.</em></h1>
+    <p class="cover-desc">Antry is a community platform where developers prove their skills through shipped demos and working agents — not resumes. We combine portfolio showcasing, community hackathons, and a launch studio into one ecosystem built for the AI-native builder generation.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><label>Company</label><span>Antry</span></div>
+      <div class="cover-meta-item"><label>Stage</label><span>Pre-seed / Concept</span></div>
+      <div class="cover-meta-item"><label>Date</label><span>March 2026</span></div>
+      <div class="cover-meta-item"><label>Version</label><span>v1.0</span></div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section">
+    <div class="section-label">01 — Executive Summary</div>
+    <p>The way developers get hired is fundamentally broken. Resumes and LinkedIn profiles describe what someone has done in the past — but the best builders today are proving their value by <strong>shipping real AI agents and products in hours, not months</strong>. There is no dedicated platform for this generation of builders to be discovered, celebrated, and connected with opportunities.</p>
+    <p>Antry fills this gap with a three-layer platform: a showcase layer for builder portfolios, a community layer built around hackathons and sponsored events, and a studio layer that co-builds and validates the most promising ideas from within the community.</p>
+    <div class="callout">
+      <p>"We're building a community where developers prove their skills through projects and demos instead of resumes — and we help the best ones turn ideas into real products."</p>
+    </div>
+    <p>The business model is capital-efficient: we start with sponsorships and placement fees (no upfront investment needed), grow through community momentum, and layer in premium products and studio equity as we scale.</p>
+  </div>
+
+  <!-- PROBLEM -->
+  <div class="section">
+    <div class="section-label">02 — The Problem</div>
+    <h2>Hiring is broken for the AI-native builder</h2>
+    <p>The current hiring process for technical talent was designed for a different era. It relies on credentials, job titles, and years of experience — metrics that have almost no correlation with the ability to <strong>build fast, iterate quickly, and ship working AI products</strong>.</p>
+    <div class="two-col">
+      <div class="col-card">
+        <h3>For builders</h3>
+        <p>Talented developers who build impressive AI agents and demos have no dedicated place to showcase their work. GitHub shows code. LinkedIn shows credentials. Neither shows what actually matters — working, live products.</p>
+      </div>
+      <div class="col-card">
+        <h3>For companies</h3>
+        <p>Companies hiring AI builders are increasingly asking for demos, not CVs — but they have no efficient way to discover, evaluate, or recruit talent based on shipped work. The discovery layer is missing.</p>
+      </div>
+    </div>
+    <p>The "vibe coding" generation — developers who use AI tools to build faster than ever — is growing rapidly. This group needs its own platform, its own community, and its own way of proving value. Antry is that platform.</p>
+  </div>
+
+  <!-- SOLUTION -->
+  <div class="section">
+    <div class="section-label">03 — The Solution</div>
+    <h2>Three layers, one ecosystem</h2>
+    <p>Antry is built in three layers, each one compounding on the last. You don't need all three to launch — you start with the showcase, grow the community, then activate the studio. Every layer creates value for the next.</p>
+    <div>
+      <div class="layer">
+        <div class="layer-num">Layer 01</div>
+        <div class="layer-body">
+          <h3>Showcase — Builder Portfolios</h3>
+          <p>Every builder gets a profile built around live demos, project walkthroughs, and shipped agents. Each project has its own shareable link with a rich preview image optimized for social media. Think Dribbble for builders — your work speaks, not your job title. This is the core product and where we start.</p>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num">Layer 02</div>
+        <div class="layer-body">
+          <h3>Community — Hackathons & Sponsored Events</h3>
+          <p>Themed hackathons and build events sponsored by companies like Anthropic, AWS, and OpenAI. Builders compete, network, and gain visibility. Sponsors get direct access to the best technical talent in the world. Events are heavily documented on social media to drive organic growth. Each hackathon also seeds the showcase layer with fresh demo content.</p>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num">Layer 03</div>
+        <div class="layer-body">
+          <h3>Studio — Launch & Validate</h3>
+          <p>Antry identifies high-potential builders and ideas from within the community. We run quick validation sprints — typically 2–4 weeks. If an idea shows traction, Antry co-builds alongside the founder and takes a small equity stake. This is a venture studio model powered entirely by community signal, with no cold sourcing required. Phase 3 only activates once the community is large enough to surface real signal.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKET -->
+  <div class="section">
+    <div class="section-label">04 — Market Opportunity</div>
+    <h2>A massive and growing market</h2>
+    <p>The global developer community is estimated at over <strong>27 million developers</strong>, with the fastest-growing segment being AI-native builders who use tools like GitHub Copilot, Cursor, and Claude to build at unprecedented speed. This group skews young, social-media-active, and deeply community-oriented.</p>
+    <div class="three-col">
+      <div class="stat-card"><div class="stat-num">27M+</div><div class="stat-label">Global developers</div></div>
+      <div class="stat-card"><div class="stat-num">$8.5B</div><div class="stat-label">Developer hiring market</div></div>
+      <div class="stat-card"><div class="stat-num">40%</div><div class="stat-label">YoY growth in AI builder tools</div></div>
+    </div>
+    <p>The hackathon market alone is growing rapidly — platforms like Devpost host thousands of events annually, but lack the portfolio and studio layers that transform a one-time event into a sustained community. The technical talent marketplace (where LinkedIn and job boards operate) is a multi-billion dollar category ripe for disruption by a demo-first alternative.</p>
+    <p><strong>Our beachhead market:</strong> AI and full-stack developers aged 18–35 who are active on Twitter/X, Discord, and GitHub, build side projects regularly, and are either job-seeking or open to freelance/startup opportunities. This segment is highly reachable via targeted community outreach and social media at very low cost.</p>
+  </div>
+
+  <!-- REVENUE MODEL -->
+  <div class="section">
+    <div class="section-label">05 — Revenue Model</div>
+    <h2>Multiple revenue streams, low upfront cost</h2>
+    <p>Antry's revenue model is designed to generate early cash flow without requiring significant upfront capital. We start with sponsorships (easiest to close) and add additional streams as the community grows.</p>
+    <table class="rev-table">
+      <tr><th>Stream</th><th>Description</th><th>Phase</th></tr>
+      <tr><td>Hackathon sponsorships</td><td>Companies pay to sponsor themed hackathon events — prizes, branding, and access to talent. Target $5K–$20K per event at launch, scaling to $50K+ per event as community grows.</td><td>Phase 1 (now)</td></tr>
+      <tr><td>Talent placement fees</td><td>When a builder is hired through Antry, we take a placement fee (typically 10–15% of first-year salary). This requires no upfront investment — pure margin once the community is active.</td><td>Phase 1–2</td></tr>
+      <tr><td>Premium builder profiles</td><td>Featured placement in discovery, advanced analytics, priority at events, and a verified "top builder" badge. Target $15–$29/month per premium user.</td><td>Phase 2</td></tr>
+      <tr><td>Event ticket revenue</td><td>As events grow in prestige, attendee tickets for premium hackathons and workshops. Small contribution but adds to brand legitimacy.</td><td>Phase 2</td></tr>
+      <tr><td>Studio equity stakes</td><td>Antry co-builds with selected founders and takes 5–10% equity in exchange for validation support, co-development resources, and community access. Long-term high-upside stream.</td><td>Phase 3</td></tr>
+    </table>
+  </div>
+
+  <!-- GO TO MARKET -->
+  <div class="section">
+    <div class="section-label">06 — Go-to-Market Strategy</div>
+    <h2>Community-led, social-first growth</h2>
+    <p>Our go-to-market strategy is designed for maximum impact with minimum spend. We don't need paid advertising to reach our audience — they live on X/Twitter, Discord, and GitHub, and they respond to authentic community building.</p>
+    <div class="mkt-phase">
+      <div class="mkt-phase-label">Phase 1 — Seed (Month 1)</div>
+      <h3>Launch the waitlist, build social proof</h3>
+      <p>Deploy the landing page with a waitlist. Post on X, LinkedIn, relevant Discord servers (AI builders, indie hackers, developer communities). Target 500 signups before the platform launches. Use waitlist numbers as leverage to approach first sponsors.</p>
+    </div>
+    <div class="mkt-phase">
+      <div class="mkt-phase-label">Phase 2 — First Event (Month 2)</div>
+      <h3>Invite-only hackathon with 50 builders</h3>
+      <p>Run the first themed hackathon (AI agents theme recommended for maximum sponsor interest). Invite 50 curated builders from the waitlist and developer communities. Secure 1–2 sponsors ($5K–$15K). Document everything on social media. The demos produced become the seed content for the platform.</p>
+    </div>
+    <div class="mkt-phase">
+      <div class="mkt-phase-label">Phase 3 — Platform Launch (Month 3)</div>
+      <h3>Open builder profiles, seed with hackathon content</h3>
+      <p>Launch the full platform with hackathon demos already live. Use hackathon participants as early advocates who share their profiles. Begin outreach to companies for talent placement. Target 200 active builder profiles within 30 days of launch.</p>
+    </div>
+    <div class="mkt-phase">
+      <div class="mkt-phase-label">Phase 4 — Scale (Month 4–12)</div>
+      <h3>Regular cadence, growing sponsor base</h3>
+      <p>One hackathon every 6–8 weeks. Grow builder profiles to 500+ by Month 6, 2,000+ by Month 12. Expand sponsor roster to 5–10 active companies. Begin testing premium profiles. Launch studio pilot with 2–3 teams.</p>
+    </div>
+  </div>
+
+  <!-- COMPETITION -->
+  <div class="section">
+    <div class="section-label">07 — Competitive Landscape</div>
+    <h2>No direct competitor owns this space</h2>
+    <p>The existing landscape is fragmented. Each competitor does one thing well but misses the full picture. Antry is the only platform that combines showcase + community + studio in one place, purpose-built for the demo-first generation.</p>
+    <div>
+      <div class="comp-row">
+        <span class="comp-name">LinkedIn</span>
+        <span class="comp-desc">Global professional network. Great for credentials and networking, but entirely built around resumes and job history. No demo layer, no community events, no studio.</span>
+        <span class="comp-gap">Missing: demos, community</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">GitHub</span>
+        <span class="comp-desc">The standard for code repositories. Shows code quality but not live demos, design thinking, or product execution. No community events. Passive discovery only.</span>
+        <span class="comp-gap">Missing: demos, events, studio</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Devpost</span>
+        <span class="comp-desc">Hackathon platform with strong event infrastructure. No persistent builder profiles, no portfolio layer, and no studio component. Events are one-off, not community-building.</span>
+        <span class="comp-gap">Missing: portfolio, studio</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Product Hunt</span>
+        <span class="comp-desc">Launch platform for new products. Great for visibility at launch but no ongoing builder identity or community. Not focused on the individual builder.</span>
+        <span class="comp-gap">Missing: builder identity, events</span>
+      </div>
+      <div class="comp-row">
+        <span class="comp-name">Antry</span>
+        <span class="comp-desc"><strong>Demo-first builder profiles + community hackathons + venture studio, all in one platform.</strong> The only destination built specifically for the AI-native builder generation that values shipping over credentials.</span>
+        <span class="comp-gap" style="color: var(--color-text-success); font-style: normal; font-weight: 500;">Full stack ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <div class="section-label">08 — Execution Timeline</div>
+    <h2>12-month roadmap</h2>
+    <div>
+      <div class="timeline-row">
+        <div class="tl-period">Week 1–2</div>
+        <div class="tl-content"><strong>Landing page & waitlist live</strong>Register antry.co. Deploy landing page. Set up email capture. Post across X, LinkedIn, Discord. Goal: 100 signups in first week.</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-period">Month 1</div>
+        <div class="tl-content"><strong>Waitlist growth & sponsor outreach</strong>Target 500 waitlist signups. Begin outreach to potential sponsors (AI companies, cloud providers). Define first hackathon theme. Start building platform MVP in parallel.</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-period">Month 2</div>
+        <div class="tl-content"><strong>First hackathon</strong>Run invite-only hackathon with 50 curated builders. 1–2 sponsors secured. Heavy social media documentation. Collect demos and testimonials. Validate the community model.</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-period">Month 3</div>
+        <div class="tl-content"><strong>Platform MVP launch</strong>Builder profiles, project cards, and discovery feed go live. Seed with hackathon demos. Begin talent placement outreach to companies. Target 200 active profiles.</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-period">Month 4–6</div>
+        <div class="tl-content"><strong>Second & third hackathons. Scale to 500+ profiles.</strong>Run two more events. Expand sponsor roster. Add social features (likes, follows, sharing). First placement fees collected. Premium profile tier tested.</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-period">Month 7–9</div>
+        <div class="tl-content"><strong>Studio pilot</strong>Select 2–3 builder teams from the community for the first studio cohort. Run 4-week validation sprints. Document publicly for PR and community engagement.</div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-period">Month 10–12</div>
+        <div class="tl-content"><strong>Seek seed funding</strong>With 2,000+ builders, 6+ hackathons, and proven placement revenue, approach seed investors. Target $500K–$1.5M to scale the team, marketing, and studio operations.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="section">
+    <div class="section-label">09 — Key Metrics & Targets</div>
+    <h2>How we measure success</h2>
+    <div class="three-col">
+      <div class="stat-card"><div class="stat-num">500</div><div class="stat-label">Waitlist goal (Month 1)</div></div>
+      <div class="stat-card"><div class="stat-num">50</div><div class="stat-label">Builders at first hackathon</div></div>
+      <div class="stat-card"><div class="stat-num">2–3</div><div class="stat-label">Sponsors for pilot event</div></div>
+      <div class="stat-card"><div class="stat-num">200</div><div class="stat-label">Active profiles at launch</div></div>
+      <div class="stat-card"><div class="stat-num">500+</div><div class="stat-label">Active profiles (Month 6)</div></div>
+      <div class="stat-card"><div class="stat-num">2,000+</div><div class="stat-label">Active profiles (Month 12)</div></div>
+      <div class="stat-card"><div class="stat-num">3×</div><div class="stat-label">Hackathons in Year 1</div></div>
+      <div class="stat-card"><div class="stat-num">10%</div><div class="stat-label">Placement fee per hire</div></div>
+      <div class="stat-card"><div class="stat-num">$50K</div><div class="stat-label">Revenue target (Year 1)</div></div>
+    </div>
+    <p style="margin-top:16px">Secondary metrics: demo views per builder profile, sponsor return rate, hackathon NPS score, social media impressions per event, time-from-profile-to-placement.</p>
+  </div>
+
+  <!-- RISKS -->
+  <div class="section">
+    <div class="section-label">10 — Risks & Mitigation</div>
+    <h2>Known risks and how we address them</h2>
+    <div>
+      <div class="risk-row">
+        <div><div class="risk-label">Getting first builders</div><div class="badge badge-med">Medium</div></div>
+        <div class="risk-mit">Mitigated by starting invite-only and personally reaching out to 50+ builders in AI Discord servers and Twitter communities. Quality over quantity early.</div>
+      </div>
+      <div class="risk-row">
+        <div><div class="risk-label">Finding first sponsors</div><div class="badge badge-med">Medium</div></div>
+        <div class="risk-mit">AI and cloud companies actively want developer community access. Use waitlist numbers and hackathon concept to pitch before the platform is built. Start with smaller sponsors ($2K–$5K).</div>
+      </div>
+      <div class="risk-row">
+        <div><div class="risk-label">Platform competition</div><div class="badge badge-low">Low</div></div>
+        <div class="risk-mit">No direct competitor covers the full stack (portfolio + events + studio). Community and brand moat builds over time and is hard to replicate quickly.</div>
+      </div>
+      <div class="risk-row">
+        <div><div class="risk-label">Monetization timing</div><div class="badge badge-low">Low</div></div>
+        <div class="risk-mit">Sponsorships are the primary early revenue source and don't require a large platform. Even a single $10K hackathon sponsorship validates the model with minimal overhead.</div>
+      </div>
+      <div class="risk-row">
+        <div><div class="risk-label">Studio execution risk</div><div class="badge badge-low">Low</div></div>
+        <div class="risk-mit">Studio is Phase 3 — only activates once community and platform are proven. No studio commitments required early. This keeps overall risk profile very low.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY NOW -->
+  <div class="section">
+    <div class="section-label">11 — Why Now</div>
+    <h2>The timing has never been better</h2>
+    <p>Three converging trends make 2026 the right moment to launch Antry:</p>
+    <div class="two-col">
+      <div class="col-card">
+        <h3>AI agent explosion</h3>
+        <p>The number of developers building AI agents has grown exponentially in the past 18 months. Companies like Anthropic, OpenAI, and Google are racing to build developer ecosystems. This community needs a home.</p>
+      </div>
+      <div class="col-card">
+        <h3>Demo-based hiring is here</h3>
+        <p>Major tech companies and startups are increasingly asking candidates to submit demos instead of CVs. The hiring market is shifting — Antry is the infrastructure for this shift.</p>
+      </div>
+      <div class="col-card">
+        <h3>Vibe coding goes mainstream</h3>
+        <p>AI-assisted coding tools have lowered the barrier to building drastically. A solo developer can now ship what used to require a team of five. This generation builds fast — and needs a platform built at their speed.</p>
+      </div>
+      <div class="col-card">
+        <h3>Community-led growth is proven</h3>
+        <p>Platforms like Replit, Vercel, and Hugging Face have shown that developer communities built around tools and shared work grow virally. Antry applies the same model to the builder identity layer.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISION -->
+  <div class="section">
+    <div class="section-label">12 — Vision</div>
+    <div class="callout">
+      <p>"Antry becomes the default identity layer for AI-native builders — the place where the world's best developers are discovered, where the most exciting ideas are validated, and where the next generation of startups is born."</p>
+    </div>
+    <p>In five years, when a company wants to hire the best AI builder, they search Antry. When a developer wants to prove they can build, they post on Antry. When a great idea needs fast validation and co-building support, it goes through Antry Studio. The colony grows stronger with every builder who joins.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>Antry · Business Plan · March 2026</span>
+    <span>Confidential — Not for distribution</span>
+  </div>
+
+</div>
+
+<script>
+  document.querySelector('.print-btn button').addEventListener('click', () => window.print());
+</script>
