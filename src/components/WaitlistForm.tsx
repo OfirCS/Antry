@@ -76,7 +76,7 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
       </div>
 
       <p className="mt-4 text-[12px] text-text-tertiary">
-        <span className="font-mono text-text-secondary">{count}</span> builders waiting
+        <span className="font-mono text-text-secondary">{count}</span> ants waiting
       </p>
     </div>
   );

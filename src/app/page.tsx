@@ -8,13 +8,13 @@ import { Nav } from "@/components/Nav";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { LayerCards } from "@/components/LayerCards";
 import { ProjectCard } from "@/components/ProjectCard";
-import { projects, hackathons } from "@/lib/mock-data";
+import { projects, antathons } from "@/lib/mock-data";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function Home() {
   const featured = [projects[3], projects[0], projects[7]]; // Palette, Sentinel, Terraform Studio
-  const nextHackathon = hackathons.find((h) => h.status === "upcoming") || hackathons[1];
+  const nextAntathon = antathons.find((h) => h.status === "upcoming") || antathons[1];
 
   return (
     <>
@@ -56,7 +56,7 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.45, ease }}
               className="text-lg md:text-xl text-gray-500 leading-relaxed max-w-xl mb-16"
             >
-              Where developers prove what they can do through
+              The colony where ants prove what they can build through
               shipped projects, live demos, and real code — not resumes.
             </motion.p>
 
@@ -112,14 +112,14 @@ export default function Home() {
               ends.
             </p>
             <p className="text-[17px] md:text-[20px] text-text-secondary leading-[1.7] font-display mt-5">
-              Antry is the home for builders who want their work to speak — with live
+              Antry is the colony for ants who want their work to speak — with live
               demos, project walkthroughs, and a community that actually gets it.
             </p>
           </motion.div>
         </section>
 
-        {/* ─── HACKATHON ─── */}
-        {nextHackathon && (
+        {/* ─── ANTATHON ─── */}
+        {nextAntathon && (
           <section className="max-w-[780px] px-6 mx-auto pb-28">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -127,24 +127,24 @@ export default function Home() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.7, ease }}
             >
-              <Link href={`/hackathons/${nextHackathon.id}`} className="group block">
+              <Link href={`/antathons/${nextAntathon.id}`} className="group block">
                 <div className="border border-border-secondary rounded-2xl p-8 md:p-10 bg-accent-muted hover:border-accent/30 transition-all duration-300">
                   <div className="flex items-center gap-2 mb-5">
                     <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                     <span className="text-[11px] font-medium tracking-[0.1em] text-accent uppercase">
-                      {nextHackathon.status === "active" ? "Live now" : "Next event"}
+                      {nextAntathon.status === "active" ? "Live now" : "Next antathon"}
                     </span>
                   </div>
                   <h3 className="font-display text-[22px] md:text-[26px] text-text-primary leading-snug mb-2 group-hover:text-text-secondary transition-colors">
-                    {nextHackathon.title}
+                    {nextAntathon.title}
                   </h3>
-                  <p className="text-[15px] text-text-secondary mb-6">{nextHackathon.theme}</p>
+                  <p className="text-[15px] text-text-secondary mb-6">{nextAntathon.theme}</p>
                   <div className="flex flex-wrap items-center gap-5 text-[13px] text-text-tertiary">
                     <span className="flex items-center gap-1.5">
                       <Trophy className="w-3.5 h-3.5 text-accent" />
-                      ${nextHackathon.prizes.reduce((s, p) => s + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0), 0).toLocaleString()} in prizes
+                      ${nextAntathon.prizes.reduce((s, p) => s + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0), 0).toLocaleString()} in prizes
                     </span>
-                    <span>{nextHackathon.sponsors.join(", ")}</span>
+                    <span>{nextAntathon.sponsors.map((s) => s.name).join(", ")}</span>
                   </div>
                   <div className="mt-6 text-[14px] font-medium text-text-primary flex items-center gap-2 group-hover:gap-3 transition-all">
                     Learn more
@@ -169,7 +169,7 @@ export default function Home() {
                 Get early access
               </h2>
               <p className="text-[15px] text-text-secondary mb-10">
-                We&apos;re opening the colony to the first builders soon.
+                We&apos;re opening the colony to the first ants soon.
               </p>
               <WaitlistForm />
             </motion.div>
@@ -186,17 +186,17 @@ export default function Home() {
                   <span className="text-sm font-bold tracking-[0.14em] text-text-secondary uppercase">Antry</span>
                 </div>
                 <p className="text-[13px] text-text-tertiary max-w-[220px] leading-relaxed">
-                  The colony for builders who ship.
+                  The colony for ants who ship.
                 </p>
               </div>
               <div className="flex gap-14">
                 <div className="flex flex-col gap-2">
                   <Link href="/discover" className="text-[13px] text-text-secondary hover:text-accent transition-colors">Discover</Link>
-                  <Link href="/hackathons" className="text-[13px] text-text-secondary hover:text-accent transition-colors">Hackathons</Link>
+                  <Link href="/antathons" className="text-[13px] text-text-secondary hover:text-accent transition-colors">Antathons</Link>
                 </div>
                 <div className="flex flex-col gap-2">
                   <Link href="/login" className="text-[13px] text-text-secondary hover:text-accent transition-colors">Sign in</Link>
-                  <Link href="/signup" className="text-[13px] text-text-secondary hover:text-accent transition-colors">Join</Link>
+                  <Link href="/signup" className="text-[13px] text-text-secondary hover:text-accent transition-colors">Join the colony</Link>
                 </div>
               </div>
             </div>
