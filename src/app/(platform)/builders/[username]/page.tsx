@@ -3,376 +3,208 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Github,
-  Twitter,
-  Globe,
-  Calendar,
-  ArrowUpRight,
-  Heart,
-  Pencil,
-  Trophy,
-  ExternalLink,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import {
-  getBuilder,
-  getBuilderProjects,
-  getBuilderAntathons,
-  getInitials,
-  formatDate,
-} from "@/lib/mock-data";
-
-const ease = [0.16, 1, 0.3, 1] as const;
-
-const patterns = [
-  "radial-gradient(circle at 25% 75%, rgba(255,255,255,0.12) 0%, transparent 50%), radial-gradient(circle at 85% 20%, rgba(255,255,255,0.08) 0%, transparent 40%)",
-  "radial-gradient(circle at 70% 80%, rgba(255,255,255,0.14) 0%, transparent 45%), radial-gradient(circle at 15% 30%, rgba(255,255,255,0.06) 0%, transparent 50%)",
-  "radial-gradient(circle at 50% 10%, rgba(255,255,255,0.1) 0%, transparent 55%), radial-gradient(circle at 30% 90%, rgba(255,255,255,0.08) 0%, transparent 35%)",
-];
+import { ArrowLeft, Github, Twitter, Globe, Calendar, ExternalLink, Play, Lock } from "lucide-react";
+import { getBuilder, getBuilderProjects, getInitials, formatDate, getAntathon } from "@/lib/mock-data";
+import { useAuth } from "@/lib/supabase/auth-context";
 
 export default function AntProfilePage() {
   const { username } = useParams() as { username: string };
+  const { user } = useAuth();
   const builder = getBuilder(username);
   const builderProjects = getBuilderProjects(username);
-  const builderAntathons = builder ? getBuilderAntathons(username) : [];
+
+  // Check if current user is the owner of this profile
+  const isOwner = user?.user_metadata?.username === username || user?.email?.split('@')[0] === username;
 
   if (!builder) {
     return (
-      <div className="max-w-[800px] mx-auto px-6 py-20 text-center">
-        <p className="text-text-tertiary text-[14px]">Ant not found.</p>
-        <Link href="/discover" className="text-[13px] text-accent mt-3 inline-block">
-          Back to colony
-        </Link>
+      <div className="min-h-screen flex items-center justify-center bg-white px-6">
+        <div className="text-center">
+          <p className="text-gray-400 text-lg mb-4 font-medium">This ant hasn&apos;t joined the colony yet.</p>
+          <Link href="/discover" className="text-blue-600 font-bold hover:underline">Back to the colony</Link>
+        </div>
       </div>
     );
   }
 
-  const totalLikes = builderProjects.reduce((s, p) => s + p.likes, 0);
-
   return (
-    <div className="max-w-[900px] mx-auto px-6 py-10 md:py-16">
-      <Link
-        href="/discover"
-        className="inline-flex items-center gap-1.5 text-[12px] text-text-tertiary hover:text-text-secondary transition-colors mb-6"
-      >
-        <ArrowLeft className="w-3 h-3" /> Colony
-      </Link>
-
-      {/* ── Hero Banner ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="rounded-2xl overflow-hidden mb-0 border border-border-tertiary"
-      >
-        {/* Gradient cover */}
-        <div className="h-36 sm:h-48 relative overflow-hidden" style={{ background: builder.gradient }}>
-          <div
-            className="absolute inset-0 opacity-[0.15] mix-blend-soft-light"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-            }}
-          />
-          <span className="absolute bottom-2 right-6 text-white/8 text-[100px] sm:text-[160px] font-mono font-bold leading-none select-none">
+    <div className="bg-white min-h-screen">
+      {/* ─── IDENTITY SECTION ─── */}
+      <section className="pt-32 pb-16 px-6 border-b border-gray-100">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10 md:text-left text-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] flex items-center justify-center text-4xl font-bold text-white shadow-2xl shrink-0"
+            style={{ background: builder.gradient }}
+          >
             {getInitials(builder.name)}
-          </span>
-        </div>
-
-        {/* Profile info */}
-        <div className="px-6 sm:px-8 pb-8 bg-background-primary">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 mb-6">
-            <div
-              className="w-20 h-20 rounded-xl flex items-center justify-center border-4 border-background-primary shadow-sm shrink-0"
-              style={{ background: builder.gradient }}
+          </motion.div>
+          
+          <div className="flex-1 min-w-0">
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4"
             >
-              <span className="text-2xl font-medium text-white">{getInitials(builder.name)}</span>
+              {builder.name}
+            </motion.h1>
+
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg text-gray-500 font-medium leading-relaxed max-w-2xl mb-6"
+            >
+              {builder.tagline}
+            </motion.p>
+
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              {builder.social.github && (
+                <a href={`https://github.com/${builder.social.github}`} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 flex items-center gap-2 transition-colors">
+                  <Github className="w-3.5 h-3.5" /> Github
+                </a>
+              )}
+              {builder.social.twitter && (
+                <a href={`https://x.com/${builder.social.twitter}`} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 flex items-center gap-2 transition-colors">
+                  <Twitter className="w-3.5 h-3.5" /> Twitter
+                </a>
+              )}
+              {builder.social.website && (
+                <a href={`https://${builder.social.website}`} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 flex items-center gap-2 transition-colors">
+                  <Globe className="w-3.5 h-3.5" /> Website
+                </a>
+              )}
             </div>
-            <div className="flex-1 min-w-0 sm:pb-1">
-              <div className="flex items-center gap-3">
-                <h1 className="font-display text-[26px] md:text-[32px] text-text-primary leading-snug">
-                  {builder.name}
-                </h1>
-                {/* Edit indicator — visible only to owner (mocked) */}
-                <button
-                  className="hidden sm:flex items-center gap-1 text-[11px] text-text-tertiary border border-border-tertiary rounded-md px-2 py-0.5 hover:border-accent hover:text-accent transition-colors"
-                  title="Only you can edit your page"
-                >
-                  <Pencil className="w-3 h-3" /> Edit
-                </button>
-              </div>
-              <p className="text-[14px] text-text-secondary mt-1.5 max-w-[460px] leading-relaxed">
-                {builder.tagline}
-              </p>
-            </div>
           </div>
 
-          {/* Skills */}
-          <div className="flex flex-wrap gap-1.5 mb-5">
-            {builder.skills.map((s) => (
-              <span
-                key={s}
-                className="text-[10px] font-mono text-text-tertiary bg-background-secondary rounded-md px-2 py-0.5"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
+          {isOwner && (
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2.5 bg-gray-900 text-white rounded-full text-xs font-bold shadow-lg hover:bg-blue-600 transition-all flex items-center gap-2 shrink-0"
+            >
+              Edit Page
+            </motion.button>
+          )}
+        </div>
+      </section>
 
-          {/* Social links */}
-          <div className="flex flex-wrap items-center gap-4 text-[12px] text-text-tertiary">
-            {builder.social.github && (
-              <a
-                href={`https://github.com/${builder.social.github}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-accent transition-colors"
-              >
-                <Github className="w-3.5 h-3.5" />
-                {builder.social.github}
-              </a>
-            )}
-            {builder.social.twitter && (
-              <a
-                href={`https://x.com/${builder.social.twitter}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-accent transition-colors"
-              >
-                <Twitter className="w-3.5 h-3.5" />@{builder.social.twitter}
-              </a>
-            )}
-            {builder.social.website && (
-              <a
-                href={`https://${builder.social.website}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-accent transition-colors"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                {builder.social.website}
-              </a>
-            )}
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              Joined {formatDate(builder.joinedAt)}
-            </span>
+      {/* ─── MEASUREMENTS BAR ─── */}
+      <section className="bg-gray-50/50 border-b border-gray-100 py-8 px-6">
+        <div className="max-w-4xl mx-auto flex items-center justify-around text-center">
+          <div>
+            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">Projects</div>
+            <div className="text-2xl font-bold text-gray-900">{builderProjects.length}</div>
+          </div>
+          <div className="w-px h-8 bg-gray-200" />
+          <div>
+            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">Total Likes</div>
+            <div className="text-2xl font-bold text-gray-900">{builderProjects.reduce((s, p) => s + p.likes, 0)}</div>
+          </div>
+          <div className="w-px h-8 bg-gray-200" />
+          <div>
+            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">Antathons</div>
+            <div className="text-2xl font-bold text-gray-900">{builder.antathonIds.length}</div>
           </div>
         </div>
-      </motion.div>
+      </section>
 
-      {/* ── Stats Row ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
-        className="flex gap-8 py-6 mb-2 text-center"
-      >
-        <div>
-          <div className="text-[22px] font-mono text-text-primary">{builderProjects.length}</div>
-          <div className="text-[11px] text-text-tertiary mt-0.5">projects</div>
-        </div>
-        <div>
-          <div className="text-[22px] font-mono text-text-primary">{totalLikes}</div>
-          <div className="text-[11px] text-text-tertiary mt-0.5">likes</div>
-        </div>
-        <div>
-          <div className="text-[22px] font-mono text-text-primary">{builderAntathons.length}</div>
-          <div className="text-[11px] text-text-tertiary mt-0.5">antathons</div>
-        </div>
-      </motion.div>
+      {/* ─── LIVE DEMOS ─── */}
+      <section className="py-24 px-6 bg-gray-50/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">Live Demos</h2>
+            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">{builderProjects.length} projects</span>
+          </div>
 
-      {/* ── About ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="mb-10"
-      >
-        <span className="text-[11px] font-mono text-text-tertiary block mb-3">about</span>
-        <p className="text-[14px] text-text-secondary leading-[1.8] max-w-[600px]">{builder.bio}</p>
-      </motion.div>
-
-      {/* ── Projects with Embedded Demos ── */}
-      {builderProjects.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.25 }}
-          className="mb-12"
-        >
-          <span className="text-[11px] font-mono text-text-tertiary block mb-5">shipped projects</span>
-          <div className="space-y-6">
+          <div className="space-y-12">
             {builderProjects.map((project, i) => (
-              <div
+              <motion.div 
                 key={project.id}
-                className="border border-border-tertiary rounded-xl overflow-hidden hover:border-border-secondary transition-colors"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-[2rem] overflow-hidden shadow-xl border border-gray-100 flex flex-col lg:flex-row"
               >
-                {/* Demo embed area */}
-                <div className="aspect-[2.4/1] relative overflow-hidden" style={{ background: project.gradient }}>
-                  <div className="absolute inset-0" style={{ backgroundImage: patterns[i % patterns.length] }} />
-                  <div
-                    className="absolute inset-0 opacity-[0.15] mix-blend-soft-light"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                    }}
-                  />
-                  {/* Demo badge */}
-                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/40 backdrop-blur-sm text-white/90 text-[11px] font-mono px-3 py-1 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    live demo
-                  </div>
-                  <span className="absolute bottom-3 left-5 text-white/15 text-[40px] font-mono font-bold select-none">
-                    {project.title.slice(0, 3).toLowerCase()}
-                  </span>
-                </div>
-
-                {/* Project info */}
-                <div className="px-6 py-5">
-                  <div className="flex items-start justify-between gap-3 mb-1.5">
-                    <div>
-                      <Link
-                        href={`/projects/${project.id}`}
-                        className="text-[17px] font-medium text-text-primary hover:text-accent transition-colors"
-                      >
-                        {project.title}
-                      </Link>
-                      {project.antathonId && (
-                        <span className="ml-2 text-[10px] font-mono text-accent bg-accent-muted px-1.5 py-0.5 rounded">
-                          antathon project
-                        </span>
-                      )}
+                <div className="lg:w-1/2 aspect-video relative group cursor-pointer" style={{ background: project.gradient }}>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                      <Play className="w-8 h-8 text-blue-600 fill-blue-600 ml-1.5" />
                     </div>
-                    <span className="flex items-center gap-1 text-text-tertiary text-[12px] shrink-0 mt-0.5">
-                      <Heart className="w-3 h-3" />
-                      {project.likes}
-                    </span>
                   </div>
-                  <p className="text-[13px] text-text-tertiary leading-relaxed mb-4">{project.tagline}</p>
-
-                  <div className="flex flex-wrap items-center gap-2 mb-4">
-                    {project.techStack.slice(0, 4).map((t) => (
-                      <span
-                        key={t}
-                        className="text-[10px] font-mono text-text-tertiary bg-background-secondary rounded px-1.5 py-0.5"
-                      >
-                        {t}
-                      </span>
+                </div>
+                <div className="lg:w-1/2 p-10 lg:p-14 flex flex-col justify-center">
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.techStack.map(t => (
+                      <span key={t} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold uppercase tracking-wider">{t}</span>
                     ))}
-                    <span className="text-[11px] text-text-tertiary font-mono ml-auto">{project.buildTime}</span>
                   </div>
-
-                  <div className="flex gap-2">
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-text-primary text-background-primary rounded-lg text-[12px] font-medium hover:opacity-85 transition-opacity"
-                    >
-                      Try demo <ArrowUpRight className="w-3 h-3" />
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4">{project.title}</h3>
+                  <p className="text-gray-500 text-lg leading-relaxed mb-8">{project.tagline}</p>
+                  <div className="flex gap-4">
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20">
+                      Run Demo
                     </a>
                     {project.sourceUrl && (
-                      <a
-                        href={project.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 border border-border-secondary rounded-lg text-[12px] text-text-secondary hover:text-text-primary transition-colors"
-                      >
-                        <Github className="w-3 h-3" /> Source
+                      <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-gray-100 text-gray-900 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
+                        Source
                       </a>
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </motion.div>
-      )}
+        </div>
+      </section>
 
-      {/* ── Antathons ── */}
-      {builderAntathons.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mb-12"
-        >
-          <span className="text-[11px] font-mono text-text-tertiary block mb-4">antathons</span>
-          <div className="space-y-3">
-            {builderAntathons.map((a) => {
-              const dotColor =
-                a.status === "active"
-                  ? "bg-green-500"
-                  : a.status === "upcoming"
-                    ? "bg-accent"
-                    : "bg-text-tertiary";
+      {/* ─── ANT TRAIL (Antathons) ─── */}
+      <section className="py-24 px-6 border-t border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-12">The Ant Trail</h2>
+          <div className="space-y-6">
+            {builder.antathonIds.map(id => {
+              const event = getAntathon(id);
+              if (!event) return null;
               return (
-                <Link
-                  key={a.id}
-                  href={`/antathons/${a.id}`}
-                  className="flex items-center gap-4 p-4 rounded-xl border border-border-tertiary hover:border-accent/30 hover:bg-background-secondary/40 transition-all group"
-                >
-                  <div
-                    className="w-10 h-10 rounded-lg shrink-0 relative overflow-hidden"
-                    style={{ background: a.gradient }}
-                  >
-                    <Trophy className="w-4 h-4 text-white/60 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-[14px] font-medium text-text-primary group-hover:text-accent transition-colors">
-                        {a.title}
-                      </h4>
-                      <span className={cn("w-1.5 h-1.5 rounded-full", dotColor)} />
+                <Link key={id} href={`/hackathons/${id}`} className="block group">
+                  <div className="flex items-center justify-between p-8 bg-white border border-gray-100 rounded-3xl hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all">
+                    <div className="flex items-center gap-6">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: event.gradient }}>
+                        {event.title[0]}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">{event.title}</h4>
+                        <p className="text-sm text-gray-400">{event.theme}</p>
+                      </div>
                     </div>
-                    <p className="text-[12px] text-text-tertiary line-clamp-1">{a.theme}</p>
+                    <ArrowLeft className="w-5 h-5 text-gray-300 group-hover:text-blue-600 rotate-180 transition-all" />
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-text-tertiary group-hover:text-accent transition-colors shrink-0" />
                 </Link>
               );
             })}
           </div>
-        </motion.div>
-      )}
+        </div>
+      </section>
 
-      {/* ── Outside Projects ── */}
-      {builder.outsideProjects.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.35 }}
-          className="mb-12"
-        >
-          <span className="text-[11px] font-mono text-text-tertiary block mb-4">outside the colony</span>
-          <div className="space-y-3">
-            {builder.outsideProjects.map((op) => (
-              <a
-                key={op.title}
-                href={op.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 rounded-xl border border-border-tertiary hover:border-border-secondary hover:bg-background-secondary/40 transition-all group"
-              >
-                <div className="w-10 h-10 rounded-lg bg-background-secondary flex items-center justify-center shrink-0">
-                  <ExternalLink className="w-4 h-4 text-text-tertiary" />
+      {/* ─── THE STORAGE (Outside Projects) ─── */}
+      <section className="py-24 px-6 bg-gray-900 text-white rounded-t-[3rem]">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold tracking-tight mb-12">The Storage</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {builder.outsideProjects.map((p, i) => (
+              <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="group p-8 border border-white/10 rounded-3xl hover:bg-white/5 transition-colors">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-bold text-xl group-hover:text-blue-400 transition-colors">{p.title}</h4>
+                  <ExternalLink className="w-4 h-4 text-white/30" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[14px] font-medium text-text-primary group-hover:text-accent transition-colors">
-                    {op.title}
-                  </h4>
-                  <p className="text-[12px] text-text-tertiary line-clamp-1">{op.description}</p>
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-text-tertiary group-hover:text-accent transition-colors shrink-0" />
+                <p className="text-white/50 text-sm leading-relaxed">{p.description}</p>
               </a>
             ))}
           </div>
-        </motion.div>
-      )}
-
-      {builderProjects.length === 0 && (
-        <p className="text-[13px] text-text-tertiary py-10 text-center">No projects yet.</p>
-      )}
+        </div>
+      </section>
     </div>
   );
 }

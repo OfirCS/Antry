@@ -47,18 +47,18 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
                 onChange={(e) => { setEmail(e.target.value); if (isError) setIsError(false); }}
                 placeholder="Enter your email"
                 className={cn(
-                  "flex-1 px-6 py-3 bg-white border-2 rounded-full text-sm outline-none transition-all",
+                  "flex-1 px-8 py-4 bg-gray-50 border border-gray-100 rounded-full text-sm outline-none transition-all",
                   isError
                     ? "border-red-400 placeholder:text-red-300"
-                    : "border-gray-100 focus:border-blue-600 text-gray-900 placeholder:text-gray-400 focus:shadow-lg focus:shadow-blue-50"
+                    : "border-gray-100 focus:border-blue-600/50 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:shadow-2xl focus:shadow-blue-500/10"
                 )}
               />
               <button
                 type="submit"
-                className="group flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full text-sm font-semibold whitespace-nowrap hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 active:scale-[0.98] transition-all"
+                className="group flex items-center justify-center gap-2 px-10 py-4 bg-gray-900 text-white rounded-full text-sm font-bold whitespace-nowrap hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/20 active:scale-[0.98] transition-all"
               >
-                Join waitlist
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                Join the Colony
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.form>
           ) : (

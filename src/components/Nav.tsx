@@ -11,8 +11,8 @@ import { useAuth } from "@/lib/supabase/auth-context";
 import { signOut } from "@/app/(auth)/actions";
 
 const links = [
-  { href: "/discover", label: "Discover" },
-  { href: "/antathons", label: "Antathons" },
+  { href: "/discover", label: "Colony" },
+  { href: "/hackathons", label: "Antathons" },
 ];
 
 export function Nav() {
@@ -37,14 +37,14 @@ export function Nav() {
           <span className="text-lg font-bold tracking-tight text-gray-900">Antry</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               className={cn(
-                "text-sm font-medium transition-colors",
-                pathname.startsWith(l.href) ? "text-blue-600" : "text-gray-500 hover:text-gray-900"
+                "text-[10px] font-bold uppercase tracking-[0.2em] transition-all",
+                pathname.startsWith(l.href) ? "text-blue-600" : "text-gray-400 hover:text-gray-900"
               )}
             >
               {l.label}
@@ -52,14 +52,14 @@ export function Nav() {
           ))}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-6">
           {loading ? (
-            <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse" />
+            <div className="w-8 h-8 rounded-full bg-gray-50 animate-pulse" />
           ) : user ? (
             <>
               <Link
                 href="/dashboard"
-                className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[11px] font-bold text-white hover:bg-blue-700 transition-colors"
+                className="w-10 h-10 rounded-2xl bg-gray-900 flex items-center justify-center text-[10px] font-bold text-white hover:bg-blue-600 transition-colors shadow-lg"
                 title={user.user_metadata?.full_name || user.email || "Profile"}
               >
                 {initials}
@@ -67,7 +67,7 @@ export function Nav() {
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="text-sm text-gray-400 hover:text-gray-700 transition-colors flex items-center gap-1"
+                  className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors flex items-center gap-1 uppercase tracking-widest"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                 </button>
@@ -75,14 +75,14 @@ export function Nav() {
             </>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+              <Link href="/login" className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">
                 Sign in
               </Link>
               <Link
                 href="/signup"
-                className="text-sm font-medium bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 hover:shadow-md transition-all active:scale-95"
+                className="text-[10px] font-bold bg-gray-900 text-white px-8 py-3 rounded-full hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/10 transition-all active:scale-95 uppercase tracking-[0.2em]"
               >
-                Join Antry
+                Join Colony
               </Link>
             </>
           )}
