@@ -45,7 +45,7 @@ export default function BuilderProfilePage() {
 
           <div className="flex flex-wrap gap-1.5 mt-4">
             {builder.skills.map((s) => (
-              <span key={s} className="text-[10px] font-mono text-text-tertiary bg-background-secondary rounded px-1.5 py-0.5">{s}</span>
+              <span key={s} className="text-[11px] font-mono text-text-secondary bg-background-secondary rounded-full px-2.5 py-1">{s}</span>
             ))}
           </div>
 

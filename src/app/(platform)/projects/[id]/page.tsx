@@ -76,18 +76,18 @@ export default function ProjectDetailPage() {
         <span className="text-[11px] font-mono text-text-tertiary block mb-3">stack</span>
         <div className="flex flex-wrap gap-2">
           {project.techStack.map((t) => (
-            <span key={t} className="text-[12px] font-mono text-text-secondary border border-border-secondary rounded-md px-2.5 py-1">{t}</span>
+            <span key={t} className="text-[12px] font-mono text-text-secondary bg-background-secondary rounded-full px-3 py-1">{t}</span>
           ))}
         </div>
       </div>
 
       {/* Actions */}
       <div className="flex flex-wrap gap-3 mb-8">
-        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2 bg-text-primary text-background-primary rounded-lg text-[13px] font-medium hover:opacity-85 transition-opacity">
+        <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white rounded-full text-[13px] font-medium hover:shadow-md hover:opacity-90 transition-all">
           Live demo <ArrowUpRight className="w-3.5 h-3.5" />
         </a>
         {project.sourceUrl && (
-          <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2 border border-border-secondary rounded-lg text-[13px] text-text-secondary hover:text-text-primary hover:border-border-primary transition-all">
+          <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 bg-background-secondary text-text-primary rounded-full text-[13px] font-medium hover:bg-border-tertiary transition-colors">
             <Github className="w-3.5 h-3.5" /> Source
           </a>
         )}

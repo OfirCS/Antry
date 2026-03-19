@@ -39,26 +39,26 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, y: -6 }}
               onSubmit={handleSubmit}
-              className="flex flex-col sm:flex-row gap-2 w-full"
+              className="flex flex-col sm:flex-row gap-3 w-full"
             >
               <input
                 type="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); if (isError) setIsError(false); }}
-                placeholder="your@email.com"
+                placeholder="Enter your email"
                 className={cn(
-                  "flex-1 px-4 py-2.5 bg-background-primary border rounded-lg text-[14px] outline-none transition-colors",
+                  "flex-1 px-6 py-3 bg-white border-2 rounded-full text-sm outline-none transition-all",
                   isError
                     ? "border-red-400 placeholder:text-red-300"
-                    : "border-border-secondary focus:border-accent text-text-primary placeholder:text-text-tertiary"
+                    : "border-gray-100 focus:border-blue-600 text-gray-900 placeholder:text-gray-400 focus:shadow-lg focus:shadow-blue-50"
                 )}
               />
               <button
                 type="submit"
-                className="group flex items-center justify-center gap-2 px-5 py-2.5 bg-text-primary text-background-primary rounded-lg text-[14px] font-medium whitespace-nowrap hover:opacity-85 active:scale-[0.98] transition-all"
+                className="group flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full text-sm font-semibold whitespace-nowrap hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 active:scale-[0.98] transition-all"
               >
                 Join waitlist
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </button>
             </motion.form>
           ) : (
@@ -66,7 +66,7 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
               key="done"
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-accent/30 bg-accent-muted rounded-lg text-accent text-[14px] font-medium"
+              className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-blue-50 rounded-full text-blue-700 text-sm font-semibold border border-blue-100"
             >
               <Check className="w-4 h-4" />
               You&apos;re on the list.

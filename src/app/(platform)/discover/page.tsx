@@ -22,32 +22,33 @@ export default function DiscoverPage() {
   );
 
   return (
-    <div className="max-w-[1080px] mx-auto px-6 py-10 md:py-16">
+    <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="font-display text-[28px] md:text-[36px] text-text-primary leading-snug mb-8">Discover</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Discover</h1>
+        <p className="text-lg text-gray-500 mb-12 max-w-2xl">Explore the best projects and meet the builders behind them.</p>
       </motion.div>
 
       {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+      <div className="relative mb-12 max-w-2xl mx-auto">
+        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
           type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search projects, tech, builders..."
-          className="w-full pl-10 pr-4 py-2.5 bg-background-secondary border border-border-tertiary rounded-lg text-[13px] text-text-primary placeholder:text-text-tertiary outline-none focus:border-accent transition-colors"
+          placeholder="Search projects, technologies, or builders..."
+          className="w-full pl-14 pr-6 py-4 bg-white border-2 border-gray-100 rounded-full text-base text-gray-900 placeholder:text-gray-400 outline-none focus:border-blue-600 focus:shadow-xl focus:shadow-blue-50 transition-all shadow-sm"
         />
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-border-tertiary">
+      <div className="flex items-center justify-center gap-8 mb-10">
         {(["projects", "builders"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={cn(
-              "text-[13px] pb-2.5 px-1 border-b-2 -mb-px capitalize transition-colors",
-              tab === t ? "text-text-primary border-accent" : "text-text-tertiary border-transparent hover:text-text-secondary"
+              "text-base font-semibold pb-2 px-2 border-b-2 capitalize transition-all",
+              tab === t ? "text-blue-600 border-blue-600" : "text-gray-400 border-transparent hover:text-gray-600"
             )}
           >
             {t}
@@ -57,16 +58,16 @@ export default function DiscoverPage() {
 
       {/* Category filters */}
       {tab === "projects" && (
-        <div className="flex flex-wrap gap-1.5 mb-8">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
           {CATEGORIES.map((c) => (
             <button
               key={c.value}
               onClick={() => setCat(c.value)}
               className={cn(
-                "text-[11px] font-mono px-2.5 py-1 rounded-md border transition-all",
+                "text-sm font-medium px-5 py-2 rounded-full border-2 transition-all active:scale-95",
                 cat === c.value
-                  ? "bg-text-primary text-background-primary border-text-primary"
-                  : "text-text-tertiary border-border-tertiary hover:border-border-secondary"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200"
+                  : "bg-white text-gray-500 border-gray-100 hover:border-gray-200 hover:bg-gray-50"
               )}
             >
               {c.label}

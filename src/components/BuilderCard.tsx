@@ -22,23 +22,23 @@ export function BuilderCard({ builder, index = 0, className }: BuilderCardProps)
     >
       <Link
         href={`/builders/${builder.username}`}
-        className="flex items-start gap-4 p-5 rounded-xl border border-border-tertiary hover:border-border-secondary hover:bg-background-secondary/40 transition-all duration-200"
+        className="flex items-start gap-4 p-5 rounded-2xl bg-white hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300"
       >
         <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
           style={{ background: builder.gradient }}
         >
-          <span className="text-[13px] font-medium text-white leading-none">{getInitials(builder.name)}</span>
+          <span className="text-sm font-bold text-white leading-none">{getInitials(builder.name)}</span>
         </div>
 
         <div className="min-w-0">
-          <h3 className="text-[14px] font-medium text-text-primary leading-snug group-hover:text-accent transition-colors">
+          <h3 className="text-base font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
             {builder.name}
           </h3>
-          <p className="text-[12px] text-text-tertiary leading-relaxed mt-1 line-clamp-2">{builder.bio}</p>
-          <div className="flex flex-wrap gap-1.5 mt-2.5">
+          <p className="text-[13px] text-gray-500 leading-relaxed mt-1 line-clamp-2">{builder.bio}</p>
+          <div className="flex flex-wrap gap-1.5 mt-3">
             {builder.skills.slice(0, 3).map((s) => (
-              <span key={s} className="text-[10px] font-mono text-text-tertiary bg-background-secondary rounded px-1.5 py-0.5">{s}</span>
+              <span key={s} className="text-[10px] font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-full px-2.5 py-0.5">{s}</span>
             ))}
           </div>
         </div>

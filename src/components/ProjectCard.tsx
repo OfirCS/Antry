@@ -31,9 +31,9 @@ export function ProjectCard({ project, index = 0, className }: ProjectCardProps)
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] as const }}
       className={cn("group", className)}
     >
-      <Link href={`/projects/${project.id}`} className="block">
+      <Link href={`/projects/${project.id}`} className="block p-4 rounded-2xl hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 active:scale-[0.99]">
         {/* Thumbnail */}
-        <div className="aspect-[16/10] rounded-xl mb-4 relative overflow-hidden" style={{ background: project.gradient }}>
+        <div className="aspect-[16/10] rounded-xl mb-5 relative overflow-hidden" style={{ background: project.gradient }}>
           {/* Pattern overlay */}
           <div className="absolute inset-0" style={{ backgroundImage: pattern }} />
           {/* Noise grain */}
@@ -44,46 +44,46 @@ export function ProjectCard({ project, index = 0, className }: ProjectCardProps)
           <span className="absolute bottom-3 left-4 text-white/20 text-[32px] font-mono font-bold select-none">
             {project.title.slice(0, 2).toLowerCase()}
           </span>
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.06] transition-colors duration-300" />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.04] transition-colors duration-300" />
         </div>
 
         {/* Content */}
-        <div className="flex items-start justify-between gap-3 mb-1.5">
-          <h3 className="text-[15px] font-medium text-text-primary group-hover:text-accent transition-colors leading-snug">
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
             {project.title}
           </h3>
-          <span className="flex items-center gap-1 text-text-tertiary text-[12px] shrink-0 mt-0.5">
-            <Heart className="w-3 h-3" />
+          <span className="flex items-center gap-1 text-gray-400 text-xs shrink-0 mt-0.5">
+            <Heart className="w-3.5 h-3.5" />
             {project.likes}
           </span>
         </div>
 
-        <p className="text-[13px] text-text-tertiary leading-relaxed line-clamp-2 mb-3">
+        <p className="text-[13px] text-gray-500 leading-relaxed line-clamp-2 mb-4">
           {project.tagline}
         </p>
 
         {/* Builder */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2.5 mb-4">
           <div
             className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
             style={{ background: project.builder.gradient }}
           >
             <span className="text-[8px] font-bold text-white leading-none">{getInitials(project.builder.name)}</span>
           </div>
-          <span className="text-[12px] text-text-tertiary">{project.builder.name}</span>
-          <span className="text-text-tertiary text-[10px]">&middot;</span>
-          <span className="text-[11px] text-text-tertiary font-mono">{project.buildTime}</span>
+          <span className="text-xs font-medium text-gray-600">{project.builder.name}</span>
+          <span className="text-gray-300 text-[10px]">&middot;</span>
+          <span className="text-[11px] text-gray-400 font-mono">{project.buildTime}</span>
         </div>
 
         {/* Tech */}
         <div className="flex flex-wrap gap-1.5">
           {project.techStack.slice(0, 3).map((tech) => (
-            <span key={tech} className="text-[10px] font-mono text-text-tertiary bg-background-secondary rounded px-1.5 py-0.5">
+            <span key={tech} className="text-[10px] font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-full px-2.5 py-0.5">
               {tech}
             </span>
           ))}
           {project.techStack.length > 3 && (
-            <span className="text-[10px] font-mono text-text-tertiary">+{project.techStack.length - 3}</span>
+            <span className="text-[10px] font-medium text-gray-400 pl-1">+{project.techStack.length - 3}</span>
           )}
         </div>
       </Link>

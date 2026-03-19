@@ -5,8 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/supabase/auth-context";
+import { signOut } from "@/app/(auth)/actions";
 
 const links = [
   { href: "/discover", label: "Discover" },
@@ -16,13 +18,23 @@ const links = [
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { user, loading } = useAuth();
+
+  const initials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name
+        .split(" ")
+        .map((w: string) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : user?.email?.slice(0, 2).toUpperCase() ?? "??";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-[60px] border-b border-border-tertiary bg-background-primary/80 backdrop-blur-xl">
-      <div className="max-w-[1080px] mx-auto h-full px-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-70 transition-opacity">
-          <Image src="/logo.png" alt="Antry" width={20} height={20} className="dark:invert" priority />
-          <span className="text-[13px] font-medium tracking-[0.14em] text-text-primary uppercase">antry</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-gray-100 bg-white/80 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto h-full px-6 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Image src="/logo.png" alt="Antry" width={32} height={32} className="dark:invert" priority />
+          <span className="text-lg font-bold tracking-tight text-gray-900">Antry</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
@@ -31,8 +43,8 @@ export function Nav() {
               key={l.href}
               href={l.href}
               className={cn(
-                "text-[13px] transition-colors",
-                pathname.startsWith(l.href) ? "text-text-primary" : "text-text-tertiary hover:text-text-primary"
+                "text-sm font-medium transition-colors",
+                pathname.startsWith(l.href) ? "text-blue-600" : "text-gray-500 hover:text-gray-900"
               )}
             >
               {l.label}
@@ -40,16 +52,40 @@ export function Nav() {
           ))}
         </div>
 
-        <div className="hidden md:flex items-center gap-5">
-          <Link href="/login" className="text-[13px] text-text-tertiary hover:text-text-primary transition-colors">
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="text-[13px] font-medium bg-text-primary text-background-primary px-4 py-1.5 rounded-md hover:opacity-85 transition-opacity"
-          >
-            Join
-          </Link>
+        <div className="hidden md:flex items-center gap-4">
+          {loading ? (
+            <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse" />
+          ) : user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[11px] font-bold text-white hover:bg-blue-700 transition-colors"
+                title={user.user_metadata?.full_name || user.email || "Profile"}
+              >
+                {initials}
+              </Link>
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="text-sm text-gray-400 hover:text-gray-700 transition-colors flex items-center gap-1"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="text-sm font-medium bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 hover:shadow-md transition-all active:scale-95"
+              >
+                Join Antry
+              </Link>
+            </>
+          )}
         </div>
 
         <button onClick={() => setOpen(!open)} className="md:hidden text-text-secondary" aria-label="Menu">
@@ -63,19 +99,34 @@ export function Nav() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden border-b border-border-tertiary bg-background-primary"
+            className="md:hidden overflow-hidden border-b border-gray-100 bg-white shadow-lg"
           >
-            <div className="px-6 py-5 flex flex-col gap-4">
+            <div className="px-6 py-8 flex flex-col gap-6">
               {links.map((l) => (
-                <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-[14px] text-text-secondary">
+                <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-sm font-medium text-gray-700 hover:text-blue-600">
                   {l.label}
                 </Link>
               ))}
-              <hr className="border-border-tertiary" />
-              <div className="flex gap-4 items-center">
-                <Link href="/login" onClick={() => setOpen(false)} className="text-[14px] text-text-secondary">Sign in</Link>
-                <Link href="/signup" onClick={() => setOpen(false)} className="text-[14px] font-medium bg-text-primary text-background-primary px-4 py-1.5 rounded-md">Join</Link>
-              </div>
+              <hr className="border-gray-100" />
+              {user ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">{user.user_metadata?.full_name || user.email}</span>
+                  <form action={signOut}>
+                    <button
+                      type="submit"
+                      onClick={() => setOpen(false)}
+                      className="text-sm font-medium text-red-500 hover:text-red-600 flex items-center gap-1.5"
+                    >
+                      <LogOut className="w-3.5 h-3.5" /> Sign out
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <Link href="/login" onClick={() => setOpen(false)} className="text-sm font-medium text-gray-700">Sign in</Link>
+                  <Link href="/signup" onClick={() => setOpen(false)} className="text-sm font-medium bg-blue-600 text-white px-6 py-2 rounded-full">Join Antry</Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

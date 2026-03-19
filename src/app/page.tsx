@@ -22,7 +22,7 @@ export default function Home() {
       <main className="pt-[60px]">
 
         {/* ─── HERO ─── */}
-        <section className="max-w-[820px] px-6 mx-auto pt-20 md:pt-32 pb-24 md:pb-32">
+        <section className="max-w-4xl px-6 mx-auto pt-28 md:pt-40 pb-32 md:pb-48">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -33,38 +33,38 @@ export default function Home() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease }}
-              className="flex items-center gap-2 mb-14"
+              className="flex flex-col items-center gap-4 mb-16"
             >
-              <Image src="/logo.png" alt="Antry" width={24} height={24} className="dark:invert" priority />
-              <span className="text-[13px] font-medium tracking-[0.18em] text-text-secondary uppercase">Antry</span>
+              <Image src="/logo.png" alt="Antry" width={64} height={64} className="dark:invert" priority />
+              <span className="text-lg font-bold tracking-[0.3em] text-gray-400 uppercase">Antry</span>
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.25, ease }}
-              className="font-display italic text-[40px] md:text-[56px] lg:text-[64px] leading-[1.08] text-text-primary mb-8 tracking-[-0.02em]"
+              className="font-display text-5xl md:text-7xl lg:text-8xl leading-[1.05] text-gray-900 mb-10 tracking-tight"
             >
               Don&apos;t tell us what <br className="hidden md:block" />
               you&apos;ve done.{" "}
-              <span className="text-text-tertiary not-italic">Show us.</span>
+              <span className="text-blue-600 italic">Show us.</span>
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.45, ease }}
-              className="text-[16px] md:text-[18px] text-text-secondary leading-[1.65] max-w-[480px] mb-14"
+              className="text-lg md:text-xl text-gray-500 leading-relaxed max-w-xl mb-16"
             >
               Where developers prove what they can do through
               shipped projects, live demos, and real code — not resumes.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6, ease }}
-              className="w-full max-w-[520px]"
+              className="w-full max-w-lg"
             >
               <WaitlistForm />
             </motion.div>
@@ -181,9 +181,9 @@ export default function Home() {
           <div className="max-w-[900px] px-6 mx-auto py-10 md:py-14">
             <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Image src="/logo.png" alt="Antry" width={18} height={18} className="dark:invert opacity-80" />
-                  <span className="text-[12px] font-medium tracking-[0.14em] text-text-secondary uppercase">Antry</span>
+                <div className="flex items-center gap-3 mb-4">
+                  <Image src="/logo.png" alt="Antry" width={28} height={28} className="dark:invert opacity-90" />
+                  <span className="text-sm font-bold tracking-[0.14em] text-text-secondary uppercase">Antry</span>
                 </div>
                 <p className="text-[13px] text-text-tertiary max-w-[220px] leading-relaxed">
                   The colony for builders who ship.

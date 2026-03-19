@@ -20,32 +20,37 @@ function HackathonCard({ hackathon, index }: { hackathon: Hackathon; index: numb
       <Link
         href={`/hackathons/${hackathon.id}`}
         className={cn(
-          "block rounded-xl border p-6 md:p-8 transition-all duration-200",
+          "block rounded-2xl bg-white border-2 border-gray-50 p-6 md:p-10 transition-all duration-300",
           hackathon.status === "completed"
-            ? "border-border-tertiary opacity-55 hover:opacity-75"
-            : "border-border-tertiary hover:border-accent/30 hover:bg-accent-muted"
+            ? "opacity-60 hover:opacity-100"
+            : "hover:border-blue-100 hover:shadow-xl hover:shadow-gray-100"
         )}
       >
-        <div className="flex items-center gap-2 mb-3">
-          <span className={cn("w-1.5 h-1.5 rounded-full", dotColor)} />
-          <span className="text-[11px] font-mono text-text-tertiary">{label}</span>
-          <span className="text-[11px] text-text-tertiary ml-auto flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
+        <div className="flex items-center gap-2 mb-6">
+          <span className={cn("w-2 h-2 rounded-full", dotColor)} />
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+          <span className="text-sm font-medium text-gray-500 ml-auto flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-400" />
             {formatDate(hackathon.startDate)} — {formatDate(hackathon.endDate)}
           </span>
         </div>
-        <h2 className="font-display text-[20px] md:text-[24px] text-text-primary leading-snug mb-1.5">{hackathon.title}</h2>
-        <p className="text-[13px] text-text-secondary mb-5">{hackathon.theme}</p>
-        <div className="flex flex-wrap items-center gap-5 text-[12px] text-text-tertiary">
-          <span className="flex items-center gap-1"><Trophy className="w-3 h-3 text-accent" />${total.toLocaleString()}</span>
-          {hackathon.participantCount > 0 && <span className="flex items-center gap-1"><Users className="w-3 h-3" />{hackathon.participantCount}</span>}
-          <span className="font-mono">{hackathon.sponsors.join(" / ")}</span>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight">{hackathon.title}</h2>
+        <p className="text-lg text-gray-500 mb-8 leading-relaxed">{hackathon.theme}</p>
+        <div className="flex flex-wrap items-center gap-8 text-sm font-medium text-gray-400">
+          <span className="flex items-center gap-2 text-blue-600">
+            <Trophy className="w-4 h-4" />
+            ${total.toLocaleString()} in prizes
+          </span>
+          {hackathon.participantCount > 0 && (
+            <span className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              {hackathon.participantCount} builders
+            </span>
+          )}
+          <span className="bg-gray-50 px-3 py-1 rounded-full text-xs font-bold text-gray-400">
+            {hackathon.sponsors.join(" / ")}
+          </span>
         </div>
-        {hackathon.status !== "completed" && (
-          <div className="mt-5 text-[13px] font-medium text-text-primary flex items-center gap-1.5">
-            {hackathon.status === "active" ? "View" : "Details"} <ArrowRight className="w-3.5 h-3.5" />
-          </div>
-        )}
       </Link>
     </motion.div>
   );
