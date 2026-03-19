@@ -4,12 +4,21 @@ export interface Builder {
   id: string;
   username: string;
   name: string;
+  tagline: string; // short 1-liner shown on cards
   bio: string;
   skills: string[];
   social: { github?: string; twitter?: string; website?: string };
   projectCount: number;
   joinedAt: string;
   gradient: string;
+  antathonIds: string[]; // antathons participated in or created
+  outsideProjects: OutsideProject[];
+}
+
+export interface OutsideProject {
+  title: string;
+  url: string;
+  description: string;
 }
 
 export interface Project {
@@ -26,9 +35,10 @@ export interface Project {
   likes: number;
   createdAt: string;
   gradient: string;
+  antathonId?: string; // if built during an antathon
 }
 
-export interface Hackathon {
+export interface Antathon {
   id: string;
   title: string;
   theme: string;
@@ -36,10 +46,11 @@ export interface Hackathon {
   startDate: string;
   endDate: string;
   prizes: { place: string; reward: string }[];
-  sponsors: string[];
+  sponsors: { name: string; tier: "title" | "gold" | "partner" }[];
   participantCount: number;
   submissionCount: number;
   status: "upcoming" | "active" | "completed";
+  gradient: string;
 }
 
 export type Category = "all" | "ai-agents" | "web-apps" | "tools" | "design" | "data-ml" | "mobile";
@@ -54,74 +65,101 @@ export const CATEGORIES: { value: Category; label: string }[] = [
   { value: "mobile", label: "Mobile" },
 ];
 
-// ── Builders ───────────────────────────────────────────
+// ── Builders (Ants) ───────────────────────────────────
 
 export const builders: Builder[] = [
   {
     id: "b1",
     username: "marachen",
     name: "Mara Chen",
+    tagline: "AI engineer building things that think",
     bio: "AI engineer obsessed with autonomous agents. Previously at DeepMind. I build things that think.",
     skills: ["Python", "LangChain", "TypeScript", "RAG", "Multi-agent systems"],
     social: { github: "marachen", twitter: "marachenai", website: "marachen.dev" },
     projectCount: 3,
     joinedAt: "2026-01-15",
     gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    antathonIds: ["h1", "h3"],
+    outsideProjects: [
+      { title: "LangChain Contrib", url: "https://github.com/marachen/langchain-contrib", description: "Popular contrib package for LangChain memory modules" },
+    ],
   },
   {
     id: "b2",
     username: "jaketorres",
     name: "Jake Torres",
+    tagline: "Full-stack builder who ships fast",
     bio: "Full-stack builder. I ship fast and break conventions. Currently exploring real-time collaboration.",
     skills: ["React", "Next.js", "Node.js", "WebSockets", "Postgres"],
     social: { github: "jaketorres", twitter: "jake_ships" },
     projectCount: 2,
     joinedAt: "2026-01-22",
     gradient: "linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%)",
+    antathonIds: ["h2"],
+    outsideProjects: [
+      { title: "Sync Engine", url: "https://github.com/jaketorres/sync-engine", description: "Open-source CRDT sync engine for collaborative apps" },
+    ],
   },
   {
     id: "b3",
     username: "aishapatel",
     name: "Aisha Patel",
+    tagline: "Design engineer bridging art and code",
     bio: "Design engineer who believes interfaces should feel like art. Bridging aesthetics and engineering.",
     skills: ["React", "Figma", "Three.js", "Framer Motion", "CSS"],
     social: { github: "aishapatel", twitter: "aisha_designs", website: "aishapatel.design" },
     projectCount: 2,
     joinedAt: "2026-02-01",
     gradient: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)",
+    antathonIds: ["h2", "h3"],
+    outsideProjects: [],
   },
   {
     id: "b4",
     username: "leokim",
     name: "Leo Kim",
+    tagline: "Makes infrastructure invisible",
     bio: "Systems thinker. I make infrastructure invisible and developer tools delightful.",
     skills: ["Go", "Rust", "Terraform", "Kubernetes", "CLI"],
     social: { github: "leokim" },
     projectCount: 2,
     joinedAt: "2026-02-10",
     gradient: "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)",
+    antathonIds: ["h3"],
+    outsideProjects: [
+      { title: "k8s-dashboard", url: "https://github.com/leokim/k8s-dash", description: "Terminal dashboard for Kubernetes clusters" },
+      { title: "go-migrate", url: "https://github.com/leokim/go-migrate", description: "Zero-dependency database migration tool in Go" },
+    ],
   },
   {
     id: "b5",
     username: "sofiarivera",
     name: "Sofia Rivera",
+    tagline: "ML engineer turning papers into products",
     bio: "ML engineer turning research papers into products people actually use. Data is my medium.",
     skills: ["Python", "PyTorch", "FastAPI", "Pandas", "Streamlit"],
     social: { github: "sofiarivera", twitter: "sofia_ml", website: "sofiarivera.io" },
     projectCount: 1,
     joinedAt: "2026-02-18",
     gradient: "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)",
+    antathonIds: ["h1"],
+    outsideProjects: [],
   },
   {
     id: "b6",
     username: "omarhassan",
     name: "Omar Hassan",
+    tagline: "Mobile-first, cross-platform everything",
     bio: "Mobile-first builder. If it doesn't work on a phone, it doesn't work. Cross-platform everything.",
     skills: ["React Native", "Swift", "Kotlin", "Firebase", "Expo"],
     social: { github: "omarhassan", twitter: "omar_builds" },
     projectCount: 1,
     joinedAt: "2026-03-01",
     gradient: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
+    antathonIds: [],
+    outsideProjects: [
+      { title: "Expo Starter", url: "https://github.com/omarhassan/expo-starter", description: "Opinionated Expo starter with auth, navigation, and theming" },
+    ],
   },
 ];
 
@@ -159,6 +197,7 @@ export const projects: Project[] = [
     likes: 98,
     createdAt: "2026-03-01",
     gradient: "linear-gradient(135deg, #06b6d4 0%, #10b981 100%)",
+    antathonId: "h2",
   },
   {
     id: "p3",
@@ -174,6 +213,7 @@ export const projects: Project[] = [
     likes: 76,
     createdAt: "2026-02-28",
     gradient: "linear-gradient(135deg, #f59e0b 0%, #f97316 100%)",
+    antathonId: "h3",
   },
   {
     id: "p4",
@@ -189,6 +229,7 @@ export const projects: Project[] = [
     likes: 231,
     createdAt: "2026-02-14",
     gradient: "linear-gradient(135deg, #f472b6 0%, #a78bfa 100%)",
+    antathonId: "h3",
   },
   {
     id: "p5",
@@ -223,7 +264,7 @@ export const projects: Project[] = [
   {
     id: "p7",
     title: "Scribe",
-    tagline: "Voice notes → structured docs in seconds",
+    tagline: "Voice notes to structured docs in seconds",
     description:
       "Record a voice memo and Scribe turns it into clean, structured documentation. It understands context, adds formatting, creates code blocks from verbal descriptions, and organizes content into sections. Perfect for capturing architecture decisions on the go.",
     demoUrl: "https://scribe-ai.vercel.app",
@@ -265,6 +306,7 @@ export const projects: Project[] = [
     likes: 156,
     createdAt: "2026-03-12",
     gradient: "linear-gradient(135deg, #e879f9 0%, #6366f1 100%)",
+    antathonId: "h2",
   },
   {
     id: "p10",
@@ -300,9 +342,9 @@ export const projects: Project[] = [
   },
 ];
 
-// ── Hackathons ─────────────────────────────────────────
+// ── Antathons ─────────────────────────────────────────
 
-export const hackathons: Hackathon[] = [
+export const antathons: Antathon[] = [
   {
     id: "h1",
     title: "Build with AI Agents",
@@ -315,19 +357,24 @@ export const hackathons: Hackathon[] = [
       { place: "1st", reward: "$5,000" },
       { place: "2nd", reward: "$2,500" },
       { place: "3rd", reward: "$1,000" },
-      { place: "Best solo builder", reward: "$500" },
+      { place: "Best solo ant", reward: "$500" },
     ],
-    sponsors: ["Anthropic", "Vercel", "Supabase"],
+    sponsors: [
+      { name: "Anthropic", tier: "title" },
+      { name: "Vercel", tier: "gold" },
+      { name: "Supabase", tier: "partner" },
+    ],
     participantCount: 0,
     submissionCount: 0,
     status: "upcoming",
+    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
   },
   {
     id: "h2",
     title: "Ship in 48 Hours",
     theme: "From zero to deployed in a single weekend",
     description:
-      "The ultimate speed challenge. Build and deploy a complete product in 48 hours. No pre-built code allowed. Judged on polish, functionality, and how fast you shipped. Bonus points for solo builders.",
+      "The ultimate speed challenge. Build and deploy a complete product in 48 hours. No pre-built code allowed. Judged on polish, functionality, and how fast you shipped. Bonus points for solo ants.",
     startDate: "2026-03-22",
     endDate: "2026-03-24",
     prizes: [
@@ -335,15 +382,19 @@ export const hackathons: Hackathon[] = [
       { place: "2nd", reward: "$1,500" },
       { place: "Best design", reward: "$750" },
     ],
-    sponsors: ["Vercel", "Neon"],
+    sponsors: [
+      { name: "Vercel", tier: "title" },
+      { name: "Neon", tier: "gold" },
+    ],
     participantCount: 47,
     submissionCount: 12,
     status: "active",
+    gradient: "linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)",
   },
   {
     id: "h3",
     title: "Open Source Sprint",
-    theme: "Build something the community can use forever",
+    theme: "Build something the colony can use forever",
     description:
       "Create an open-source tool, library, or framework that solves a common developer pain point. Must be published on GitHub with proper documentation, CI, and a README that makes contributors want to jump in.",
     startDate: "2026-02-15",
@@ -353,10 +404,14 @@ export const hackathons: Hackathon[] = [
       { place: "2nd", reward: "$1,000" },
       { place: "Most stars (30 days)", reward: "$500" },
     ],
-    sponsors: ["GitHub", "Cloudflare"],
+    sponsors: [
+      { name: "GitHub", tier: "title" },
+      { name: "Cloudflare", tier: "partner" },
+    ],
     participantCount: 83,
     submissionCount: 34,
     status: "completed",
+    gradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
   },
 ];
 
@@ -370,8 +425,8 @@ export function getProject(id: string): Project | undefined {
   return projects.find((p) => p.id === id);
 }
 
-export function getHackathon(id: string): Hackathon | undefined {
-  return hackathons.find((h) => h.id === id);
+export function getAntathon(id: string): Antathon | undefined {
+  return antathons.find((h) => h.id === id);
 }
 
 export function getBuilderProjects(username: string): Project[] {
@@ -381,6 +436,16 @@ export function getBuilderProjects(username: string): Project[] {
 export function getProjectsByCategory(category: Category): Project[] {
   if (category === "all") return projects;
   return projects.filter((p) => p.category === category);
+}
+
+export function getAntathonProjects(antathonId: string): Project[] {
+  return projects.filter((p) => p.antathonId === antathonId);
+}
+
+export function getBuilderAntathons(username: string): Antathon[] {
+  const builder = getBuilder(username);
+  if (!builder) return [];
+  return antathons.filter((a) => builder.antathonIds.includes(a.id));
 }
 
 export function getInitials(name: string): string {

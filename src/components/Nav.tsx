@@ -12,7 +12,7 @@ import { signOut } from "@/app/(auth)/actions";
 
 const links = [
   { href: "/discover", label: "Discover" },
-  { href: "/hackathons", label: "Hackathons" },
+  { href: "/antathons", label: "Antathons" },
 ];
 
 export function Nav() {

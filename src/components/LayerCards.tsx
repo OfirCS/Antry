@@ -6,20 +6,20 @@ import { cn } from "@/lib/utils";
 const layers = [
   {
     num: "01",
-    title: "Showcase",
-    desc: "Your profile is your portfolio. Live demos, project walkthroughs, and shipped work — not bullet points on a resume.",
+    title: "The Colony",
+    desc: "Every ant gets a page. Live demos, project walkthroughs, and shipped work — not bullet points on a resume. Your page, your proof.",
     accent: "group-hover:border-accent/40",
   },
   {
     num: "02",
-    title: "Build together",
-    desc: "Hackathons and sponsored build events where builders in AI gather, compete for real prizes, and find collaborators.",
+    title: "Antathons",
+    desc: "Build challenges with real prizes and sponsor visibility. Ants compete, create, collaborate — and the best demos rise to the top.",
     accent: "group-hover:border-text-secondary/30",
   },
   {
     num: "03",
-    title: "Launch fast",
-    desc: "We spot high-potential ideas from the community and help them go from prototype to validated product.",
+    title: "Launch Studio",
+    desc: "We spot high-potential ideas from the colony and help them go from prototype to validated product. Build fast, launch together.",
     accent: "group-hover:border-text-tertiary/40",
   },
 ];
