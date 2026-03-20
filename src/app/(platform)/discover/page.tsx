@@ -2,126 +2,110 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowRight, Github, Twitter, Layers, Heart, Zap, Play } from "lucide-react";
+import { Search, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { builders, getBuilderProjects, getInitials } from "@/lib/mock-data";
+import { builders, getInitials } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
-export default function ColonyFlowPage() {
-  const [q, setQ] = useState("");
+export default function DiscoverPage() {
+  const [query, setQuery] = useState("");
 
-  const filteredAnts = builders.filter(
-    (b) => !q || b.name.toLowerCase().includes(q.toLowerCase()) || b.skills.some((s) => s.toLowerCase().includes(q.toLowerCase()))
+  const filtered = builders.filter(
+    (b) =>
+      !query ||
+      b.name.toLowerCase().includes(query.toLowerCase()) ||
+      b.skills.some((s) => s.toLowerCase().includes(query.toLowerCase()))
   );
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Sticky Search Header */}
-      <div className="fixed top-16 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 py-6 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="bg-background-primary min-h-screen">
+      {/* Sticky search */}
+      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5">
+        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" />
             <input
               type="text"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search 100+ Active Builders..."
-              className="w-full pl-11 pr-6 py-3.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name or skill..."
+              className="w-full pl-10 pr-4 py-2.5 bg-surface border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-full text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
             />
           </div>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-4 py-3 rounded-xl border border-gray-100">
-            <Zap className="w-3 h-3 text-blue-600" />
-            {builders.length} Developers
-          </div>
+          <span className="text-xs font-medium text-text-tertiary tabular-nums whitespace-nowrap">
+            {filtered.length} builder{filtered.length !== 1 && "s"}
+          </span>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto pt-48 pb-24 px-6">
-        <div className="space-y-3">
-          <AnimatePresence mode="popLayout">
-            {filteredAnts.map((ant, index) => (
-              <AntListCard key={ant.id} ant={ant} index={index} />
-            ))}
-          </AnimatePresence>
-        </div>
+      {/* Builder list */}
+      <div className="max-w-2xl mx-auto pt-44 pb-24 px-6">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((builder, i) => (
+            <motion.div
+              key={builder.id}
+              layout
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{
+                duration: 0.35,
+                delay: i * 0.04,
+                ease: [0.25, 1, 0.5, 1],
+              }}
+            >
+              <Link
+                href={`/builders/${builder.username}`}
+                className="group flex items-center gap-4 py-5 border-b border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 transition-colors"
+              >
+                {/* Avatar */}
+                <div
+                  className="w-11 h-11 rounded-full flex items-center justify-center text-[13px] font-semibold text-white shrink-0"
+                  style={{ background: builder.gradient }}
+                >
+                  {getInitials(builder.name)}
+                </div>
 
-        {filteredAnts.length === 0 && (
-          <div className="py-32 text-center">
-            <p className="text-gray-400 font-medium">No builders found matching your search.</p>
-          </div>
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline gap-2">
+                    <h3 className="text-[15px] font-semibold text-text-primary group-hover:text-accent transition-colors truncate">
+                      {builder.name}
+                    </h3>
+                  </div>
+                  <p className="text-[13px] text-text-secondary truncate mt-0.5">
+                    {builder.tagline}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {builder.skills.slice(0, 3).map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-[11px] font-medium text-text-tertiary bg-background-secondary px-2 py-0.5 rounded-md"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <ArrowUpRight className="w-4 h-4 text-text-tertiary opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 shrink-0" />
+              </Link>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {/* Empty state */}
+        {filtered.length === 0 && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="py-32 text-center text-sm text-text-tertiary"
+          >
+            No builders match your search.
+          </motion.p>
         )}
       </div>
     </div>
-  );
-}
-
-function AntListCard({ ant, index }: { ant: any; index: number }) {
-  const projects = getBuilderProjects(ant.username);
-  const totalLikes = projects.reduce((s, p) => s + p.likes, 0);
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-    >
-      <Link 
-        href={`/builders/${ant.username}`}
-        className="group flex flex-col md:flex-row items-start md:items-center gap-6 p-6 bg-white border border-gray-100 rounded-2xl hover:border-blue-100 hover:shadow-xl hover:shadow-gray-200/30 transition-all"
-      >
-        {/* Identity & Measurements */}
-        <div className="flex items-center gap-5 flex-1 min-w-0">
-          <div 
-            className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold text-white shrink-0 shadow-sm"
-            style={{ background: ant.gradient }}
-          >
-            {getInitials(ant.name)}
-          </div>
-          <div className="min-w-0">
-            <h2 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
-              {ant.name}
-            </h2>
-            <p className="text-[13px] text-gray-500 line-clamp-1 mt-0.5 font-medium leading-relaxed">
-              {ant.tagline}
-            </p>
-          </div>
-        </div>
-
-        {/* Simple Measurements */}
-        <div className="flex items-center gap-8 px-4 py-2 md:py-0 border-t md:border-t-0 md:border-l border-gray-100 w-full md:w-auto">
-          <div className="text-center">
-            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 justify-center">
-              Projects
-            </div>
-            <div className="text-base font-bold text-gray-900">{projects.length}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 justify-center">
-              Likes
-            </div>
-            <div className="text-base font-bold text-gray-900">{totalLikes}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 justify-center">
-              Events
-            </div>
-            <div className="text-base font-bold text-gray-900">{ant.antathonIds.length}</div>
-          </div>
-        </div>
-
-        {/* Trail Preview (Quick Demo) */}
-        {projects[0] && (
-          <div className="hidden lg:flex items-center gap-2 pl-6 border-l border-gray-100">
-             <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                <Play className="w-4 h-4 text-blue-600 fill-blue-600" />
-             </div>
-          </div>
-        )}
-
-        <ArrowRight className="hidden md:block w-5 h-5 text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all ml-2" />
-      </Link>
-    </motion.div>
   );
 }

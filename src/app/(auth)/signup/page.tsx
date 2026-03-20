@@ -18,10 +18,10 @@ export default function SignupPage() {
 
   const inputCls = (field: string) =>
     cn(
-      "w-full px-4 py-3 bg-gray-50 border-2 rounded-xl text-sm outline-none transition-all",
+      "w-full px-5 py-3.5 bg-background-secondary border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-full text-[14px] font-medium outline-none transition-all duration-300",
       hasFieldError(field)
-        ? "border-red-400"
-        : "border-gray-50 focus:border-blue-600 focus:bg-white focus:shadow-lg focus:shadow-blue-50 text-gray-900 placeholder:text-gray-400"
+        ? "border-red-400 focus:ring-2 focus:ring-red-400/20"
+        : "focus:border-accent/40 focus:ring-2 focus:ring-accent/20 text-text-primary placeholder:text-text-tertiary"
     );
 
   return (
@@ -29,18 +29,20 @@ export default function SignupPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full max-w-[420px] bg-white p-10 rounded-3xl shadow-2xl shadow-gray-200"
+      className="w-full max-w-[420px] bg-surface p-10 rounded-3xl border border-black/5 dark:border-white/5 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.08)]"
     >
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Join the colony</h1>
-        <p className="text-sm text-gray-500">Create your builder profile</p>
+        <h1 className="font-display text-[28px] text-text-primary mb-2 tracking-[-0.02em]">
+          Join Antry
+        </h1>
+        <p className="text-[14px] text-text-secondary">Create your builder profile</p>
       </div>
 
       <div className="space-y-3 mb-8">
         <form action={signInWithGoogle}>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-50 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-100 transition-all"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-black/5 dark:border-white/5 rounded-full text-[14px] font-semibold text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 ease-out"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -54,22 +56,24 @@ export default function SignupPage() {
         <form action={signInWithGithub}>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-50 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-100 transition-all"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-black/5 dark:border-white/5 rounded-full text-[14px] font-semibold text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 ease-out"
           >
-            <Github className="w-5 h-5 text-gray-900" /> Sign up with GitHub
+            <Github className="w-5 h-5" /> Sign up with GitHub
           </button>
         </form>
       </div>
 
       <div className="flex items-center gap-4 mb-8">
-        <div className="flex-1 h-px bg-gray-100" />
-        <span className="text-xs font-medium text-gray-400">or use email</span>
-        <div className="flex-1 h-px bg-gray-100" />
+        <div className="flex-1 h-px bg-black/5 dark:bg-white/5" />
+        <span className="text-[12px] font-medium text-text-tertiary">or use email</span>
+        <div className="flex-1 h-px bg-black/5 dark:bg-white/5" />
       </div>
 
       <form action={formAction} className="space-y-4">
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Full Name</label>
+          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+            Full name
+          </label>
           <input
             type="text"
             name="name"
@@ -78,7 +82,9 @@ export default function SignupPage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Email address</label>
+          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+            Email address
+          </label>
           <input
             type="email"
             name="email"
@@ -87,7 +93,9 @@ export default function SignupPage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Password</label>
+          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+            Password
+          </label>
           <input
             type="password"
             name="password"
@@ -96,37 +104,39 @@ export default function SignupPage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Invite code <span className="normal-case font-normal">(optional)</span></label>
+          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+            Invite code <span className="normal-case font-normal">(optional)</span>
+          </label>
           <input
             type="text"
             name="invite"
             placeholder="e.g. ANTRY-2026"
-            className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-50 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-blue-600 focus:bg-white focus:shadow-lg focus:shadow-blue-50 transition-all"
+            className="w-full px-5 py-3.5 bg-background-secondary border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-full text-[14px] font-medium text-text-primary placeholder:text-text-tertiary outline-none focus:border-accent/40 focus:ring-2 focus:ring-accent/20 transition-all duration-300"
           />
         </div>
         {state?.error && (
-          <p className="text-[11px] text-red-500 font-medium ml-1">{state.error}</p>
+          <p className="text-[12px] text-red-500 font-medium">{state.error}</p>
         )}
         {state?.fieldErrors &&
           Object.values(state.fieldErrors)
             .flat()
             .map((msg) => (
-              <p key={msg} className="text-[11px] text-red-500 font-medium ml-1">
+              <p key={msg} className="text-[12px] text-red-500 font-medium">
                 {msg}
               </p>
             ))}
         <button
           type="submit"
           disabled={pending}
-          className="w-full px-4 py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-200 transition-all active:scale-[0.98] mt-2 disabled:opacity-50"
+          className="w-full px-4 py-3.5 bg-text-primary text-background-primary rounded-full text-[14px] font-semibold hover:opacity-80 transition-all duration-300 active:scale-[0.98] mt-2 disabled:opacity-50"
         >
           {pending ? "Creating account..." : "Create account"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-gray-500 mt-10">
+      <p className="text-center text-[14px] text-text-secondary mt-10">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-600 font-bold hover:underline">
+        <Link href="/login" className="text-accent font-semibold hover:underline">
           Sign in
         </Link>
       </p>

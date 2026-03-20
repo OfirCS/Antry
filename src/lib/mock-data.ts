@@ -78,7 +78,7 @@ export const builders: Builder[] = [
     social: { github: "marachen", twitter: "marachenai", website: "marachen.dev" },
     projectCount: 3,
     joinedAt: "2026-01-15",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)",
     antathonIds: ["h1", "h3"],
     outsideProjects: [
       { title: "LangChain Contrib", url: "https://github.com/marachen/langchain-contrib", description: "Popular contrib package for LangChain memory modules" },
@@ -94,7 +94,7 @@ export const builders: Builder[] = [
     social: { github: "jaketorres", twitter: "jake_ships" },
     projectCount: 2,
     joinedAt: "2026-01-22",
-    gradient: "linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%)",
+    gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
     antathonIds: ["h2"],
     outsideProjects: [
       { title: "Sync Engine", url: "https://github.com/jaketorres/sync-engine", description: "Open-source CRDT sync engine for collaborative apps" },
@@ -110,7 +110,7 @@ export const builders: Builder[] = [
     social: { github: "aishapatel", twitter: "aisha_designs", website: "aishapatel.design" },
     projectCount: 2,
     joinedAt: "2026-02-01",
-    gradient: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)",
+    gradient: "linear-gradient(135deg, #374151 0%, #111827 100%)",
     antathonIds: ["h2", "h3"],
     outsideProjects: [],
   },
@@ -124,7 +124,7 @@ export const builders: Builder[] = [
     social: { github: "leokim" },
     projectCount: 2,
     joinedAt: "2026-02-10",
-    gradient: "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)",
+    gradient: "linear-gradient(135deg, #334155 0%, #0f172a 100%)",
     antathonIds: ["h3"],
     outsideProjects: [
       { title: "k8s-dashboard", url: "https://github.com/leokim/k8s-dash", description: "Terminal dashboard for Kubernetes clusters" },
@@ -141,7 +141,7 @@ export const builders: Builder[] = [
     social: { github: "sofiarivera", twitter: "sofia_ml", website: "sofiarivera.io" },
     projectCount: 1,
     joinedAt: "2026-02-18",
-    gradient: "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)",
+    gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)",
     antathonIds: ["h1"],
     outsideProjects: [],
   },
@@ -155,7 +155,7 @@ export const builders: Builder[] = [
     social: { github: "omarhassan", twitter: "omar_builds" },
     projectCount: 1,
     joinedAt: "2026-03-01",
-    gradient: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
+    gradient: "linear-gradient(135deg, #4b5563 0%, #1f2937 100%)",
     antathonIds: [],
     outsideProjects: [
       { title: "Expo Starter", url: "https://github.com/omarhassan/expo-starter", description: "Opinionated Expo starter with auth, navigation, and theming" },
@@ -177,10 +177,10 @@ export const projects: Project[] = [
     techStack: ["Python", "LangChain", "Claude API", "GitHub Actions", "FastAPI"],
     buildTime: "3 weeks",
     category: "ai-agents",
-    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)" },
     likes: 142,
     createdAt: "2026-02-20",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    gradient: "linear-gradient(135deg, #262626 0%, #171717 100%)",
   },
   {
     id: "p2",
@@ -193,10 +193,10 @@ export const projects: Project[] = [
     techStack: ["Next.js", "WebSockets", "Canvas API", "Postgres", "Liveblocks"],
     buildTime: "5 weeks",
     category: "web-apps",
-    builder: { username: "jaketorres", name: "Jake Torres", gradient: "linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%)" },
+    builder: { username: "jaketorres", name: "Jake Torres", gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)" },
     likes: 98,
     createdAt: "2026-03-01",
-    gradient: "linear-gradient(135deg, #06b6d4 0%, #10b981 100%)",
+    gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
     antathonId: "h2",
   },
   {
@@ -209,10 +209,10 @@ export const projects: Project[] = [
     techStack: ["Go", "Bubble Tea", "SQLite", "Lip Gloss"],
     buildTime: "2 weeks",
     category: "tools",
-    builder: { username: "leokim", name: "Leo Kim", gradient: "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)" },
+    builder: { username: "leokim", name: "Leo Kim", gradient: "linear-gradient(135deg, #374151 0%, #111827 100%)" },
     likes: 76,
     createdAt: "2026-02-28",
-    gradient: "linear-gradient(135deg, #f59e0b 0%, #f97316 100%)",
+    gradient: "linear-gradient(135deg, #334155 0%, #0f172a 100%)",
     antathonId: "h3",
   },
   {
@@ -225,10 +225,10 @@ export const projects: Project[] = [
     techStack: ["React", "Three.js", "WebGL", "Framer Motion", "Vercel"],
     buildTime: "10 days",
     category: "design",
-    builder: { username: "aishapatel", name: "Aisha Patel", gradient: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)" },
+    builder: { username: "aishapatel", name: "Aisha Patel", gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)" },
     likes: 231,
     createdAt: "2026-02-14",
-    gradient: "linear-gradient(135deg, #f472b6 0%, #a78bfa 100%)",
+    gradient: "linear-gradient(135deg, #4b5563 0%, #1f2937 100%)",
     antathonId: "h3",
   },
   {
@@ -241,10 +241,10 @@ export const projects: Project[] = [
     techStack: ["Python", "FastAPI", "Claude API", "Streamlit", "Supabase"],
     buildTime: "4 weeks",
     category: "ai-agents",
-    builder: { username: "sofiarivera", name: "Sofia Rivera", gradient: "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)" },
+    builder: { username: "sofiarivera", name: "Sofia Rivera", gradient: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)" },
     likes: 89,
     createdAt: "2026-03-10",
-    gradient: "linear-gradient(135deg, #34d399 0%, #60a5fa 100%)",
+    gradient: "linear-gradient(135deg, #262626 0%, #171717 100%)",
   },
   {
     id: "p6",
@@ -256,10 +256,10 @@ export const projects: Project[] = [
     techStack: ["React Native", "Expo", "HealthKit", "D3.js", "Firebase"],
     buildTime: "6 weeks",
     category: "mobile",
-    builder: { username: "omarhassan", name: "Omar Hassan", gradient: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)" },
+    builder: { username: "omarhassan", name: "Omar Hassan", gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)" },
     likes: 64,
     createdAt: "2026-03-05",
-    gradient: "linear-gradient(135deg, #818cf8 0%, #c084fc 100%)",
+    gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
   },
   {
     id: "p7",
@@ -272,10 +272,10 @@ export const projects: Project[] = [
     techStack: ["TypeScript", "Whisper API", "Claude API", "Next.js", "Vercel"],
     buildTime: "2 weeks",
     category: "ai-agents",
-    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #374151 0%, #111827 100%)" },
     likes: 117,
     createdAt: "2026-03-08",
-    gradient: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+    gradient: "linear-gradient(135deg, #334155 0%, #0f172a 100%)",
   },
   {
     id: "p8",
@@ -287,10 +287,10 @@ export const projects: Project[] = [
     techStack: ["React", "Go", "Terraform", "D3.js", "Docker"],
     buildTime: "8 weeks",
     category: "tools",
-    builder: { username: "leokim", name: "Leo Kim", gradient: "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)" },
+    builder: { username: "leokim", name: "Leo Kim", gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)" },
     likes: 203,
     createdAt: "2026-01-30",
-    gradient: "linear-gradient(135deg, #fbbf24 0%, #dc2626 100%)",
+    gradient: "linear-gradient(135deg, #4b5563 0%, #1f2937 100%)",
   },
   {
     id: "p9",
@@ -302,10 +302,10 @@ export const projects: Project[] = [
     techStack: ["React", "Web Audio API", "Three.js", "Spotify API", "TensorFlow.js"],
     buildTime: "3 weeks",
     category: "design",
-    builder: { username: "aishapatel", name: "Aisha Patel", gradient: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)" },
+    builder: { username: "aishapatel", name: "Aisha Patel", gradient: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)" },
     likes: 156,
     createdAt: "2026-03-12",
-    gradient: "linear-gradient(135deg, #e879f9 0%, #6366f1 100%)",
+    gradient: "linear-gradient(135deg, #262626 0%, #171717 100%)",
     antathonId: "h2",
   },
   {
@@ -319,10 +319,10 @@ export const projects: Project[] = [
     techStack: ["Node.js", "Express", "Faker.js", "OpenAPI", "Docker"],
     buildTime: "10 days",
     category: "tools",
-    builder: { username: "jaketorres", name: "Jake Torres", gradient: "linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%)" },
+    builder: { username: "jaketorres", name: "Jake Torres", gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)" },
     likes: 88,
     createdAt: "2026-02-05",
-    gradient: "linear-gradient(135deg, #0284c7 0%, #0d9488 100%)",
+    gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
   },
   {
     id: "p11",
@@ -335,10 +335,10 @@ export const projects: Project[] = [
     techStack: ["Python", "Claude API", "Redis", "React", "WebSockets"],
     buildTime: "6 weeks",
     category: "ai-agents",
-    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #374151 0%, #111827 100%)" },
     likes: 184,
     createdAt: "2026-01-20",
-    gradient: "linear-gradient(135deg, #4338ca 0%, #7e22ce 100%)",
+    gradient: "linear-gradient(135deg, #334155 0%, #0f172a 100%)",
   },
 ];
 
@@ -367,7 +367,7 @@ export const antathons: Antathon[] = [
     participantCount: 0,
     submissionCount: 0,
     status: "upcoming",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)",
   },
   {
     id: "h2",
@@ -389,7 +389,7 @@ export const antathons: Antathon[] = [
     participantCount: 47,
     submissionCount: 12,
     status: "active",
-    gradient: "linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)",
+    gradient: "linear-gradient(135deg, #4b5563 0%, #1f2937 100%)",
   },
   {
     id: "h3",
@@ -411,9 +411,44 @@ export const antathons: Antathon[] = [
     participantCount: 83,
     submissionCount: 34,
     status: "completed",
-    gradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    gradient: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)",
   },
 ];
+
+// ── Ofir's builder profile ───────────────────────────
+
+builders.push({
+  id: "b7",
+  username: "ofirsela",
+  name: "Ofir Sela",
+  tagline: "Building the future of builder communities",
+  bio: "Founder of Antry. Obsessed with creating the platform where builders are discovered by what they ship, not what they say.",
+  skills: ["Next.js", "TypeScript", "Supabase", "Product", "AI Agents"],
+  social: { github: "OfirCS", twitter: "ofirsela" },
+  projectCount: 1,
+  joinedAt: "2026-01-01",
+  gradient: "linear-gradient(135deg, #262626 0%, #171717 100%)",
+  antathonIds: [],
+  outsideProjects: [
+    { title: "Antry", url: "https://antry.dev", description: "Where builders are discovered — the platform itself" },
+  ],
+});
+
+projects.push({
+  id: "p12",
+  title: "Wealthy",
+  tagline: "AI-powered financial pathfinder for smart investing",
+  description:
+    "Wealthy is an AI-powered financial tool that helps users navigate investment decisions with a smart Pathfinder feature. It analyzes market trends, personal risk profiles, and financial goals to create personalized investment strategies. Features include real-time portfolio tracking, AI-driven insights, and an intuitive dashboard.",
+  demoUrl: "https://cap.so/s/9evpv4n3m2vpcgg",
+  techStack: ["Next.js", "TypeScript", "AI Agents", "Supabase", "Tailwind CSS"],
+  buildTime: "4 weeks",
+  category: "ai-agents",
+  builder: { username: "ofirsela", name: "Ofir Sela", gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)" },
+  likes: 47,
+  createdAt: "2026-03-01",
+  gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
+});
 
 // ── Helpers ────────────────────────────────────────────
 

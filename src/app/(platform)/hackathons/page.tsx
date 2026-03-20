@@ -2,45 +2,54 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowRight, Trophy, Users, Layers, Filter, Calendar } from "lucide-react";
+import { Search, Trophy, Users } from "lucide-react";
 import Link from "next/link";
-import { antathons, formatDate } from "@/lib/mock-data";
+import { antathons } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
-export default function AntathonsPage() {
-  const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+const filters = ["all", "active", "completed"] as const;
+type Filter = (typeof filters)[number];
 
-  const filteredEvents = antathons.filter(
-    (e) => 
-      (!q || e.title.toLowerCase().includes(q.toLowerCase()) || e.theme.toLowerCase().includes(q.toLowerCase())) &&
+export default function HackathonsPage() {
+  const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const filtered = antathons.filter(
+    (e) =>
+      (!q ||
+        e.title.toLowerCase().includes(q.toLowerCase()) ||
+        e.theme.toLowerCase().includes(q.toLowerCase())) &&
       (filter === "all" || e.status === filter)
   );
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Sticky Header */}
-      <div className="fixed top-16 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-6 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="min-h-screen bg-background-primary">
+      {/* Sticky search + filter bar */}
+      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5">
+        <div className="max-w-[720px] mx-auto px-6 py-4 flex items-center gap-3">
+          {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-text-tertiary pointer-events-none" />
             <input
               type="text"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search 100+ Antathons..."
-              className="w-full pl-11 pr-6 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+              placeholder="Search hackathons..."
+              className="w-full pl-9 pr-4 py-2 bg-transparent border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-full text-[13px] text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
             />
           </div>
-          
-          <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-2xl">
-            {(["all", "active", "completed"] as const).map((f) => (
+
+          {/* Filter pills */}
+          <div className="flex items-center gap-0.5 bg-background-secondary/60 p-1 rounded-full">
+            {filters.map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
                 className={cn(
-                  "px-4 py-2.5 text-xs font-bold uppercase tracking-widest rounded-xl transition-all",
-                  filter === f ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
+                  "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all duration-200",
+                  filter === f
+                    ? "bg-text-primary text-background-primary shadow-sm"
+                    : "text-text-tertiary hover:text-text-secondary"
                 )}
               >
                 {f}
@@ -50,91 +59,130 @@ export default function AntathonsPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto pt-52 pb-24 px-6">
-        <div className="space-y-4">
+      {/* Page content */}
+      <div className="max-w-[720px] mx-auto px-6 pt-44 pb-24">
+        {/* Page heading */}
+        <motion.h1
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-[32px] text-text-primary mb-8"
+        >
+          Hackathons
+        </motion.h1>
+
+        {/* Cards */}
+        <div className="space-y-2">
           <AnimatePresence mode="popLayout">
-            {filteredEvents.map((event, index) => (
-              <AntathonListCard key={event.id} event={event} index={index} />
+            {filtered.map((event, i) => (
+              <HackathonCard key={event.id} event={event} index={i} />
             ))}
           </AnimatePresence>
         </div>
 
-        {filteredEvents.length === 0 && (
-          <div className="py-32 text-center">
-            <p className="text-gray-400 font-medium">No Antathons found matching your criteria.</p>
-          </div>
+        {/* Empty state */}
+        {filtered.length === 0 && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center text-text-tertiary text-[14px] py-24"
+          >
+            No hackathons found.
+          </motion.p>
         )}
       </div>
     </div>
   );
 }
 
-function AntathonListCard({ event, index }: { event: any; index: number }) {
-  const prizePool = event.prizes.reduce((s: number, p: any) => s + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0), 0);
+/* ─── Card ──────────────────────────────────────────── */
+
+function HackathonCard({
+  event,
+  index,
+}: {
+  event: (typeof antathons)[number];
+  index: number;
+}) {
+  const prizePool = event.prizes.reduce(
+    (sum, p) => sum + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0),
+    0
+  );
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{
+        duration: 0.35,
+        delay: index * 0.04,
+        ease: [0.16, 1, 0.3, 1],
+      }}
     >
-      <Link 
+      <Link
         href={`/hackathons/${event.id}`}
-        className="group flex flex-col lg:flex-row items-start lg:items-center gap-6 p-6 md:p-8 bg-white border border-gray-100 rounded-[2.5rem] hover:border-blue-100 hover:shadow-2xl hover:shadow-blue-500/5 transition-all"
+        className="group flex items-center gap-4 px-4 py-4 rounded-2xl border border-transparent hover:border-black/5 dark:hover:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all duration-200"
       >
-        {/* Visual & Identity */}
-        <div className="flex items-center gap-6 flex-1 min-w-0">
-          <div 
-            className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center text-xl font-bold text-white shrink-0 shadow-lg relative overflow-hidden"
-            style={{ background: event.gradient }}
-          >
-            <div className="absolute inset-0 bg-black/10 mix-blend-overlay" />
-            <span className="relative z-10">{event.title[0]}</span>
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
-                {event.title}
-              </h2>
-              <span className={cn(
-                "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                event.status === "active" ? "bg-green-50 text-green-600" : "bg-gray-50 text-gray-400"
-              )}>
-                {event.status}
-              </span>
-            </div>
-            <p className="text-sm text-gray-500 line-clamp-1 font-medium leading-relaxed">
-              {event.theme}
-            </p>
-          </div>
+        {/* Gradient initial */}
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center text-[15px] font-bold text-white shrink-0"
+          style={{ background: event.gradient }}
+        >
+          {event.title[0]}
         </div>
 
-        {/* Simple Measurements */}
-        <div className="flex items-center gap-10 px-4 py-4 lg:py-0 border-t lg:border-t-0 lg:border-l border-gray-100 w-full lg:w-auto">
-          <div className="text-center">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 justify-center">
-              <Trophy className="w-3.5 h-3.5 text-blue-600" /> Prizes
-            </div>
-            <div className="text-lg font-bold text-gray-900">${prizePool.toLocaleString()}</div>
+        {/* Text block */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h2 className="text-[15px] font-semibold text-text-primary truncate leading-snug">
+              {event.title}
+            </h2>
+            <StatusBadge status={event.status} />
           </div>
-          <div className="text-center">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 justify-center">
-              <Users className="w-3.5 h-3.5 text-blue-600" /> Ants
-            </div>
-            <div className="text-lg font-bold text-gray-900">{event.participantCount}</div>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 justify-center">
-              <Layers className="w-3.5 h-3.5 text-blue-600" /> Demos
-            </div>
-            <div className="text-lg font-bold text-gray-900">{event.submissionCount}</div>
-          </div>
+          <p className="text-[13px] text-text-tertiary truncate mt-0.5">
+            {event.theme}
+          </p>
         </div>
 
-        <ArrowRight className="hidden lg:block w-5 h-5 text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all ml-2" />
+        {/* Stats */}
+        <div className="hidden sm:flex items-center gap-5 shrink-0 text-text-secondary">
+          <span className="flex items-center gap-1.5 text-[13px] font-medium">
+            <Trophy className="w-3.5 h-3.5 text-accent" />
+            ${prizePool.toLocaleString()}
+          </span>
+          <span className="flex items-center gap-1.5 text-[13px] font-medium">
+            <Users className="w-3.5 h-3.5 text-text-tertiary" />
+            {event.participantCount}
+          </span>
+        </div>
       </Link>
     </motion.div>
+  );
+}
+
+/* ─── Status Badge ──────────────────────────────────── */
+
+function StatusBadge({
+  status,
+}: {
+  status: "upcoming" | "active" | "completed";
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide shrink-0",
+        status === "active" &&
+          "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+        status === "upcoming" && "bg-accent-muted text-accent",
+        status === "completed" && "bg-background-secondary text-text-tertiary"
+      )}
+    >
+      {status === "active" && (
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+      )}
+      {status}
+    </span>
   );
 }

@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Newsreader, DM_Sans, Geist_Mono } from "next/font/google";
+import { Instrument_Serif, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/lib/supabase/auth-context";
+import { ScoutAgent } from "@/components/ScoutAgent";
 import "./globals.css";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument",
   subsets: ["latin"],
+  weight: "400",
   style: ["normal", "italic"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
 });
 
@@ -20,8 +22,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Antry — The Colony for Builders",
-  description: "Where developers prove what they can do through shipped projects, live demos, and real code.",
+  title: "Antry — Where Builders Prove Their Work",
+  description:
+    "The platform for technical talent. Replace resumes with live demos and verified shipping history.",
 };
 
 export default function RootLayout({
@@ -32,10 +35,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${dmSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} ${plusJakarta.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <AuthProvider>{children}</AuthProvider>
+      <body className="min-h-full flex flex-col grain">
+        <AuthProvider>
+          {children}
+          <ScoutAgent />
+        </AuthProvider>
       </body>
     </html>
   );

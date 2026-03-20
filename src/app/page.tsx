@@ -3,240 +3,353 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, Trophy, Users } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Trophy, Users } from "lucide-react";
 import { Nav } from "@/components/Nav";
+import { AgentHome } from "@/components/AgentHome";
 import { WaitlistForm } from "@/components/WaitlistForm";
-import { LayerCards } from "@/components/LayerCards";
-import { ProjectCard } from "@/components/ProjectCard";
+import { SocialProofBar } from "@/components/SocialProofBar";
+import { ComparisonSection } from "@/components/ComparisonSection";
+import { Testimonials } from "@/components/Testimonials";
 import { projects, antathons, builders, getInitials } from "@/lib/mock-data";
 
-const ease = [0.16, 1, 0.3, 1] as const;
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+};
 
 export default function Home() {
-  const featured = [projects[3], projects[0], projects[7]]; // Palette, Sentinel, Terraform Studio
-  const nextAntathon = antathons.find((h) => h.status === "active") || antathons[0];
+  const featured = [projects[3], projects[0], projects[7]];
+  const nextAntathon =
+    antathons.find((h) => h.status === "active") || antathons[0];
+
+  const prizeTotal = nextAntathon?.prizes
+    .map((p) => parseInt(p.reward.replace(/[^0-9]/g, ""), 10) || 0)
+    .reduce((a, b) => a + b, 0);
 
   return (
     <>
       <Nav />
-      <main className="overflow-x-hidden">
+      <main className="bg-background-primary min-h-screen pt-[72px]">
+        {/* ─── AGENT HERO ─── */}
+        <AgentHome />
 
-        {/* ─── HERO ─── */}
-        <section className="min-h-screen flex flex-col justify-center items-center px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease }}
-            className="flex flex-col items-center"
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2, ease }}
-              className="mb-12"
-            >
-              <Image src="/logo.png" alt="Antry" width={64} height={64} className="dark:invert" priority />
-            </motion.div>
+        {/* ─── SOCIAL PROOF BAR ─── */}
+        <SocialProofBar />
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, ease }}
-              className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight text-gray-900 mb-8"
-            >
-              Show. <span className="text-blue-600">Don&apos;t tell.</span>
-            </motion.h1>
+        {/* ─── COMPARISON / DIFFERENTIATION ─── */}
+        <ComparisonSection />
 
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease }}
-              className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed max-w-xl mb-12"
-            >
-              The platform for developers who prefer shipping projects over writing resumes. Build, demo, and prove your technical depth.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5, ease }}
-              className="w-full max-w-md"
-            >
-              <WaitlistForm />
-            </motion.div>
-          </motion.div>
-        </section>
-
-        {/* ─── THE CONCEPT ─── */}
-        <section className="py-32 px-6 border-t border-gray-100">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-6 leading-tight">
-                  Your work is your identity.
-                </h2>
-                <p className="text-gray-500 text-lg leading-relaxed mb-8">
-                  Antry focuses on the finished product. No bullet points or job descriptions — just live demos and project walkthroughs that show exactly what you can build.
-                </p>
-                <div className="flex items-center gap-4 text-sm font-bold">
-                  <Link href="/login" className="px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-blue-600 transition-all">Join the platform</Link>
-                </div>
-              </div>
-              <div className="aspect-square bg-gray-50 rounded-[3rem] border border-gray-100 flex items-center justify-center p-12 overflow-hidden group">
-                <div className="w-full aspect-video bg-white rounded-2xl shadow-xl transition-transform duration-700 group-hover:scale-105 border border-gray-100" />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── THE LAYERS ─── */}
-        <section className="py-24 px-6 bg-gray-50/50 border-y border-gray-100">
-          <div className="max-w-4xl mx-auto">
-            <header className="mb-16">
-              <h2 className="text-3xl font-bold tracking-tight text-gray-900">Platform Features</h2>
-            </header>
-            <LayerCards />
-          </div>
-        </section>
-
-        {/* ─── FEATURED ANTS ─── */}
-        <section className="py-32 px-6 bg-white">
-          <div className="max-w-4xl mx-auto">
+        {/* ─── DIRECTORY PREVIEW ─── */}
+        <section className="py-32 px-8 bg-background-secondary radial-spotlight overflow-hidden dot-grid">
+          <div className="max-w-[1100px] mx-auto relative z-10">
             <div className="flex items-end justify-between mb-16">
-              <div className="max-w-md">
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight">Featured Developers</h2>
+              <div>
+                <motion.h2
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease }}
+                  className="font-display text-[clamp(2rem,5vw,3.5rem)] text-text-primary tracking-[-0.03em] leading-none"
+                >
+                  Top builders.
+                </motion.h2>
+                <motion.p
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1, ease }}
+                  className="text-[14px] text-text-tertiary mt-2"
+                >
+                  Showing 3 of {builders.length}+ builders
+                </motion.p>
               </div>
-              <Link href="/discover" className="hidden md:flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-blue-600 transition-all">
-                Explore all profiles <ArrowRight className="w-4 h-4" />
+              <Link
+                href="/builders"
+                className="hidden md:flex items-center gap-2 text-[14px] font-semibold text-text-primary hover:text-accent transition-colors group"
+              >
+                View all
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {featured.map((project, i) => {
-                const ant = builders.find(b => b.username === project.builder.username);
+                const ant = builders.find(
+                  (b) => b.username === project.builder.username
+                );
                 if (!ant) return null;
                 return (
                   <motion.div
                     key={project.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
                     viewport={{ once: true }}
-                    className="group"
+                    transition={{ duration: 0.5, delay: i * 0.12, ease }}
                   >
-                    <Link 
+                    <Link
                       href={`/builders/${ant.username}`}
-                      className="flex flex-col md:flex-row items-center gap-8 p-6 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-xl hover:shadow-gray-200/40 transition-all border border-transparent hover:border-blue-50"
+                      className="group block p-8 rounded-3xl glass-card glow-border bg-surface/80 hover:-translate-y-1 hover:shadow-[0_16px_48px_-12px_var(--glow-orange)] transition-all duration-300 ease-out relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-accent/0 before:to-transparent hover:before:via-accent/40 before:transition-all"
                     >
-                      <div 
-                        className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold text-white shadow-md shrink-0"
+                      <div
+                        className="w-11 h-11 rounded-xl flex items-center justify-center text-[13px] font-bold text-white mb-8"
                         style={{ background: ant.gradient }}
                       >
                         {getInitials(ant.name)}
                       </div>
-                      <div className="flex-1 text-center md:text-left">
-                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{ant.name}</h3>
-                        <p className="text-gray-500 font-medium mt-1 line-clamp-1">{ant.tagline}</p>
+                      <h3 className="text-[17px] font-semibold text-text-primary mb-2 group-hover:text-accent transition-colors">
+                        {ant.name}
+                      </h3>
+                      <p className="text-[14px] text-text-secondary leading-relaxed mb-4 line-clamp-2">
+                        {ant.tagline}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 mb-8">
+                        {ant.skills.slice(0, 3).map((s) => (
+                          <span
+                            key={s}
+                            className="text-[11px] font-medium text-text-tertiary bg-background-secondary rounded-full px-2.5 py-0.5"
+                          >
+                            {s}
+                          </span>
+                        ))}
                       </div>
-                      <div className="flex items-center gap-4 pl-6 border-l border-gray-200 hidden md:flex">
-                         <div className="text-right">
-                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Latest Project</div>
-                            <div className="text-sm font-bold text-gray-900">{project.title}</div>
-                         </div>
-                         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-blue-600 transition-colors">
-                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                         </div>
+                      <div className="pt-6 border-t border-black/5 dark:border-white/5 flex items-center justify-between">
+                        <span className="text-[12px] font-medium text-text-tertiary tracking-wide uppercase">
+                          {project.title}
+                        </span>
+                        <ArrowUpRight className="w-4 h-4 text-text-tertiary group-hover:text-accent transition-colors" />
                       </div>
                     </Link>
                   </motion.div>
                 );
               })}
             </div>
+
+            <Link
+              href="/builders"
+              className="md:hidden flex items-center justify-center gap-2 mt-10 text-[14px] font-semibold text-text-primary hover:text-accent transition-colors group"
+            >
+              View all builders
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </section>
 
-        {/* ─── LIVE ANTATHON ─── */}
-        {nextAntathon && (
-          <section className="pb-32 px-6">
+        {/* ─── TESTIMONIALS ─── */}
+        <Testimonials />
+
+        {/* ─── ORIGIN STORY ─── */}
+        <section className="py-32 px-8 radial-spotlight relative overflow-hidden">
+          <div className="max-w-[680px] mx-auto relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true }}
-              className="max-w-4xl mx-auto p-12 md:p-16 bg-gray-900 rounded-[2.5rem] text-white relative overflow-hidden group"
+              transition={{ duration: 0.6, ease }}
             >
-              <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-600 opacity-5 blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:opacity-10 transition-opacity" />
-              
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Next Build Event</span>
-                </div>
-                <h3 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                  {nextAntathon.title}
-                </h3>
-                <p className="text-white/40 text-lg leading-relaxed mb-10 max-w-lg">
-                  {nextAntathon.theme}
+              <span className="text-[12px] font-semibold text-accent uppercase tracking-widest">
+                Our Story
+              </span>
+              <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] text-text-primary tracking-[-0.03em] mt-4 mb-8 leading-[1.05]">
+                <span className="gradient-text">Born from building.</span>
+              </h2>
+              <div className="space-y-5 text-[16px] text-text-secondary leading-relaxed">
+                <p>
+                  Antry started during the{" "}
+                  <span className="text-text-primary font-medium">
+                    AI Builder Program with Wealthsimple
+                  </span>{" "}
+                  — where we learned that the best way to prove yourself is to
+                  ship fast, iterate in public, and let your work speak. We
+                  realized there was no single place where builders could
+                  showcase what they ship, and where recruiters could see cool{" "}
+                  <span className="text-text-primary font-medium">
+                    3-minute demos
+                  </span>{" "}
+                  instead of reading resumes.
                 </p>
-                <div className="flex flex-wrap gap-8 text-xs font-bold text-white/60 uppercase tracking-widest mb-10">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-blue-500" /> ${nextAntathon.prizes.reduce((s, p) => s + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0), 0).toLocaleString()} Pool
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-blue-500" /> {nextAntathon.participantCount} Joined
-                    </div>
-                </div>
-                <Link href={`/hackathons/${nextAntathon.id}`} className="inline-flex items-center gap-2 bg-white text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-blue-600 hover:text-white transition-all shadow-xl">
-                  Learn more <ArrowRight className="w-4 h-4" />
-                </Link>
+                <p>
+                  That&apos;s what Antry is:{" "}
+                  <span className="text-text-primary font-medium">
+                    a home for builders who prove their work
+                  </span>
+                  . A place where you iterate fast, showcase what you build, and
+                  grow with a community that values shipping over talking.
+                </p>
               </div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ─── ACTIVE HACKATHON ─── */}
+        {nextAntathon && (
+          <section className="py-32 px-8">
+            <div className="max-w-[1100px] mx-auto">
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, ease }}
+              >
+                <Link
+                  href={`/hackathons/${nextAntathon.id}`}
+                  className="group block relative overflow-hidden rounded-3xl bg-[#0a0a0a] text-white hover:bg-[#111] transition-all duration-300 border border-white/10 hover:shadow-[0_0_40px_var(--glow-orange)] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-accent/0 before:to-transparent hover:before:via-accent/40 before:transition-all"
+                >
+                  <div className="relative z-10 p-12 md:p-20 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-12">
+                    <div className="max-w-xl">
+                      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 border border-white/10 backdrop-blur-sm rounded-full text-[11px] font-semibold uppercase tracking-wider mb-8 text-white/80">
+                        Active hackathon
+                      </span>
+                      <h2 className="font-display text-[clamp(2rem,6vw,4rem)] leading-[0.9] tracking-[-0.03em] mb-6">
+                        {nextAntathon.title}
+                      </h2>
+                      <p className="text-[16px] text-white/50 font-medium leading-relaxed mb-6">
+                        {nextAntathon.theme}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-4 text-[13px] text-white/60">
+                        {prizeTotal > 0 && (
+                          <span className="flex items-center gap-1.5">
+                            <Trophy className="w-3.5 h-3.5 text-yellow-400" />
+                            <span className="font-semibold text-white/80">
+                              ${prizeTotal.toLocaleString()} in prizes
+                            </span>
+                          </span>
+                        )}
+                        {nextAntathon.participantCount > 0 && (
+                          <span className="flex items-center gap-1.5">
+                            <Users className="w-3.5 h-3.5" />
+                            {nextAntathon.participantCount} builders competing
+                          </span>
+                        )}
+                      </div>
+                      {nextAntathon.sponsors.length > 0 && (
+                        <div className="flex items-center gap-3 mt-6">
+                          <span className="text-[11px] text-white/30 uppercase tracking-wider">
+                            Sponsors
+                          </span>
+                          {nextAntathon.sponsors.map((s) => (
+                            <span key={s.name} className="text-[12px] font-semibold text-white/50">
+                              {s.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 px-8 py-4 bg-white text-[#111] rounded-full font-semibold text-[14px] group-hover:bg-accent group-hover:text-white group-hover:shadow-[0_0_20px_var(--glow-orange-strong)] transition-all duration-300 shrink-0">
+                      View details
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            </div>
           </section>
         )}
 
         {/* ─── FINAL CTA ─── */}
-        <section className="py-40 px-6 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-10">
-              Build your technical identity.
-            </h2>
-            <div className="max-w-md mx-auto">
-              <WaitlistForm />
-            </div>
+        <section className="py-36 px-8 bg-[#060606] text-white relative overflow-hidden">
+          {/* Spotlight blob */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/[0.06] rounded-full blur-[120px] pointer-events-none" />
+          <div className="dot-grid absolute inset-0 pointer-events-none" />
+          <div className="max-w-[560px] mx-auto text-center relative z-10">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease }}
+            >
+              <p className="text-[14px] font-medium text-white/40 mb-6">
+                Join 500+ builders already on the waitlist
+              </p>
+              <h2 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] tracking-[-0.03em] mb-6 leading-[0.9]">
+                Ready to <span className="gradient-text">prove</span>
+                <br />
+                your work?
+              </h2>
+              <p className="text-[16px] text-white/40 mb-14 leading-relaxed">
+                Stop telling companies what you can do. Show them.
+                <br />
+                Join the next wave of builders who ship in public.
+              </p>
+              <WaitlistForm dark />
+              <Link
+                href="/builders"
+                className="inline-flex items-center gap-1.5 mt-6 text-[14px] font-medium text-white/40 hover:text-white/70 transition-colors"
+              >
+                Or browse the directory
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </motion.div>
           </div>
         </section>
 
         {/* ─── FOOTER ─── */}
-        <footer className="py-20 px-6 border-t border-gray-100 bg-gray-50/50">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-start mb-16">
-              <div className="col-span-2">
-                <div className="flex items-center gap-3 mb-6">
-                  <Image src="/logo.png" alt="Antry" width={32} height={32} className="dark:invert" />
-                  <span className="text-xl font-bold tracking-tight text-gray-900">Antry</span>
+        <footer className="py-20 border-t border-black/5 dark:border-white/5 bg-background-primary relative overflow-hidden">
+          {/* Subtle top glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-accent/[0.03] rounded-full blur-[80px] pointer-events-none" />
+          <div className="max-w-[1100px] mx-auto px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
+              <div className="col-span-2 md:col-span-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <Image
+                    src="/logo.png"
+                    alt="Antry"
+                    width={24}
+                    height={24}
+                    className="dark:invert object-contain opacity-90 mix-blend-multiply dark:mix-blend-screen brightness-0"
+                  />
+                  <span className="text-[16px] font-bold tracking-[-0.04em] text-text-primary">
+                    Antry
+                  </span>
                 </div>
-                <p className="text-gray-400 font-medium max-w-sm">
-                  The platform for developers who ship. No resumes, just proof of work.
+                <p className="text-[13px] text-text-tertiary leading-relaxed">
+                  Built by builders,
+                  <br />
+                  for builders.
                 </p>
               </div>
               <div>
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-6">Navigate</h4>
-                <div className="flex flex-col gap-3 text-xs font-bold text-gray-900">
-                  <Link href="/discover" className="hover:text-blue-600 transition-colors">Developers</Link>
-                  <Link href="/hackathons" className="hover:text-blue-600 transition-colors">Events</Link>
+                <h4 className="text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-4">
+                  For Builders
+                </h4>
+                <div className="flex flex-col gap-3 text-[13px] font-medium text-text-secondary">
+                  <Link href="/builders" className="hover:text-text-primary transition-colors">Builders</Link>
+                  <Link href="/hackathons" className="hover:text-text-primary transition-colors">Hackathons</Link>
+                  <Link href="/submit" className="hover:text-text-primary transition-colors">Submit a project</Link>
+                  <Link href="/signup" className="hover:text-text-primary transition-colors">Create profile</Link>
                 </div>
               </div>
               <div>
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-6">Account</h4>
-                <div className="flex flex-col gap-3 text-xs font-bold text-gray-900">
-                  <Link href="/login" className="hover:text-blue-600 transition-colors">Sign in</Link>
-                  <Link href="/signup" className="hover:text-blue-600 transition-colors">Join Antry</Link>
+                <h4 className="text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-4">
+                  For Companies
+                </h4>
+                <div className="flex flex-col gap-3 text-[13px] font-medium text-text-secondary">
+                  <Link href="/builders" className="hover:text-text-primary transition-colors">Browse builders</Link>
+                  <Link href="/hackathons" className="hover:text-text-primary transition-colors">Sponsor a hackathon</Link>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-4">
+                  Connect
+                </h4>
+                <div className="flex flex-col gap-3 text-[13px] font-medium text-text-secondary">
+                  <Link href="/login" className="hover:text-text-primary transition-colors">Log in</Link>
+                  <span className="text-text-tertiary cursor-default">Twitter / X</span>
+                  <span className="text-text-tertiary cursor-default">GitHub</span>
+                  <span className="text-text-tertiary cursor-default">Discord</span>
                 </div>
               </div>
             </div>
-            <div className="pt-10 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-              <span>&copy; 2026 Antry</span>
-              <div className="flex gap-8 text-gray-300">
-                <span>Vaughan, ON</span>
-              </div>
+            <div className="pt-8 border-t border-black/5 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-[13px] text-text-tertiary">&copy; 2026 Antry. All rights reserved.</div>
+              <div className="text-[12px] gradient-text opacity-60">Where builders are discovered.</div>
             </div>
           </div>
         </footer>

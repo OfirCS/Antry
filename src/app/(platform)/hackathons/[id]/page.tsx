@@ -3,155 +3,208 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Users, Trophy, Calendar, ExternalLink, Play, Globe, Shield, Zap } from "lucide-react";
-import { getAntathon, getAntathonProjects, formatDate, getInitials } from "@/lib/mock-data";
+import { ArrowLeft, Trophy, Users, Zap } from "lucide-react";
+import { getAntathon, getAntathonProjects, getInitials } from "@/lib/mock-data";
+
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function AntathonDetailPage() {
   const { id } = useParams() as { id: string };
   const event = getAntathon(id);
   const submissions = getAntathonProjects(id);
-  const prizePool = event?.prizes.reduce((s, p) => s + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0), 0) || 0;
+  const prizePool =
+    event?.prizes.reduce(
+      (s, p) => s + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0),
+      0
+    ) || 0;
 
   if (!event) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white px-6">
+      <div className="min-h-screen flex items-center justify-center bg-background-primary px-8">
         <div className="text-center">
-          <p className="text-gray-400 text-lg mb-4 font-medium">This Antathon hasn&apos;t started yet.</p>
-          <Link href="/hackathons" className="text-blue-600 font-bold hover:underline">Back to Antathons</Link>
+          <p className="text-text-tertiary text-[15px] mb-4 font-medium">
+            This hackathon doesn&apos;t exist yet.
+          </p>
+          <Link
+            href="/hackathons"
+            className="text-accent font-semibold hover:underline text-[14px]"
+          >
+            All hackathons
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* ─── HERO ─── */}
-      <section className="relative pt-40 pb-24 px-6 overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50/20 via-transparent to-transparent">
-        <div className="max-w-6xl mx-auto relative">
-          <Link href="/hackathons" className="inline-flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-blue-600 transition-colors mb-16 uppercase tracking-[0.3em]">
-            <ArrowLeft className="w-4 h-4" /> All Antathons
-          </Link>
+    <div className="bg-background-primary min-h-screen">
+      {/* ── Hero ── */}
+      <section className="relative pt-40 pb-24 px-8 bg-[#111] text-white overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{ background: event.gradient }}
+        />
+        <div className="absolute inset-0 bg-[#111]/80" />
 
-          <div className="flex flex-col lg:flex-row gap-16 items-end justify-between">
-            <div className="max-w-3xl">
-              <span className="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-8 inline-block">
-                {event.status} Antathon
+        <div className="max-w-[900px] mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease }}
+          >
+            <Link
+              href="/hackathons"
+              className="inline-flex items-center gap-2 text-[12px] font-medium text-white/40 hover:text-white/70 transition-colors mb-12 uppercase tracking-widest"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              All hackathons
+            </Link>
+
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/8 border border-white/10 rounded-full text-[11px] font-semibold uppercase tracking-wider text-white/60">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                {event.status}
               </span>
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-gray-900 mb-8 leading-[0.95]">{event.title}</h1>
-              <p className="text-xl md:text-2xl text-gray-400 font-medium leading-relaxed max-w-xl">{event.theme}</p>
             </div>
-            <div className="flex gap-4">
-              <button className="px-12 py-5 bg-gray-900 text-white rounded-full font-bold shadow-2xl hover:bg-blue-600 transition-all active:scale-95">
-                Enter the Trail
-              </button>
-            </div>
-          </div>
+
+            <h1 className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-[0.95] tracking-[-0.03em] mb-6">
+              {event.title}
+            </h1>
+
+            <p className="text-[17px] text-white/40 max-w-lg leading-relaxed">
+              {event.theme}
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* ─── STATS & SPONSORS ─── */}
-      <section className="py-24 px-6 bg-white border-y border-gray-100">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-            <div className="p-10 bg-gray-50 rounded-[2.5rem] border border-gray-100/50 hover:bg-white hover:shadow-2xl hover:shadow-blue-500/5 transition-all group">
-              <Trophy className="w-6 h-6 text-blue-600 mb-6 group-hover:scale-110 transition-transform" />
-              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">Total Prize Pool</div>
-              <div className="text-4xl font-bold text-gray-900 tracking-tight">${prizePool.toLocaleString()}</div>
+      {/* ── Stats bar ── */}
+      <section className="border-b border-border-primary">
+        <div className="max-w-[900px] mx-auto px-8 py-6 flex items-center justify-between flex-wrap gap-6">
+          {[
+            { icon: Trophy, label: "Prize pool", value: `$${prizePool.toLocaleString()}` },
+            { icon: Users, label: "Builders", value: event.participantCount.toString() },
+            { icon: Zap, label: "Submissions", value: event.submissionCount.toString() },
+          ].map((stat) => (
+            <div key={stat.label} className="flex items-center gap-3">
+              <stat.icon className="w-4 h-4 text-text-tertiary" />
+              <span className="text-[13px] text-text-tertiary font-medium">
+                {stat.label}
+              </span>
+              <span className="text-[15px] font-semibold text-text-primary">
+                {stat.value}
+              </span>
             </div>
-            <div className="p-10 bg-gray-50 rounded-[2.5rem] border border-gray-100/50 hover:bg-white hover:shadow-2xl hover:shadow-blue-500/5 transition-all group">
-              <Users className="w-6 h-6 text-blue-600 mb-6 group-hover:scale-110 transition-transform" />
-              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">Active Ants</div>
-              <div className="text-4xl font-bold text-gray-900 tracking-tight">{event.participantCount}</div>
-            </div>
-            <div className="p-10 bg-gray-50 rounded-[2.5rem] border border-gray-100/50 hover:bg-white hover:shadow-2xl hover:shadow-blue-500/5 transition-all group">
-              <Zap className="w-6 h-6 text-blue-600 mb-6 group-hover:scale-110 transition-transform" />
-              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">Days Remaining</div>
-              <div className="text-4xl font-bold text-gray-900 tracking-tight">04</div>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-10">Supporting the Colony</h3>
-            <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
-               {event.sponsors.map((s, i) => (
-                 <div key={i} className="flex flex-col items-center gap-2">
-                   <div className="text-2xl font-bold text-gray-300 group-hover:text-gray-900 transition-colors uppercase tracking-tight">{s.name}</div>
-                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.tier}</span>
-                 </div>
-               ))}
-            </div>
-          </div>
+          ))}
+          <button className="ml-auto px-6 py-2.5 bg-accent text-white rounded-full font-semibold text-[13px] hover:opacity-90 transition-opacity active:scale-[0.97]">
+            Join hackathon
+          </button>
         </div>
       </section>
 
-      {/* ─── THE APPLE GRID (Submissions) ─── */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-16">
-            <h2 className="text-4xl font-bold tracking-tight text-gray-900">The Colony Demos</h2>
-            <div className="flex gap-2">
-              <span className="px-4 py-1.5 bg-gray-50 text-gray-400 rounded-full text-xs font-bold uppercase tracking-widest">{submissions.length} Submissions</span>
-            </div>
+      {/* ── Submissions ── */}
+      <section className="py-20 px-8">
+        <div className="max-w-[900px] mx-auto">
+          <div className="flex items-baseline justify-between mb-10">
+            <h2 className="font-display text-[clamp(1.5rem,3vw,2rem)] text-text-primary tracking-[-0.02em]">
+              Submissions
+            </h2>
+            <span className="text-[12px] font-medium text-text-tertiary tracking-wide">
+              {submissions.length} project{submissions.length !== 1 && "s"}
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:auto-rows-[450px]">
-            {submissions.map((p, i) => {
-              // Create an "Apple Grid" pattern
-              const isLarge = i === 0 || i === 5 || i === 8;
-              const isWide = i === 2 || i === 7;
-              
-              const colSpan = isLarge ? "md:col-span-8" : isWide ? "md:col-span-6" : "md:col-span-4";
-              const rowSpan = isLarge ? "md:row-span-2" : "md:row-span-1";
-
-              return (
-                <motion.div 
+          {submissions.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-text-tertiary text-[14px]">
+                No submissions yet. Be the first to submit.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {submissions.map((p, i) => (
+                <motion.div
                   key={p.id}
-                  whileHover={{ scale: 0.99 }}
-                  className={`${colSpan} ${rowSpan} bg-gray-50 rounded-[2.5rem] overflow-hidden relative group border border-gray-100 cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all`}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06, ease }}
+                  className="group relative rounded-2xl overflow-hidden border border-border-primary/60 hover:border-border-primary bg-surface cursor-pointer transition-all duration-300 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]"
                 >
-                  <div className="absolute inset-0 opacity-20" style={{ background: p.gradient }} />
-                  
-                  <div className="absolute inset-0 p-10 flex flex-col justify-end">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold" style={{ background: p.builder.gradient }}>
+                  {/* Gradient top band */}
+                  <div
+                    className="h-28 w-full"
+                    style={{ background: p.gradient }}
+                  />
+
+                  <div className="p-5">
+                    {/* Builder */}
+                    <div className="flex items-center gap-2.5 mb-4">
+                      <div
+                        className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[9px] font-bold shrink-0"
+                        style={{ background: p.builder.gradient }}
+                      >
                         {getInitials(p.builder.name)}
                       </div>
-                      <span className="text-sm font-bold text-gray-900">{p.builder.name}</span>
+                      <span className="text-[12px] font-medium text-text-secondary truncate">
+                        {p.builder.name}
+                      </span>
                     </div>
 
-                    <h3 className={`${isLarge ? 'text-4xl' : 'text-2xl'} font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors`}>{p.title}</h3>
-                    <p className="text-gray-500 text-sm max-w-sm mb-6 line-clamp-2">{p.tagline}</p>
-
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">
-                      <button className="px-6 py-2 bg-white text-gray-900 rounded-full text-xs font-bold shadow-lg hover:bg-gray-50">
-                        View Demo
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="absolute top-10 right-10">
-                    <div className="w-12 h-12 bg-white/80 backdrop-blur rounded-full flex items-center justify-center shadow-xl">
-                      <Play className="w-5 h-5 text-blue-600 fill-blue-600 ml-1" />
-                    </div>
+                    {/* Project info */}
+                    <h3 className="text-[16px] font-semibold text-text-primary mb-1.5 group-hover:text-accent transition-colors">
+                      {p.title}
+                    </h3>
+                    <p className="text-[13px] text-text-secondary leading-relaxed line-clamp-2">
+                      {p.tagline}
+                    </p>
                   </div>
                 </motion.div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ─── FINAL CTA ─── */}
-      <section className="py-32 px-6 text-center bg-gray-900 text-white rounded-t-[4rem]">
-        <div className="max-w-2xl mx-auto">
-          <Shield className="w-12 h-12 text-blue-500 mx-auto mb-8" />
-          <h2 className="text-4xl font-bold mb-6">Sponsor the Next Antathon</h2>
-          <p className="text-white/50 text-lg mb-10 leading-relaxed">
-            Support the most creative ants in the colony and get your tools in the hands of elite builders.
-          </p>
-          <button className="px-12 py-5 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20">
-            Contact for Sponsorship
-          </button>
+      {/* ── Sponsors ── */}
+      {event.sponsors.length > 0 && (
+        <section className="pb-10 px-8">
+          <div className="max-w-[900px] mx-auto">
+            <div className="flex items-center gap-8 flex-wrap">
+              <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-widest">
+                Sponsors
+              </span>
+              <div className="h-4 w-px bg-border-primary" />
+              {event.sponsors.map((s, i) => (
+                <span
+                  key={i}
+                  className="text-[14px] font-medium text-text-secondary"
+                >
+                  {s.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Sponsor CTA ── */}
+      <section className="py-20 px-8 border-t border-border-primary">
+        <div className="max-w-[900px] mx-auto flex items-center justify-between flex-wrap gap-6">
+          <div>
+            <h3 className="font-display text-[clamp(1.25rem,3vw,1.75rem)] text-text-primary tracking-[-0.02em] mb-1">
+              Sponsor the next hackathon
+            </h3>
+            <p className="text-[14px] text-text-tertiary">
+              Put your tools in the hands of top builders.
+            </p>
+          </div>
+          <Link
+            href="#"
+            className="px-6 py-2.5 border border-border-primary rounded-full text-[13px] font-semibold text-text-primary hover:bg-surface transition-colors"
+          >
+            Get in touch
+          </Link>
         </div>
       </section>
     </div>

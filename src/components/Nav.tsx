@@ -3,134 +3,91 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { signOut } from "@/app/(auth)/actions";
 
 const links = [
-  { href: "/discover", label: "Colony" },
-  { href: "/hackathons", label: "Antathons" },
+  { href: "/about", label: "About Us" },
+  { href: "/builders", label: "Builders" },
+  { href: "/hackathons", label: "Hackathons" },
+  { href: "/companies", label: "For Companies" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export function Nav() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
 
-  const initials = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name
-        .split(" ")
-        .map((w: string) => w[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
-    : user?.email?.slice(0, 2).toUpperCase() ?? "??";
-
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-gray-100 bg-white/80 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto h-full px-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <Image src="/logo.png" alt="Antry" width={32} height={32} className="dark:invert" priority />
-          <span className="text-lg font-bold tracking-tight text-gray-900">Antry</span>
-        </Link>
+    <nav className="fixed top-0 left-0 right-0 z-50 h-[72px] glass-card backdrop-blur-2xl shadow-[0_1px_0_0_var(--glass-border),0_8px_32px_-12px_rgba(0,0,0,0.05)] transition-all">
+      <div className="max-w-[1200px] mx-auto h-full px-8 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center gap-10">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 group"
+          >
+            <Image
+              src="/logo.png"
+              alt="Antry"
+              width={28}
+              height={28}
+              className="dark:invert object-contain transition-transform group-hover:scale-105 duration-300 mix-blend-multiply dark:mix-blend-screen brightness-0"
+              priority
+            />
+            <span className="text-[18px] font-bold tracking-[-0.04em] text-text-primary">
+              Antry
+            </span>
+          </Link>
 
-          <div className="hidden md:flex items-center gap-10">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={cn(
-                "text-[10px] font-bold uppercase tracking-[0.2em] transition-all",
-                pathname.startsWith(l.href) ? "text-blue-600" : "text-gray-400 hover:text-gray-900"
-              )}
-            >
-              {l.label}
-            </Link>
-          ))}
+          {/* Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {links.map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className={cn(
+                  "text-[14px] font-medium transition-colors duration-200",
+                  pathname.startsWith(l.href)
+                    ? "text-text-primary"
+                    : "text-text-tertiary hover:text-text-primary"
+                )}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-6">
+        {/* Right side */}
+        <div className="flex items-center gap-5">
           {loading ? (
-            <div className="w-8 h-8 rounded-full bg-gray-50 animate-pulse" />
+            <div className="w-8 h-8 rounded-full bg-border-secondary animate-pulse" />
           ) : user ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="w-10 h-10 rounded-2xl bg-gray-900 flex items-center justify-center text-[10px] font-bold text-white hover:bg-blue-600 transition-colors shadow-lg"
-                title={user.user_metadata?.full_name || user.email || "Profile"}
-              >
-                {initials}
-              </Link>
-              <form action={signOut}>
-                <button
-                  type="submit"
-                  className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors flex items-center gap-1 uppercase tracking-widest"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              </form>
-            </>
+            <Link
+              href="/dashboard"
+              className="text-[14px] font-semibold text-text-primary hover:text-accent transition-colors"
+            >
+              Dashboard
+            </Link>
           ) : (
             <>
-              <Link href="/login" className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em]">
-                Sign in
+              <Link
+                href="/login"
+                className="text-[14px] font-medium text-text-tertiary hover:text-text-primary transition-colors"
+              >
+                Log in
               </Link>
               <Link
                 href="/signup"
-                className="text-[10px] font-bold bg-gray-900 text-white px-8 py-3 rounded-full hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/10 transition-all active:scale-95 uppercase tracking-[0.2em]"
+                className="text-[13px] font-semibold bg-text-primary text-background-primary px-5 py-2.5 rounded-full glow-border hover:shadow-[0_4px_14px_0_var(--glow-orange)] hover:bg-[#222] transition-all duration-300 ease-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none dark:bg-white dark:text-black dark:hover:bg-white/90 dark:hover:shadow-[0_4px_14px_0_var(--glow-orange)]"
               >
-                Join Colony
+                Apply now
               </Link>
             </>
           )}
         </div>
-
-        <button onClick={() => setOpen(!open)} className="md:hidden text-text-secondary" aria-label="Menu">
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
       </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden border-b border-gray-100 bg-white shadow-lg"
-          >
-            <div className="px-6 py-8 flex flex-col gap-6">
-              {links.map((l) => (
-                <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-sm font-medium text-gray-700 hover:text-blue-600">
-                  {l.label}
-                </Link>
-              ))}
-              <hr className="border-gray-100" />
-              {user ? (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{user.user_metadata?.full_name || user.email}</span>
-                  <form action={signOut}>
-                    <button
-                      type="submit"
-                      onClick={() => setOpen(false)}
-                      className="text-sm font-medium text-red-500 hover:text-red-600 flex items-center gap-1.5"
-                    >
-                      <LogOut className="w-3.5 h-3.5" /> Sign out
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <Link href="/login" onClick={() => setOpen(false)} className="text-sm font-medium text-gray-700">Sign in</Link>
-                  <Link href="/signup" onClick={() => setOpen(false)} className="text-sm font-medium bg-blue-600 text-white px-6 py-2 rounded-full">Join Antry</Link>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </nav>
   );
 }
