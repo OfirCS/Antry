@@ -42,7 +42,7 @@ export default function CompaniesPage() {
             animate="visible"
             transition={{ duration: 0.6, ease }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-muted border border-accent/15 rounded-full text-[12px] font-semibold text-accent mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-muted border border-accent/15 rounded-lg text-[12px] font-semibold text-accent mb-8">
               <Building2 className="w-3.5 h-3.5" />
               For Companies &amp; Sponsors
             </div>
@@ -63,7 +63,7 @@ export default function CompaniesPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="#sponsor"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-text-primary text-background-primary rounded-full text-[14px] font-semibold hover:opacity-80 transition-opacity"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-text-primary text-background-primary rounded-lg text-[14px] font-semibold hover:opacity-80 transition-opacity"
               >
                 Become a sponsor
                 <ArrowRight className="w-4 h-4" />
@@ -72,7 +72,7 @@ export default function CompaniesPage() {
                 href="https://newsroom.wealthsimple.com/we-asked-canadians-to-build-something-instead-of-sending-a-resume-heres-what-happened"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 border border-border-primary text-text-secondary rounded-full text-[14px] font-medium hover:text-text-primary hover:border-text-tertiary transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3.5 border border-border-primary text-text-secondary rounded-lg text-[14px] font-medium hover:text-text-primary hover:border-text-tertiary transition-colors"
               >
                 See how Wealthsimple did it
                 <ArrowUpRight className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function CompaniesPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease }}
-                className="p-8 bg-surface rounded-3xl border border-black/5 dark:border-white/5"
+                className="p-8 bg-surface rounded-lg border border-border-primary"
               >
                 <item.icon className="w-5 h-5 text-accent mb-5" />
                 <h3 className="text-[16px] font-semibold text-text-primary mb-2">
@@ -157,7 +157,7 @@ export default function CompaniesPage() {
             whileInView="visible"
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease }}
-            className="relative p-10 md:p-14 rounded-3xl bg-[#111] text-white overflow-hidden"
+            className="relative p-10 md:p-14 rounded-lg bg-text-primary text-white overflow-hidden"
           >
             <div
               className="absolute inset-0 opacity-30"
@@ -182,7 +182,7 @@ export default function CompaniesPage() {
                 href="https://newsroom.wealthsimple.com/we-asked-canadians-to-build-something-instead-of-sending-a-resume-heres-what-happened"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#111] rounded-full text-[13px] font-semibold hover:bg-white/90 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-text-primary rounded-lg text-[13px] font-semibold hover:bg-white/90 transition-colors"
               >
                 Read the Wealthsimple story
                 <ArrowUpRight className="w-4 h-4" />
@@ -257,7 +257,7 @@ export default function CompaniesPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.06, ease }}
-                className="p-6 bg-surface rounded-3xl border border-black/5 dark:border-white/5"
+                className="p-6 bg-surface rounded-lg border border-border-primary"
               >
                 <item.icon className="w-5 h-5 text-accent mb-4" />
                 <h3 className="text-[15px] font-semibold text-text-primary mb-2">
@@ -303,7 +303,7 @@ export default function CompaniesPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                className="text-center p-8 rounded-3xl bg-surface border border-black/5 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_15px_-3px_rgba(255,255,255,0.01)]"
+                className="text-center p-8 rounded-lg bg-surface border border-border-primary shadow-sm "
               >
                 <div className="text-[clamp(2rem,4vw,3rem)] font-bold text-text-primary tracking-tight">
                   {stat.num}
@@ -344,7 +344,7 @@ export default function CompaniesPage() {
               whileInView="visible"
               viewport={{ once: true }}
               transition={{ duration: 0.5, ease }}
-              className="relative p-8 rounded-3xl border-2 border-accent/20 bg-surface overflow-hidden"
+              className="relative p-8 rounded-lg border-2 border-accent/20 bg-surface overflow-hidden"
             >
               <div className="absolute top-0 right-0 px-4 py-1.5 bg-accent text-white text-[11px] font-semibold uppercase tracking-wider rounded-bl-xl">
                 Title Sponsor
@@ -376,7 +376,7 @@ export default function CompaniesPage() {
               whileInView="visible"
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.08, ease }}
-              className="p-8 rounded-3xl border border-black/5 dark:border-white/5 bg-surface"
+              className="p-8 rounded-lg border border-border-primary bg-surface"
             >
               <h3 className="text-[20px] font-semibold text-text-primary mb-6">
                 Platform Partner
@@ -434,7 +434,7 @@ export default function CompaniesPage() {
                 >
                   <Link
                     href={`/builders/${builder.username}`}
-                    className="group block p-6 rounded-3xl border border-black/5 dark:border-white/5 bg-surface hover:border-black/10 dark:hover:border-white/10 hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_12px_32px_-8px_rgba(255,255,255,0.04)] transition-all duration-300 ease-out"
+                    className="group block p-6 rounded-lg border border-border-primary bg-surface hover:border-black/10 dark:hover:border-white/10 hover:-translate-y-1  dark: transition-all duration-300 ease-out"
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <div
@@ -456,7 +456,7 @@ export default function CompaniesPage() {
                       {builder.skills.slice(0, 3).map((s) => (
                         <span
                           key={s}
-                          className="text-[10px] font-medium text-text-tertiary bg-background-secondary rounded-full px-2 py-0.5"
+                          className="text-[10px] font-medium text-text-tertiary bg-background-secondary rounded-lg px-2 py-0.5"
                         >
                           {s}
                         </span>
@@ -519,7 +519,7 @@ export default function CompaniesPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section id="sponsor" className="py-32 px-8 bg-[#111] text-white">
+      <section id="sponsor" className="py-32 px-8 bg-text-primary text-white">
         <div className="max-w-[560px] mx-auto text-center">
           <motion.div
             variants={fadeUp}

@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 const ease = [0.25, 1, 0.5, 1] as const;
 
 const tileBase =
-  "rounded-3xl border border-black/5 dark:border-white/5 bg-surface overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_12px_32px_-8px_rgba(255,255,255,0.04)]";
+  "rounded-lg border border-border-primary bg-surface overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1  dark:";
 
 export default function BuilderProfilePage() {
   const { username } = useParams() as { username: string };
@@ -91,7 +91,7 @@ export default function BuilderProfilePage() {
           >
             <div>
               <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center text-[28px] font-bold text-white mb-6 shadow-lg"
+                className="w-20 h-20 rounded-full flex items-center justify-center text-[28px] font-bold text-white mb-6 shadow-lg"
                 style={{ background: builder.gradient }}
               >
                 {getInitials(builder.name)}
@@ -154,7 +154,7 @@ export default function BuilderProfilePage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.06, ease }}
-              className={cn("md:col-span-2 md:row-span-2 rounded-3xl overflow-hidden relative group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.2)]")}
+              className={cn("md:col-span-2 md:row-span-2 rounded-lg overflow-hidden relative group transition-all duration-300 ease-out hover:-translate-y-1 ")}
             >
               <div
                 className="absolute inset-0"
@@ -163,7 +163,7 @@ export default function BuilderProfilePage() {
               <div className="absolute inset-0 bg-black/20" />
               <div className="relative z-10 p-8 flex flex-col justify-between h-full min-h-[320px]">
                 <div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-full text-[11px] font-semibold text-white/90 uppercase tracking-wider mb-6">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm rounded-lg text-[11px] font-semibold text-white/90 uppercase tracking-wider mb-6">
                     Featured project
                   </span>
                   <h2 className="font-display text-[clamp(1.5rem,3vw,2.25rem)] text-white tracking-[-0.02em] leading-[1.1] mb-2">
@@ -191,7 +191,7 @@ export default function BuilderProfilePage() {
                       href={featuredProject.demoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#111] rounded-xl text-[13px] font-semibold hover:bg-white/90 transition-colors"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-text-primary rounded-xl text-[13px] font-semibold hover:bg-white/90 transition-colors"
                     >
                       <Play className="w-3.5 h-3.5" />
                       Live demo
@@ -347,9 +347,9 @@ export default function BuilderProfilePage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 + i * 0.06, ease }}
-              className="rounded-3xl overflow-hidden relative group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.2)]"
+              className="rounded-lg overflow-hidden relative group transition-all duration-300 ease-out hover:-translate-y-1 "
             >
-              <div className="absolute inset-0 bg-[#111]" />
+              <div className="absolute inset-0 bg-text-primary" />
               <div
                 className="absolute inset-0 opacity-30"
                 style={{
@@ -364,7 +364,7 @@ export default function BuilderProfilePage() {
                 <div className="flex items-center gap-2 mb-3">
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider",
+                      "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider",
                       event.status === "active"
                         ? "bg-green-500/20 text-green-400"
                         : event.status === "upcoming"

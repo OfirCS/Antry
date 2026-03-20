@@ -30,7 +30,7 @@ export default function BuildersPage() {
   return (
     <div className="bg-background-primary min-h-screen">
       {/* Sticky search + filters */}
-      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5">
+      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/80 backdrop-blur-xl border-b border-border-primary">
         <div className="max-w-[900px] mx-auto px-6 py-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="relative flex-1">
@@ -40,7 +40,7 @@ export default function BuildersPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by name, skill, or tagline..."
-                className="w-full pl-10 pr-4 py-2.5 bg-surface border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-full text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
+                className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border-primary shadow-sm rounded-lg text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
               />
             </div>
             <span className="text-xs font-medium text-text-tertiary tabular-nums whitespace-nowrap">
@@ -53,7 +53,7 @@ export default function BuildersPage() {
                 key={skill}
                 onClick={() => setActiveSkill(skill)}
                 className={cn(
-                  "px-3.5 py-1.5 text-[11px] font-semibold rounded-full transition-all whitespace-nowrap",
+                  "px-3.5 py-1.5 text-[11px] font-semibold rounded-lg transition-all whitespace-nowrap",
                   activeSkill === skill
                     ? "bg-text-primary text-background-primary"
                     : "text-text-tertiary hover:text-text-secondary hover:bg-background-secondary"
@@ -93,7 +93,7 @@ export default function BuildersPage() {
                 >
                   <Link
                     href={`/builders/${builder.username}`}
-                    className="group block p-6 rounded-3xl border border-black/5 dark:border-white/5 bg-surface hover:border-black/10 dark:hover:border-white/10 hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_12px_32px_-8px_rgba(255,255,255,0.04)] transition-all duration-300 ease-out"
+                    className="group block p-6 rounded-lg border border-border-primary bg-surface hover:border-black/10 dark:hover:border-white/10 hover:-translate-y-1  dark: transition-all duration-300 ease-out"
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <div
@@ -119,7 +119,7 @@ export default function BuildersPage() {
                       {builder.skills.slice(0, 3).map((skill) => (
                         <span
                           key={skill}
-                          className="text-[10px] font-medium text-text-tertiary bg-background-secondary rounded-full px-2 py-0.5"
+                          className="text-[10px] font-medium text-text-tertiary bg-background-secondary rounded-lg px-2 py-0.5"
                         >
                           {skill}
                         </span>
@@ -131,7 +131,7 @@ export default function BuildersPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 text-[11px] text-text-tertiary pt-4 border-t border-black/5 dark:border-white/5">
+                    <div className="flex items-center gap-3 text-[11px] text-text-tertiary pt-4 border-t border-border-primary">
                       <span>{bp.length} project{bp.length !== 1 && "s"}</span>
                       <span className="text-border-primary">·</span>
                       <span className="flex items-center gap-1">

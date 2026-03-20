@@ -81,7 +81,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 mb-10">
         <Link
           href="/submit"
-          className="flex items-center gap-4 p-6 bg-surface border border-black/5 dark:border-white/5 rounded-3xl hover:-translate-y-1 hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-12px_rgba(255,255,255,0.05)] transition-all duration-300 ease-out group"
+          className="flex items-center gap-4 p-6 bg-surface border border-border-primary rounded-lg hover:-translate-y-1 hover:border-black/10 dark:hover:border-white/10  dark: transition-all duration-300 ease-out group"
         >
           <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white shrink-0">
             <Plus className="w-5 h-5" />
@@ -98,7 +98,7 @@ export default function DashboardPage() {
 
         <Link
           href="/hackathons"
-          className="flex items-center gap-4 p-6 bg-surface border border-black/5 dark:border-white/5 rounded-3xl hover:-translate-y-1 hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-12px_rgba(255,255,255,0.05)] transition-all duration-300 ease-out group"
+          className="flex items-center gap-4 p-6 bg-surface border border-border-primary rounded-lg hover:-translate-y-1 hover:border-black/10 dark:hover:border-white/10  dark: transition-all duration-300 ease-out group"
         >
           <div className="w-10 h-10 rounded-lg bg-text-primary flex items-center justify-center text-background-primary shrink-0">
             <ArrowRight className="w-5 h-5" />
@@ -121,7 +121,7 @@ export default function DashboardPage() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="bg-surface border border-black/5 dark:border-white/5 rounded-3xl p-8 text-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_15px_-3px_rgba(255,255,255,0.01)]">
+        <div className="bg-surface border border-border-primary rounded-lg p-8 text-center shadow-sm ">
           <p className="text-[14px] text-text-tertiary mb-4">
             You haven&apos;t submitted any projects yet.
           </p>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
           {projects.map((project) => (
             <div
               key={project.id}
-              className="flex items-center gap-4 p-5 bg-surface border border-black/5 dark:border-white/5 rounded-2xl hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_4px_20px_-8px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out"
+              className="flex items-center gap-4 p-5 bg-surface border border-border-primary rounded-lg hover:border-black/10 dark:hover:border-white/10  transition-all duration-300 ease-out"
             >
               <div className="flex-1 min-w-0">
                 <Link

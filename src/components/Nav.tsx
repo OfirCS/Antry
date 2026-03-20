@@ -5,13 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { Button } from "@/components/ui/button";
 
 const links = [
-  { href: "/about", label: "About Us" },
+  { href: "/about", label: "About" },
   { href: "/builders", label: "Builders" },
   { href: "/hackathons", label: "Hackathons" },
   { href: "/companies", label: "For Companies" },
-  { href: "/blog", label: "Blog" },
 ];
 
 export function Nav() {
@@ -19,35 +19,33 @@ export function Nav() {
   const { user, loading } = useAuth();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-[72px] glass-card backdrop-blur-2xl shadow-[0_1px_0_0_var(--glass-border),0_8px_32px_-12px_rgba(0,0,0,0.05)] transition-all">
-      <div className="max-w-[1200px] mx-auto h-full px-8 flex items-center justify-between">
-        {/* Logo */}
+    <nav className="fixed inset-x-0 top-0 z-50 border-b border-border-primary bg-background-primary/60 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-6 sm:px-8">
         <div className="flex items-center gap-10">
           <Link
             href="/"
-            className="flex items-center gap-2.5 group"
+            className="group flex items-center gap-2.5 transition-opacity hover:opacity-80"
           >
             <Image
               src="/logo.png"
               alt="Antry"
-              width={28}
-              height={28}
-              className="dark:invert object-contain transition-transform group-hover:scale-105 duration-300 mix-blend-multiply dark:mix-blend-screen brightness-0"
+              width={24}
+              height={24}
+              className="object-contain brightness-0 dark:invert"
               priority
             />
-            <span className="text-[18px] font-bold tracking-[-0.04em] text-text-primary">
+            <span className="text-[17px] font-bold tracking-tight text-text-primary">
               Antry
             </span>
           </Link>
 
-          {/* Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-6 lg:flex">
             {links.map((l) => (
               <Link
                 key={l.label}
                 href={l.href}
                 className={cn(
-                  "text-[14px] font-medium transition-colors duration-200",
+                  "text-[13px] font-medium transition-colors duration-200",
                   pathname.startsWith(l.href)
                     ? "text-text-primary"
                     : "text-text-tertiary hover:text-text-primary"
@@ -59,14 +57,13 @@ export function Nav() {
           </div>
         </div>
 
-        {/* Right side */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3">
           {loading ? (
-            <div className="w-8 h-8 rounded-full bg-border-secondary animate-pulse" />
+            <div className="h-8 w-8 animate-pulse rounded-full bg-border-secondary" />
           ) : user ? (
             <Link
               href="/dashboard"
-              className="text-[14px] font-semibold text-text-primary hover:text-accent transition-colors"
+              className="text-[13px] font-medium text-text-primary hover:opacity-80"
             >
               Dashboard
             </Link>
@@ -74,16 +71,13 @@ export function Nav() {
             <>
               <Link
                 href="/login"
-                className="text-[14px] font-medium text-text-tertiary hover:text-text-primary transition-colors"
+                className="text-[13px] font-medium text-text-tertiary hover:text-text-primary transition-colors"
               >
                 Log in
               </Link>
-              <Link
-                href="/signup"
-                className="text-[13px] font-semibold bg-text-primary text-background-primary px-5 py-2.5 rounded-full glow-border hover:shadow-[0_4px_14px_0_var(--glow-orange)] hover:bg-[#222] transition-all duration-300 ease-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none dark:bg-white dark:text-black dark:hover:bg-white/90 dark:hover:shadow-[0_4px_14px_0_var(--glow-orange)]"
-              >
-                Apply now
-              </Link>
+              <Button size="sm" asChild>
+                <Link href="/signup">Get Started</Link>
+              </Button>
             </>
           )}
         </div>

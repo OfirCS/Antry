@@ -17,14 +17,17 @@ import {
   Zap,
   Code2,
   Sparkles,
+  Database,
+  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   builders as mockBuilders,
   projects as mockProjects,
   antathons as mockAntathons,
-  getInitials,
 } from "@/lib/mock-data";
+import { Badge } from "@/components/ui/badge";
+import { HeroAnimation } from "@/components/HeroAnimation";
 import type { AgentResponseBody, AgentRichCard } from "@/lib/agent/types";
 
 /* ── Constants ─────────────────────────────────────────── */
@@ -65,13 +68,11 @@ interface ConversationTurn {
 function RenderLine({ line }: { line: string }) {
   if (line.trim() === "") return <br />;
 
-  // Process inline markdown: **bold** and *italic*
   const parts: React.ReactNode[] = [];
   let remaining = line;
   let key = 0;
 
   while (remaining.length > 0) {
-    // Bold
     const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
     if (boldMatch && boldMatch.index !== undefined) {
       if (boldMatch.index > 0) {
@@ -86,7 +87,6 @@ function RenderLine({ line }: { line: string }) {
       continue;
     }
 
-    // Italic
     const italicMatch = remaining.match(/\*(.+?)\*/);
     if (italicMatch && italicMatch.index !== undefined) {
       if (italicMatch.index > 0) {
@@ -108,14 +108,14 @@ function RenderLine({ line }: { line: string }) {
   return <p className="leading-relaxed">{parts}</p>;
 }
 
-/* ── Source pill (Perplexity-style tool step) ──────────── */
+/* ── Source pill ──────────── */
 
 function SourcePill({ tool, result }: { tool: string; result: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background-secondary border border-border-primary/40 text-[11px] shrink-0"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background-secondary border border-border-primary text-[11px] shrink-0"
       title={result}
     >
       <Zap className="w-2.5 h-2.5 text-accent" />
@@ -137,11 +137,11 @@ function ThinkingSkeleton() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: i * 0.15 }}
-          className="h-3 rounded-full bg-border-secondary/60 overflow-hidden"
+          className="h-3 rounded-full bg-border-secondary overflow-hidden"
           style={{ width: `${width * 100}%` }}
         >
           <motion.div
-            className="h-full w-full bg-gradient-to-r from-transparent via-border-primary/30 to-transparent"
+            className="h-full w-full bg-gradient-to-r from-transparent via-border-primary/40 to-transparent"
             animate={{ x: ["-100%", "100%"] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
           />
@@ -158,7 +158,7 @@ function BuilderCard({ data }: { data: AgentRichCard & { type: "builder" } }) {
   return (
     <Link
       href={`/builders/${b.username}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary/40 bg-background-primary hover:border-accent/30 hover:bg-accent-muted/20 transition-all"
+      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary bg-surface hover:border-accent/30 hover:shadow-sm transition-all"
     >
       <div
         className="w-9 h-9 rounded-lg flex items-center justify-center text-[11px] font-bold text-white shrink-0"
@@ -182,7 +182,7 @@ function ProjectCard({ data }: { data: AgentRichCard & { type: "project" } }) {
   return (
     <Link
       href={`/projects/${p.id}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary/40 bg-background-primary hover:border-accent/30 hover:bg-accent-muted/20 transition-all"
+      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary bg-surface hover:border-accent/30 hover:shadow-sm transition-all"
     >
       <div
         className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
@@ -212,10 +212,10 @@ function HackathonCard({ data }: { data: AgentRichCard & { type: "hackathon" } }
   return (
     <Link
       href={`/hackathons/${h.id}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary/40 bg-background-primary hover:border-accent/30 hover:bg-accent-muted/20 transition-all"
+      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary bg-surface hover:border-accent/30 hover:shadow-sm transition-all"
     >
-      <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] flex items-center justify-center shrink-0">
-        <Trophy className="w-4 h-4 text-yellow-400" />
+      <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center shrink-0">
+        <Trophy className="w-4 h-4 text-amber-500" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[13px] font-semibold text-text-primary group-hover:text-accent truncate transition-colors">
@@ -233,7 +233,7 @@ function HackathonCard({ data }: { data: AgentRichCard & { type: "hackathon" } }
 function TeamCard({ data }: { data: AgentRichCard & { type: "team" } }) {
   const t = data.data;
   return (
-    <div className="p-4 rounded-xl border border-accent/20 bg-accent-muted/10 space-y-3">
+    <div className="p-4 rounded-xl border border-accent/20 bg-accent-muted space-y-3">
       <div className="flex items-center gap-2 text-[12px] font-semibold text-accent">
         <Users className="w-3.5 h-3.5" />
         Team for &ldquo;{t.theme}&rdquo;
@@ -267,7 +267,7 @@ function TeamCard({ data }: { data: AgentRichCard & { type: "team" } }) {
 function BuilderDetailCard({ data }: { data: AgentRichCard & { type: "builder_detail" } }) {
   const d = data.data;
   return (
-    <div className="p-4 rounded-xl border border-border-primary/40 bg-background-primary space-y-3">
+    <div className="p-4 rounded-xl border border-border-primary bg-surface space-y-3">
       <Link href={`/builders/${d.builder.username}`} className="group flex items-center gap-3">
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center text-[12px] font-bold text-white shrink-0"
@@ -292,7 +292,7 @@ function BuilderDetailCard({ data }: { data: AgentRichCard & { type: "builder_de
         ))}
       </div>
       {d.projects.length > 0 && (
-        <div className="space-y-1.5 pt-2 border-t border-border-primary/30">
+        <div className="space-y-1.5 pt-2 border-t border-border-primary">
           {d.projects.slice(0, 3).map((p) => (
             <div key={p.id} className="flex items-center justify-between text-[12px]">
               <span className="font-medium text-text-primary truncate">{p.title}</span>
@@ -310,7 +310,7 @@ function BuilderDetailCard({ data }: { data: AgentRichCard & { type: "builder_de
 function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" } }) {
   const c = data.data;
   return (
-    <div className="p-4 rounded-xl border border-border-primary/40 bg-background-primary space-y-3">
+    <div className="p-4 rounded-xl border border-border-primary bg-surface space-y-3">
       <div className="flex items-center gap-2 text-[12px] font-semibold text-text-primary">
         <GitCompare className="w-3.5 h-3.5 text-accent" /> Builder Comparison
       </div>
@@ -335,7 +335,7 @@ function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" }
             {unique.length > 0 && (
               <div className="mt-2 flex flex-wrap justify-center gap-1">
                 {unique.slice(0, 3).map((s) => (
-                  <span key={s} className="text-[9px] font-medium text-accent bg-accent-muted/30 rounded-full px-1.5 py-0.5">
+                  <span key={s} className="text-[9px] font-medium text-accent bg-accent-muted rounded-full px-1.5 py-0.5">
                     {s}
                   </span>
                 ))}
@@ -345,7 +345,7 @@ function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" }
         ))}
       </div>
       {c.sharedSkills.length > 0 && (
-        <div className="text-center pt-2 border-t border-border-primary/30">
+        <div className="text-center pt-2 border-t border-border-primary">
           <span className="text-[10px] text-text-tertiary">
             Shared: {c.sharedSkills.join(", ")}
           </span>
@@ -472,36 +472,29 @@ export function AgentHome() {
   };
 
   return (
-    <section className="relative py-24 md:py-32 px-6 hero-mesh">
-      {/* Multi-blob backdrop */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-[var(--mesh-blob-1)] blur-[120px] float-slow" />
-        <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full bg-[var(--mesh-blob-2)] blur-[100px] float-medium" />
-        <div className="absolute top-[10%] right-[10%] w-[350px] h-[350px] rounded-full bg-[var(--mesh-blob-3)] blur-[90px] float-slow" />
-        <div className="dot-grid absolute inset-0" />
-      </div>
-
-      <div className="relative max-w-[720px] mx-auto">
+    <section className="relative overflow-hidden px-6 py-18 md:py-22">
+      <div className="relative mx-auto max-w-[780px]">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.6, ease }}
-          className={cn("text-center transition-all duration-500", hasResults ? "mb-8" : "mb-12")}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease }}
+          className={cn("text-center transition-all duration-500", hasResults ? "mb-8" : "mb-16")}
         >
           {!hasResults && (
             <>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-muted/50 border border-accent/20 text-[11px] font-semibold text-accent uppercase tracking-widest mb-6 shadow-[0_0_20px_var(--glow-orange)] backdrop-blur-sm">
-                <Sparkles className="w-3 h-3" />
-                AI-Powered
+              <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded border border-border-primary bg-background-secondary px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-text-secondary">
+                <Database className="h-3 w-3" />
+                Retrieval Engine v1.2
               </div>
-              <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] text-text-primary tracking-[-0.04em] leading-[0.95] mb-4">
+
+              <h1 className="font-display mb-6 text-[clamp(2.7rem,6.5vw,4.5rem)] leading-[0.92] tracking-[-0.04em] text-text-primary">
                 Discover builders
                 <br />
-                <span className="gradient-text">by what they ship.</span>
+                by what they ship.
               </h1>
-              <p className="text-[15px] text-text-secondary max-w-md mx-auto leading-relaxed">
-                Scout searches {mockBuilders.length} builders, {mockProjects.length} projects, and {mockAntathons.length} hackathons. Ask anything.
+              <p className="mx-auto max-w-lg text-[16px] leading-relaxed text-text-secondary">
+                Search verified builders, projects, and hackathons from your production data. Structured results, zero hallucinations.
               </p>
             </>
           )}
@@ -513,15 +506,15 @@ export function AgentHome() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15, ease }}
           className={cn(
-            "relative glass-card search-glow rounded-2xl shadow-[0_2px_20px_-4px_rgba(0,0,0,0.06)] transition-all duration-300",
+            "relative bg-surface border transition-all duration-200",
             isSearching
-              ? "border-accent/40 shadow-[0_0_30px_var(--glow-orange),0_0_60px_var(--glow-orange)]"
-              : "border-border-primary/60 hover:border-border-primary focus-within:border-accent/40"
+              ? "border-text-primary"
+              : "border-border-primary shadow-sm hover:border-text-tertiary focus-within:border-text-primary"
           )}
         >
-          <div className="flex items-center gap-3 px-5 py-4">
+          <div className="flex items-center gap-4 px-5 py-4">
             {isSearching ? (
-              <Loader2 className="w-5 h-5 text-accent animate-spin shrink-0" />
+              <Loader2 className="w-5 h-5 text-text-primary animate-spin shrink-0" />
             ) : (
               <Search className="w-5 h-5 text-text-tertiary shrink-0" />
             )}
@@ -531,32 +524,25 @@ export function AgentHome() {
               value={query}
               onChange={(e) => setQuery(e.target.value.slice(0, MAX_CHARS))}
               onKeyDown={handleKeyDown}
-              placeholder="Ask Scout about builders, projects, hackathons..."
+              placeholder="Query builders, projects, or active hackathons..."
               disabled={isSearching}
               maxLength={MAX_CHARS}
-              className="flex-1 bg-transparent text-[15px] text-text-primary placeholder:text-text-tertiary/60 outline-none disabled:opacity-50"
+              className="flex-1 bg-transparent text-[15px] font-medium text-text-primary placeholder:text-text-tertiary/50 outline-none disabled:opacity-50"
               autoComplete="off"
             />
             {query.trim() && (
               <button
                 onClick={() => handleSearch()}
                 disabled={isSearching}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-text-primary text-background-primary text-[12px] font-semibold hover:opacity-80 disabled:opacity-30 transition-opacity shrink-0"
+                className="flex h-8 w-8 items-center justify-center rounded bg-text-primary text-background-primary hover:opacity-90 disabled:opacity-20 transition-opacity"
               >
-                <CornerDownLeft className="w-3 h-3" />
+                <CornerDownLeft className="h-4 w-4" />
               </button>
             )}
           </div>
-
-          {/* Character counter near limit */}
-          {query.length > WARN_CHARS && (
-            <div className="absolute right-5 -bottom-5 text-[10px] text-text-tertiary">
-              {query.length}/{MAX_CHARS}
-            </div>
-          )}
         </motion.div>
 
-        {/* Suggestion chips (only when no results) */}
+        {/* Suggestion chips */}
         <AnimatePresence>
           {!hasResults && (
             <motion.div
@@ -571,7 +557,7 @@ export function AgentHome() {
                   key={s.label}
                   onClick={() => handleSearch(s.prompt)}
                   disabled={isSearching}
-                  className="group flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card text-[13px] font-medium text-text-secondary hover:border-accent/30 hover:text-text-primary hover:bg-accent-muted/20 hover:shadow-[0_0_15px_var(--glow-orange)] disabled:opacity-40 transition-all"
+                  className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border-primary bg-surface text-[13px] font-medium text-text-secondary hover:border-accent/40 hover:text-text-primary hover:shadow-sm disabled:opacity-40 transition-all"
                 >
                   <s.icon className="w-3.5 h-3.5 text-text-tertiary group-hover:text-accent transition-colors" />
                   {s.label}
@@ -587,16 +573,15 @@ export function AgentHome() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-center text-[11px] text-text-tertiary/50 mt-5"
+            className="mt-5 text-center text-[11px] text-text-tertiary/70"
           >
-            Scout only answers Antry queries. Rate limited. No external data.
+            Scout only answers Antry queries. Rate-limited. No external web context.
           </motion.p>
         )}
 
         {/* Results */}
         {hasResults && (
           <div ref={resultsRef} className="mt-8 space-y-8">
-            {/* New search button */}
             <div className="flex justify-center">
               <button
                 onClick={resetConversation}
@@ -615,15 +600,13 @@ export function AgentHome() {
                 transition={{ duration: 0.4, ease }}
                 className="space-y-4"
               >
-                {/* User query */}
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <Search className="w-3.5 h-3.5 text-background-primary" />
+                  <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center shrink-0 mt-0.5">
+                    <Search className="w-3.5 h-3.5 text-white" />
                   </div>
                   <p className="text-[15px] font-medium text-text-primary pt-1">{turn.query}</p>
                 </div>
 
-                {/* Sources bar (Perplexity-style) */}
                 {turn.steps.length > 0 && (
                   <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                     <span className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider shrink-0">
@@ -635,12 +618,10 @@ export function AgentHome() {
                   </div>
                 )}
 
-                {/* Loading state */}
                 {turn.isLoading && <ThinkingSkeleton />}
 
-                {/* Error state */}
                 {turn.error && (
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/5 border border-red-500/10">
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10">
                     <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-[13px] font-medium text-red-600 dark:text-red-400">{turn.error}</p>
@@ -654,17 +635,14 @@ export function AgentHome() {
                   </div>
                 )}
 
-                {/* Response */}
                 {turn.response && (
                   <div className="space-y-4">
-                    {/* Text response */}
                     <div className="text-[14px] text-text-secondary space-y-1.5">
                       {turn.response.split("\n").map((line, i) => (
                         <RenderLine key={i} line={line} />
                       ))}
                     </div>
 
-                    {/* Rich cards */}
                     {turn.cards.length > 0 && (
                       <div className="space-y-2">
                         {turn.cards.map((card, i) => (
@@ -682,12 +660,10 @@ export function AgentHome() {
                   </div>
                 )}
 
-                {/* Divider between turns */}
-                {turn.response && <div className="border-t border-border-primary/30" />}
+                {turn.response && <div className="border-t border-border-primary" />}
               </motion.div>
             ))}
 
-            {/* Follow-up chips */}
             {!isSearching && turns[turns.length - 1]?.response && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -699,7 +675,7 @@ export function AgentHome() {
                   <button
                     key={fu}
                     onClick={() => handleSearch(fu)}
-                    className="px-3.5 py-2 rounded-xl border border-border-primary/40 bg-background-primary text-[12px] font-medium text-text-secondary hover:border-accent/30 hover:text-text-primary hover:bg-accent-muted/20 transition-all"
+                    className="px-3.5 py-2 rounded-xl border border-border-primary bg-surface text-[12px] font-medium text-text-secondary hover:border-accent/30 hover:text-text-primary hover:shadow-sm transition-all"
                   >
                     {fu}
                   </button>

@@ -40,7 +40,7 @@ export default function ProjectDetailPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="aspect-[2.2/1] rounded-3xl overflow-hidden mb-8 relative shadow-[0_4px_20px_-8px_rgba(0,0,0,0.1)]"
+        className="aspect-[2.2/1] rounded-lg overflow-hidden mb-8 relative shadow-sm"
         style={{ background: project.gradient }}
       >
         <div
@@ -114,7 +114,7 @@ export default function ProjectDetailPage() {
           {project.techStack.map((t) => (
             <span
               key={t}
-              className="text-[12px] font-mono text-text-secondary bg-background-secondary rounded-full px-3 py-1"
+              className="text-[12px] font-mono text-text-secondary bg-background-secondary rounded-lg px-3 py-1"
             >
               {t}
             </span>
@@ -128,7 +128,7 @@ export default function ProjectDetailPage() {
           href={project.demoUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white rounded-full text-[13px] font-semibold hover:opacity-90 transition-all"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white rounded-lg text-[13px] font-semibold hover:opacity-90 transition-all"
         >
           Live demo <ArrowUpRight className="w-3.5 h-3.5" />
         </a>
@@ -137,7 +137,7 @@ export default function ProjectDetailPage() {
             href={project.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-background-secondary text-text-primary rounded-full text-[13px] font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-background-secondary text-text-primary rounded-lg text-[13px] font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           >
             <Github className="w-3.5 h-3.5" /> Source
           </a>
@@ -145,7 +145,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Meta */}
-      <div className="py-5 border-t border-black/5 dark:border-white/5 flex flex-wrap gap-5 text-[11px] font-mono text-text-tertiary">
+      <div className="py-5 border-t border-border-primary flex flex-wrap gap-5 text-[11px] font-mono text-text-tertiary">
         <span>{project.category.replace("-", " ")}</span>
         <span>{formatDate(project.createdAt)}</span>
         <span>{project.buildTime}</span>
@@ -153,7 +153,7 @@ export default function ProjectDetailPage() {
 
       {/* More */}
       {more.length > 0 && (
-        <div className="mt-10 pt-8 border-t border-black/5 dark:border-white/5">
+        <div className="mt-10 pt-8 border-t border-border-primary">
           <h3 className="text-[14px] text-text-secondary mb-6 font-medium">
             More from {project.builder.name}
           </h3>

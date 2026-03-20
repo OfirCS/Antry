@@ -392,7 +392,7 @@ async function buildSupabaseDataset(): Promise<AgentDataset | null> {
       projectCount: 0,
       gradient:
         profile.gradient ||
-        "linear-gradient(135deg, #e8590c 0%, #f97316 100%)",
+        "linear-gradient(135deg, #111827 0%, #374151 100%)",
       antathonIds: [],
     });
   });
@@ -421,7 +421,7 @@ async function buildSupabaseDataset(): Promise<AgentDataset | null> {
       createdAt: project.created_at || new Date().toISOString(),
       gradient:
         project.gradient ||
-        "linear-gradient(135deg, #e8590c 0%, #f97316 100%)",
+        "linear-gradient(135deg, #111827 0%, #374151 100%)",
       antathonId: undefined,
     });
   });
@@ -451,7 +451,7 @@ async function buildSupabaseDataset(): Promise<AgentDataset | null> {
     participantCount: hackathon.participant_count || 0,
     submissionCount: hackathon.submission_count || 0,
     status: coerceStatus(hackathon.status),
-    gradient: "linear-gradient(135deg, #e8590c 0%, #f97316 100%)",
+    gradient: "linear-gradient(135deg, #111827 0%, #374151 100%)",
   }));
 
   return {

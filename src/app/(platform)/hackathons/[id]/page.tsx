@@ -39,12 +39,12 @@ export default function AntathonDetailPage() {
   return (
     <div className="bg-background-primary min-h-screen">
       {/* ── Hero ── */}
-      <section className="relative pt-40 pb-24 px-8 bg-[#111] text-white overflow-hidden">
+      <section className="relative pt-40 pb-24 px-8 bg-text-primary text-white overflow-hidden">
         <div
           className="absolute inset-0 opacity-40"
           style={{ background: event.gradient }}
         />
-        <div className="absolute inset-0 bg-[#111]/80" />
+        <div className="absolute inset-0 bg-text-primary/80" />
 
         <div className="max-w-[900px] mx-auto relative z-10">
           <motion.div
@@ -61,7 +61,7 @@ export default function AntathonDetailPage() {
             </Link>
 
             <div className="mb-6">
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/8 border border-white/10 rounded-full text-[11px] font-semibold uppercase tracking-wider text-white/60">
+              <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/8 border border-white/10 rounded-lg text-[11px] font-semibold uppercase tracking-wider text-white/60">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 {event.status}
               </span>
@@ -96,7 +96,7 @@ export default function AntathonDetailPage() {
               </span>
             </div>
           ))}
-          <button className="ml-auto px-6 py-2.5 bg-accent text-white rounded-full font-semibold text-[13px] hover:opacity-90 transition-opacity active:scale-[0.97]">
+          <button className="ml-auto px-6 py-2.5 bg-accent text-white rounded-lg font-semibold text-[13px] hover:opacity-90 transition-opacity active:scale-[0.97]">
             Join hackathon
           </button>
         </div>
@@ -129,7 +129,7 @@ export default function AntathonDetailPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                  className="group relative rounded-2xl overflow-hidden border border-border-primary/60 hover:border-border-primary bg-surface cursor-pointer transition-all duration-300 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]"
+                  className="group relative rounded-lg overflow-hidden border border-border-primary/60 hover:border-border-primary bg-surface cursor-pointer transition-all duration-300 "
                 >
                   {/* Gradient top band */}
                   <div
@@ -201,7 +201,7 @@ export default function AntathonDetailPage() {
           </div>
           <Link
             href="#"
-            className="px-6 py-2.5 border border-border-primary rounded-full text-[13px] font-semibold text-text-primary hover:bg-surface transition-colors"
+            className="px-6 py-2.5 border border-border-primary rounded-lg text-[13px] font-semibold text-text-primary hover:bg-surface transition-colors"
           >
             Get in touch
           </Link>

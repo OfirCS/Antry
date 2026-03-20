@@ -103,7 +103,7 @@ function MiniHackathonCard({ data }: { data: AgentRichCard & { type: "hackathon"
       href={`/hackathons/${h.id}`}
       className="group flex items-center gap-2.5 p-2.5 rounded-lg border border-border-primary/30 bg-background-primary hover:border-accent/20 transition-all"
     >
-      <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center shrink-0">
+      <div className="w-7 h-7 rounded-md bg-background-secondary flex items-center justify-center shrink-0">
         <Trophy className="w-3.5 h-3.5 text-yellow-400" />
       </div>
       <div className="min-w-0 flex-1">
@@ -268,245 +268,158 @@ export function ScoutAgent() {
         body: JSON.stringify({ message: msg, history }),
       });
 
-      if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error || `Request failed (${res.status})`);
-      }
+      if (!res.ok) throw new Error("Request failed");
 
       const json = (await res.json()) as AgentResponseBody;
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          role: "assistant",
-          content: json.response,
-          steps: json.steps,
-          cards: json.cards,
-        },
-      ]);
+      setMessages((prev) => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: json.response,
+        steps: json.steps,
+        cards: json.cards,
+      }]);
     } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Something went wrong.";
-      setMessages((prev) => [
-        ...prev,
-        { id: (Date.now() + 1).toString(), role: "assistant", content: errMsg, error: errMsg },
-      ]);
+      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: "assistant", content: "Sync interrupted.", error: "error" }]);
     } finally {
       setIsThinking(false);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const resetChat = () => {
-    setMessages([]);
-    setInput("");
-    inputRef.current?.focus();
-  };
-
   return (
-    <>
-      {/* Floating trigger */}
+    <div className="fixed bottom-8 right-8 z-[100]">
       <AnimatePresence>
-        {!isOpen && (
+        {!isOpen ? (
           <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            layoutId="agent"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            exit={{ scale: 0, rotate: 20 }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-text-primary text-background-primary flex items-center justify-center shadow-[0_8px_32px_-4px_rgba(0,0,0,0.2)] hover:scale-105 active:scale-95 transition-transform"
-            aria-label="Open Scout AI"
+            className="relative h-16 w-16 group"
           >
-            <Sparkles className="w-5 h-5" />
+            {/* 3D Orb Effect */}
+            <div className="absolute inset-0 rounded-full bg-text-primary shadow-[0_0_40px_rgba(0,0,0,0.1)] group-hover:shadow-[0_0_50px_rgba(0,0,0,0.15)] transition-shadow" />
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.6, 0.3]
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-[-4px] rounded-full border border-text-primary/20" 
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Bot className="w-6 h-6 text-background-primary" />
+            </div>
+            
+            {/* Minimal Tooltip */}
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              whileHover={{ opacity: 1, x: -20 }}
+              className="absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap bg-text-primary text-background-primary px-3 py-1.5 rounded text-[11px] font-bold uppercase tracking-widest pointer-events-none"
+            >
+              Ask Scout
+            </motion.div>
           </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Chat panel */}
-      <AnimatePresence>
-        {isOpen && (
+        ) : (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            layoutId="agent"
+            initial={{ opacity: 0, y: 40, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[560px] max-h-[calc(100vh-120px)] bg-surface border border-border-primary rounded-2xl shadow-[0_24px_80px_-12px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden"
+            exit={{ opacity: 0, y: 40, scale: 0.9 }}
+            className="w-[360px] h-[520px] bg-surface border border-border-primary rounded-xl shadow-2xl overflow-hidden flex flex-col"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border-primary/50 bg-surface">
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
-                  <Bot className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-[13px] font-semibold text-text-primary leading-tight">Scout</h3>
-                  <p className="text-[10px] text-text-tertiary">Antry AI</p>
-                </div>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-primary bg-background-tertiary/50">
+              <div className="flex items-center gap-3">
+                <div className="h-2 w-2 rounded-full bg-text-primary animate-pulse" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-text-primary">Scout Interface</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                {messages.length > 0 && (
-                  <button
-                    onClick={resetChat}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-colors"
-                    title="New chat"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-colors"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <button onClick={() => setIsOpen(false)} className="text-text-tertiary hover:text-text-primary transition-colors">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 scrollbar-thin">
-              {/* Empty state */}
-              {messages.length === 0 && !isThinking && (
-                <div className="flex flex-col items-center justify-center h-full text-center px-2">
-                  <div className="w-10 h-10 rounded-xl bg-accent-muted flex items-center justify-center mb-3">
-                    <Sparkles className="w-4.5 h-4.5 text-accent" />
-                  </div>
-                  <h4 className="text-[14px] font-semibold text-text-primary mb-1.5">Hey, I&apos;m Scout</h4>
-                  <p className="text-[12px] text-text-secondary mb-6 leading-relaxed max-w-[260px]">
-                    I know every builder, project, and hackathon on Antry.
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 scrollbar-none">
+              {messages.length === 0 && (
+                <div className="pt-8 text-center">
+                  <p className="text-[13px] text-text-secondary leading-relaxed">
+                    I have indexed all production records.
+                    <br />
+                    What can I retrieve for you?
                   </p>
-                  <div className="grid grid-cols-2 gap-1.5 w-full">
-                    {QUICK_PROMPTS.map((sp) => (
-                      <button
-                        key={sp.label}
-                        onClick={() => handleSend(sp.prompt)}
-                        className="group flex items-center gap-1.5 p-2.5 rounded-lg border border-border-primary/40 bg-background-primary text-left hover:border-accent/20 hover:bg-accent-muted/30 transition-all"
+                  <div className="mt-8 grid gap-2">
+                    {QUICK_PROMPTS.map((p) => (
+                      <button 
+                        key={p.label}
+                        onClick={() => handleSend(p.prompt)}
+                        className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary hover:text-text-primary border border-border-primary p-3 rounded hover:bg-background-tertiary transition-all"
                       >
-                        <sp.icon className="w-3 h-3 text-text-tertiary group-hover:text-accent transition-colors shrink-0" />
-                        <span className="text-[11px] font-medium text-text-secondary group-hover:text-text-primary transition-colors">
-                          {sp.label}
-                        </span>
+                        {p.label}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Message list */}
               {messages.map((msg) => (
-                <div key={msg.id}>
-                  {msg.role === "user" ? (
-                    <div className="flex justify-end">
-                      <div className="max-w-[80%] px-3.5 py-2 rounded-2xl rounded-br-sm bg-text-primary text-background-primary text-[12px] leading-relaxed">
-                        {msg.content}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {/* Tool steps as inline pills */}
-                      {msg.steps && msg.steps.length > 0 && (
-                        <div className="flex items-center gap-1 flex-wrap ml-7">
-                          {msg.steps.map((step, i) => (
-                            <span
-                              key={i}
-                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-background-secondary text-[9px] text-text-tertiary"
-                              title={step.result}
-                            >
-                              <Zap className="w-2 h-2 text-accent" />
-                              {step.tool.replace(/_/g, " ")}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Response text */}
-                      <div className="flex gap-2">
-                        <div className="w-5 h-5 rounded-md bg-accent flex items-center justify-center shrink-0 mt-0.5">
-                          <Bot className="w-2.5 h-2.5 text-white" />
-                        </div>
-                        <div className={cn("max-w-[85%] text-[12px] leading-relaxed space-y-1", msg.error ? "text-red-500" : "text-text-secondary")}>
-                          {msg.error ? (
-                            <div className="flex items-start gap-1.5">
-                              <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
-                              <span>{msg.error}</span>
-                            </div>
-                          ) : (
-                            msg.content.split("\n").map((line, i) =>
-                              line.trim() === "" ? <br key={i} /> : (
-                                <p key={i}><InlineText text={line} /></p>
-                              )
-                            )
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Rich cards */}
-                      {msg.cards && msg.cards.length > 0 && (
-                        <div className="ml-7 space-y-1.5">
-                          {msg.cards.map((card, i) => (
-                            <MiniCardRenderer key={i} card={card} />
-                          ))}
-                        </div>
-                      )}
+                <div key={msg.id} className={cn("flex flex-col", msg.role === "user" ? "items-end" : "items-start")}>
+                  <div className={cn(
+                    "max-w-[90%] p-4 text-[13px] leading-relaxed",
+                    msg.role === "user" 
+                      ? "bg-background-tertiary text-text-primary border border-border-primary rounded-lg" 
+                      : "text-text-secondary border-l-2 border-border-primary pl-4"
+                  )}>
+                    <InlineText text={msg.content} />
+                  </div>
+                  {msg.cards && msg.cards.length > 0 && (
+                    <div className="mt-4 w-full space-y-2 pl-4">
+                      {msg.cards.map((card, i) => (
+                        <MiniCardRenderer key={i} card={card} />
+                      ))}
                     </div>
                   )}
                 </div>
               ))}
-
-              {/* Thinking indicator */}
               {isThinking && (
-                <div className="flex gap-2">
-                  <div className="w-5 h-5 rounded-md bg-accent/80 flex items-center justify-center shrink-0">
-                    <Bot className="w-2.5 h-2.5 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background-secondary">
-                    <Loader2 className="w-3 h-3 text-accent animate-spin" />
-                    <span className="text-[11px] text-text-tertiary">Thinking...</span>
+                <div className="pl-4 border-l-2 border-border-primary py-2">
+                  <div className="flex gap-1">
+                    {[0, 1, 2].map((i) => (
+                      <motion.div
+                        key={i}
+                        animate={{ opacity: [0.2, 1, 0.2] }}
+                        transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                        className="h-1.5 w-1.5 rounded-full bg-text-tertiary"
+                      />
+                    ))}
                   </div>
                 </div>
               )}
-
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="px-3 py-2.5 border-t border-border-primary/50 bg-surface">
-              <div className={cn(
-                "flex items-center gap-2 bg-background-primary border rounded-xl px-3 py-2 transition-colors",
-                isThinking ? "border-border-primary/40" : "border-border-primary/50 focus-within:border-accent/30"
-              )}>
+            <div className="p-4 bg-background-tertiary/30 border-t border-border-primary">
+              <div className="flex items-center gap-3 bg-surface border border-border-primary px-4 py-2.5 rounded focus-within:border-text-primary transition-colors">
                 <input
                   ref={inputRef}
-                  type="text"
                   value={input}
-                  onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask Scout anything..."
-                  disabled={isThinking}
-                  maxLength={MAX_CHARS}
-                  className="flex-1 bg-transparent text-[12px] text-text-primary placeholder:text-text-tertiary/60 outline-none disabled:opacity-40"
-                  autoComplete="off"
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                  placeholder="Request details..."
+                  className="flex-1 bg-transparent text-[13px] text-text-primary outline-none placeholder:text-text-tertiary/40"
                 />
-                <button
+                <button 
                   onClick={() => handleSend()}
                   disabled={!input.trim() || isThinking}
-                  className="w-6 h-6 rounded-md bg-text-primary text-background-primary flex items-center justify-center disabled:opacity-20 hover:opacity-80 transition-opacity shrink-0"
+                  className="text-text-primary disabled:opacity-20 hover:scale-110 transition-transform"
                 >
-                  <Send className="w-3 h-3" />
+                  <Send className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[9px] text-text-tertiary/50 text-center mt-1.5">
-                {mockBuilders.length} builders · {mockProjects.length} projects · {mockAntathons.length} hackathons
-              </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

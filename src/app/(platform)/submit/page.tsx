@@ -28,7 +28,7 @@ export default function SubmitPage() {
 
   const inputCls = (field: string) =>
     cn(
-      "w-full px-5 py-3.5 bg-background-secondary border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-2xl text-[14px] font-medium outline-none transition-all duration-300",
+      "w-full px-5 py-3.5 bg-background-secondary border border-border-primary shadow-sm rounded-lg text-[14px] font-medium outline-none transition-all duration-300",
       hasFieldError(field)
         ? "border-red-400 focus:ring-2 focus:ring-red-400/20"
         : "focus:border-accent/40 focus:ring-2 focus:ring-accent/20 text-text-primary placeholder:text-text-tertiary"
@@ -180,7 +180,7 @@ export default function SubmitPage() {
         <div className="pt-4 flex items-center gap-4">
           <button
             type="submit"
-            className="px-6 py-3.5 bg-accent text-white rounded-full text-[14px] font-semibold hover:shadow-[0_4px_14px_0_rgba(232,89,12,0.2)] dark:hover:shadow-[0_4px_14px_0_rgba(249,115,22,0.2)] hover:opacity-90 transition-all duration-300 ease-out disabled:opacity-50"
+            className="px-6 py-3.5 bg-accent text-white rounded-lg text-[14px] font-semibold  dark: hover:opacity-90 transition-all duration-300 ease-out disabled:opacity-50"
           >
             {pending ? "Submitting..." : "Submit project"}
           </button>

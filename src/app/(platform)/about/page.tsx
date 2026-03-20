@@ -133,7 +133,7 @@ export default function AboutPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease }}
-                className="p-8 bg-surface rounded-3xl border border-black/5 dark:border-white/5"
+                className="p-8 bg-surface rounded-lg border border-border-primary"
               >
                 <div className="flex items-center gap-2 mb-4">
                   <item.icon className="w-4 h-4 text-accent" />
@@ -216,7 +216,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.4, delay: i * 0.06, ease }}
                 className="flex gap-6"
               >
-                <div className="w-1 bg-accent/20 rounded-full shrink-0" />
+                <div className="w-1 bg-accent/20 rounded-lg shrink-0" />
                 <div>
                   <h3 className="text-[16px] font-semibold text-text-primary mb-1">
                     {value.title}
@@ -232,7 +232,7 @@ export default function AboutPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="py-24 px-8 bg-[#111] text-white">
+      <section className="py-24 px-8 bg-text-primary text-white">
         <div className="max-w-[480px] mx-auto text-center">
           <motion.div
             variants={fadeUp}
@@ -250,7 +250,7 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-[#111] rounded-full text-[14px] font-semibold hover:bg-white/90 transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-text-primary rounded-lg text-[14px] font-semibold hover:bg-white/90 transition-colors"
               >
                 Create profile
                 <ArrowRight className="w-4 h-4" />

@@ -25,7 +25,7 @@ export default function HackathonsPage() {
   return (
     <div className="min-h-screen bg-background-primary">
       {/* Sticky search + filter bar */}
-      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5">
+      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/80 backdrop-blur-xl border-b border-border-primary">
         <div className="max-w-[720px] mx-auto px-6 py-4 flex items-center gap-3">
           {/* Search */}
           <div className="relative flex-1">
@@ -35,18 +35,18 @@ export default function HackathonsPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search hackathons..."
-              className="w-full pl-9 pr-4 py-2 bg-transparent border border-black/5 dark:border-white/5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.02)] rounded-full text-[13px] text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
+              className="w-full pl-9 pr-4 py-2 bg-transparent border border-border-primary shadow-sm rounded-lg text-[13px] text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
             />
           </div>
 
           {/* Filter pills */}
-          <div className="flex items-center gap-0.5 bg-background-secondary/60 p-1 rounded-full">
+          <div className="flex items-center gap-0.5 bg-background-secondary/60 p-1 rounded-lg">
             {filters.map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
                 className={cn(
-                  "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all duration-200",
+                  "px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider rounded-lg transition-all duration-200",
                   filter === f
                     ? "bg-text-primary text-background-primary shadow-sm"
                     : "text-text-tertiary hover:text-text-secondary"
@@ -123,7 +123,7 @@ function HackathonCard({
     >
       <Link
         href={`/hackathons/${event.id}`}
-        className="group flex items-center gap-4 px-4 py-4 rounded-2xl border border-transparent hover:border-black/5 dark:hover:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all duration-200"
+        className="group flex items-center gap-4 px-4 py-4 rounded-lg border border-transparent hover:border-black/5 dark:hover:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-all duration-200"
       >
         {/* Gradient initial */}
         <div

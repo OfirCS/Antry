@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import { Sora, DM_Sans, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/lib/supabase/auth-context";
 import { ScoutAgent } from "@/components/ScoutAgent";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument",
+const sora = Sora({
+  variable: "--font-editorial",
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const dmSans = DM_Sans({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -35,9 +35,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${plusJakarta.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${dmSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col grain">
+      <body className="min-h-full flex flex-col">
+        <div className="noise-overlay" />
         <AuthProvider>
           {children}
           <ScoutAgent />

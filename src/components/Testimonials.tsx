@@ -4,25 +4,28 @@ import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    quote: "I landed my current role because a CTO saw my Antry profile. No resume, no cover letter — just my shipped work.",
+    quote:
+      "I landed my current role because a CTO saw my Antry profile. No resume, no cover letter, just shipped work and clear proof.",
     name: "Mara Chen",
     role: "AI Engineer",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     initials: "MC",
+    gradient: "linear-gradient(135deg, #2563eb 0%, #0891b2 100%)",
   },
   {
-    quote: "Antathons pushed me to ship faster than I ever have. Built and deployed Flowstate in 48 hours — and won.",
+    quote:
+      "Antathons changed my shipping pace. I built and deployed Flowstate in 48 hours and got qualified inbound leads the same week.",
     name: "Jake Torres",
     role: "Full-Stack Builder",
-    gradient: "linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%)",
     initials: "JT",
+    gradient: "linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%)",
   },
   {
-    quote: "Finally, a platform that cares about what I've built, not which company I worked at. This is how it should be.",
+    quote:
+      "It finally feels fair. Teams judge me on depth, polish, and momentum instead of buzzwords or company logos.",
     name: "Aisha Patel",
     role: "Design Engineer",
-    gradient: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)",
     initials: "AP",
+    gradient: "linear-gradient(135deg, #0ea5e9 0%, #4338ca 100%)",
   },
 ];
 
@@ -30,58 +33,52 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Testimonials() {
   return (
-    <section className="py-32 px-8 mesh-gradient">
-      <div className="max-w-[1100px] mx-auto relative z-10">
+    <section className="px-6 py-28 sm:px-8">
+      <div className="mx-auto max-w-[1160px]">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease }}
-          className="mb-16"
+          className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
         >
-          <span className="text-[12px] font-semibold text-accent uppercase tracking-wider">
-            From the community
-          </span>
-          <h2 className="font-display text-[clamp(2rem,5vw,3rem)] text-text-primary tracking-[-0.02em] mt-4">
-            Builders who ship here.
-          </h2>
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-text-tertiary">Success Stories</span>
+            <h2 className="mt-4 font-display text-[clamp(2.3rem,6vw,4.2rem)] leading-[0.95] tracking-[-0.04em] text-text-primary">
+              Teams discover builders.
+              <br />
+              Builders get momentum.
+            </h2>
+          </div>
+          <p className="max-w-[340px] text-[15px] leading-relaxed text-text-secondary">
+            Verified outcomes from builders who converted shipping signal into real opportunity.
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-px bg-border-primary border border-border-primary md:grid-cols-3">
           {testimonials.map((t, i) => (
-            <motion.div
+            <motion.article
               key={t.name}
-              initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15, ease }}
-              className="relative p-8 rounded-3xl glass-card glow-border bg-surface/80 hover:-translate-y-1 transition-all duration-300"
+              transition={{ duration: 0.55, delay: i * 0.1, ease }}
+              className="bg-surface relative flex h-full flex-col justify-between gap-10 p-8 hover:bg-background-tertiary transition-colors"
             >
-              {/* Quotation mark */}
-              <span
-                className="text-[48px] font-display leading-none absolute top-4 right-6 select-none gradient-text"
-                style={{ opacity: 0.25 }}
-              >
-                &ldquo;
-              </span>
+              <p className="relative z-10 text-[15px] leading-relaxed text-text-secondary">&ldquo;{t.quote}&rdquo;</p>
 
-              <p className="text-[15px] text-text-secondary leading-relaxed mb-8 relative z-10">
-                &ldquo;{t.quote}&rdquo;
-              </p>
-
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div
-                  className="w-9 h-9 rounded-lg flex items-center justify-center text-[11px] font-bold text-white"
-                  style={{ background: t.gradient }}
+                  className="flex h-10 w-10 items-center justify-center rounded bg-text-primary text-[11px] font-bold text-background-primary"
                 >
                   {t.initials}
                 </div>
                 <div>
-                  <p className="text-[14px] font-semibold text-text-primary">{t.name}</p>
-                  <p className="text-[12px] text-text-tertiary">{t.role}</p>
+                  <p className="text-[14px] font-bold text-text-primary">{t.name}</p>
+                  <p className="text-[12px] font-medium text-text-tertiary">{t.role}</p>
                 </div>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>

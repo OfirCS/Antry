@@ -57,12 +57,12 @@ export async function createProject(
     : [];
 
   const gradients = [
-    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-    "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-    "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+    "linear-gradient(135deg, #111827 0%, #374151 100%)",
+    "linear-gradient(135deg, #374151 0%, #4b5563 100%)",
+    "linear-gradient(135deg, #1e293b 0%, #334155 100%)",
+    "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+    "linear-gradient(135deg, #171717 0%, #262626 100%)",
+    "linear-gradient(135deg, #27272a 0%, #404040 100%)",
   ];
 
   const { error } = await supabase.from("projects").insert({

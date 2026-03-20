@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface WaitlistFormProps {
   initialCount?: number;
@@ -11,7 +12,7 @@ interface WaitlistFormProps {
   dark?: boolean;
 }
 
-export function WaitlistForm({ initialCount = 247, className, dark }: WaitlistFormProps) {
+export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [count, setCount] = useState(initialCount);
@@ -36,11 +37,11 @@ export function WaitlistForm({ initialCount = 247, className, dark }: WaitlistFo
           {!submitted ? (
             <motion.form
               key="form"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98 }}
               onSubmit={handleSubmit}
-              className="flex flex-col sm:flex-row gap-2 w-full"
+              className="flex w-full flex-col gap-2 sm:flex-row"
             >
               <input
                 type="email"
@@ -49,36 +50,23 @@ export function WaitlistForm({ initialCount = 247, className, dark }: WaitlistFo
                   setEmail(e.target.value);
                   if (isError) setIsError(false);
                 }}
-                placeholder="Email address"
+                placeholder="Enter your email"
                 className={cn(
-                  "flex-1 px-5 py-3.5 border rounded-full text-[14px] font-medium outline-none transition-all duration-300",
-                  dark
-                    ? "bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-white/50 focus:shadow-[0_0_20px_var(--glow-orange),0_0_40px_var(--glow-orange)] focus:outline-none"
-                    : "glass-card text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:shadow-[0_0_20px_var(--glow-orange),0_0_40px_var(--glow-orange)] focus:outline-none",
+                  "flex-1 rounded-xl border px-5 py-3.5 text-[14px] font-medium outline-none transition-all duration-200",
+                  "border-border-primary bg-background-secondary text-text-primary placeholder:text-text-tertiary focus:border-accent focus:ring-2 focus:ring-accent/20",
                   isError && "border-red-400 placeholder:text-red-300"
                 )}
               />
-              <button
-                type="submit"
-                className={cn(
-                  "flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[14px] font-semibold whitespace-nowrap transition-all active:scale-[0.97]",
-                  dark
-                    ? "bg-white text-[#111] hover:bg-white/90 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                    : "bg-text-primary text-background-primary hover:opacity-80 hover:shadow-[0_0_20px_var(--glow-orange)]"
-                )}
-              >
+              <Button type="submit" variant="default" size="lg">
                 Apply <ArrowRight className="w-4 h-4" />
-              </button>
+              </Button>
             </motion.form>
           ) : (
             <motion.div
               key="done"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className={cn(
-                "flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-full text-[14px] font-semibold",
-                dark ? "bg-white text-[#111]" : "bg-text-primary text-background-primary"
-              )}
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-accent px-5 py-3.5 text-[14px] font-semibold text-white"
             >
               <Check className="w-4 h-4" />
               Application received
@@ -87,11 +75,8 @@ export function WaitlistForm({ initialCount = 247, className, dark }: WaitlistFo
         </AnimatePresence>
       </div>
 
-      <p className={cn(
-        "mt-4 text-[12px] font-medium tracking-wide",
-        dark ? "text-white/40" : "text-text-tertiary"
-      )}>
-        <span className={dark ? "text-white/70" : "text-text-secondary"}>{count.toLocaleString()}</span>{" "}
+      <p className="mt-4 text-[12px] font-medium tracking-wide text-text-tertiary">
+        <span className="text-text-secondary">{count.toLocaleString()}</span>{" "}
         builders in queue
       </p>
     </div>
