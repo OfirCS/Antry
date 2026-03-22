@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/supabase/auth-context";
 import { Button } from "@/components/ui/button";
 
 const links = [
-  { href: "/about", label: "About" },
+  { href: "/discover", label: "Discover" },
   { href: "/builders", label: "Builders" },
   { href: "/hackathons", label: "Hackathons" },
   { href: "/companies", label: "For Companies" },

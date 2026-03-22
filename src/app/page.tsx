@@ -351,8 +351,8 @@ export default function Home() {
                     </Link>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
-                    <Link href="/builders">
-                      Explore Builders
+                    <Link href="/discover">
+                      Explore Projects
                     </Link>
                   </Button>
                 </div>
@@ -669,7 +669,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-x-8 gap-y-4 text-[13px] font-medium text-text-tertiary">
-                <Link href="/about" className="transition-colors hover:text-text-primary">About</Link>
+                <Link href="/discover" className="transition-colors hover:text-text-primary">Discover</Link>
                 <Link href="/builders" className="transition-colors hover:text-text-primary">Builders</Link>
                 <Link href="/hackathons" className="transition-colors hover:text-text-primary">Hackathons</Link>
                 <Link href="/companies" className="transition-colors hover:text-text-primary">Companies</Link>
