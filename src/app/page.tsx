@@ -2,40 +2,38 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate, useSpring } from "framer-motion";
 import {
   ArrowRight,
-  ArrowUpRight,
-  Bot,
-  Database,
-  Layers,
+  Check,
+  GitBranch,
+  Shield,
   Search,
-  ShieldCheck,
-  Sparkles,
-  Trophy,
+  Terminal,
+  Layers,
+  BarChart3,
+  Building2,
+  ChevronRight,
+  Rocket,
   Users,
   Zap,
 } from "lucide-react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Nav } from "@/components/Nav";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { Button } from "@/components/ui/button";
-import { antathons, builders, projects, getInitials } from "@/lib/mock-data";
+import { antathons, projects } from "@/lib/mock-data";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+/* ── Shared ───────────────────────────────── */
+const ease = [0.16, 1, 0.3, 1] as const;
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
 };
 
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-const staggerContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+const stagger = {
+  visible: { transition: { staggerChildren: 0.07 } },
 };
 
 const tierRank = { title: 0, gold: 1, partner: 2 } as const;
@@ -55,306 +53,358 @@ function uniqueSponsorsWithTier() {
     .sort((a, b) => tierRank[a.tier] - tierRank[b.tier]);
 }
 
-/* ── Animated data visualization for hero ─── */
-function HeroVisual() {
-  const topBuilders = [...builders].sort((a, b) => b.projectCount - a.projectCount).slice(0, 4);
-
-  return (
-    <div className="relative w-full max-w-[600px] mx-auto" style={{ perspective: "1500px" }}>
-      {/* Background Glow */}
-      <div className="absolute inset-0 -z-10 rounded-3xl bg-accent/[0.04] blur-[100px] scale-125" />
-
-      <motion.div
-        initial={{ rotateY: -10, rotateX: 5, opacity: 0, scale: 0.98 }}
-        animate={{ rotateY: 0, rotateX: 0, opacity: 1, scale: 1 }}
-        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-        className="rounded-xl border border-border-primary bg-surface shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden"
-      >
-        {/* Top bar - Ultra Clean */}
-        <div className="flex items-center justify-between border-b border-border-tertiary px-6 py-4 bg-background-secondary/30">
-          <div className="flex items-center gap-1.5">
-            <div className="h-2 w-2 rounded-full bg-border-primary" />
-            <div className="h-2 w-2 rounded-full bg-border-primary" />
-            <div className="h-2 w-2 rounded-full bg-border-primary" />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent-muted px-2 py-0.5 rounded-md">
-              Engine v2.4
-            </span>
-          </div>
-        </div>
-
-        {/* Search / Command Bar */}
-        <div className="px-6 py-5 border-b border-border-tertiary">
-          <div className="flex items-center gap-3 text-[14px] text-text-tertiary">
-            <Search className="h-4 w-4 text-accent" />
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="flex items-center gap-1"
-            >
-              <span>Querying</span>
-              <span className="text-text-primary font-medium">"top AI agents builders"</span>
-              <span className="w-1 h-4 bg-accent animate-pulse ml-0.5" />
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="p-2">
-          {topBuilders.map((builder, index) => (
-            <motion.div
-              key={builder.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.4 + index * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="flex items-center justify-between p-4 rounded-lg hover:bg-background-secondary transition-all duration-300 group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-lg flex items-center justify-center text-xs font-bold text-white shadow-sm"
-                  style={{ background: builder.gradient }}
-                >
-                  {getInitials(builder.name)}
-                </div>
-                <div>
-                  <p className="text-[14px] font-semibold text-text-primary">{builder.name}</p>
-                  <p className="text-[12px] text-text-tertiary tracking-tight">{builder.skills.slice(0, 2).join(" · ")}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-6">
-                <div className="hidden sm:flex flex-col items-end">
-                  <span className="text-[11px] font-bold text-text-primary uppercase tracking-wider">{builder.projectCount} ships</span>
-                  <div className="h-1 w-20 rounded-full bg-border-tertiary mt-1.5 overflow-hidden">
-                    <motion.div
-                      className="h-full bg-accent"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${85 - index * 12}%` }}
-                      transition={{ duration: 1, delay: 1.8 + index * 0.1 }}
-                    />
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-text-tertiary group-hover:text-accent group-hover:translate-x-1 transition-all" />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Bottom Status */}
-        <div className="px-6 py-4 bg-background-secondary/30 border-t border-border-tertiary flex items-center justify-between">
-          <div className="flex items-center gap-4 text-[11px] font-medium text-text-tertiary uppercase tracking-widest">
-            <span className="flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              Verified
-            </span>
-            <span className="opacity-40">/</span>
-            <span>{builders.length} nodes</span>
-          </div>
-          <div className="text-[10px] font-mono text-text-tertiary bg-surface px-2 py-0.5 rounded border border-border-tertiary">
-            LATENCY: 84MS
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Floating Detail Elements */}
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 2.2, duration: 0.8 }}
-        className="absolute -right-8 top-1/4 z-10 hidden xl:block"
-      >
-        <div className="bg-surface border border-border-primary p-4 rounded-xl shadow-xl backdrop-blur-md max-w-[180px]">
-          <div className="flex items-center gap-2 mb-2">
-            <Bot className="h-4 w-4 text-accent" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-text-secondary">Agent Intel</span>
-          </div>
-          <p className="text-[12px] leading-relaxed text-text-secondary">
-            Matches found across <span className="text-text-primary font-bold">12 frameworks</span>.
-          </p>
-        </div>
-      </motion.div>
-    </div>
+/* ── Animated Counter ─────────────────────── */
+function AnimatedNumber({ value }: { value: number }) {
+  const count = useMotionValue(0);
+  const display = useTransform(count, (v) =>
+    value >= 1000 ? `${(v / 1000).toFixed(1)}k` : Math.round(v).toLocaleString()
   );
+  useEffect(() => {
+    const controls = animate(count, value, { duration: 2, ease: "easeOut" });
+    return controls.stop;
+  }, [count, value]);
+  return <motion.span>{display}</motion.span>;
 }
 
-/* ── Feature card component ───────────────── */
-function FeatureCard({
-  icon: Icon,
-  title,
-  description,
-  delay = 0,
+/* ── Floating Project Cards (Hero Visual) ── */
+
+const cardColors = ["#3B82F6", "#8B5CF6", "#10B981", "#F59E0B", "#EC4899"];
+
+const cardPositions = [
+  { x: 20, y: 40, rotate: -2, scale: 1, zIndex: 5, floatOffset: 0 },
+  { x: 200, y: 0, rotate: 3, scale: 0.93, zIndex: 4, floatOffset: 1 },
+  { x: 60, y: 200, rotate: -1.5, scale: 0.9, zIndex: 3, floatOffset: 2 },
+  { x: 230, y: 160, rotate: 2, scale: 0.87, zIndex: 2, floatOffset: 0.5 },
+  { x: 130, y: -10, rotate: -3, scale: 0.84, zIndex: 1, floatOffset: 1.5 },
+];
+
+function MiniProjectCard({
+  project,
+  color,
+  pos,
+  index,
 }: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  delay?: number;
+  project: (typeof projects)[number];
+  color: string;
+  pos: (typeof cardPositions)[number];
+  index: number;
 }) {
   return (
     <motion.div
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative rounded-xl border border-border-primary bg-surface p-8 transition-all duration-500 hover:border-accent/40 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.05)]"
+      initial={{ opacity: 0, y: 30, rotate: pos.rotate * 2 }}
+      animate={{
+        opacity: 1,
+        y: [0, -10, 0],
+        rotate: pos.rotate,
+      }}
+      transition={{
+        opacity: { delay: 0.3 + index * 0.12, duration: 0.5 },
+        y: {
+          delay: pos.floatOffset,
+          repeat: Infinity,
+          duration: 3.5 + index * 0.3,
+          ease: "easeInOut",
+        },
+        rotate: { delay: 0.3 + index * 0.12, duration: 0.5 },
+      }}
+      whileHover={{
+        scale: 1.08,
+        zIndex: 20,
+        rotate: 0,
+        boxShadow: `0 20px 40px ${color}20`,
+      }}
+      style={{
+        position: "absolute",
+        left: pos.x,
+        top: pos.y,
+        zIndex: pos.zIndex,
+        scale: pos.scale,
+      }}
+      className="w-[210px] rounded-xl border bg-white p-4 shadow-lg shadow-black/[0.04] cursor-pointer select-none"
     >
-      <div className="relative z-10">
-        <div className="mb-8 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-secondary text-text-primary group-hover:bg-accent group-hover:text-[#0a0b0d] transition-colors duration-500">
-          <Icon className="h-5 w-5" />
+      {/* Color accent line */}
+      <div className="h-0.5 w-8 rounded-full mb-3" style={{ backgroundColor: color }} />
+
+      <div className="flex items-center gap-2 mb-2.5">
+        <div
+          className="h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-semibold text-white"
+          style={{ background: project.builder.gradient }}
+        >
+          {project.builder.name.charAt(0)}
         </div>
-        <h3 className="text-[18px] font-bold tracking-tight text-text-primary mb-3">{title}</h3>
-        <p className="text-[14px] leading-relaxed text-text-secondary">{description}</p>
+        <span className="text-[11px] text-text-tertiary">{project.builder.name}</span>
+      </div>
+
+      <div className="text-[14px] font-semibold text-text-primary mb-0.5 leading-tight">
+        {project.title}
+      </div>
+      <div className="text-[11px] text-text-tertiary line-clamp-1 mb-2.5">
+        {project.tagline}
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        {project.techStack.slice(0, 2).map((t) => (
+          <span
+            key={t}
+            className="text-[9px] font-medium px-1.5 py-0.5 rounded-md"
+            style={{ backgroundColor: `${color}10`, color: color }}
+          >
+            {t}
+          </span>
+        ))}
       </div>
     </motion.div>
   );
 }
 
-/* ── Step card ────────────────────────────── */
-function StepCard({ number, title, detail, delay }: { number: number; title: string; detail: string; delay: number }) {
+function HeroVisual() {
+  const heroProjects = [
+    projects[0],
+    projects[1],
+    projects[3],
+    projects[4],
+    projects[6],
+  ];
+
+  return (
+    <div className="relative w-[460px] h-[380px] hidden lg:block">
+      {heroProjects.map((project, i) => (
+        <MiniProjectCard
+          key={project.id}
+          project={project}
+          color={cardColors[i]}
+          pos={cardPositions[i]}
+          index={i}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── Feature row item ─────────────────────── */
+function Feature({
+  icon: Icon,
+  title,
+  description,
+  color,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  color: string;
+}) {
   return (
     <motion.div
       variants={fadeUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="relative px-8"
+      className="group flex items-start gap-3.5 p-4 rounded-xl hover:bg-background-secondary/60 transition-colors"
     >
-      <div className="mb-6 font-mono text-[11px] font-bold tracking-[0.2em] text-accent uppercase">
-        Step {number}
+      <div
+        className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
+        style={{ backgroundColor: `${color}10` }}
+      >
+        <Icon className="h-4 w-4" style={{ color }} />
       </div>
-      <h3 className="text-[20px] font-bold text-text-primary mb-4 tracking-tight">{title}</h3>
-      <p className="text-[15px] leading-relaxed text-text-secondary">{detail}</p>
+      <div>
+        <h3 className="text-[14px] font-semibold text-text-primary mb-0.5">{title}</h3>
+        <p className="text-[13px] text-text-secondary leading-relaxed">{description}</p>
+      </div>
     </motion.div>
   );
 }
 
 /* ── Trust bar ────────────────────────────── */
-function SponsorItem({ name, tier }: { name: string; tier: "title" | "gold" | "partner" }) {
-  const dotClass =
-    tier === "title"
-      ? "bg-accent shadow-[0_0_8px_var(--glow-accent-strong)]"
-      : tier === "gold"
-        ? "bg-text-tertiary/50"
-        : "bg-text-tertiary/25";
-  const textClass =
-    tier === "title"
-      ? "font-bold text-text-primary"
-      : tier === "gold"
-        ? "font-semibold text-text-secondary"
-        : "font-medium text-text-tertiary";
-
-  return (
-    <span className={`inline-flex items-center gap-2.5 px-6 whitespace-nowrap ${textClass}`}>
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${dotClass}`} />
-      <span className="text-[14px] tracking-tight">{name}</span>
-    </span>
-  );
-}
-
 function TrustBar() {
   const sponsors = uniqueSponsorsWithTier();
-  return (
-    <motion.section
-      variants={fadeIn}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
-      className="border-y border-border-tertiary bg-background-secondary/30 py-10 overflow-hidden"
+  const items = sponsors.map((s) => (
+    <span
+      key={s.name}
+      className="inline-flex items-center px-8 opacity-25 hover:opacity-60 transition-opacity cursor-default select-none"
     >
-      <p className="mb-6 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-text-tertiary">
-        Backed by leading sponsors
-      </p>
-      <div className="marquee-mask">
-        <div className="animate-marquee flex w-max">
-          {/* Primary set */}
+      <span className="text-[12px] font-semibold tracking-widest text-text-primary uppercase">
+        {s.name}
+      </span>
+    </span>
+  ));
+
+  return (
+    <div className="py-6 overflow-hidden border-y border-border-secondary/60">
+      <div className="trustbar-mask">
+        <div className="animate-trustbar-marquee flex w-max items-center">
           <div className="flex items-center">
-            {sponsors.map((s) => (
-              <SponsorItem key={s.name} name={s.name} tier={s.tier} />
-            ))}
-          </div>
-          {/* Duplicate for seamless loop */}
-          <div className="flex items-center" aria-hidden="true">
-            {sponsors.map((s) => (
-              <SponsorItem key={`dup-${s.name}`} name={s.name} tier={s.tier} />
-            ))}
+            {items}
+            {items}
           </div>
         </div>
       </div>
-    </motion.section>
+    </div>
+  );
+}
+
+/* ── Interactive Project Showcase ──────────── */
+function ProjectShowcase() {
+  const featured = [...projects].slice(0, 6);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollRef}
+        className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-none -mx-6 px-6"
+      >
+        {featured.map((project, i) => (
+          <motion.div
+            key={project.id}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.06, duration: 0.4, ease }}
+            className="snap-start shrink-0 w-[300px]"
+          >
+            <Link
+              href={`/projects/${project.id}`}
+              className="group block rounded-xl border border-border-primary bg-surface p-5 hover:border-text-tertiary/30 hover:shadow-md transition-all h-full relative overflow-hidden"
+            >
+              {/* Subtle color accent top */}
+              <div
+                className="absolute top-0 left-0 right-0 h-0.5"
+                style={{ backgroundColor: cardColors[i % cardColors.length] }}
+              />
+
+              <div className="flex items-center gap-2 mb-3 mt-1">
+                <div
+                  className="h-6 w-6 rounded-full flex items-center justify-center text-[9px] font-semibold text-white"
+                  style={{ background: project.builder.gradient }}
+                >
+                  {project.builder.name.charAt(0)}
+                </div>
+                <span className="text-[11px] font-medium text-text-tertiary">
+                  {project.builder.name}
+                </span>
+                <div className="ml-auto flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
+                  <Check className="h-2.5 w-2.5" /> Verified
+                </div>
+              </div>
+
+              <h3 className="text-[16px] font-semibold text-text-primary mb-1 group-hover:text-accent-bright transition-colors">
+                {project.title}
+              </h3>
+              <p className="text-[12px] text-text-tertiary line-clamp-2 mb-4 leading-relaxed">
+                {project.tagline}
+              </p>
+
+              <div className="flex items-center gap-1.5 mt-auto">
+                {project.techStack.slice(0, 3).map((t) => (
+                  <span
+                    key={t}
+                    className="text-[10px] font-medium text-text-tertiary bg-background-secondary px-1.5 py-0.5 rounded"
+                  >
+                    {t}
+                  </span>
+                ))}
+                <span className="ml-auto text-[10px] text-text-tertiary">
+                  {project.likes} signals
+                </span>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 }
 
 /* ── Main page ────────────────────────────── */
 export default function Home() {
-  const featuredBuilders = [...builders].sort((a, b) => b.projectCount - a.projectCount).slice(0, 6);
-  const featuredProjects = [...projects].sort((a, b) => b.likes - a.likes).slice(0, 6);
-
-  const nextAntathon = antathons.find((a) => a.status === "active") ?? antathons[0];
-  const prizeTotal =
-    nextAntathon?.prizes
-      .map((p) => parseInt(p.reward.replace(/[^0-9]/g, ""), 10) || 0)
-      .reduce((a, b) => a + b, 0) ?? 0;
-
   return (
     <>
       <Nav />
-      <main className="min-h-screen bg-background-primary pt-20 text-text-primary">
-
+      <main className="min-h-screen bg-background-primary pt-14">
         {/* ════════ HERO ════════ */}
-        <section className="relative overflow-hidden pb-24 pt-24 sm:pb-32 sm:pt-40">
-          <div className="spotlight" />
+        <section className="relative overflow-hidden py-16 sm:py-24 min-h-[calc(100vh-56px)] flex items-center">
+          {/* Subtle gradient orbs */}
+          <div className="absolute top-20 right-[10%] w-[500px] h-[500px] rounded-full bg-blue-500/[0.03] blur-3xl pointer-events-none" />
+          <div className="absolute bottom-20 left-[5%] w-[400px] h-[400px] rounded-full bg-violet-500/[0.03] blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 mx-auto max-w-[1400px] px-6 sm:px-10">
-            <div className="grid items-center gap-20 lg:grid-cols-[1.1fr_0.9fr]">
-              {/* Left: Copy */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              >
+          <div className="relative z-10 mx-auto max-w-[1200px] px-6 w-full">
+            <div className="flex items-center justify-between gap-12">
+              {/* Left */}
+              <div className="max-w-[520px]">
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="inline-flex items-center gap-2 rounded-full border border-border-primary bg-surface px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-text-secondary mb-10 shadow-sm"
+                  transition={{ duration: 0.4 }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border-primary bg-background-secondary/80 text-[12px] font-medium text-text-secondary mb-5"
                 >
-                  <Sparkles className="h-3 w-3 text-accent" />
-                  Proof of Work Protocol
+                  <motion.span
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                  />
+                  Now in early access
                 </motion.div>
 
-                <h1 className="font-display text-[clamp(2.8rem,6vw,5.5rem)] leading-[0.9] tracking-[-0.04em] text-text-primary">
-                  The <span className="text-accent">intelligent layer</span> for technical talent.
-                </h1>
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1, ease }}
+                  className="text-[clamp(2.4rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.035em] text-text-primary mb-5"
+                >
+                  Ship it.{" "}
+                  <span className="text-text-tertiary">Prove it.</span>
+                  <br />
+                  Get discovered.
+                </motion.h1>
 
-                <p className="mt-8 max-w-[480px] text-[18px] leading-relaxed text-text-secondary">
-                  Replace resumes with live signal. Discover builders through verified shipping history and real-world performance.
-                </p>
+                <motion.p
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="text-[16px] leading-relaxed text-text-secondary mb-8 max-w-[400px]"
+                >
+                  The open registry where builders are discovered by what they ship, not what they claim.
+                </motion.p>
 
-                <div className="mt-12 flex flex-wrap items-center gap-5">
-                  <Button variant="default" size="lg" className="rounded-full px-10 h-14 text-base" asChild>
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="flex flex-wrap items-center gap-3"
+                >
+                  <Button size="lg" asChild>
                     <Link href="/signup">
-                      Get Started
-                      <ArrowRight className="h-5 w-5" />
+                      Start building <ArrowRight className="h-4 w-4 ml-1" />
                     </Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="rounded-full px-10 h-14 text-base" asChild>
-                    <Link href="/builders">
-                      Explore Network
-                    </Link>
+                  <Button variant="outline" size="lg" asChild>
+                    <Link href="/builders">Explore builders</Link>
                   </Button>
-                </div>
-              </motion.div>
+                </motion.div>
 
-              {/* Right: Animated Visual */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.4 }}
-              >
-                <HeroVisual />
-              </motion.div>
+                {/* Stats */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7, duration: 0.5 }}
+                  className="flex items-center gap-8 mt-10 pt-6 border-t border-border-secondary"
+                >
+                  {[
+                    { value: 12400, label: "Projects shipped" },
+                    { value: 4200, label: "Builders" },
+                    { value: 140, label: "Frameworks", suffix: "+" },
+                  ].map((stat) => (
+                    <div key={stat.label}>
+                      <div className="text-[22px] font-semibold tracking-tight text-text-primary tabular-nums">
+                        <AnimatedNumber value={stat.value} />
+                        {stat.suffix}
+                      </div>
+                      <div className="text-[11px] text-text-tertiary mt-0.5">{stat.label}</div>
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* Right: Floating cards */}
+              <HeroVisual />
             </div>
           </div>
         </section>
@@ -363,248 +413,118 @@ export default function Home() {
         <TrustBar />
 
         {/* ════════ FEATURES ════════ */}
-        <section className="section-padding relative">
-          <div className="mx-auto max-w-[1200px] px-6">
+        <section className="py-16 sm:py-20">
+          <div className="mx-auto max-w-[1000px] px-6">
             <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-24"
+              className="text-center mb-10"
             >
-              <h2 className="font-display text-[clamp(2.4rem,5vw,4rem)] leading-[0.9] tracking-[-0.03em] text-text-primary max-w-[700px]">
-                Built for deep technical discovery.
+              <h2 className="text-[clamp(1.5rem,3vw,2.2rem)] tracking-tight mb-2">
+                Built for builders who ship
               </h2>
-              <p className="mt-8 max-w-[500px] text-[17px] text-text-secondary leading-relaxed">
-                We've stripped away the noise of resumes and referrals to focus on what actually matters: verified output.
+              <p className="text-[14px] text-text-secondary">
+                Your work speaks. We amplify it.
               </p>
             </motion.div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <FeatureCard
-                icon={Database}
-                title="Verified Dataset"
-                description="Built on a protocol that verifies GitHub contributions, live deployments, and technical peer reviews."
-                delay={0}
-              />
-              <FeatureCard
-                icon={Bot}
-                title="AI Context Matching"
-                description="Our engine understands tech stacks and problem complexity, not just keyword matching."
-                delay={0.1}
-              />
-              <FeatureCard
-                icon={ShieldCheck}
-                title="Zero-Trust Hiring"
-                description="Don't trust claims. Every builder profile is anchored to cryptographically signed proof of work."
-                delay={0.2}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ════════ HOW IT WORKS ════════ */}
-        <section className="section-padding bg-background-secondary/30 border-y border-border-tertiary">
-          <div className="mx-auto max-w-[1200px] px-6">
-            <div className="grid gap-20 lg:grid-cols-[0.8fr_1.2fr]">
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-              >
-                <span className="font-mono text-[11px] font-bold tracking-[0.2em] text-accent uppercase mb-6 block">The Workflow</span>
-                <h2 className="font-display text-[clamp(2.4rem,5vw,3.5rem)] leading-[0.95] tracking-[-0.03em] text-text-primary">
-                  How builders move from signal to success.
-                </h2>
-              </motion.div>
-
-              <div className="grid gap-12 sm:grid-cols-2">
-                <StepCard
-                  number={1}
-                  title="Connect Source"
-                  detail="Builders link their GitHub, Vercel, and technical logs. Our engine indexes every commit and ship."
-                  delay={0.1}
-                />
-                <StepCard
-                  number={2}
-                  title="Prove Quality"
-                  detail="Participate in Antathons or ship projects to earn reputation scores across specific technical verticals."
-                  delay={0.2}
-                />
-                <StepCard
-                  number={3}
-                  title="Get Discovered"
-                  detail="Companies use our AI explorer to find the exact technical fit based on real performance data."
-                  delay={0.3}
-                />
-                <StepCard
-                  number={4}
-                  title="Direct Hire"
-                  detail="Engage builders directly with high-intent offers. No recruiters, no screening loops."
-                  delay={0.4}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ════════ BUILDER SHOWCASE ════════ */}
-        <section className="section-padding relative overflow-hidden">
-          <div className="mx-auto max-w-[1200px] px-6">
             <motion.div
-              variants={fadeUp}
+              variants={stagger}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="flex items-end justify-between gap-10 mb-20"
+              className="grid sm:grid-cols-2 gap-1"
             >
-              <div className="max-w-[600px]">
-                <h2 className="font-display text-[clamp(2.4rem,5vw,4rem)] leading-[0.9] tracking-[-0.03em] text-text-primary">
-                  Shipped on Antry.
-                </h2>
-                <p className="mt-6 text-[17px] text-text-secondary">
-                  Recent projects from the network's top technical minds.
-                </p>
-              </div>
-              <Button variant="outline" size="lg" className="rounded-full" asChild>
-                <Link href="/builders">View all work <ArrowRight className="h-4 w-4" /></Link>
+              <Feature icon={Shield} title="Verified history" description="Every project indexed from GitHub, Vercel, and deployment logs." color="#10B981" />
+              <Feature icon={Layers} title="Stack analysis" description="Your depth and patterns mapped across 140+ frameworks." color="#8B5CF6" />
+              <Feature icon={Search} title="Get discovered" description="Companies find you by real skills, not resume keywords." color="#F59E0B" />
+              <Feature icon={Terminal} title="Live demos" description="Attach working demos. Show what you built, not slides." color="#3B82F6" />
+              <Feature icon={BarChart3} title="Signal metrics" description="Track your reputation with real-time community engagement." color="#EC4899" />
+              <Feature icon={Users} title="Collaborate" description="Find co-builders for hackathons, projects, and startups." color="#06B6D4" />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ════════ PROJECTS ════════ */}
+        <section className="py-14 sm:py-18">
+          <div className="mx-auto max-w-[1200px] px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex items-end justify-between gap-4 mb-6"
+            >
+              <h2 className="text-[clamp(1.5rem,3vw,2.2rem)] tracking-tight">Recently shipped</h2>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/builders" className="text-text-secondary">
+                  View all <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
+                </Link>
               </Button>
             </motion.div>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredProjects.map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: index * 0.1 }}
-                >
-                  <Link
-                    href={`/projects/${project.id}`}
-                    className="group card-premium block p-8 h-full flex flex-col"
-                  >
-                    <div className="flex items-start justify-between mb-8">
-                      <div
-                        className="flex h-12 w-12 items-center justify-center rounded-xl text-[14px] font-bold text-white shadow-lg"
-                        style={{ background: project.gradient }}
-                      >
-                        {project.title.slice(0, 1)}
-                      </div>
-                      <div className="h-8 w-8 rounded-full bg-background-secondary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <ArrowUpRight className="h-4 w-4 text-text-primary" />
-                      </div>
-                    </div>
-                    <h3 className="text-[20px] font-bold text-text-primary mb-3 tracking-tight group-hover:text-accent transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-[14px] text-text-secondary leading-relaxed line-clamp-2 mb-8 flex-grow">
-                      {project.tagline}
-                    </p>
-                    <div className="flex items-center justify-between pt-6 border-t border-border-tertiary">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[12px] font-bold text-text-primary">{project.builder.name}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-accent uppercase tracking-wider">
-                        <Zap className="h-3.5 w-3.5" />
-                        {project.likes} signal
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+            <ProjectShowcase />
           </div>
         </section>
 
         {/* ════════ CTA ════════ */}
-        <section className="section-padding">
-          <div className="mx-auto max-w-[1200px] px-6">
+        <section className="py-16 sm:py-20">
+          <div className="mx-auto max-w-[520px] px-6 text-center">
             <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative overflow-hidden rounded-[40px] border border-border-primary bg-surface px-10 py-24 text-center sm:px-16"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] to-transparent" />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-accent/[0.05] blur-[120px]" />
-
-              <div className="relative z-10 mx-auto max-w-[600px]">
-                <h2 className="font-display text-[clamp(2.6rem,5vw,4.5rem)] leading-[0.9] tracking-[-0.04em] text-text-primary">
-                  Ready to prove your work?
-                </h2>
-                <p className="mx-auto mt-8 text-[18px] leading-relaxed text-text-secondary">
-                  Join 2,400+ builders already building their verified technical reputation on Antry.
-                </p>
-                <div className="mt-12 flex flex-col items-center gap-6">
-                  <WaitlistForm initialCount={537} />
-                  <p className="text-[12px] font-medium text-text-tertiary uppercase tracking-widest">
-                    Free for builders · No credit card required
-                  </p>
-                </div>
-              </div>
+              <h2 className="text-[clamp(1.5rem,3vw,2.2rem)] tracking-tight mb-2">
+                Ready to ship?
+              </h2>
+              <p className="text-[14px] text-text-secondary mb-8">
+                Join builders who prove their work, not just talk about it.
+              </p>
+              <WaitlistForm initialCount={537} />
             </motion.div>
           </div>
         </section>
 
         {/* ════════ FOOTER ════════ */}
-        <footer className="border-t border-border-tertiary bg-surface px-6 pb-16 pt-24 sm:px-10">
-          <div className="mx-auto max-w-[1400px]">
-            <div className="grid gap-16 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
-              <div className="col-span-1">
-                <div className="flex items-center gap-3">
-                  <Image src="/logo.png" alt="Antry" width={28} height={28} className="object-contain brightness-0 dark:invert" />
-                  <span className="text-[20px] font-bold tracking-tight text-text-primary">Antry</span>
+        <footer className="bg-background-primary border-t border-border-primary px-6 py-12">
+          <div className="mx-auto max-w-[1200px]">
+            <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr]">
+              <div>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="h-7 w-7 rounded-md bg-accent flex items-center justify-center">
+                    <Image src="/logo.png" alt="Antry" width={16} height={16} className="object-contain invert" />
+                  </div>
+                  <span className="text-[16px] font-semibold tracking-tight">Antry</span>
                 </div>
-                <p className="mt-6 text-[15px] leading-relaxed text-text-tertiary max-w-[260px]">
-                  The intelligent layer for technical talent. Verified output over resume claims.
+                <p className="text-[13px] text-text-tertiary max-w-[220px] leading-relaxed">
+                  The open registry for builders who ship.
                 </p>
               </div>
-              
-              <div>
-                <h4 className="text-[13px] font-bold uppercase tracking-widest text-text-primary mb-6">Network</h4>
-                <ul className="space-y-4 text-[14px] text-text-tertiary">
-                  <li><Link href="/builders" className="hover:text-accent transition-colors">Explorer</Link></li>
-                  <li><Link href="/hackathons" className="hover:text-accent transition-colors">Antathons</Link></li>
-                  <li><Link href="/projects" className="hover:text-accent transition-colors">Project Feed</Link></li>
-                  <li><Link href="/leaderboard" className="hover:text-accent transition-colors">Leaderboard</Link></li>
-                </ul>
-              </div>
 
-              <div>
-                <h4 className="text-[13px] font-bold uppercase tracking-widest text-text-primary mb-6">Platform</h4>
-                <ul className="space-y-4 text-[14px] text-text-tertiary">
-                  <li><Link href="/companies" className="hover:text-accent transition-colors">For Companies</Link></li>
-                  <li><Link href="/about" className="hover:text-accent transition-colors">Our Vision</Link></li>
-                  <li><Link href="/blog" className="hover:text-accent transition-colors">Changelog</Link></li>
-                  <li><Link href="/pricing" className="hover:text-accent transition-colors">Pricing</Link></li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-[13px] font-bold uppercase tracking-widest text-text-primary mb-6">Legal</h4>
-                <ul className="space-y-4 text-[14px] text-text-tertiary">
-                  <li><Link href="/privacy" className="hover:text-accent transition-colors">Privacy</Link></li>
-                  <li><Link href="/terms" className="hover:text-accent transition-colors">Terms</Link></li>
-                  <li><Link href="/security" className="hover:text-accent transition-colors">Security</Link></li>
-                </ul>
-              </div>
+              {[
+                { title: "Product", links: [["Builders", "/builders"], ["Opportunities", "/hackathons"], ["Discover", "/discover"]] },
+                { title: "Company", links: [["For teams", "/companies"], ["About", "/about"], ["Blog", "/blog"]] },
+                { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"]] },
+              ].map((col) => (
+                <div key={col.title}>
+                  <h4 className="text-[11px] font-semibold text-text-tertiary uppercase tracking-wider mb-3">{col.title}</h4>
+                  <ul className="space-y-2 text-[13px] text-text-secondary">
+                    {col.links.map(([label, href]) => (
+                      <li key={label}>
+                        <Link href={href} className="hover:text-text-primary transition-colors">{label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
 
-            <div className="mt-24 pt-12 border-t border-border-tertiary flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-[13px] text-text-tertiary font-medium">
-                &copy; 2026 Antry Platform. All rights reserved.
-              </span>
-              <div className="flex gap-8">
-                <Link href="#" className="text-text-tertiary hover:text-text-primary transition-colors">Twitter</Link>
-                <Link href="#" className="text-text-tertiary hover:text-text-primary transition-colors">GitHub</Link>
-                <Link href="#" className="text-text-tertiary hover:text-text-primary transition-colors">Discord</Link>
+            <div className="mt-10 pt-6 border-t border-border-secondary flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-[12px] text-text-tertiary">
+              <span>&copy; 2026 Antry Inc.</span>
+              <div className="flex gap-5">
+                <Link href="#" className="hover:text-text-primary transition-colors">Twitter</Link>
+                <Link href="#" className="hover:text-text-primary transition-colors">GitHub</Link>
+                <Link href="#" className="hover:text-text-primary transition-colors">Discord</Link>
               </div>
             </div>
           </div>

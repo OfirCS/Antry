@@ -8,10 +8,9 @@ import { useAuth } from "@/lib/supabase/auth-context";
 import { Button } from "@/components/ui/button";
 
 const links = [
-  { href: "/about", label: "About" },
   { href: "/builders", label: "Builders" },
-  { href: "/hackathons", label: "Hackathons" },
-  { href: "/companies", label: "For Companies" },
+  { href: "/hackathons", label: "Opportunities" },
+  { href: "/companies", label: "For Teams" },
 ];
 
 export function Nav() {
@@ -19,35 +18,32 @@ export function Nav() {
   const { user, loading } = useAuth();
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 border-b border-border-tertiary bg-background-primary/80 backdrop-blur-xl transition-all duration-300">
-      <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-6 sm:px-10">
-        <div className="flex items-center gap-12">
-          <Link
-            href="/"
-            className="group flex items-center gap-3 transition-all hover:opacity-90"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-text-primary">
-               <Image
+    <nav className="fixed inset-x-0 top-0 z-50 border-b border-border-primary/60 bg-background-primary/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-6">
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent">
+              <Image
                 src="/logo.png"
                 alt="Antry"
-                width={20}
-                height={20}
-                className="object-contain invert dark:brightness-0"
+                width={16}
+                height={16}
+                className="object-contain invert"
                 priority
               />
             </div>
-            <span className="text-[19px] font-bold tracking-tight text-text-primary">
+            <span className="text-[16px] font-semibold tracking-tight">
               Antry
             </span>
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex">
+          <div className="hidden items-center gap-6 lg:flex">
             {links.map((l) => (
               <Link
                 key={l.label}
                 href={l.href}
                 className={cn(
-                  "text-[14px] font-bold tracking-tight transition-all duration-300",
+                  "text-[13px] font-medium transition-colors",
                   pathname.startsWith(l.href)
                     ? "text-text-primary"
                     : "text-text-tertiary hover:text-text-primary"
@@ -59,36 +55,38 @@ export function Nav() {
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3">
           {loading ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-background-secondary" />
+            <div className="h-5 w-20 animate-pulse rounded bg-background-secondary" />
           ) : user ? (
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
               <Link
                 href="/dashboard"
                 className={cn(
-                  "text-[14px] font-bold tracking-tight transition-all",
-                  pathname === "/dashboard" ? "text-text-primary" : "text-text-tertiary hover:text-text-primary"
+                  "text-[13px] font-medium transition-colors",
+                  pathname === "/dashboard"
+                    ? "text-text-primary"
+                    : "text-text-tertiary hover:text-text-primary"
                 )}
               >
                 Dashboard
               </Link>
-              <Button size="sm" variant="outline" className="rounded-full px-5 h-9" asChild>
-                <Link href="/submit">Submit</Link>
+              <Button size="sm" asChild>
+                <Link href="/submit">Ship project</Link>
               </Button>
             </div>
           ) : (
-            <>
+            <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="text-[14px] font-bold tracking-tight text-text-tertiary hover:text-text-primary transition-all"
+                className="text-[13px] font-medium text-text-tertiary hover:text-text-primary transition-colors"
               >
                 Log in
               </Link>
-              <Button size="sm" className="rounded-full px-6 h-10 text-[13px] font-bold" asChild>
-                <Link href="/signup">Get Started</Link>
+              <Button size="sm" asChild>
+                <Link href="/signup">Get started</Link>
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>

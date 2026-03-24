@@ -19,6 +19,15 @@ type Project = {
   demo_url: string | null;
 };
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -61,10 +70,10 @@ export default function DashboardPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="max-w-[740px] mx-auto px-8 py-20">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-border-secondary rounded-lg w-48" />
-          <div className="h-4 bg-border-secondary rounded-lg w-72" />
+      <div className="max-w-[860px] mx-auto px-6 py-20">
+        <div className="animate-pulse space-y-3">
+          <div className="h-7 bg-background-secondary rounded-lg w-48" />
+          <div className="h-4 bg-background-secondary rounded-lg w-72" />
         </div>
       </div>
     );
@@ -74,166 +83,184 @@ export default function DashboardPage() {
     user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Builder";
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 py-16 md:py-24">
+    <div className="max-w-[860px] mx-auto px-6 py-16 sm:py-20 min-h-screen">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.4 }}
+        className="flex items-start justify-between gap-6 mb-10"
       >
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="font-display text-[clamp(2rem,5vw,2.5rem)] text-text-primary tracking-[-0.03em]">
-            Welcome, {name}
+        <div>
+          <h1 className="text-[clamp(2rem,4vw,3rem)] tracking-tight text-text-primary mb-1">
+            {name.split(" ")[0]}
           </h1>
-          <Link
-            href="/settings"
-            className="h-10 w-10 flex items-center justify-center rounded-full border border-border-primary text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-all"
-            title="Settings"
-          >
-            <Settings className="w-5 h-5" />
-          </Link>
+          <p className="text-[15px] text-text-secondary">
+            Your workspace and shipped projects
+          </p>
         </div>
-        <p className="text-[16px] text-text-secondary mb-12 max-w-[500px] leading-relaxed">
-          Manage your verified shipping history and discover new opportunities.
-        </p>
+        <Link
+          href="/settings"
+          className="h-10 w-10 flex items-center justify-center rounded-lg border border-border-primary bg-surface text-text-tertiary hover:text-text-primary hover:border-text-tertiary/40 transition-all"
+          title="Settings"
+        >
+          <Settings className="w-4.5 h-4.5" />
+        </Link>
       </motion.div>
 
+      {/* Profile incomplete */}
       {profileIncomplete && (
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8 p-5 rounded-xl border border-accent/20 bg-accent/[0.04] flex items-center gap-4"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-5 flex items-center gap-4"
         >
-          <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-            <UserCircle className="w-5 h-5 text-accent" />
+          <div className="h-9 w-9 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+            <UserCircle className="w-5 h-5 text-amber-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[14px] font-semibold text-text-primary">
-              Complete your profile
-            </p>
-            <p className="text-[13px] text-text-secondary">
-              Add a bio and skills so companies and builders can find you.
-            </p>
+            <p className="text-[14px] font-semibold text-amber-900">Complete your profile</p>
+            <p className="text-[13px] text-amber-700">Add a bio and skills so teams can discover you.</p>
           </div>
-          <Link
-            href="/settings"
-            className="px-5 py-2 bg-accent text-white rounded-lg text-[13px] font-semibold hover:opacity-90 transition-opacity shrink-0"
-          >
-            Edit profile
-          </Link>
+          <Button size="sm" asChild>
+            <Link href="/settings">Update profile</Link>
+          </Button>
         </motion.div>
       )}
 
-      <div className="grid gap-6 sm:grid-cols-2 mb-16">
+      {/* Quick actions */}
+      <div className="grid sm:grid-cols-2 gap-3 mb-12">
         <Link
           href="/submit"
-          className="card-premium p-8 flex flex-col group h-full"
+          className="group rounded-xl border border-border-primary bg-surface p-5 flex items-center gap-4 hover:border-text-tertiary/30 hover:shadow-sm transition-all"
         >
-          <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center text-[#0a0b0d] mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-accent/20">
-            <Plus className="w-6 h-6" />
+          <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform">
+            <Plus className="w-5 h-5" />
           </div>
-          <h3 className="text-[18px] font-bold text-text-primary mb-2 tracking-tight group-hover:text-accent transition-colors">
-            Submit a project
-          </h3>
-          <p className="text-[14px] text-text-secondary leading-relaxed">
-            Add new proof of work to your profile and build your technical reputation.
-          </p>
+          <div>
+            <h3 className="text-[15px] font-semibold text-text-primary">Ship a project</h3>
+            <p className="text-[13px] text-text-tertiary">Add verified work to your profile</p>
+          </div>
         </Link>
 
         <Link
           href="/hackathons"
-          className="card-premium p-8 flex flex-col group h-full"
+          className="group rounded-xl border border-border-primary bg-surface p-5 flex items-center gap-4 hover:border-text-tertiary/30 hover:shadow-sm transition-all"
         >
-          <div className="w-12 h-12 rounded-xl bg-background-secondary flex items-center justify-center text-text-primary mb-6 group-hover:scale-110 transition-transform duration-500 border border-border-primary">
-            <ArrowRight className="w-6 h-6" />
+          <div className="h-10 w-10 rounded-lg bg-background-secondary flex items-center justify-center text-text-primary shrink-0 group-hover:scale-105 transition-transform">
+            <ArrowRight className="w-5 h-5" />
           </div>
-          <h3 className="text-[18px] font-bold text-text-primary mb-2 tracking-tight group-hover:text-accent transition-colors">
-            Join a hackathon
-          </h3>
-          <p className="text-[14px] text-text-secondary leading-relaxed">
-            Collaborate with other builders and earn verified badges for your work.
-          </p>
+          <div>
+            <h3 className="text-[15px] font-semibold text-text-primary">Find opportunities</h3>
+            <p className="text-[13px] text-text-tertiary">Browse bounties and hackathons</p>
+          </div>
         </Link>
       </div>
 
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-[12px] font-bold text-text-primary uppercase tracking-[0.15em]">
-          Verified History ({projects.length})
-        </h2>
-      </div>
+      {/* Projects */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-[20px] font-semibold text-text-primary font-[family-name:var(--font-display)] italic">
+            Your projects
+          </h2>
+          <span className="text-[13px] text-text-tertiary">
+            {projects.length} {projects.length === 1 ? "project" : "projects"}
+          </span>
+        </div>
 
-      {projects.length === 0 ? (
-        <div className="card-premium p-12 text-center bg-background-secondary/30">
-          <p className="text-[15px] text-text-tertiary mb-6">
-            No projects verified yet. Start by shipping your first project.
-          </p>
-          <Button asChild className="rounded-full px-8">
-            <Link href="/submit">
-              <Plus className="w-4 h-4 mr-2" /> Submit Project
-            </Link>
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              className="flex items-center gap-6 p-6 card-premium group"
-            >
-              <div className="flex-1 min-w-0">
-                <Link
-                  href={`/projects/${project.id}`}
-                  className="text-[16px] font-bold text-text-primary hover:text-accent transition-colors truncate block tracking-tight"
-                >
-                  {project.title}
-                </Link>
-                <p className="text-[13px] text-text-tertiary truncate mt-1">
-                  {project.tagline}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-[12px] font-bold text-text-tertiary uppercase tracking-wider shrink-0">
-                <Zap className="w-3.5 h-3.5 text-accent" />
-                {project.likes_count} SIGNAL
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                {project.demo_url && (
-                  <a
-                    href={project.demo_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="h-8 w-8 flex items-center justify-center rounded-full border border-border-primary text-text-tertiary hover:text-accent hover:bg-accent-muted transition-all"
-                    title="Live demo"
-                  >
-                    <ArrowUpRight className="w-4 h-4" />
-                  </a>
-                )}
-                <Link
-                  href={`/projects/${project.id}/edit`}
-                  className="h-8 w-8 flex items-center justify-center rounded-full border border-border-primary text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-all"
-                  title="Edit"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </Link>
-                <form action={deleteProject}>
-                  <input type="hidden" name="project_id" value={project.id} />
-                  <button
-                    type="submit"
-                    className="h-8 w-8 flex items-center justify-center rounded-full border border-border-primary text-text-tertiary hover:text-red-500 hover:bg-red-500/5 transition-all"
-                    title="Delete"
-                    onClick={(e) => {
-                      if (!confirm("Delete this project? This cannot be undone.")) {
-                        e.preventDefault();
-                      }
-                    }}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </form>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+        {projects.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-xl border border-dashed border-border-primary bg-background-secondary/30 py-16 text-center"
+          >
+            <Zap className="w-10 h-10 text-text-tertiary mx-auto mb-4 opacity-30" />
+            <p className="text-[15px] font-medium text-text-secondary mb-1">No projects yet</p>
+            <p className="text-[13px] text-text-tertiary mb-6">Ship your first project to start building your reputation.</p>
+            <Button size="default" asChild>
+              <Link href="/submit">
+                Ship your first project <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Link>
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="visible"
+            className="space-y-2"
+          >
+            {projects.map((project, idx) => (
+              <motion.div
+                key={project.id}
+                variants={fadeUp}
+                className="group rounded-xl border border-border-primary bg-surface p-5 hover:border-text-tertiary/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2.5 mb-1">
+                    <h3 className="text-[15px] font-semibold text-text-primary group-hover:text-accent-bright transition-colors truncate">
+                      {project.title}
+                    </h3>
+                    {project.category && (
+                      <span className="text-[11px] font-medium text-text-tertiary bg-background-secondary px-2 py-0.5 rounded shrink-0">
+                        {project.category}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[13px] text-text-tertiary line-clamp-1">
+                    {project.tagline}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-[13px] font-medium text-text-secondary tabular-nums">
+                    {project.likes_count} signals
+                  </span>
+
+                  <div className="flex items-center gap-1.5">
+                    {project.demo_url && (
+                      <a
+                        href={project.demo_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="h-8 w-8 flex items-center justify-center rounded-lg border border-border-primary bg-surface text-text-tertiary hover:text-text-primary hover:border-text-tertiary/40 transition-all"
+                        title="Live demo"
+                      >
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    <Link
+                      href={`/projects/${project.id}/edit`}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border-primary bg-surface text-text-tertiary hover:text-text-primary hover:border-text-tertiary/40 transition-all"
+                      title="Edit"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </Link>
+                    <form action={deleteProject}>
+                      <input type="hidden" name="project_id" value={project.id} />
+                      <button
+                        type="submit"
+                        className="h-8 w-8 flex items-center justify-center rounded-lg border border-border-primary bg-surface text-text-tertiary hover:text-red-500 hover:border-red-200 transition-all"
+                        title="Delete"
+                        onClick={(e) => {
+                          if (!confirm("Delete this project?")) {
+                            e.preventDefault();
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </form>
+                    <Button size="sm" variant="outline" asChild>
+                      <Link href={`/projects/${project.id}`}>View</Link>
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

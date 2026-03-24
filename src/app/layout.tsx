@@ -9,11 +9,6 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const interDisplay = Inter({
-  variable: "--font-display",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: "Antry — Where Builders Prove Their Work",
   description:
@@ -28,10 +23,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interDisplay.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="noise-overlay" />
+        <div className="grain-overlay" />
         <AuthProvider>
           {children}
           <ScoutAgent />
