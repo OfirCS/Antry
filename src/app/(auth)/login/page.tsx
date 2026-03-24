@@ -11,7 +11,9 @@ import { login, signInWithGoogle, signInWithGithub, type AuthState } from "../ac
 export default function LoginPage() {
   return (
     <Suspense>
-      <LoginForm />
+      <div className="min-h-[80vh] flex items-center justify-center p-6">
+        <LoginForm />
+      </div>
     </Suspense>
   );
 }
@@ -31,37 +33,37 @@ function LoginForm() {
 
   const inputCls = (field: string) =>
     cn(
-      "w-full px-5 py-3.5 bg-background-secondary border border-border-primary shadow-sm rounded-lg text-[14px] font-medium outline-none transition-all duration-300",
+      "w-full px-5 py-4 bg-background-secondary border border-border-primary rounded-xl text-[15px] outline-none transition-all duration-300",
       hasFieldError(field)
         ? "border-red-400 focus:ring-2 focus:ring-red-400/20"
-        : "focus:border-accent/40 focus:ring-2 focus:ring-accent/20 text-text-primary placeholder:text-text-tertiary"
+        : "focus:bg-surface focus:border-accent/40 focus:ring-4 focus:ring-accent/10 text-text-primary placeholder:text-text-tertiary"
     );
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full max-w-[420px] bg-surface p-10 rounded-lg border border-border-primary shadow-sm"
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="w-full max-w-[440px] card-premium p-10 sm:p-12"
     >
-      <div className="text-center mb-8">
-        <h1 className="font-display text-[28px] text-text-primary mb-2 tracking-[-0.02em]">
+      <div className="text-center mb-10">
+        <h1 className="font-display text-[clamp(1.8rem,4vw,2.2rem)] font-bold text-text-primary mb-3 tracking-[-0.03em]">
           Welcome back
         </h1>
-        <p className="text-[14px] text-text-secondary">Sign in to your account</p>
+        <p className="text-[15px] text-text-secondary">Sign in to your builder account</p>
       </div>
 
       {authError === "auth" && (
-        <p className="text-[12px] text-red-500 font-medium mb-4">
+        <p className="text-[13px] text-red-500 font-medium mb-6 text-center bg-red-500/10 py-3 rounded-lg">
           Authentication failed. Please try again.
         </p>
       )}
 
-      <div className="space-y-3 mb-8">
+      <div className="space-y-3 mb-10">
         <form action={signInWithGoogle}>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-border-primary rounded-lg text-[14px] font-semibold text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 ease-out"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 bg-surface border border-border-primary rounded-full text-[14px] font-bold text-text-primary hover:bg-background-secondary transition-all shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -75,7 +77,7 @@ function LoginForm() {
         <form action={signInWithGithub}>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-border-primary rounded-lg text-[14px] font-semibold text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 ease-out"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 bg-surface border border-border-primary rounded-full text-[14px] font-bold text-text-primary hover:bg-background-secondary transition-all shadow-sm"
           >
             <Github className="w-5 h-5" /> Continue with GitHub
           </button>
@@ -84,14 +86,14 @@ function LoginForm() {
 
       <div className="flex items-center gap-4 mb-8">
         <div className="flex-1 h-px bg-border-primary" />
-        <span className="text-[12px] font-medium text-text-tertiary">or use email</span>
+        <span className="text-[11px] font-bold uppercase tracking-widest text-text-tertiary">or email</span>
         <div className="flex-1 h-px bg-border-primary" />
       </div>
 
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} className="space-y-5">
         <input type="hidden" name="redirect" value={redirectTo} />
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[12px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2 pl-1">
             Email address
           </label>
           <input
@@ -102,7 +104,7 @@ function LoginForm() {
           />
         </div>
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[12px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2 pl-1">
             Password
           </label>
           <input
@@ -113,28 +115,28 @@ function LoginForm() {
           />
         </div>
         {state?.error && (
-          <p className="text-[12px] text-red-500 font-medium">{state.error}</p>
+          <p className="text-[13px] text-red-500 font-medium pl-1">{state.error}</p>
         )}
         {state?.fieldErrors &&
           Object.values(state.fieldErrors)
             .flat()
             .map((msg) => (
-              <p key={msg} className="text-[12px] text-red-500 font-medium">
+              <p key={msg} className="text-[13px] text-red-500 font-medium pl-1">
                 {msg}
               </p>
             ))}
         <button
           type="submit"
           disabled={pending}
-          className="w-full px-4 py-3.5 bg-text-primary text-background-primary rounded-lg text-[14px] font-semibold hover:opacity-80 transition-all duration-300 active:scale-[0.98] mt-2 disabled:opacity-50"
+          className="w-full h-14 bg-text-primary text-background-primary rounded-full text-[15px] font-bold hover:opacity-90 transition-all duration-300 active:scale-[0.98] mt-4 disabled:opacity-50"
         >
-          {pending ? "Signing in..." : "Sign in"}
+          {pending ? "Signing in..." : "Sign in to Antry"}
         </button>
       </form>
 
-      <p className="text-center text-[14px] text-text-secondary mt-10">
+      <p className="text-center text-[14px] text-text-tertiary mt-10">
         New here?{" "}
-        <Link href="/signup" className="text-accent font-semibold hover:underline">
+        <Link href="/signup" className="text-accent font-bold hover:underline">
           Create an account
         </Link>
       </p>

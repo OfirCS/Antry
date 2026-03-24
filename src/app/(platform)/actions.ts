@@ -2,21 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
-
-// ── Project schemas ──────────────────────────────────────
-
-const projectSchema = z.object({
-  title: z.string().min(2, "Title must be at least 2 characters").max(100),
-  tagline: z.string().min(5, "Tagline must be at least 5 characters").max(200),
-  description: z.string().max(2000).optional(),
-  category: z.enum(["ai-agents", "web-apps", "tools", "design", "data-ml", "mobile"]),
-  tech_stack: z.string().optional(), // comma-separated
-  demo_url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  source_url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  build_time: z.string().max(50).optional(),
-});
+import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { projectSchema, profileSchema } from "@/lib/schemas";
 
 export type FormState = {
   error?: string;
@@ -173,22 +160,6 @@ export async function deleteProject(formData: FormData) {
   redirect("/dashboard");
 }
 
-// ── Profile schemas ──────────────────────────────────────
-
-const profileSchema = z.object({
-  full_name: z.string().min(2, "Name must be at least 2 characters").max(100),
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(30)
-    .regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers, and hyphens"),
-  bio: z.string().max(500).optional(),
-  skills: z.string().optional(), // comma-separated
-  github_url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  twitter_url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  website_url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-});
-
 // ── Update profile ──────────────────────────────────────
 
 export async function updateProfile(
@@ -268,7 +239,15 @@ export async function deleteAccount() {
   // Delete profile (cascades to projects, likes, etc.)
   await supabase.from("profiles").delete().eq("id", user.id);
 
-  // Sign out
+  // Fully remove the auth user using admin privileges
+  const adminClient = createAdminClient();
+  const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id);
+
+  if (deleteError) {
+    throw new Error("Failed to delete account. Please try again.");
+  }
+
+  // Sign out and redirect
   await supabase.auth.signOut();
   redirect("/");
 }
@@ -308,4 +287,154 @@ export async function toggleLike(formData: FormData) {
 
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/discover");
+}
+
+// ── Join waitlist ───────────────────────────────────────
+
+export async function joinWaitlist(
+  _prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const email = formData.get("email") as string;
+
+  if (!email || !email.includes("@")) {
+    return { error: "Please enter a valid email address." };
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("waitlist").insert({ email });
+
+  if (error) {
+    if (error.code === "23505") {
+      // unique_violation — already on waitlist
+      return { success: true };
+    }
+    return { error: "Something went wrong. Please try again." };
+  }
+
+  return { success: true };
+}
+
+// ── Join hackathon ──────────────────────────────────────
+
+export async function joinHackathon(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const hackathonId = formData.get("hackathon_id") as string;
+  if (!hackathonId) return;
+
+  // Check if already joined
+  const { data: existing } = await supabase
+    .from("hackathon_participants")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .eq("hackathon_id", hackathonId)
+    .single();
+
+  if (existing) return; // Already joined
+
+  await supabase.from("hackathon_participants").insert({
+    user_id: user.id,
+    hackathon_id: hackathonId,
+  });
+
+  revalidatePath(`/hackathons/${hackathonId}`);
+}
+
+// ── Leave hackathon ─────────────────────────────────────
+
+export async function leaveHackathon(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const hackathonId = formData.get("hackathon_id") as string;
+  if (!hackathonId) return;
+
+  await supabase
+    .from("hackathon_participants")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("hackathon_id", hackathonId);
+
+  revalidatePath(`/hackathons/${hackathonId}`);
+}
+
+// ── Submit project to hackathon ─────────────────────────
+
+export async function submitToHackathon(
+  _prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const hackathonId = formData.get("hackathon_id") as string;
+  const projectId = formData.get("project_id") as string;
+
+  if (!hackathonId || !projectId) {
+    return { error: "Missing hackathon or project." };
+  }
+
+  // Verify user is a participant
+  const { data: participation } = await supabase
+    .from("hackathon_participants")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .eq("hackathon_id", hackathonId)
+    .single();
+
+  if (!participation) {
+    return { error: "You must join the hackathon before submitting." };
+  }
+
+  // Verify project belongs to user
+  const { data: project } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("id", projectId)
+    .eq("builder_id", user.id)
+    .single();
+
+  if (!project) {
+    return { error: "You can only submit your own projects." };
+  }
+
+  // Check for duplicate submission
+  const { data: existingSub } = await supabase
+    .from("hackathon_submissions")
+    .select("id")
+    .eq("hackathon_id", hackathonId)
+    .eq("project_id", projectId)
+    .single();
+
+  if (existingSub) {
+    return { error: "This project has already been submitted." };
+  }
+
+  const { error } = await supabase.from("hackathon_submissions").insert({
+    hackathon_id: hackathonId,
+    project_id: projectId,
+    submitted_by: user.id,
+  });
+
+  if (error) {
+    return { error: "Failed to submit project. Try again." };
+  }
+
+  revalidatePath(`/hackathons/${hackathonId}`);
+  return { success: true };
 }

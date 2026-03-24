@@ -55,11 +55,11 @@ export default function EditProjectPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="max-w-[600px] mx-auto px-6 py-20">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-100 rounded w-48" />
-          <div className="h-12 bg-gray-100 rounded w-full mt-8" />
-          <div className="h-12 bg-gray-100 rounded w-full" />
+      <div className="max-w-[700px] mx-auto px-6 py-24">
+        <div className="animate-pulse space-y-6">
+          <div className="h-10 bg-border-secondary rounded-lg w-48" />
+          <div className="h-14 bg-border-secondary rounded-xl w-full mt-10" />
+          <div className="h-14 bg-border-secondary rounded-xl w-full" />
         </div>
       </div>
     );
@@ -67,9 +67,9 @@ export default function EditProjectPage() {
 
   if (notFound) {
     return (
-      <div className="max-w-[600px] mx-auto px-6 py-20 text-center">
-        <p className="text-[14px] text-text-tertiary">Project not found or you don't have permission to edit it.</p>
-        <Link href="/dashboard" className="text-[13px] text-accent mt-3 inline-block">
+      <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
+        <p className="text-[15px] text-text-tertiary">Project not found or you don't have permission to edit it.</p>
+        <Link href="/dashboard" className="text-[14px] font-bold text-accent mt-4 inline-block hover:underline">
           Back to dashboard
         </Link>
       </div>
@@ -84,37 +84,41 @@ export default function EditProjectPage() {
 
   const inputCls = (field: string) =>
     cn(
-      "w-full px-5 py-3.5 bg-background-secondary border border-border-primary shadow-sm rounded-lg text-[14px] font-medium outline-none transition-all duration-300",
+      "w-full px-5 py-3.5 bg-background-secondary border border-border-primary shadow-sm rounded-xl text-[14px] font-medium outline-none transition-all duration-300",
       hasFieldError(field)
         ? "border-red-400 focus:ring-2 focus:ring-red-400/20"
-        : "focus:border-accent/40 focus:ring-2 focus:ring-accent/20 text-text-primary placeholder:text-text-tertiary"
+        : "focus:bg-surface focus:border-accent/40 focus:ring-4 focus:ring-accent/10 text-text-primary placeholder:text-text-tertiary"
     );
 
   return (
-    <div className="max-w-[600px] mx-auto px-6 py-10 md:py-16">
+    <div className="max-w-[700px] mx-auto px-6 py-16 md:py-24">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-1.5 text-[12px] text-text-tertiary hover:text-text-primary transition-colors mb-8 font-medium"
+        className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-text-tertiary hover:text-text-primary transition-colors mb-10"
       >
-        <ArrowLeft className="w-3 h-3" /> Dashboard
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
       </Link>
 
-      <h1 className="font-display text-[28px] text-text-primary mb-2 tracking-[-0.02em]">Edit project</h1>
-      <p className="text-[14px] text-text-secondary mb-10">
-        Update your project details.
-      </p>
+      <div className="mb-12">
+        <h1 className="font-display text-[clamp(2rem,4vw,2.5rem)] text-text-primary mb-3 tracking-[-0.03em] font-bold">
+          Edit Project
+        </h1>
+        <p className="text-[16px] text-text-secondary leading-relaxed">
+          Update the details, repository, and demo links for your shipped project.
+        </p>
+      </div>
 
       {state?.error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+        <div className="mb-8 p-5 bg-red-500/10 border border-red-500/20 rounded-xl text-[14px] font-medium text-red-500">
           {state.error}
         </div>
       )}
 
-      <form action={formAction} className="space-y-6">
+      <form action={formAction} className="space-y-8 card-premium p-8 sm:p-10">
         <input type="hidden" name="project_id" value={id} />
 
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
             Project name *
           </label>
           <input
@@ -124,12 +128,12 @@ export default function EditProjectPage() {
             className={inputCls("title")}
           />
           {fieldError("title") && (
-            <p className="text-[11px] text-red-500 mt-1">{fieldError("title")}</p>
+            <p className="text-[12px] font-medium text-red-500 mt-2 pl-1">{fieldError("title")}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
             Tagline *
           </label>
           <input
@@ -139,24 +143,24 @@ export default function EditProjectPage() {
             className={inputCls("tagline")}
           />
           {fieldError("tagline") && (
-            <p className="text-[11px] text-red-500 mt-1">{fieldError("tagline")}</p>
+            <p className="text-[12px] font-medium text-red-500 mt-2 pl-1">{fieldError("tagline")}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
             Description
           </label>
           <textarea
             name="description"
-            rows={4}
+            rows={5}
             defaultValue={project?.description || ""}
             className={cn(inputCls("description"), "resize-none")}
           />
         </div>
 
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
             Category *
           </label>
           <select
@@ -173,21 +177,21 @@ export default function EditProjectPage() {
         </div>
 
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
             Tech stack
           </label>
           <input
             type="text"
             name="tech_stack"
             defaultValue={project?.tech_stack?.join(", ") || ""}
-            placeholder="Comma-separated"
+            placeholder="Next.js, Python (comma-separated)"
             className={inputCls("tech_stack")}
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+            <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
               Live demo URL
             </label>
             <input
@@ -198,7 +202,7 @@ export default function EditProjectPage() {
             />
           </div>
           <div>
-            <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+            <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
               Source code URL
             </label>
             <input
@@ -211,7 +215,7 @@ export default function EditProjectPage() {
         </div>
 
         <div>
-          <label className="block text-[12px] font-semibold text-text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-[0.1em] mb-2.5 pl-1">
             Build time
           </label>
           <input
@@ -222,16 +226,17 @@ export default function EditProjectPage() {
           />
         </div>
 
-        <div className="pt-4 flex items-center gap-4">
+        <div className="pt-6 flex flex-col sm:flex-row sm:items-center gap-4 border-t border-border-tertiary mt-8">
           <button
             type="submit"
-            className="px-6 py-3.5 bg-accent text-white rounded-lg text-[14px] font-semibold  dark: hover:opacity-90 transition-all duration-300 ease-out disabled:opacity-50"
+            className="w-full sm:w-auto px-8 py-4 bg-text-primary text-background-primary rounded-full text-[14px] font-bold hover:opacity-90 transition-all duration-300 ease-out disabled:opacity-50 shadow-md"
+            disabled={pending}
           >
-            {pending ? "Saving..." : "Save changes"}
+            {pending ? "Saving..." : "Save Changes"}
           </button>
           <Link
             href="/dashboard"
-            className="text-[14px] text-text-secondary hover:text-text-primary transition-colors"
+            className="w-full sm:w-auto px-8 py-4 text-center border border-border-primary bg-background-secondary rounded-full text-[14px] font-bold text-text-secondary hover:text-text-primary hover:bg-surface transition-all"
           >
             Cancel
           </Link>

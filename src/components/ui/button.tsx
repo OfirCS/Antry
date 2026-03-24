@@ -4,24 +4,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "bg-accent text-white hover:bg-accent-bright shadow-[0_4px_16px_rgba(59,91,219,0.3)] hover:shadow-[0_6px_24px_rgba(59,91,219,0.4)]",
+          "bg-accent text-[#0a0b0d] hover:bg-accent-bright btn-glow shadow-[0_1px_2px_rgba(0,0,0,0.05)]",
         accent:
-          "bg-accent text-white hover:bg-accent-bright shadow-[0_4px_16px_rgba(59,91,219,0.3)] hover:shadow-[0_6px_24px_rgba(59,91,219,0.4)]",
+          "bg-accent text-[#0a0b0d] hover:bg-accent-bright btn-glow shadow-[0_1px_2px_rgba(0,0,0,0.05)]",
         outline:
-          "border border-border-primary bg-transparent text-text-primary hover:bg-accent-muted hover:border-accent/30",
+          "border border-border-primary bg-transparent text-text-primary hover:bg-background-secondary hover:border-border-secondary",
         ghost:
-          "text-text-secondary hover:bg-accent-muted hover:text-text-primary",
+          "text-text-secondary hover:bg-background-secondary hover:text-text-primary",
         link: "text-accent underline-offset-4 hover:underline",
+        secondary: "bg-surface text-text-primary border border-border-primary hover:bg-background-secondary shadow-sm",
       },
       size: {
-        sm: "h-9 px-4 text-[13px]",
+        sm: "h-8 px-3 text-[12px]",
         default: "h-10 px-5 text-[14px]",
-        lg: "h-12 px-8 text-[15px]",
+        lg: "h-12 px-8 text-[15px] font-semibold tracking-tight",
         icon: "h-10 w-10",
       },
     },
@@ -31,6 +32,7 @@ const buttonVariants = cva(
     },
   }
 );
+
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,

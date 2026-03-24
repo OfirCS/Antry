@@ -2,22 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
-
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  invite: z.string().optional(),
-});
+import { loginSchema, signupSchema, resetPasswordSchema } from "@/lib/schemas";
 
 export type AuthState = {
   error?: string;
+  success?: string;
   fieldErrors?: Record<string, string[]>;
 } | null;
 
@@ -127,4 +116,34 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+// ── Reset password ──────────────────────────────────────
+
+export async function resetPassword(
+  _prevState: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const parsed = resetPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
+
+  if (!parsed.success) {
+    return { fieldErrors: parsed.error.flatten().fieldErrors };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    parsed.data.email,
+    {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/settings`,
+    }
+  );
+
+  if (error) {
+    return { error: "Failed to send reset email. Try again." };
+  }
+
+  // Always return success to avoid leaking whether the email exists
+  return { success: "If an account exists with that email, a reset link has been sent." };
 }

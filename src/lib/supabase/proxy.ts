@@ -32,9 +32,10 @@ export async function updateSession(request: NextRequest) {
 
   // Protected routes — redirect to login if not authenticated
   const protectedPaths = ["/dashboard", "/submit", "/settings"];
-  const isProtected = protectedPaths.some((p) =>
-    request.nextUrl.pathname.startsWith(p)
-  );
+  const pathname = request.nextUrl.pathname;
+  const isProtected =
+    protectedPaths.some((p) => pathname.startsWith(p)) ||
+    /^\/projects\/[^/]+\/edit$/.test(pathname);
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();

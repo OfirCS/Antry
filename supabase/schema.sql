@@ -113,9 +113,10 @@ create policy "Users can unlike" on public.project_likes for delete using (auth.
 -- Hackathons: anyone can read (admin creates via dashboard/SQL)
 create policy "Hackathons are viewable by everyone" on public.hackathons for select using (true);
 
--- Hackathon participants: anyone can read, authenticated can join
+-- Hackathon participants: anyone can read, authenticated can join/leave
 create policy "Participants are viewable by everyone" on public.hackathon_participants for select using (true);
 create policy "Authenticated users can register" on public.hackathon_participants for insert with check (auth.uid() = user_id);
+create policy "Users can leave hackathons" on public.hackathon_participants for delete using (auth.uid() = user_id);
 
 -- Hackathon submissions: anyone can read, only submitter can insert
 create policy "Submissions are viewable by everyone" on public.hackathon_submissions for select using (true);
@@ -163,9 +164,63 @@ create trigger on_like_change
   after insert or delete on public.project_likes
   for each row execute procedure public.update_likes_count();
 
+-- Function: update participant count
+create or replace function public.update_participant_count()
+returns trigger as $$
+begin
+  if (TG_OP = 'INSERT') then
+    update public.hackathons set participant_count = participant_count + 1 where id = new.hackathon_id;
+    return new;
+  elsif (TG_OP = 'DELETE') then
+    update public.hackathons set participant_count = participant_count - 1 where id = old.hackathon_id;
+    return old;
+  end if;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_participant_change
+  after insert or delete on public.hackathon_participants
+  for each row execute procedure public.update_participant_count();
+
+-- Function: update submission count
+create or replace function public.update_submission_count()
+returns trigger as $$
+begin
+  if (TG_OP = 'INSERT') then
+    update public.hackathons set submission_count = submission_count + 1 where id = new.hackathon_id;
+    return new;
+  elsif (TG_OP = 'DELETE') then
+    update public.hackathons set submission_count = submission_count - 1 where id = old.hackathon_id;
+    return old;
+  end if;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_submission_change
+  after insert or delete on public.hackathon_submissions
+  for each row execute procedure public.update_submission_count();
+
+-- Blog posts
+create table public.blog_posts (
+  id uuid default gen_random_uuid() primary key,
+  slug text unique not null,
+  title text not null,
+  excerpt text not null,
+  content text not null,
+  category text not null default 'Product',
+  read_time text default '5 min',
+  published boolean default false,
+  published_at timestamptz,
+  created_at timestamptz default now() not null
+);
+
+alter table public.blog_posts enable row level security;
+create policy "Published posts are viewable" on public.blog_posts for select using (published = true);
+
 -- Indexes
 create index idx_projects_builder on public.projects(builder_id);
 create index idx_projects_category on public.projects(category);
 create index idx_projects_created on public.projects(created_at desc);
 create index idx_hackathons_status on public.hackathons(status);
 create index idx_profiles_username on public.profiles(username);
+create index idx_blog_published on public.blog_posts(published, published_at desc);

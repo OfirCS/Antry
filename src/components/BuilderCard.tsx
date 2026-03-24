@@ -25,32 +25,32 @@ export function BuilderCard({ builder, index = 0, className }: BuilderCardProps)
     >
       <Link
         href={`/builders/${builder.username}`}
-        className="flex items-start gap-5 p-5 rounded-2xl bg-surface border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-12px_rgba(255,255,255,0.05)] transition-all duration-300 ease-out"
+        className="flex items-start gap-5 card-premium p-6"
       >
         <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 text-white shadow-sm"
+          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-white shadow-md"
           style={{ background: builder.gradient }}
         >
-          <span className="text-[12px] font-bold leading-none">
+          <span className="text-[13px] font-bold leading-none">
             {getInitials(builder.name)}
           </span>
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-[15px] font-semibold text-text-primary leading-tight group-hover:text-accent transition-colors">
+            <h3 className="text-[16px] font-bold text-text-primary leading-tight group-hover:text-accent transition-colors tracking-tight">
               {builder.name}
             </h3>
-            <ArrowUpRight className="w-3.5 h-3.5 text-text-tertiary opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+            <ArrowUpRight className="w-4 h-4 text-text-tertiary opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
           </div>
-          <p className="text-[13px] text-text-secondary leading-relaxed mt-1.5 line-clamp-2">
+          <p className="text-[14px] text-text-secondary leading-relaxed mt-2 line-clamp-2">
             {builder.bio}
           </p>
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="flex flex-wrap gap-2 mt-4">
             {builder.skills.slice(0, 3).map((s) => (
               <span
                 key={s}
-                className="text-[11px] font-medium text-text-tertiary bg-background-secondary rounded-full px-2.5 py-0.5"
+                className="text-[11px] font-bold text-text-tertiary bg-background-secondary border border-border-secondary rounded-md px-2.5 py-1 tracking-tight"
               >
                 {s}
               </span>

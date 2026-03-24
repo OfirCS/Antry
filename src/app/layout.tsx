@@ -1,23 +1,16 @@
 import type { Metadata } from "next";
-import { Sora, DM_Sans, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { AuthProvider } from "@/lib/supabase/auth-context";
 import { ScoutAgent } from "@/components/ScoutAgent";
 import "./globals.css";
 
-const sora = Sora({
-  variable: "--font-editorial",
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const interDisplay = Inter({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
@@ -35,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sora.variable} ${dmSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${interDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <div className="noise-overlay" />

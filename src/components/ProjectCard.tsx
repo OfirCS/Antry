@@ -25,46 +25,46 @@ export function ProjectCard({ project, index = 0, className }: ProjectCardProps)
     >
       <Link
         href={`/projects/${project.id}`}
-        className="block p-7 rounded-2xl bg-surface border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-12px_rgba(255,255,255,0.05)] transition-all duration-300 ease-out"
+        className="block card-premium p-8 h-full flex flex-col"
       >
-        <div className="flex items-start justify-between gap-4 mb-5">
+        <div className="flex items-start justify-between gap-4 mb-6">
           <div className="min-w-0">
-            <h3 className="text-[17px] font-semibold text-text-primary group-hover:text-accent transition-colors truncate">
+            <h3 className="text-[18px] font-bold text-text-primary group-hover:text-accent transition-colors truncate tracking-tight">
               {project.title}
             </h3>
-            <p className="text-[13px] text-text-secondary line-clamp-1 mt-1">
+            <p className="text-[14px] text-text-secondary line-clamp-1 mt-1 font-medium">
               {project.tagline}
             </p>
           </div>
-          <span className="flex items-center gap-1.5 text-text-tertiary text-[12px] shrink-0 mt-1">
-            <Heart className="w-3 h-3" />
-            <span className="font-medium">{project.likes}</span>
+          <span className="flex items-center gap-1.5 text-accent text-[12px] font-bold shrink-0 mt-1 uppercase tracking-wider">
+            <Heart className="w-3.5 h-3.5" />
+            <span>{project.likes}</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-2.5 mb-6">
+        <div className="flex items-center gap-3 mb-8">
           <div
-            className="w-5 h-5 rounded flex items-center justify-center text-[7px] font-bold text-white"
+            className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-bold text-white shadow-sm"
             style={{ background: project.builder.gradient }}
           >
             {getInitials(project.builder.name)}
           </div>
-          <span className="text-[12px] font-semibold text-text-primary">
+          <span className="text-[13px] font-bold text-text-primary">
             {project.builder.name}
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-2 pt-5 border-t border-border-secondary">
+        <div className="flex flex-wrap gap-2 pt-6 border-t border-border-tertiary mt-auto">
           {project.techStack.slice(0, 3).map((tech) => (
             <span
               key={tech}
-              className="text-[11px] font-medium text-text-tertiary"
+              className="text-[11px] font-bold text-text-tertiary bg-background-secondary px-2.5 py-1 rounded-md tracking-tight"
             >
               {tech}
             </span>
           ))}
           {project.techStack.length > 3 && (
-            <span className="text-[11px] text-text-tertiary">
+            <span className="text-[11px] font-bold text-text-tertiary px-1 py-1">
               +{project.techStack.length - 3}
             </span>
           )}
