@@ -13,9 +13,16 @@ const links = [
   { href: "/companies", label: "For Teams" },
 ];
 
+function checkIsAdmin(userId: string | undefined): boolean {
+  if (!userId) return false;
+  const ids = process.env.NEXT_PUBLIC_ADMIN_USER_IDS || "";
+  return ids.split(",").map((s) => s.trim()).includes(userId);
+}
+
 export function Nav() {
   const pathname = usePathname();
   const { user, loading } = useAuth();
+  const showAdmin = checkIsAdmin(user?.id);
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-border-primary/60 bg-background-primary/80 backdrop-blur-xl">
@@ -60,6 +67,19 @@ export function Nav() {
             <div className="h-5 w-20 animate-pulse rounded bg-background-secondary" />
           ) : user ? (
             <div className="flex items-center gap-3">
+              {showAdmin && (
+                <Link
+                  href="/admin/discovery"
+                  className={cn(
+                    "text-[13px] font-medium transition-colors",
+                    pathname.startsWith("/admin")
+                      ? "text-text-primary"
+                      : "text-text-tertiary hover:text-text-primary"
+                  )}
+                >
+                  Admin
+                </Link>
+              )}
               <Link
                 href="/dashboard"
                 className={cn(
