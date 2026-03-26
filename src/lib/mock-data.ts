@@ -1,5 +1,7 @@
 // ── Types ──────────────────────────────────────────────
 
+export type UserRole = "builder" | "company" | "investor";
+
 export interface Builder {
   id: string;
   username: string;
@@ -13,6 +15,50 @@ export interface Builder {
   gradient: string;
   antathonIds: string[]; // antathons participated in or created
   outsideProjects: OutsideProject[];
+  role?: UserRole;
+  hourlyRate?: string;
+  availability?: "available" | "busy" | "open-to-offers";
+  location?: string;
+}
+
+export interface Company {
+  id: string;
+  name: string;
+  logo?: string;
+  tagline: string;
+  description: string;
+  industry: string;
+  size: string;
+  openRoles: OpenRole[];
+  gradient: string;
+  website?: string;
+}
+
+export interface OpenRole {
+  id: string;
+  title: string;
+  type: "full-time" | "contract" | "freelance";
+  skills: string[];
+  salary?: string;
+  remote: boolean;
+}
+
+export interface StartupIdea {
+  id: string;
+  title: string;
+  pitch: string;
+  description: string;
+  stage: "idea" | "mvp" | "seed" | "series-a";
+  category: string;
+  techStack: string[];
+  builder: { username: string; name: string; gradient: string };
+  seeking: string[];
+  fundingGoal?: string;
+  traction?: string;
+  demoUrl?: string;
+  likes: number;
+  createdAt: string;
+  gradient: string;
 }
 
 export interface OutsideProject {
@@ -83,6 +129,9 @@ export const builders: Builder[] = [
     outsideProjects: [
       { title: "LangChain Contrib", url: "https://github.com/marachen/langchain-contrib", description: "Popular contrib package for LangChain memory modules" },
     ],
+    availability: "open-to-offers",
+    hourlyRate: "$150/hr",
+    location: "San Francisco, CA",
   },
   {
     id: "b2",
@@ -99,6 +148,9 @@ export const builders: Builder[] = [
     outsideProjects: [
       { title: "Sync Engine", url: "https://github.com/jaketorres/sync-engine", description: "Open-source CRDT sync engine for collaborative apps" },
     ],
+    availability: "available",
+    hourlyRate: "$120/hr",
+    location: "Austin, TX",
   },
   {
     id: "b3",
@@ -113,6 +165,9 @@ export const builders: Builder[] = [
     gradient: "linear-gradient(135deg, #374151 0%, #111827 100%)",
     antathonIds: ["h2", "h3"],
     outsideProjects: [],
+    availability: "busy",
+    hourlyRate: "$130/hr",
+    location: "London, UK",
   },
   {
     id: "b4",
@@ -130,6 +185,9 @@ export const builders: Builder[] = [
       { title: "k8s-dashboard", url: "https://github.com/leokim/k8s-dash", description: "Terminal dashboard for Kubernetes clusters" },
       { title: "go-migrate", url: "https://github.com/leokim/go-migrate", description: "Zero-dependency database migration tool in Go" },
     ],
+    availability: "available",
+    hourlyRate: "$140/hr",
+    location: "Seoul, South Korea",
   },
   {
     id: "b5",
@@ -144,6 +202,9 @@ export const builders: Builder[] = [
     gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)",
     antathonIds: ["h1"],
     outsideProjects: [],
+    availability: "open-to-offers",
+    hourlyRate: "$125/hr",
+    location: "Toronto, Canada",
   },
   {
     id: "b6",
@@ -160,6 +221,9 @@ export const builders: Builder[] = [
     outsideProjects: [
       { title: "Expo Starter", url: "https://github.com/omarhassan/expo-starter", description: "Opinionated Expo starter with auth, navigation, and theming" },
     ],
+    availability: "available",
+    hourlyRate: "$110/hr",
+    location: "Dubai, UAE",
   },
 ];
 
@@ -449,6 +513,155 @@ projects.push({
   createdAt: "2026-03-01",
   gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
 });
+
+// ── Companies ─────────────────────────────────────────
+
+export const companies: Company[] = [
+  {
+    id: "c1",
+    name: "NeuralForge",
+    tagline: "Building the next generation of AI infrastructure",
+    description: "NeuralForge builds scalable AI infrastructure for enterprises. We're looking for builders who ship fast and think in systems.",
+    industry: "AI Infrastructure",
+    size: "50-200",
+    openRoles: [
+      { id: "r1", title: "Senior AI Engineer", type: "full-time", skills: ["Python", "PyTorch", "Kubernetes"], salary: "$180k-$240k", remote: true },
+      { id: "r2", title: "Full-Stack Developer", type: "full-time", skills: ["React", "TypeScript", "Node.js"], salary: "$150k-$200k", remote: true },
+    ],
+    gradient: "linear-gradient(135deg, #1e293b 0%, #334155 100%)",
+    website: "https://neuralforge.ai",
+  },
+  {
+    id: "c2",
+    name: "CodeLayer",
+    tagline: "Developer tools that just work",
+    description: "We build developer tools used by 100k+ engineers daily. Our team is small, fast, and obsessed with DX.",
+    industry: "Developer Tools",
+    size: "10-50",
+    openRoles: [
+      { id: "r3", title: "Founding Engineer", type: "full-time", skills: ["Rust", "Go", "Systems"], salary: "$160k-$220k", remote: true },
+      { id: "r4", title: "Contract Frontend Dev", type: "contract", skills: ["React", "Next.js", "Tailwind"], salary: "$120/hr", remote: true },
+    ],
+    gradient: "linear-gradient(135deg, #374151 0%, #111827 100%)",
+    website: "https://codelayer.dev",
+  },
+  {
+    id: "c3",
+    name: "Synthwave Labs",
+    tagline: "Generative AI for creative professionals",
+    description: "We're building AI tools that amplify creative workflows — from design to music to writing. Looking for builders who blend art and code.",
+    industry: "Creative AI",
+    size: "10-50",
+    openRoles: [
+      { id: "r5", title: "ML Engineer", type: "full-time", skills: ["Python", "Diffusion Models", "FastAPI"], salary: "$170k-$230k", remote: true },
+      { id: "r6", title: "Design Engineer", type: "freelance", skills: ["React", "Three.js", "Framer Motion"], salary: "$100/hr", remote: true },
+    ],
+    gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)",
+    website: "https://synthwave.ai",
+  },
+  {
+    id: "c4",
+    name: "DataPipe",
+    tagline: "Real-time data pipelines for modern teams",
+    description: "DataPipe helps companies process billions of events daily with zero-config pipelines. We need systems builders who love scale.",
+    industry: "Data Infrastructure",
+    size: "50-200",
+    openRoles: [
+      { id: "r7", title: "Backend Engineer", type: "full-time", skills: ["Go", "Kafka", "Postgres"], salary: "$155k-$210k", remote: true },
+    ],
+    gradient: "linear-gradient(135deg, #4b5563 0%, #1f2937 100%)",
+    website: "https://datapipe.io",
+  },
+];
+
+// ── Startup Ideas / Pitches ──────────────────────────
+
+export const startupIdeas: StartupIdea[] = [
+  {
+    id: "s1",
+    title: "Sentinel AI",
+    pitch: "AI code reviewer that catches what linters miss — autonomous PR review agent.",
+    description: "Sentinel is redefining code review. Our multi-agent pipeline reads diffs, checks against project conventions, and synthesizes human-quality reviews. Currently processing 2,000+ PRs/month in beta. Looking for seed funding to build the enterprise tier.",
+    stage: "mvp",
+    category: "Developer Tools",
+    techStack: ["Python", "LangChain", "Claude API", "GitHub Actions"],
+    builder: { username: "marachen", name: "Mara Chen", gradient: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)" },
+    seeking: ["Seed Funding", "Enterprise Partnerships"],
+    fundingGoal: "$1.5M",
+    traction: "2,000+ PRs reviewed/month, 50 beta teams",
+    demoUrl: "https://sentinel-demo.vercel.app",
+    likes: 89,
+    createdAt: "2026-03-01",
+    gradient: "linear-gradient(135deg, #262626 0%, #171717 100%)",
+  },
+  {
+    id: "s2",
+    title: "Flowstate",
+    pitch: "The collaborative whiteboard that thinks with you — AI-native visual workspace.",
+    description: "Flowstate is where distributed teams think together. AI-powered auto-layout, smart grouping, and wireframe generation from text. Currently 3k MAU with 40% week-over-week growth. Seeking pre-seed to hire 2 more engineers.",
+    stage: "seed",
+    category: "Collaboration",
+    techStack: ["Next.js", "WebSockets", "Canvas API", "Liveblocks"],
+    builder: { username: "jaketorres", name: "Jake Torres", gradient: "linear-gradient(135deg, #27272a 0%, #09090b 100%)" },
+    seeking: ["Pre-Seed Funding", "Design Partners"],
+    fundingGoal: "$750K",
+    traction: "3k MAU, 40% W/W growth",
+    demoUrl: "https://flowstate.app",
+    likes: 64,
+    createdAt: "2026-02-15",
+    gradient: "linear-gradient(135deg, #404040 0%, #171717 100%)",
+  },
+  {
+    id: "s3",
+    title: "Palette Pro",
+    pitch: "AI design systems that generate production-ready color palettes from a single seed.",
+    description: "Palette Pro is the design system generator used by 2,000+ designers. Enter a seed color or mood, get a complete accessible palette exported to Figma, Tailwind, CSS, or Swift. Planning to expand into full design token management.",
+    stage: "mvp",
+    category: "Design Tools",
+    techStack: ["React", "Three.js", "WebGL", "Vercel"],
+    builder: { username: "aishapatel", name: "Aisha Patel", gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)" },
+    seeking: ["Angel Investment", "Design Tool Partnerships"],
+    fundingGoal: "$500K",
+    traction: "2,000+ active designers, 10k palettes generated",
+    likes: 112,
+    createdAt: "2026-02-28",
+    gradient: "linear-gradient(135deg, #334155 0%, #0f172a 100%)",
+  },
+  {
+    id: "s4",
+    title: "Terraform Studio",
+    pitch: "Visual infrastructure as code — drag-and-drop cloud architecture, no YAML required.",
+    description: "Terraform Studio makes cloud infrastructure visual. Drag-and-drop AWS/GCP/Azure resources, auto-detect dependencies, estimate costs, and generate production Terraform configs. 500 teams in closed beta. Raising Series A to scale go-to-market.",
+    stage: "series-a",
+    category: "Infrastructure",
+    techStack: ["React", "Go", "Terraform", "Docker"],
+    builder: { username: "leokim", name: "Leo Kim", gradient: "linear-gradient(135deg, #334155 0%, #0f172a 100%)" },
+    seeking: ["Series A", "Strategic Partners"],
+    fundingGoal: "$5M",
+    traction: "500 teams in beta, $180k ARR",
+    demoUrl: "https://tf-studio.dev",
+    likes: 156,
+    createdAt: "2026-01-20",
+    gradient: "linear-gradient(135deg, #4b5563 0%, #1f2937 100%)",
+  },
+  {
+    id: "s5",
+    title: "Nomad AI",
+    pitch: "AI travel planner that learns your vibe and builds personalized itineraries.",
+    description: "Nomad learns your travel preferences over time and builds deeply personalized itineraries. Real-time prices, Google Maps integration, PDF exports. Growing 25% month-over-month with strong retention. Looking for seed round.",
+    stage: "seed",
+    category: "Consumer AI",
+    techStack: ["Python", "FastAPI", "Claude API", "Supabase"],
+    builder: { username: "sofiarivera", name: "Sofia Rivera", gradient: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)" },
+    seeking: ["Seed Funding", "Travel API Partners"],
+    fundingGoal: "$1M",
+    traction: "8k users, 25% M/M growth, 65% retention",
+    demoUrl: "https://nomad-travel.vercel.app",
+    likes: 73,
+    createdAt: "2026-03-10",
+    gradient: "linear-gradient(135deg, #18181b 0%, #000000 100%)",
+  },
+];
 
 // ── Helpers ────────────────────────────────────────────
 

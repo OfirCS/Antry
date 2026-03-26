@@ -17,6 +17,10 @@ import {
   Rocket,
   Users,
   Zap,
+  Briefcase,
+  TrendingUp,
+  Trophy,
+  Code2,
 } from "lucide-react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Nav } from "@/components/Nav";
@@ -349,19 +353,19 @@ export default function Home() {
                   transition={{ duration: 0.6, delay: 0.1, ease }}
                   className="text-[clamp(2.4rem,5.5vw,4rem)] leading-[1.05] tracking-[-0.035em] text-text-primary mb-5"
                 >
-                  Ship it.{" "}
-                  <span className="text-text-tertiary">Prove it.</span>
+                  Build. Hire.{" "}
+                  <span className="text-text-tertiary">Hack.</span>
                   <br />
-                  Get discovered.
+                  Invest. Ship.
                 </motion.h1>
 
                 <motion.p
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-[16px] leading-relaxed text-text-secondary mb-8 max-w-[400px]"
+                  className="text-[16px] leading-relaxed text-text-secondary mb-8 max-w-[420px]"
                 >
-                  The open registry where builders are discovered by what they ship, not what they claim.
+                  The AI coder platform where builders ship, companies hire, hackers compete, and investors discover the next big idea.
                 </motion.p>
 
                 <motion.div
@@ -372,11 +376,11 @@ export default function Home() {
                 >
                   <Button size="lg" asChild>
                     <Link href="/signup">
-                      Start building <ArrowRight className="h-4 w-4 ml-1" />
+                      Get started <ArrowRight className="h-4 w-4 ml-1" />
                     </Link>
                   </Button>
                   <Button variant="outline" size="lg" asChild>
-                    <Link href="/builders">Explore builders</Link>
+                    <Link href="/discover">Explore platform</Link>
                   </Button>
                 </motion.div>
 
@@ -412,8 +416,97 @@ export default function Home() {
         {/* ════════ TRUST BAR ════════ */}
         <TrustBar />
 
-        {/* ════════ FEATURES ════════ */}
-        <section className="py-16 sm:py-20">
+        {/* ════════ PLATFORM PILLARS ════════ */}
+        <section className="py-16 sm:py-24">
+          <div className="mx-auto max-w-[1100px] px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-[clamp(1.5rem,3vw,2.4rem)] tracking-tight mb-2">
+                One platform, every opportunity
+              </h2>
+              <p className="text-[15px] text-text-secondary max-w-[440px] mx-auto">
+                Whether you build, hire, hack, or invest — Antry connects the entire AI builder ecosystem.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            >
+              {[
+                {
+                  icon: Code2,
+                  title: "Build",
+                  description: "Ship projects, create your verified portfolio, and get discovered by your work.",
+                  color: "#3B82F6",
+                  href: "/discover",
+                  cta: "Start building",
+                },
+                {
+                  icon: Briefcase,
+                  title: "Hire",
+                  description: "Find proven engineers by their shipped projects, not resume keywords.",
+                  color: "#8B5CF6",
+                  href: "/hire",
+                  cta: "Browse talent",
+                },
+                {
+                  icon: Trophy,
+                  title: "Hack",
+                  description: "Compete in hackathons, win prizes, and earn verified credentials.",
+                  color: "#F59E0B",
+                  href: "/hackathons",
+                  cta: "Join hackathons",
+                },
+                {
+                  icon: TrendingUp,
+                  title: "Invest",
+                  description: "Discover promising startups from builders with proven track records.",
+                  color: "#10B981",
+                  href: "/invest",
+                  cta: "Explore startups",
+                },
+              ].map(({ icon: Icon, title, description, color, href, cta }) => (
+                <motion.div key={title} variants={fadeUp}>
+                  <Link
+                    href={href}
+                    className="group block rounded-xl border border-border-primary bg-surface p-6 hover:border-text-tertiary/30 hover:shadow-lg transition-all h-full relative overflow-hidden"
+                  >
+                    <div
+                      className="absolute top-0 left-0 right-0 h-0.5"
+                      style={{ backgroundColor: color }}
+                    />
+                    <div
+                      className="h-10 w-10 rounded-lg flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
+                      style={{ backgroundColor: `${color}10` }}
+                    >
+                      <Icon className="h-5 w-5" style={{ color }} />
+                    </div>
+                    <h3 className="text-[18px] font-semibold text-text-primary mb-1.5">
+                      {title}
+                    </h3>
+                    <p className="text-[13px] text-text-secondary leading-relaxed mb-4">
+                      {description}
+                    </p>
+                    <span className="inline-flex items-center gap-1 text-[13px] font-semibold group-hover:gap-2 transition-all" style={{ color }}>
+                      {cta} <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ════════ FEATURES GRID ════════ */}
+        <section className="py-16 sm:py-20 bg-background-secondary/30">
           <div className="mx-auto max-w-[1000px] px-6">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -497,12 +590,12 @@ export default function Home() {
                   <span className="text-[16px] font-semibold tracking-tight">Antry</span>
                 </div>
                 <p className="text-[13px] text-text-tertiary max-w-[220px] leading-relaxed">
-                  The open registry for builders who ship.
+                  The AI coder platform — build, hire, hack, invest.
                 </p>
               </div>
 
               {[
-                { title: "Product", links: [["Builders", "/builders"], ["Opportunities", "/hackathons"], ["Discover", "/discover"]] },
+                { title: "Platform", links: [["Discover", "/discover"], ["Hire Talent", "/hire"], ["Hackathons", "/hackathons"], ["Invest", "/invest"]] },
                 { title: "Company", links: [["For teams", "/companies"], ["About", "/about"], ["Blog", "/blog"]] },
                 { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"]] },
               ].map((col) => (

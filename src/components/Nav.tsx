@@ -8,9 +8,10 @@ import { useAuth } from "@/lib/supabase/auth-context";
 import { Button } from "@/components/ui/button";
 
 const links = [
-  { href: "/builders", label: "Builders" },
-  { href: "/hackathons", label: "Opportunities" },
-  { href: "/companies", label: "For Teams" },
+  { href: "/discover", label: "Discover" },
+  { href: "/hire", label: "Hire" },
+  { href: "/hackathons", label: "Hackathons" },
+  { href: "/invest", label: "Invest" },
 ];
 
 function checkIsAdmin(userId: string | undefined): boolean {

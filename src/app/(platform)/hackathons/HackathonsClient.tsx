@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Trophy, Users, ArrowRight } from "lucide-react";
+import { Search, Trophy, Users, ArrowRight, Zap, Calendar, Star } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const filters = ["all", "active", "completed"] as const;
@@ -71,7 +72,15 @@ export default function HackathonsClient({ hackathons }: { hackathons: Hackathon
       {/* Page content */}
       <div className="max-w-[900px] mx-auto px-6 pt-52 pb-24">
         {/* Page heading */}
-        <div className="mb-12">
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-8 w-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
+              <Trophy className="h-4 w-4 text-violet-500" />
+            </div>
+            <span className="text-[12px] font-semibold uppercase tracking-widest text-violet-500">
+              Hackathons
+            </span>
+          </div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -86,9 +95,51 @@ export default function HackathonsClient({ hackathons }: { hackathons: Hackathon
             transition={{ delay: 0.2 }}
             className="text-[16px] text-text-secondary mt-2 max-w-[500px]"
           >
-            Compete, build, and earn verified credentials on the platform.
+            Compete, build, and earn verified credentials. Win prizes, get hired, and prove your skills.
           </motion.p>
         </div>
+
+        {/* Featured upcoming hackathon highlight */}
+        {hackathons.some((h) => h.status === "upcoming" || h.status === "active") && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="mb-10 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-background-primary p-6 sm:p-8"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="h-4 w-4 text-emerald-600" />
+              <span className="text-[12px] font-bold uppercase tracking-widest text-emerald-600">
+                {hackathons.find((h) => h.status === "active") ? "Live Now" : "Coming Soon"}
+              </span>
+            </div>
+            {(() => {
+              const featured = hackathons.find((h) => h.status === "active") || hackathons.find((h) => h.status === "upcoming");
+              if (!featured) return null;
+              const prizePool = featured.prizes.reduce(
+                (sum, p) => sum + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0),
+                0
+              );
+              return (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-[22px] font-bold text-text-primary mb-1">{featured.title}</h2>
+                    <p className="text-[14px] text-text-secondary">{featured.theme}</p>
+                    <div className="flex items-center gap-4 mt-3 text-[13px] text-text-tertiary">
+                      <span className="flex items-center gap-1"><Trophy className="h-3.5 w-3.5 text-amber-500" /> ${prizePool.toLocaleString()} in prizes</span>
+                      <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {featured.participantCount} builders</span>
+                    </div>
+                  </div>
+                  <Button size="lg" asChild>
+                    <Link href={`/hackathons/${featured.id}`}>
+                      {featured.status === "active" ? "Join now" : "Register"} <ArrowRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              );
+            })()}
+          </motion.div>
+        )}
 
         {/* Cards */}
         <div className="space-y-4">
@@ -115,6 +166,35 @@ export default function HackathonsClient({ hackathons }: { hackathons: Hackathon
             </button>
           </motion.div>
         )}
+
+        {/* Sponsor CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 grid sm:grid-cols-2 gap-4"
+        >
+          <div className="rounded-2xl border border-border-primary bg-surface p-6 sm:p-8">
+            <Star className="h-5 w-5 text-amber-500 mb-3" />
+            <h3 className="text-[18px] font-semibold text-text-primary mb-2">Sponsor a hackathon</h3>
+            <p className="text-[13px] text-text-secondary mb-4 leading-relaxed">
+              Put your brand in front of the best builders. Sponsor prizes, get featured, and recruit top talent directly.
+            </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/companies">Learn more <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+            </Button>
+          </div>
+          <div className="rounded-2xl border border-border-primary bg-surface p-6 sm:p-8">
+            <Calendar className="h-5 w-5 text-blue-500 mb-3" />
+            <h3 className="text-[18px] font-semibold text-text-primary mb-2">Host your own</h3>
+            <p className="text-[13px] text-text-secondary mb-4 leading-relaxed">
+              Run a hackathon on Antry. We handle registration, submissions, and judging. You bring the challenge.
+            </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/signup">Get started <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+            </Button>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
