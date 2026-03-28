@@ -1,0 +1,184 @@
+[  133458ms] [ERROR] ./src/app/(platform)/builders/page.tsx:3:1
+Module not found: Can't resolve './BuildersClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders, projects as mockProjects } from "@/li...
+> 3 | import BuildersClient from "./BuildersClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function BuildersPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[  133822ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders?_rsc=8idju:0
+[  133825ms] [ERROR] ./src/app/(platform)/builders/page.tsx:3:1
+Module not found: Can't resolve './BuildersClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders, projects as mockProjects } from "@/li...
+> 3 | import BuildersClient from "./BuildersClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function BuildersPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[  133898ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders?_rsc=8idju:0
+[  133995ms] [ERROR] ./src/app/(platform)/builders/page.tsx:3:1
+Module not found: Can't resolve './BuildersClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders, projects as mockProjects } from "@/li...
+> 3 | import BuildersClient from "./BuildersClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function BuildersPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[  134026ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders?_rsc=8idju:0
+[  134098ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders:0
+[  134503ms] Error: ./src/app/(platform)/builders/page.tsx:3:1
+Module not found: Can't resolve './BuildersClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders, projects as mockProjects } from "@/li...
+> 3 | import BuildersClient from "./BuildersClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function BuildersPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./src/app/(platform)/builders/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at Object.getCompilationErrors (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1189:59)
+    at DevBundlerService.getCompilationError (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/dev/next-dev-server.js:719:42)
+    at DevServer.findPageComponents (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/dev/next-dev-server.js:689:43)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/base-server.js:1745:26)
+[  134505ms] [ERROR] ./src/app/(platform)/builders/page.tsx:3:1
+Module not found: Can't resolve './BuildersClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders, projects as mockProjects } from "@/li...
+> 3 | import BuildersClient from "./BuildersClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function BuildersPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[  134551ms] [ERROR] ./src/app/(platform)/builders/page.tsx:3:1
+Module not found: Can't resolve './BuildersClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders, projects as mockProjects } from "@/li...
+> 3 | import BuildersClient from "./BuildersClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function BuildersPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[  274329ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[  274619ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders?_rsc=8idju:0
+[  274643ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[  274705ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders?_rsc=8idju:0
+[  274793ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders?_rsc=8idju:0
+[  274800ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[  274853ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/builders:0
+[  275004ms] Error: ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./src/app/(platform)/discover/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at Object.getCompilationErrors (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1189:59)
+    at DevBundlerService.getCompilationError (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/dev/next-dev-server.js:719:42)
+    at DevServer.findPageComponents (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/dev/next-dev-server.js:689:43)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/ofirsela/Downloads/Antry/node_modules/next/dist/server/base-server.js:1745:26)
+[  275032ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[  275050ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[  275091ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[  275227ms] [ERROR] ./src/app/(platform)/discover/page.tsx:3:1
+Module not found: Can't resolve './DiscoverClient'
+  1 | import { getBuilders } from "@/lib/supabase/queries";
+  2 | import { builders as mockBuilders } from "@/lib/mock-data";
+> 3 | import DiscoverClient from "./DiscoverClient";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |
+  5 | export default async function DiscoverPage() {
+  6 |   const dbBuilders = await getBuilders();
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945

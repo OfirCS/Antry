@@ -1,0 +1,293 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Antry" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e24]: Antry
+        - generic [ref=e25]:
+          - button "Community" [ref=e27]:
+            - text: Community
+            - img [ref=e28]
+          - button "Product" [ref=e31]:
+            - text: Product
+            - img [ref=e32]
+          - button "Company" [ref=e36]:
+            - text: Company
+            - img [ref=e37]
+        - generic [ref=e40]:
+          - link "Log in" [ref=e41] [cursor=pointer]:
+            - /url: /login
+          - link "Get started" [ref=e42] [cursor=pointer]:
+            - /url: /signup
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e49]:
+          - link "Back to Showcase" [ref=e51] [cursor=pointer]:
+            - /url: /showcase
+            - img [ref=e52]
+            - text: Back to Showcase
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - generic [ref=e57]:
+                - img [ref=e58]
+                - generic [ref=e61]: Featured Project
+              - heading "Wealthy" [level=1] [ref=e62]
+              - paragraph [ref=e63]: AI-powered financial intelligence, reimagined. A next-gen Wealthsimple-inspired platform for smarter money management.
+              - generic [ref=e64]:
+                - generic [ref=e65]: OS
+                - generic [ref=e66]:
+                  - paragraph [ref=e67]: Ofir Sela
+                  - paragraph [ref=e68]: Builder
+              - generic [ref=e69]:
+                - generic [ref=e70]:
+                  - img [ref=e71]
+                  - text: React
+                - generic [ref=e75]:
+                  - img [ref=e76]
+                  - text: Next.js
+                - generic [ref=e79]:
+                  - img [ref=e80]
+                  - text: AI / LLM
+                - generic [ref=e88]:
+                  - img [ref=e89]
+                  - text: Supabase
+                - generic [ref=e93]:
+                  - img [ref=e94]
+                  - text: Tailwind CSS
+                - generic [ref=e100]:
+                  - img [ref=e101]
+                  - text: TypeScript
+              - generic [ref=e105]:
+                - link "Watch Demo" [ref=e106] [cursor=pointer]:
+                  - /url: https://cap.so/s/9evpv4n3m2vpcgg
+                  - img [ref=e107]
+                  - text: Watch Demo
+                - link "View Source" [ref=e109] [cursor=pointer]:
+                  - /url: https://cap.so/s/9evpv4n3m2vpcgg
+                  - text: View Source
+                  - img [ref=e110]
+            - generic [ref=e117]:
+              - generic [ref=e119]:
+                - generic [ref=e120]: W
+                - generic [ref=e121]: Wealthy
+              - generic [ref=e125]:
+                - paragraph [ref=e126]: Total Portfolio
+                - paragraph [ref=e127]: $124,847+12.4%
+              - generic [ref=e143]:
+                - img [ref=e145]
+                - paragraph [ref=e154]: Based on your spending patterns, I recommend increasing your monthly TFSA contribution by $200 to maximize tax-free growth.
+        - generic [ref=e157]:
+          - iframe [ref=e159]:
+            - generic [active] [ref=f1e1]:
+              - region "Notifications alt+T"
+              - main [ref=f1e2]:
+                - generic [ref=f1e3]:
+                  - heading "404" [level=1] [ref=f1e4]
+                  - paragraph [ref=f1e5]: Oops, we couldn't find this page
+                  - paragraph [ref=f1e6]:
+                    - text: "Please contact the Cap team if this seems like a mistake:"
+                    - link "hello@cap.so" [ref=f1e7] [cursor=pointer]:
+                      - /url: mailto:hello@cap.so
+              - alert [ref=f1e8]
+          - generic [ref=e160]:
+            - paragraph [ref=e161]: Full product walkthrough of the Wealthy platform
+            - link "Open in Cap" [ref=e162] [cursor=pointer]:
+              - /url: https://cap.so/s/9evpv4n3m2vpcgg
+              - text: Open in Cap
+              - img [ref=e163]
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - heading "What is Wealthy?" [level=2] [ref=e168]
+            - paragraph [ref=e169]: Wealthy is an AI-powered financial intelligence platform inspired by Wealthsimple. It combines the clean, minimal design language of modern fintech with advanced AI capabilities to help users make smarter financial decisions through natural conversation.
+            - paragraph [ref=e170]: Think of it as having a brilliant financial advisor available 24/7 - one that understands your entire financial picture and can explain complex concepts in simple terms.
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - img [ref=e174]
+              - heading "AI Financial Advisor" [level=3] [ref=e182]
+              - paragraph [ref=e183]: Natural language conversations about your finances, powered by advanced LLMs that understand context and nuance.
+            - generic [ref=e184]:
+              - img [ref=e186]
+              - heading "Smart Portfolio Insights" [level=3] [ref=e189]
+              - paragraph [ref=e190]: Real-time analysis of investment performance with AI-driven recommendations and risk assessment.
+            - generic [ref=e191]:
+              - img [ref=e193]
+              - heading "Secure by Design" [level=3] [ref=e195]
+              - paragraph [ref=e196]: Bank-grade security with row-level policies, encrypted data storage, and zero-knowledge architecture.
+            - generic [ref=e197]:
+              - img [ref=e199]
+              - heading "Instant Intelligence" [level=3] [ref=e201]
+              - paragraph [ref=e202]: Sub-second responses and real-time data processing. No waiting around for your financial insights.
+            - generic [ref=e203]:
+              - img [ref=e205]
+              - heading "Unified Dashboard" [level=3] [ref=e208]
+              - paragraph [ref=e209]: All your accounts, investments, and financial goals in one clean, intuitive interface.
+            - generic [ref=e210]:
+              - img [ref=e212]
+              - heading "Automated Actions" [level=3] [ref=e215]
+              - paragraph [ref=e216]: Set up AI-powered rules for savings, investing, and budgeting that work while you sleep.
+        - generic [ref=e217]:
+          - generic [ref=e218]:
+            - heading "Built with craft" [level=2] [ref=e219]
+            - paragraph [ref=e220]: Every screen designed with intention. Clean interfaces that let your finances breathe.
+          - generic [ref=e221]:
+            - generic [ref=e224]:
+              - generic [ref=e225]:
+                - img [ref=e226]
+                - generic [ref=e229]: Dashboard
+              - paragraph [ref=e230]: Portfolio overview with real-time AI insights
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - img [ref=e235]
+                - generic [ref=e243]: AI Chat
+              - paragraph [ref=e244]: Natural language financial conversations
+            - generic [ref=e247]:
+              - generic [ref=e248]:
+                - img [ref=e249]
+                - generic [ref=e252]: Smart Transfers
+              - paragraph [ref=e253]: AI-optimized money movement between accounts
+        - generic [ref=e255]:
+          - generic [ref=e256]:
+            - heading "Tech stack deep dive" [level=2] [ref=e257]
+            - paragraph [ref=e258]: Every technology was chosen with purpose. Here is the reasoning behind each decision.
+          - generic [ref=e259]:
+            - generic [ref=e261]:
+              - img [ref=e263]
+              - generic [ref=e266]:
+                - heading "React + Next.js" [level=3] [ref=e267]
+                - paragraph [ref=e268]: Server-side rendering for blazing fast initial loads, with client-side interactivity for a smooth financial dashboard experience.
+            - generic [ref=e270]:
+              - img [ref=e272]
+              - generic [ref=e280]:
+                - heading "AI / LLM Integration" [level=3] [ref=e281]
+                - paragraph [ref=e282]: Advanced language models fine-tuned for financial reasoning, enabling natural conversations about complex money topics.
+            - generic [ref=e284]:
+              - img [ref=e286]
+              - generic [ref=e290]:
+                - heading "Supabase" [level=3] [ref=e291]
+                - paragraph [ref=e292]: Real-time database with row-level security, auth, and edge functions. Perfect for sensitive financial data with instant sync.
+            - generic [ref=e294]:
+              - img [ref=e296]
+              - generic [ref=e302]:
+                - heading "Tailwind CSS" [level=3] [ref=e303]
+                - paragraph [ref=e304]: Rapid UI iteration with a utility-first approach. Enables the clean, Wealthsimple-inspired minimal aesthetic.
+        - generic [ref=e306]:
+          - heading "Meet the builder" [level=2] [ref=e307]
+          - generic [ref=e309]:
+            - generic [ref=e310]: OS
+            - generic [ref=e311]:
+              - heading "Ofir Sela" [level=3] [ref=e312]
+              - paragraph [ref=e313]: Full-stack builder, AI enthusiast, and fintech explorer
+              - paragraph [ref=e314]: Passionate about building products at the intersection of AI and finance. Wealthy represents a vision for what personal finance tools should look like in the AI era - intelligent, accessible, and beautifully designed.
+              - generic [ref=e315]:
+                - link "View Profile" [ref=e316] [cursor=pointer]:
+                  - /url: /builders/ofir-sela
+                  - text: View Profile
+                  - img [ref=e317]
+                - link "More projects by Ofir" [ref=e320] [cursor=pointer]:
+                  - /url: /showcase
+        - generic [ref=e326]:
+          - generic [ref=e328]:
+            - img [ref=e329]
+            - generic [ref=e332]: Start building
+          - heading "Inspired? Start building on Antry" [level=2] [ref=e333]:
+            - text: Inspired? Start building
+            - text: on Antry
+          - paragraph [ref=e334]: Join a community of builders shipping real products. Your showcase project could be next.
+          - generic [ref=e335]:
+            - link "Get started free" [ref=e336] [cursor=pointer]:
+              - /url: /signup
+              - text: Get started free
+              - img [ref=e337]
+            - link "Browse showcase" [ref=e340] [cursor=pointer]:
+              - /url: /showcase
+    - contentinfo [ref=e341]:
+      - generic [ref=e344]:
+        - generic [ref=e345]:
+          - generic [ref=e346]:
+            - link "Antry" [ref=e347] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e348]:
+                - img [ref=e350]
+                - generic [ref=e366]: Antry
+            - paragraph [ref=e367]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+            - generic [ref=e368]:
+              - link "GitHub" [ref=e369] [cursor=pointer]:
+                - /url: https://github.com
+                - img [ref=e370]
+              - link "X (Twitter)" [ref=e372] [cursor=pointer]:
+                - /url: https://x.com
+                - img [ref=e373]
+              - link "LinkedIn" [ref=e375] [cursor=pointer]:
+                - /url: https://linkedin.com
+                - img [ref=e376]
+          - generic [ref=e378]:
+            - heading "Product" [level=4] [ref=e379]
+            - list [ref=e380]:
+              - listitem [ref=e381]:
+                - link "Builders" [ref=e382] [cursor=pointer]:
+                  - /url: /builders
+              - listitem [ref=e383]:
+                - link "Showcase" [ref=e384] [cursor=pointer]:
+                  - /url: /showcase
+              - listitem [ref=e385]:
+                - link "Hackathons" [ref=e386] [cursor=pointer]:
+                  - /url: /hackathons
+              - listitem [ref=e387]:
+                - link "Recruiters" [ref=e388] [cursor=pointer]:
+                  - /url: /companies
+              - listitem [ref=e389]:
+                - link "Submit Project" [ref=e390] [cursor=pointer]:
+                  - /url: /submit
+          - generic [ref=e391]:
+            - heading "Company" [level=4] [ref=e392]
+            - list [ref=e393]:
+              - listitem [ref=e394]:
+                - link "About" [ref=e395] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e396]:
+                - link "Blog" [ref=e397] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=e398]:
+                - link "Careers" [ref=e399] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e400]:
+                - link "Contact" [ref=e401] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e402]:
+            - heading "Resources" [level=4] [ref=e403]
+            - list [ref=e404]:
+              - listitem [ref=e405]:
+                - link "Documentation" [ref=e406] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=e407]:
+                - link "API" [ref=e408] [cursor=pointer]:
+                  - /url: /api
+              - listitem [ref=e409]:
+                - link "Community" [ref=e410] [cursor=pointer]:
+                  - /url: /community
+              - listitem [ref=e411]:
+                - link "Support" [ref=e412] [cursor=pointer]:
+                  - /url: /support
+          - generic [ref=e413]:
+            - heading "Legal" [level=4] [ref=e414]
+            - list [ref=e415]:
+              - listitem [ref=e416]:
+                - link "Privacy Policy" [ref=e417] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e418]:
+                - link "Terms of Service" [ref=e419] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e420]:
+                - link "Cookie Policy" [ref=e421] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e422]:
+          - generic [ref=e423]: © 2026 Antry. All rights reserved.
+          - button "Back to top" [ref=e424]:
+            - text: Back to top
+            - img [ref=e426]
+  - button "Open Next.js Dev Tools" [ref=e433] [cursor=pointer]:
+    - img [ref=e434]
+  - alert [ref=e437]

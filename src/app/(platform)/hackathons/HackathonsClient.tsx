@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Trophy, Users, ArrowRight } from "lucide-react";
+import { Search, Users, ArrowRight, Trophy, Flame } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const filters = ["all", "active", "completed"] as const;
+const filters = ["all", "active", "upcoming", "completed"] as const;
 type Filter = (typeof filters)[number];
 
 interface HackathonItem {
@@ -17,11 +17,57 @@ interface HackathonItem {
   gradient: string;
   prizes: { place: string; reward: string }[];
   participantCount: number;
+  startDate: string;
+  endDate: string;
 }
 
-export default function HackathonsClient({ hackathons }: { hackathons: HackathonItem[] }) {
+/* -- Countdown hook ---------------------------------------- */
+
+function useCountdown(targetDate: string) {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date().getTime();
+      const target = new Date(targetDate).getTime();
+      const diff = Math.max(0, target - now);
+
+      setTimeLeft({
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diff / (1000 * 60)) % 60),
+      });
+    };
+
+    tick();
+    const interval = setInterval(tick, 60_000);
+    return () => clearInterval(interval);
+  }, [targetDate]);
+
+  return timeLeft;
+}
+
+function formatCountdown(t: { days: number; hours: number; minutes: number }) {
+  if (t.days > 0) return `${t.days}d ${t.hours}h left`;
+  if (t.hours > 0) return `${t.hours}h ${t.minutes}m left`;
+  return `${t.minutes}m left`;
+}
+
+/* -- Main component ---------------------------------------- */
+
+export default function HackathonsClient({
+  hackathons,
+}: {
+  hackathons: HackathonItem[];
+}) {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const featuredHackathon =
+    hackathons.find((h) => h.status === "active") ||
+    hackathons.find((h) => h.status === "upcoming");
 
   const filtered = hackathons.filter(
     (e) =>
@@ -31,34 +77,132 @@ export default function HackathonsClient({ hackathons }: { hackathons: Hackathon
       (filter === "all" || e.status === filter)
   );
 
+  // Animate tab indicator
+  useEffect(() => {
+    const activeTab = tabRefs.current.get(filter);
+    const indicator = indicatorRef.current;
+    if (activeTab && indicator) {
+      const { offsetLeft, offsetWidth } = activeTab;
+      indicator.style.transform = `translateX(${offsetLeft}px)`;
+      indicator.style.width = `${offsetWidth}px`;
+    }
+  }, [filter]);
+
+  const featuredTarget = featuredHackathon
+    ? featuredHackathon.status === "active"
+      ? featuredHackathon.endDate
+      : featuredHackathon.startDate
+    : null;
+
+  const featuredCountdown = useCountdown(
+    featuredTarget || new Date().toISOString()
+  );
+
   return (
-    <div className="min-h-screen bg-background-primary">
-      {/* Sticky search + filter bar */}
-      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/90 backdrop-blur-xl border-b border-border-tertiary transition-all duration-300">
-        <div className="max-w-[900px] mx-auto px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="min-h-screen bg-[#FAFAF7]">
+      {/* -- Header + Featured banner ------------------------------ */}
+      <div className="max-w-[960px] mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-6">
+        <h1 className="text-[24px] sm:text-[28px] font-bold tracking-tight text-[#111]">
+          Hackathons
+        </h1>
+        <p className="mt-1 text-[14px] sm:text-[15px] text-[#111]/50">
+          Weekend sprints. Ship a demo. Win prizes.
+        </p>
+
+        {/* Featured hackathon banner */}
+        {featuredHackathon && (
+          <Link href={`/hackathons/${featuredHackathon.id}`} className="group block mt-6">
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="relative overflow-hidden rounded-2xl bg-[#111] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-5 transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
+            >
+              {/* Subtle gradient accent */}
+              <div className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full bg-[#C6F135]/[0.06] blur-[80px] pointer-events-none" />
+
+              <div className="flex-1 min-w-0 relative z-10">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-white/10 text-white/80 border border-white/10">
+                    {featuredHackathon.status === "active" ? (
+                      <>
+                        <Flame className="w-3 h-3 text-[#C6F135]" />
+                        Live now
+                      </>
+                    ) : (
+                      "Up next"
+                    )}
+                  </span>
+                  {featuredHackathon.prizes[0] && (
+                    <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-white/50">
+                      <Trophy className="w-3 h-3" />
+                      {featuredHackathon.prizes[0].reward}
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-[22px] sm:text-[26px] font-bold text-white tracking-tight leading-tight">
+                  {featuredHackathon.title}
+                </h2>
+                <p className="mt-1.5 text-[14px] text-white/50 truncate max-w-[500px]">
+                  {featuredHackathon.theme}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 sm:gap-4 shrink-0 relative z-10 flex-wrap">
+                <div className="flex items-center gap-2 text-white/60">
+                  <Users className="w-4 h-4" />
+                  <span className="text-[14px] font-semibold tabular-nums">
+                    {featuredHackathon.participantCount}
+                  </span>
+                </div>
+
+                {featuredTarget && (
+                  <span className="text-[12px] sm:text-[13px] font-bold tabular-nums text-[#C6F135] bg-[#C6F135]/10 px-3 py-1.5 rounded-lg">
+                    {formatCountdown(featuredCountdown)}
+                  </span>
+                )}
+
+                <span className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#111] text-[13px] font-bold transition-transform duration-200 group-hover:scale-105 min-h-[44px]">
+                  Join
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              </div>
+            </motion.div>
+          </Link>
+        )}
+      </div>
+
+      {/* -- Sticky search + filter bar -------------------------- */}
+      <div className="sticky top-[56px] z-40 backdrop-blur-xl border-b border-[#111]/[0.06] bg-[#FAFAF7]/90">
+        <div className="max-w-[960px] mx-auto px-4 sm:px-6 py-3 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           {/* Search */}
-          <div className="relative flex-1 max-w-[400px]">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-accent pointer-events-none" />
+          <div className="relative flex-1 sm:max-w-[320px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#111]/25 pointer-events-none" />
             <input
               type="text"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search antathons..."
-              className="w-full pl-12 pr-4 py-3 bg-surface border border-border-primary shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-full text-[15px] font-medium text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-4 focus:ring-accent/10 outline-none transition-all duration-300"
+              placeholder="Search hackathons..."
+              className="w-full pl-10 pr-4 py-3 sm:py-2.5 bg-white border border-[#111]/[0.08] rounded-xl text-[14px] text-[#111] placeholder:text-[#111]/30 outline-none focus:border-[#111]/20 focus:shadow-[0_0_0_3px_rgba(17,17,17,0.04)] transition-all"
             />
           </div>
 
-          {/* Filter pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
+          {/* Filter tabs */}
+          <div className="relative flex items-center gap-0.5 p-1 rounded-xl bg-[#111]/[0.04] overflow-x-auto scrollbar-none">
+            <div
+              ref={indicatorRef}
+              className="absolute top-1 h-[calc(100%-8px)] rounded-lg bg-[#111] shadow-sm transition-all duration-300 ease-out"
+            />
             {filters.map((f) => (
               <button
                 key={f}
+                ref={(el) => {
+                  if (el) tabRefs.current.set(f, el);
+                }}
                 onClick={() => setFilter(f)}
                 className={cn(
-                  "px-4 py-2 text-[12px] font-bold uppercase tracking-widest rounded-full transition-all duration-300",
-                  filter === f
-                    ? "bg-text-primary text-background-primary shadow-md"
-                    : "bg-surface border border-border-primary text-text-secondary hover:text-text-primary hover:border-border-secondary"
+                  "relative z-10 px-3.5 py-2.5 sm:py-1.5 text-[12px] font-semibold capitalize rounded-lg transition-colors duration-200 whitespace-nowrap min-h-[44px] sm:min-h-0",
+                  filter === f ? "text-white" : "text-[#111]/40 hover:text-[#111]/60"
                 )}
               >
                 {f}
@@ -68,30 +212,14 @@ export default function HackathonsClient({ hackathons }: { hackathons: Hackathon
         </div>
       </div>
 
-      {/* Page content */}
-      <div className="max-w-[900px] mx-auto px-6 pt-52 pb-24">
-        {/* Page heading */}
-        <div className="mb-12">
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-[clamp(2rem,4vw,3rem)] text-text-primary tracking-[-0.03em]"
-          >
-            Antathons
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-[16px] text-text-secondary mt-2 max-w-[500px]"
-          >
-            Compete, build, and earn verified credentials on the platform.
-          </motion.p>
-        </div>
+      {/* -- Hackathon list --------------------------------------- */}
+      <div className="max-w-[960px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-8">
+        <p className="text-[13px] font-medium text-[#111]/40 mb-5">
+          {filtered.length} hackathon{filtered.length !== 1 ? "s" : ""}
+          {filter !== "all" ? ` \u00b7 ${filter}` : ""}
+        </p>
 
-        {/* Cards */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <AnimatePresence mode="popLayout">
             {filtered.map((event, i) => (
               <HackathonCard key={event.id} event={event} index={i} />
@@ -104,23 +232,50 @@ export default function HackathonsClient({ hackathons }: { hackathons: Hackathon
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-24"
+            className="text-center py-20"
           >
-            <p className="text-[16px] text-text-secondary font-medium">No antathons found.</p>
+            <div className="w-12 h-12 rounded-xl bg-[#111]/[0.04] flex items-center justify-center mx-auto mb-3">
+              <Search className="w-5 h-5 text-[#111]/20" />
+            </div>
+            <p className="text-[15px] font-medium text-[#111]/40">
+              No hackathons match your search.
+            </p>
             <button
-              onClick={() => { setQ(""); setFilter("all"); }}
-              className="mt-4 text-accent text-[14px] font-bold hover:underline"
+              onClick={() => {
+                setQ("");
+                setFilter("all");
+              }}
+              className="mt-3 text-[13px] font-semibold text-[#C6F135] hover:underline"
             >
               Clear filters
             </button>
           </motion.div>
         )}
       </div>
+
+      {/* -- Bottom CTA ------------------------------------------ */}
+      <div className="max-w-[960px] mx-auto px-4 sm:px-6 pb-16">
+        <div className="rounded-2xl bg-[#111] p-6 sm:p-10 text-center">
+          <h2 className="text-[20px] sm:text-[26px] font-bold text-white tracking-tight">
+            Want to host a hackathon?
+          </h2>
+          <p className="mt-2 text-[13px] sm:text-[14px] text-white/50 max-w-[380px] mx-auto">
+            Bring your community together. We handle the infra.
+          </p>
+          <Link
+            href="/submit"
+            className="inline-flex items-center gap-2 mt-5 px-6 py-3.5 sm:py-3 rounded-xl bg-[#C6F135] text-[#111] text-[14px] font-semibold transition-transform hover:scale-[1.02] active:scale-[0.98] min-h-[48px]"
+          >
+            Get started
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
 
-/* Card */
+/* -- Hackathon Card ----------------------------------------- */
 
 function HackathonCard({
   event,
@@ -129,95 +284,101 @@ function HackathonCard({
   event: HackathonItem;
   index: number;
 }) {
-  const prizePool = event.prizes.reduce(
-    (sum, p) => sum + (parseInt(p.reward.replace(/[^0-9]/g, "")) || 0),
-    0
-  );
+  const targetDate =
+    event.status === "active"
+      ? event.endDate
+      : event.status === "upcoming"
+        ? event.startDate
+        : null;
+
+  const countdown = useCountdown(targetDate || new Date().toISOString());
+
+  const statusColor: Record<string, string> = {
+    active: "bg-[#C6F135] shadow-[0_0_6px_rgba(198,241,53,0.6)]",
+    upcoming: "bg-[#111]/30",
+    completed: "bg-[#111]/15",
+  };
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      transition={{
-        duration: 0.4,
-        delay: index * 0.05,
-        ease: [0.16, 1, 0.3, 1],
-      }}
+      transition={{ duration: 0.35, delay: index * 0.04 }}
     >
       <Link
         href={`/hackathons/${event.id}`}
-        className="group card-premium flex flex-col sm:flex-row sm:items-center gap-6 p-6 sm:p-8"
+        className="group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 px-4 sm:px-5 py-4 rounded-xl bg-white border border-[#111]/[0.06] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:-translate-y-[1px] min-h-[64px]"
       >
-        {/* Gradient initial */}
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center text-[18px] font-bold text-white shrink-0 shadow-lg"
-          style={{ background: event.gradient }}
-        >
-          {event.title[0]}
+        {/* Top/Left: status dot + title + theme */}
+        <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
+          <span
+            className={cn(
+              "w-2.5 h-2.5 rounded-full shrink-0",
+              statusColor[event.status]
+            )}
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-[15px] font-semibold text-[#111] truncate">
+                {event.title}
+              </h3>
+              <span className="hidden sm:inline text-[13px] text-[#111]/35 truncate max-w-[200px]">
+                {event.theme}
+              </span>
+            </div>
+            <span className="sm:hidden text-[12px] text-[#111]/40 truncate block mt-0.5">
+              {event.theme}
+            </span>
+            {/* Mobile-only: show participants + prize inline */}
+            <div className="flex items-center gap-3 mt-1.5 md:hidden text-[12px] text-[#111]/40">
+              <span className="flex items-center gap-1 font-medium tabular-nums">
+                <Users className="w-3 h-3" />
+                {event.participantCount}
+              </span>
+              {event.prizes[0] && (
+                <span className="flex items-center gap-1 font-medium">
+                  <Trophy className="w-3 h-3" />
+                  {event.prizes[0].reward}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Text block */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1.5">
-            <h2 className="text-[20px] font-bold text-text-primary truncate tracking-tight group-hover:text-accent transition-colors">
-              {event.title}
-            </h2>
-            <StatusBadge status={event.status} />
-          </div>
-          <p className="text-[15px] text-text-secondary truncate max-w-[90%]">
-            {event.theme}
-          </p>
+        {/* Center: participants + prize (desktop) */}
+        <div className="hidden md:flex items-center gap-5 shrink-0 text-[13px] text-[#111]/50">
+          <span className="flex items-center gap-1.5 font-medium tabular-nums">
+            <Users className="w-3.5 h-3.5" />
+            {event.participantCount}
+          </span>
+          {event.prizes[0] && (
+            <span className="flex items-center gap-1.5 font-medium">
+              <Trophy className="w-3.5 h-3.5" />
+              {event.prizes[0].reward}
+            </span>
+          )}
         </div>
 
-        {/* Stats */}
-        <div className="flex items-center gap-6 shrink-0 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-border-tertiary">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest mb-1">Prize Pool</span>
-            <span className="flex items-center gap-1.5 text-[15px] font-bold text-text-primary">
-              <Trophy className="w-4 h-4 text-accent" />
-              ${prizePool.toLocaleString()}
+        {/* Bottom/Right: countdown + button */}
+        <div className="flex items-center gap-3 shrink-0 pl-5 sm:pl-0">
+          {targetDate && (
+            <span className="text-[12px] font-semibold tabular-nums text-[#111]/40">
+              {formatCountdown(countdown)}
             </span>
-          </div>
-          <div className="w-px h-10 bg-border-tertiary hidden sm:block" />
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest mb-1">Builders</span>
-            <span className="flex items-center gap-1.5 text-[15px] font-bold text-text-primary">
-              <Users className="w-4 h-4 text-text-tertiary" />
-              {event.participantCount}
+          )}
+          {event.status === "completed" ? (
+            <span className="px-3.5 py-2 sm:py-1.5 rounded-lg bg-[#111]/[0.04] text-[12px] font-semibold text-[#111]/40 min-h-[36px] sm:min-h-0 inline-flex items-center">
+              View
             </span>
-          </div>
-          <div className="h-10 w-10 rounded-full bg-background-secondary flex items-center justify-center ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hidden sm:flex">
-            <ArrowRight className="w-5 h-5 text-text-primary group-hover:translate-x-0.5 transition-transform" />
-          </div>
+          ) : (
+            <span className="px-3.5 py-2 sm:py-1.5 rounded-lg bg-[#111] text-white text-[12px] font-semibold transition-transform duration-200 group-hover:scale-105 min-h-[36px] sm:min-h-0 inline-flex items-center">
+              Join
+            </span>
+          )}
         </div>
       </Link>
     </motion.div>
-  );
-}
-
-/* Status Badge */
-
-function StatusBadge({
-  status,
-}: {
-  status: "upcoming" | "active" | "completed";
-}) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-widest shrink-0",
-        status === "active" &&
-          "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20",
-        status === "upcoming" && "bg-accent-muted text-accent border border-accent/20",
-        status === "completed" && "bg-background-secondary text-text-tertiary border border-border-secondary"
-      )}
-    >
-      {status === "active" && (
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
-      )}
-      {status}
-    </span>
   );
 }

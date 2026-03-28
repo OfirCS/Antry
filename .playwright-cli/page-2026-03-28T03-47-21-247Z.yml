@@ -1,0 +1,214 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Antry" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e24]: Antry
+        - generic [ref=e25]:
+          - button "Community" [ref=e27]:
+            - text: Community
+            - img [ref=e28]
+          - button "Product" [ref=e32]:
+            - text: Product
+            - img [ref=e33]
+          - button "Company" [ref=e36]:
+            - text: Company
+            - img [ref=e37]
+    - main [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - img
+              - textbox "Search builders by name, skill, or tagline..." [ref=e47]
+            - generic [ref=e48]:
+              - generic [ref=e49]: "2"
+              - text: Builders
+          - generic [ref=e50]:
+            - button "All Builders" [ref=e51]
+            - button "AI / ML" [ref=e52]
+            - button "Frontend" [ref=e53]
+            - button "Backend" [ref=e54]
+            - button "Full Stack" [ref=e55]
+            - button "Design" [ref=e56]
+            - button "Mobile" [ref=e57]
+          - generic [ref=e58]:
+            - generic [ref=e59]: "Filter:"
+            - button "AI" [ref=e60]
+            - button "React" [ref=e61]
+            - button "Python" [ref=e62]
+            - button "Go" [ref=e63]
+            - button "TypeScript" [ref=e64]
+            - button "Design" [ref=e65]
+            - button "Mobile" [ref=e66]
+            - button "Rust" [ref=e67]
+            - button "Next.js" [ref=e68]
+            - button "Node.js" [ref=e69]
+        - generic [ref=e70]:
+          - generic [ref=e72]:
+            - generic [ref=e74]:
+              - img [ref=e75]
+              - text: Builder Network
+            - heading "The Network" [level=1] [ref=e78]
+            - paragraph [ref=e79]: Discover builders by their verified shipping history. Every project, every contribution.
+          - generic [ref=e80]:
+            - heading "Featured Builders" [level=2] [ref=e82]
+            - generic [ref=e84]:
+              - link "Featured Top Builder OS ofir sela 0 Ships 0" [ref=e86] [cursor=pointer]:
+                - /url: /builders/ofir-sela-e8ff
+                - generic [ref=e88]:
+                  - generic [ref=e89]:
+                    - img [ref=e90]
+                    - text: Featured
+                  - generic [ref=e92]:
+                    - img [ref=e93]
+                    - text: Top Builder
+                - generic [ref=e96]:
+                  - generic [ref=e97]: OS
+                  - generic [ref=e98]:
+                    - heading "ofir sela" [level=3] [ref=e99]
+                    - paragraph
+                    - generic [ref=e100]:
+                      - generic [ref=e101]: 0 Ships
+                      - generic [ref=e102]:
+                        - img [ref=e103]
+                        - text: "0"
+                  - img [ref=e106]
+              - link "Featured Top Builder TA Test Admin 0 Ships 0" [ref=e110] [cursor=pointer]:
+                - /url: /builders/test-admin-415b
+                - generic [ref=e112]:
+                  - generic [ref=e113]:
+                    - img [ref=e114]
+                    - text: Featured
+                  - generic [ref=e116]:
+                    - img [ref=e117]
+                    - text: Top Builder
+                - generic [ref=e120]:
+                  - generic [ref=e121]: TA
+                  - generic [ref=e122]:
+                    - heading "Test Admin" [level=3] [ref=e123]
+                    - paragraph
+                    - generic [ref=e124]:
+                      - generic [ref=e125]: 0 Ships
+                      - generic [ref=e126]:
+                        - img [ref=e127]
+                        - text: "0"
+                  - img [ref=e130]
+          - heading "All Builders" [level=2] [ref=e134]
+          - generic [ref=e136]:
+            - link "OS ofir sela 0 Ships 0" [ref=e138] [cursor=pointer]:
+              - /url: /builders/ofir-sela-e8ff
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - generic [ref=e141]: OS
+                  - img [ref=e143]
+                - heading "ofir sela" [level=3] [ref=e146]
+                - paragraph
+                - generic [ref=e148]:
+                  - generic [ref=e149]: 0 Ships
+                  - generic [ref=e150]:
+                    - img [ref=e151]
+                    - text: "0"
+            - link "TA Test Admin 0 Ships 0" [ref=e154] [cursor=pointer]:
+              - /url: /builders/test-admin-415b
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - generic [ref=e157]: TA
+                  - img [ref=e159]
+                - heading "Test Admin" [level=3] [ref=e162]
+                - paragraph
+                - generic [ref=e164]:
+                  - generic [ref=e165]: 0 Ships
+                  - generic [ref=e166]:
+                    - img [ref=e167]
+                    - text: "0"
+    - contentinfo [ref=e169]:
+      - generic [ref=e172]:
+        - generic [ref=e173]:
+          - generic [ref=e174]:
+            - link "Antry" [ref=e175] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e176]:
+                - img [ref=e178]
+                - generic [ref=e194]: Antry
+            - paragraph [ref=e195]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+            - generic [ref=e196]:
+              - link "GitHub" [ref=e197] [cursor=pointer]:
+                - /url: https://github.com
+                - img [ref=e198]
+              - link "X (Twitter)" [ref=e200] [cursor=pointer]:
+                - /url: https://x.com
+                - img [ref=e201]
+              - link "LinkedIn" [ref=e203] [cursor=pointer]:
+                - /url: https://linkedin.com
+                - img [ref=e204]
+          - generic [ref=e206]:
+            - heading "Product" [level=4] [ref=e207]
+            - list [ref=e208]:
+              - listitem [ref=e209]:
+                - link "Builders" [ref=e210] [cursor=pointer]:
+                  - /url: /builders
+              - listitem [ref=e211]:
+                - link "Showcase" [ref=e212] [cursor=pointer]:
+                  - /url: /showcase
+              - listitem [ref=e213]:
+                - link "Hackathons" [ref=e214] [cursor=pointer]:
+                  - /url: /hackathons
+              - listitem [ref=e215]:
+                - link "Recruiters" [ref=e216] [cursor=pointer]:
+                  - /url: /companies
+              - listitem [ref=e217]:
+                - link "Submit Project" [ref=e218] [cursor=pointer]:
+                  - /url: /submit
+          - generic [ref=e219]:
+            - heading "Company" [level=4] [ref=e220]
+            - list [ref=e221]:
+              - listitem [ref=e222]:
+                - link "About" [ref=e223] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e224]:
+                - link "Blog" [ref=e225] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=e226]:
+                - link "Careers" [ref=e227] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e228]:
+                - link "Contact" [ref=e229] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e230]:
+            - heading "Resources" [level=4] [ref=e231]
+            - list [ref=e232]:
+              - listitem [ref=e233]:
+                - link "Documentation" [ref=e234] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=e235]:
+                - link "API" [ref=e236] [cursor=pointer]:
+                  - /url: /api
+              - listitem [ref=e237]:
+                - link "Community" [ref=e238] [cursor=pointer]:
+                  - /url: /community
+              - listitem [ref=e239]:
+                - link "Support" [ref=e240] [cursor=pointer]:
+                  - /url: /support
+          - generic [ref=e241]:
+            - heading "Legal" [level=4] [ref=e242]
+            - list [ref=e243]:
+              - listitem [ref=e244]:
+                - link "Privacy Policy" [ref=e245] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e246]:
+                - link "Terms of Service" [ref=e247] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e248]:
+                - link "Cookie Policy" [ref=e249] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e250]:
+          - generic [ref=e251]: © 2026 Antry. All rights reserved.
+          - button "Back to top" [ref=e252]:
+            - text: Back to top
+            - img [ref=e254]
+  - button "Open Next.js Dev Tools" [ref=e261] [cursor=pointer]:
+    - img [ref=e262]

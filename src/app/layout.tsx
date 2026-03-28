@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Sora, DM_Sans } from "next/font/google";
 import { AuthProvider } from "@/lib/supabase/auth-context";
-import { ScoutAgent } from "@/components/ScoutAgent";
 import "./globals.css";
 
-const inter = Inter({
+const display = Sora({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const sans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Antry — Where Builders Prove Their Work",
+  title: "Antry — Community for AI Builders",
   description:
-    "The platform for technical talent. Replace resumes with live demos and verified shipping history.",
+    "A focused community for AI builders to ship projects, join hackathons, and get discovered by recruiters.",
 };
 
 export default function RootLayout({
@@ -21,16 +27,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <div className="grain-overlay" />
-        <AuthProvider>
-          {children}
-          <ScoutAgent />
-        </AuthProvider>
+    <html lang="en" className={`${display.variable} ${sans.variable} h-full antialiased`}>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
+      </head>
+      <body className="min-h-full">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

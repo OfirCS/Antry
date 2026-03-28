@@ -1,0 +1,262 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Antry" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e24]: Antry
+      - generic [ref=e25]:
+        - button "Community" [ref=e27]:
+          - text: Community
+          - img [ref=e28]
+        - button "Product" [ref=e31]:
+          - text: Product
+          - img [ref=e32]
+        - button "Company" [ref=e36]:
+          - text: Company
+          - img [ref=e37]
+  - main [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - img [ref=e46]
+          - text: AI-Powered Agent
+        - heading "Meet Scout" [level=1] [ref=e54]:
+          - text: Meet
+          - generic [ref=e55]: Scout
+        - paragraph [ref=e56]: Search builders, shipped work, projects, and hackathons in plain English.
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - img [ref=e59]
+            - text: Search
+          - generic [ref=e61]:
+            - img [ref=e62]
+            - text: Compare
+          - generic [ref=e66]:
+            - img [ref=e67]
+            - text: Teams
+          - generic [ref=e72]:
+            - img [ref=e73]
+            - text: Events
+        - generic [ref=e76]:
+          - generic [ref=e77]: Platform only
+          - generic [ref=e78]: Live demos
+          - generic [ref=e79]: Team matches
+      - generic [ref=e82]:
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e91]: antry terminal
+            - generic [ref=e92]:
+              - generic [ref=e93]:
+                - generic [ref=e94]:
+                  - img [ref=e95]
+                  - text: K
+                - generic [ref=e97]: to focus
+              - generic [ref=e100]: Ready
+          - generic [ref=e101]:
+            - img [ref=e102]
+            - textbox "Ask anything about the network..." [ref=e105]
+            - button "Voice search (coming soon)" [ref=e106]:
+              - img [ref=e107]
+        - generic [ref=e110]:
+          - generic [ref=e112]:
+            - button "Find builders" [ref=e113]:
+              - img [ref=e115]
+              - text: Find builders
+            - button "View hackathons" [ref=e118]:
+              - img [ref=e120]
+              - text: View hackathons
+            - button "Build a team" [ref=e126]:
+              - img [ref=e128]
+              - text: Build a team
+            - button "Compare profiles" [ref=e132]:
+              - img [ref=e134]
+              - text: Compare profiles
+          - generic [ref=e138]:
+            - paragraph [ref=e139]: People are searching
+            - paragraph [ref=e141]: “Who's building AI agents right now?”
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - img [ref=e145]
+              - generic [ref=e147]: 0+
+            - generic [ref=e148]: builders indexed
+        - paragraph [ref=e149]: Search runs only against Antry data. No external browsing.
+      - generic [ref=e151]:
+        - heading "Scout workspace" [level=2] [ref=e153]
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - img [ref=e157]
+            - heading "Search" [level=3] [ref=e160]
+            - paragraph [ref=e161]: Search by stack and shipped work.
+          - generic [ref=e162]:
+            - img [ref=e164]
+            - heading "Teams" [level=3] [ref=e169]
+            - paragraph [ref=e170]: Build balanced teams from the network.
+          - generic [ref=e171]:
+            - img [ref=e173]
+            - heading "Compare" [level=3] [ref=e178]
+            - paragraph [ref=e179]: Compare strengths side by side.
+          - generic [ref=e180]:
+            - img [ref=e182]
+            - heading "Events" [level=3] [ref=e188]
+            - paragraph [ref=e189]: Find events that fit your stack.
+      - generic [ref=e191]:
+        - heading "Prompt starters" [level=2] [ref=e193]
+        - generic [ref=e194]:
+          - generic [ref=e195]:
+            - generic [ref=e196]:
+              - img [ref=e198]
+              - heading "Builders" [level=3] [ref=e201]
+            - generic [ref=e202]:
+              - button "Find React builders" [ref=e203]:
+                - img [ref=e204]
+                - text: Find React builders
+                - img [ref=e207]
+              - button "Who ships AI agents?" [ref=e209]:
+                - img [ref=e210]
+                - text: Who ships AI agents?
+                - img [ref=e213]
+          - generic [ref=e215]:
+            - generic [ref=e216]:
+              - img [ref=e218]
+              - heading "Projects" [level=3] [ref=e222]
+            - generic [ref=e223]:
+              - button "Show Next.js projects" [ref=e224]:
+                - img [ref=e225]
+                - text: Show Next.js projects
+                - img [ref=e228]
+              - button "Latest shipped work" [ref=e230]:
+                - img [ref=e231]
+                - text: Latest shipped work
+                - img [ref=e234]
+          - generic [ref=e236]:
+            - generic [ref=e237]:
+              - img [ref=e239]
+              - heading "Teams" [level=3] [ref=e244]
+            - generic [ref=e245]:
+              - button "Build an AI hackathon team" [ref=e246]:
+                - img [ref=e247]
+                - text: Build an AI hackathon team
+                - img [ref=e250]
+              - button "Assemble a full-stack team" [ref=e252]:
+                - img [ref=e253]
+                - text: Assemble a full-stack team
+                - img [ref=e256]
+          - generic [ref=e258]:
+            - generic [ref=e259]:
+              - img [ref=e261]
+              - heading "Events" [level=3] [ref=e267]
+            - generic [ref=e268]:
+              - button "Active hackathons" [ref=e269]:
+                - img [ref=e270]
+                - text: Active hackathons
+                - img [ref=e273]
+              - button "Upcoming AI events" [ref=e275]:
+                - img [ref=e276]
+                - text: Upcoming AI events
+                - img [ref=e279]
+      - generic [ref=e282]:
+        - heading "Network memory" [level=2] [ref=e284]
+        - generic [ref=e285]:
+          - generic [ref=e286]:
+            - paragraph [ref=e287]: 0+
+            - paragraph [ref=e288]: signals indexed
+          - generic [ref=e289]:
+            - paragraph [ref=e290]: 0+
+            - paragraph [ref=e291]: builders
+          - generic [ref=e292]:
+            - paragraph [ref=e293]: "0"
+            - paragraph [ref=e294]: events
+      - generic [ref=e296]:
+        - img [ref=e297]
+        - heading "Ask Scout" [level=3] [ref=e302]
+        - paragraph [ref=e303]: Start from a prompt and jump straight into the network.
+        - button "Ask Scout now" [ref=e304]:
+          - img [ref=e305]
+          - text: Ask Scout now
+  - contentinfo [ref=e308]:
+    - generic [ref=e311]:
+      - generic [ref=e312]:
+        - generic [ref=e313]:
+          - link "Antry" [ref=e314] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e315]:
+              - img [ref=e317]
+              - generic [ref=e333]: Antry
+          - paragraph [ref=e334]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+          - generic [ref=e335]:
+            - link "GitHub" [ref=e336] [cursor=pointer]:
+              - /url: https://github.com
+              - img [ref=e337]
+            - link "X (Twitter)" [ref=e339] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e340]
+            - link "LinkedIn" [ref=e342] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e343]
+        - generic [ref=e345]:
+          - heading "Product" [level=4] [ref=e346]
+          - list [ref=e347]:
+            - listitem [ref=e348]:
+              - link "Builders" [ref=e349] [cursor=pointer]:
+                - /url: /builders
+            - listitem [ref=e350]:
+              - link "Showcase" [ref=e351] [cursor=pointer]:
+                - /url: /showcase
+            - listitem [ref=e352]:
+              - link "Hackathons" [ref=e353] [cursor=pointer]:
+                - /url: /hackathons
+            - listitem [ref=e354]:
+              - link "Recruiters" [ref=e355] [cursor=pointer]:
+                - /url: /companies
+            - listitem [ref=e356]:
+              - link "Submit Project" [ref=e357] [cursor=pointer]:
+                - /url: /submit
+        - generic [ref=e358]:
+          - heading "Company" [level=4] [ref=e359]
+          - list [ref=e360]:
+            - listitem [ref=e361]:
+              - link "About" [ref=e362] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e363]:
+              - link "Blog" [ref=e364] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e365]:
+              - link "Careers" [ref=e366] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e367]:
+              - link "Contact" [ref=e368] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e369]:
+          - heading "Resources" [level=4] [ref=e370]
+          - list [ref=e371]:
+            - listitem [ref=e372]:
+              - link "Documentation" [ref=e373] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e374]:
+              - link "API" [ref=e375] [cursor=pointer]:
+                - /url: /api
+            - listitem [ref=e376]:
+              - link "Community" [ref=e377] [cursor=pointer]:
+                - /url: /community
+            - listitem [ref=e378]:
+              - link "Support" [ref=e379] [cursor=pointer]:
+                - /url: /support
+        - generic [ref=e380]:
+          - heading "Legal" [level=4] [ref=e381]
+          - list [ref=e382]:
+            - listitem [ref=e383]:
+              - link "Privacy Policy" [ref=e384] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e385]:
+              - link "Terms of Service" [ref=e386] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e387]:
+              - link "Cookie Policy" [ref=e388] [cursor=pointer]:
+                - /url: /cookies
+      - generic [ref=e389]:
+        - generic [ref=e390]: © 2026 Antry. All rights reserved.
+        - button "Back to top" [ref=e391]:
+          - text: Back to top
+          - img [ref=e393]

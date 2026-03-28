@@ -26,12 +26,12 @@ describe("debug signup", () => {
     let caught;
     try {
       result = await signup(null, fd);
-    } catch (e) {
+    } catch (e: unknown) {
       caught = e;
     }
-    
+
     console.log("result:", result);
-    console.log("caught:", caught?.constructor?.name, caught?.message);
+    console.log("caught:", caught?.constructor?.name, (caught as Error)?.message);
     console.log("signUp called:", mockSignUp.mock.calls.length);
   });
 });

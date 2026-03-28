@@ -15,6 +15,8 @@ export default async function HackathonsPage() {
           gradient: `linear-gradient(135deg, #18181b 0%, #000000 100%)`,
           prizes: Array.isArray(h.prizes) ? h.prizes : [],
           participantCount: h.participant_count,
+          startDate: h.start_date,
+          endDate: h.end_date,
         }))
       : mockAntathons.map((h) => ({
           id: h.id,
@@ -24,6 +26,8 @@ export default async function HackathonsPage() {
           gradient: h.gradient,
           prizes: h.prizes,
           participantCount: h.participantCount,
+          startDate: h.startDate,
+          endDate: h.endDate,
         }));
 
   return <HackathonsClient hackathons={hackathons} />;

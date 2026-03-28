@@ -45,7 +45,7 @@ export default async function AntathonDetailPage({
   const dbResult = await getHackathon(id);
 
   if (dbResult) {
-    const { hackathon, submissions } = dbResult;
+    const { hackathon, submissions, participants } = dbResult;
 
     // Check which of user's projects are already submitted
     const submittedProjectIds = submissions
@@ -54,6 +54,15 @@ export default async function AntathonDetailPage({
         return project?.id as string | undefined;
       })
       .filter(Boolean) as string[];
+
+    // Build participant avatar list
+    const participantAvatars = (participants || []).slice(0, 12).map((p: Record<string, unknown>) => {
+      const profile = p.profiles as Record<string, unknown> | null;
+      return {
+        name: (profile?.full_name as string) || "Builder",
+        gradient: (profile?.gradient as string) || "linear-gradient(135deg, #27272a 0%, #09090b 100%)",
+      };
+    });
 
     return (
       <HackathonDetailClient
@@ -68,6 +77,9 @@ export default async function AntathonDetailPage({
           sponsors: hackathon.sponsors || [],
           participantCount: hackathon.participant_count,
           submissionCount: hackathon.submission_count,
+          startDate: hackathon.start_date,
+          endDate: hackathon.end_date,
+          participantAvatars,
           submissions: submissions.map((s: Record<string, unknown>) => {
             const project = s.projects as Record<string, unknown> | null;
             const profiles = project?.profiles as Record<string, unknown> | null;
@@ -125,6 +137,9 @@ export default async function AntathonDetailPage({
         sponsors: mockEvent.sponsors.map((s) => s.name),
         participantCount: mockEvent.participantCount,
         submissionCount: mockEvent.submissionCount,
+        startDate: mockEvent.startDate,
+        endDate: mockEvent.endDate,
+        participantAvatars: [],
         submissions: mockSubmissions.map((p) => ({
           id: p.id,
           title: p.title,

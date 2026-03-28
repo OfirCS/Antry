@@ -1,0 +1,335 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Antry" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e34]: Antry
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - button "Community" [ref=e38]:
+            - text: Community
+            - img [ref=e39]
+          - menu [ref=e41]:
+            - generic [ref=e42]:
+              - menuitem "Builders Directory" [ref=e43] [cursor=pointer]:
+                - img [ref=e45]
+                - generic [ref=e50]:
+                  - generic [ref=e51]: Builders
+                  - generic [ref=e52]: Directory
+              - menuitem "Hackathons Live weekends" [ref=e53] [cursor=pointer]:
+                - img [ref=e55]
+                - generic [ref=e61]:
+                  - generic [ref=e62]: Hackathons
+                  - generic [ref=e63]: Live weekends
+              - menuitem "Discover Scan signal" [ref=e64] [cursor=pointer]:
+                - img [ref=e66]
+                - generic [ref=e69]:
+                  - generic [ref=e70]: Discover
+                  - generic [ref=e71]: Scan signal
+        - button "Product" [ref=e73]:
+          - text: Product
+          - img [ref=e74]
+        - button "Company" [ref=e77]:
+          - text: Company
+          - img [ref=e78]
+  - main [ref=e83]:
+    - generic [ref=e84]:
+      - generic [ref=e87]:
+        - heading "Hire builders who actually ship" [level=1] [ref=e88]:
+          - text: Hire builders who
+          - text: actually
+          - generic [ref=e89]: ship
+        - paragraph [ref=e91]: Search live demos, inspect stack, and shortlist builders fast.
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - img [ref=e94]
+            - text: Live demos
+          - generic [ref=e97]:
+            - img [ref=e98]
+            - text: Stack visible
+          - generic [ref=e102]:
+            - img [ref=e103]
+            - text: Scout match
+        - generic [ref=e106]:
+          - link "Browse builders" [ref=e107] [cursor=pointer]:
+            - /url: /builders
+            - text: Browse builders
+            - img [ref=e108]
+          - link "Use Scout search" [ref=e110] [cursor=pointer]:
+            - /url: /agent
+            - text: Use Scout search
+            - img [ref=e111]
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - img [ref=e117]
+            - generic [ref=e122]: 2+
+            - paragraph [ref=e123]: builders
+          - generic [ref=e124]:
+            - img [ref=e126]
+            - generic [ref=e130]: 0+
+            - paragraph [ref=e131]: live demos
+          - generic [ref=e132]:
+            - img [ref=e134]
+            - generic [ref=e140]: "0"
+            - paragraph [ref=e141]: events tracked
+        - paragraph [ref=e142]:
+          - text: Hiring? Email
+          - link "sponsors@antry.dev" [ref=e143] [cursor=pointer]:
+            - /url: mailto:sponsors@antry.dev
+          - text: .
+      - generic [ref=e145]:
+        - generic [ref=e146]:
+          - text: The Problem
+          - heading "Hiring hides the work" [level=2] [ref=e147]
+          - paragraph [ref=e148]: Resumes and keyword scans miss real shipping signal.
+        - generic [ref=e149]:
+          - generic [ref=e150]:
+            - img [ref=e152]
+            - heading "Keyword-stuffed profiles" [level=3] [ref=e155]
+            - paragraph [ref=e156]: Tool lists look identical and proof stays hidden.
+          - generic [ref=e157]:
+            - img [ref=e159]
+            - heading "No way to verify skills" [level=3] [ref=e162]
+            - paragraph [ref=e163]: References are slow and stale links do not help.
+          - generic [ref=e164]:
+            - img [ref=e166]
+            - heading "Same candidates everywhere" [level=3] [ref=e169]
+            - paragraph [ref=e170]: The best builders are usually shipping, not refreshing LinkedIn.
+      - generic [ref=e172]:
+        - generic [ref=e173]:
+          - text: How Antry is Different
+          - heading "Open proof before the call" [level=2] [ref=e174]
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - generic [ref=e177]:
+              - img [ref=e178]
+              - text: Builder Profiles
+            - heading "Open the build, not a PDF" [level=3] [ref=e182]
+            - paragraph [ref=e183]: Open demos, scan stack, and judge quality quickly.
+          - generic [ref=e185]:
+            - generic [ref=e186]:
+              - generic [ref=e187]: MR
+              - generic [ref=e188]:
+                - generic [ref=e189]: Maya Rodriguez
+                - generic [ref=e190]: Full-stack AI builder
+            - generic [ref=e191]:
+              - generic [ref=e192]: React
+              - generic [ref=e193]: Python
+              - generic [ref=e194]: LangChain
+              - generic [ref=e195]: Next.js
+            - generic [ref=e196]:
+              - generic [ref=e197]:
+                - img [ref=e199]
+                - generic [ref=e203]: AgentFlow
+                - generic [ref=e204]: LIVE DEMO
+              - paragraph [ref=e205]: Multi-agent orchestration framework. Built in 12 days.
+            - generic [ref=e206]:
+              - generic [ref=e207]:
+                - img [ref=e208]
+                - text: 7 projects
+              - generic [ref=e212]:
+                - img [ref=e213]
+                - text: 142 likes
+              - generic [ref=e215]:
+                - img [ref=e216]
+                - text: 2 wins
+        - generic [ref=e222]:
+          - generic [ref=e223]:
+            - generic [ref=e224]:
+              - img [ref=e225]
+              - text: AI Scout
+            - heading "Describe the builder you need" [level=3] [ref=e228]
+            - paragraph [ref=e229]: Use plain English and Scout returns the closest matches.
+          - generic [ref=e231]:
+            - generic [ref=e232]:
+              - img [ref=e233]
+              - generic [ref=e236]: “React + AI builders who ship fast”
+            - generic [ref=e237]: Scout found 3 matches
+            - generic [ref=e238]:
+              - generic [ref=e239]: Ma
+              - generic [ref=e240]:
+                - generic [ref=e241]: Maya R.
+                - generic [ref=e242]: React, LangChain
+              - generic [ref=e243]: 97%
+            - generic [ref=e244]:
+              - generic [ref=e245]: Ja
+              - generic [ref=e246]:
+                - generic [ref=e247]: James K.
+                - generic [ref=e248]: Next.js, GPT-4
+              - generic [ref=e249]: 94%
+            - generic [ref=e250]:
+              - generic [ref=e251]: Pr
+              - generic [ref=e252]:
+                - generic [ref=e253]: Priya S.
+                - generic [ref=e254]: React, Python
+              - generic [ref=e255]: 91%
+        - generic [ref=e256]:
+          - generic [ref=e257]:
+            - generic [ref=e258]:
+              - img [ref=e259]
+              - text: Antathons
+            - heading "Pressure-tested builders" [level=3] [ref=e265]
+            - paragraph [ref=e266]: Hackathon results show who ships fast and lands polished work.
+          - generic [ref=e268]:
+            - generic [ref=e269]:
+              - img [ref=e271]
+              - generic [ref=e277]:
+                - generic [ref=e278]: AI Agents Antathon
+                - generic [ref=e279]: 48 hours · 124 participants
+            - generic [ref=e280]: Top performers
+            - generic [ref=e281]:
+              - generic [ref=e282]: 1st
+              - generic [ref=e283]: Maya R.AgentFlow
+            - generic [ref=e284]:
+              - generic [ref=e285]: 2nd
+              - generic [ref=e286]: James K.ChatOps
+            - generic [ref=e287]:
+              - generic [ref=e288]: 3rd
+              - generic [ref=e289]: Alex T.DevAssist
+            - generic [ref=e290]:
+              - img [ref=e291]
+              - generic [ref=e294]: All projects have live demos
+      - generic [ref=e296]:
+        - generic [ref=e297]:
+          - text: For Recruiters
+          - heading "What you can verify fast" [level=2] [ref=e298]
+        - generic [ref=e299]:
+          - generic [ref=e300]:
+            - img [ref=e302]
+            - heading "Verified shipped work" [level=3] [ref=e305]
+            - paragraph [ref=e306]: Open work instead of reading bullets.
+          - generic [ref=e307]:
+            - img [ref=e309]
+            - heading "AI Scout search" [level=3] [ref=e312]
+            - paragraph [ref=e313]: Describe the role and get ranked matches.
+          - generic [ref=e314]:
+            - img [ref=e316]
+            - heading "Hackathon track records" [level=3] [ref=e322]
+            - paragraph [ref=e323]: See pressure-tested results with receipts.
+          - generic [ref=e324]:
+            - img [ref=e326]
+            - heading "Stack decisions visible" [level=3] [ref=e328]
+            - paragraph [ref=e329]: Filter by stack and scan real strengths.
+      - generic [ref=e331]:
+        - generic [ref=e332]:
+          - text: Workflow
+          - heading "Shortlist flow" [level=2] [ref=e333]
+        - generic [ref=e334]:
+          - generic [ref=e335]:
+            - generic [ref=e336]: "01"
+            - img [ref=e338]
+            - heading "Search" [level=3] [ref=e341]
+            - paragraph [ref=e342]: Use Scout or filters to find the right slice.
+            - img [ref=e344]
+          - generic [ref=e346]:
+            - generic [ref=e347]: "02"
+            - img [ref=e349]
+            - heading "Review portfolios" [level=3] [ref=e352]
+            - paragraph [ref=e353]: Open demos and scan build history.
+            - img [ref=e355]
+          - generic [ref=e357]:
+            - generic [ref=e358]: "03"
+            - img [ref=e360]
+            - heading "Connect" [level=3] [ref=e362]
+            - paragraph [ref=e363]: Reach out or sponsor a hackathon.
+      - generic [ref=e366]:
+        - heading "Open the directory" [level=2] [ref=e367]
+        - paragraph [ref=e368]: Get early access to builders, Scout, and sponsorship.
+        - generic [ref=e369]:
+          - generic [ref=e371]:
+            - textbox "Enter your email" [ref=e373]
+            - button "Join waitlist" [ref=e374]:
+              - text: Join waitlist
+              - img [ref=e375]
+          - paragraph [ref=e385]: 247 builders ahead of you
+        - paragraph [ref=e386]:
+          - text: Free for early companies. Email
+          - link "sponsors@antry.dev" [ref=e387] [cursor=pointer]:
+            - /url: mailto:sponsors@antry.dev
+  - contentinfo [ref=e388]:
+    - generic [ref=e391]:
+      - generic [ref=e392]:
+        - generic [ref=e393]:
+          - link "Antry" [ref=e394] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e395]:
+              - img [ref=e397]
+              - generic [ref=e423]: Antry
+          - paragraph [ref=e425]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+          - generic [ref=e426]:
+            - link "GitHub" [ref=e427] [cursor=pointer]:
+              - /url: https://github.com
+              - img [ref=e428]
+            - link "X (Twitter)" [ref=e430] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e431]
+            - link "LinkedIn" [ref=e433] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e434]
+        - generic [ref=e436]:
+          - heading "Product" [level=4] [ref=e437]
+          - list [ref=e438]:
+            - listitem [ref=e439]:
+              - link "Builders" [ref=e440] [cursor=pointer]:
+                - /url: /builders
+            - listitem [ref=e441]:
+              - link "Showcase" [ref=e442] [cursor=pointer]:
+                - /url: /showcase
+            - listitem [ref=e443]:
+              - link "Hackathons" [ref=e444] [cursor=pointer]:
+                - /url: /hackathons
+            - listitem [ref=e445]:
+              - link "Recruiters" [ref=e446] [cursor=pointer]:
+                - /url: /companies
+            - listitem [ref=e447]:
+              - link "Submit Project" [ref=e448] [cursor=pointer]:
+                - /url: /submit
+        - generic [ref=e449]:
+          - heading "Company" [level=4] [ref=e450]
+          - list [ref=e451]:
+            - listitem [ref=e452]:
+              - link "About" [ref=e453] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e454]:
+              - link "Blog" [ref=e455] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e456]:
+              - link "Careers" [ref=e457] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e458]:
+              - link "Contact" [ref=e459] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e460]:
+          - heading "Resources" [level=4] [ref=e461]
+          - list [ref=e462]:
+            - listitem [ref=e463]:
+              - link "Documentation" [ref=e464] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e465]:
+              - link "API" [ref=e466] [cursor=pointer]:
+                - /url: /api
+            - listitem [ref=e467]:
+              - link "Community" [ref=e468] [cursor=pointer]:
+                - /url: /community
+            - listitem [ref=e469]:
+              - link "Support" [ref=e470] [cursor=pointer]:
+                - /url: /support
+        - generic [ref=e471]:
+          - heading "Legal" [level=4] [ref=e472]
+          - list [ref=e473]:
+            - listitem [ref=e474]:
+              - link "Privacy Policy" [ref=e475] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e476]:
+              - link "Terms of Service" [ref=e477] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e478]:
+              - link "Cookie Policy" [ref=e479] [cursor=pointer]:
+                - /url: /cookies
+      - generic [ref=e480]:
+        - generic [ref=e481]: © 2026 Antry. All rights reserved.
+        - button "Back to top" [ref=e482]:
+          - text: Back to top
+          - img [ref=e484]

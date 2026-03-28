@@ -209,7 +209,7 @@ export async function getProjects(options?: {
   const { data, error } = await query;
 
   if (error || !data) {
-    console.error("Error fetching projects:", error);
+    // Silently fall back to mock data - Supabase may not have projects table yet
     return [];
   }
 

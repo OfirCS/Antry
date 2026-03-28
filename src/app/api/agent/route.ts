@@ -6,24 +6,47 @@ import {
   runAgent,
 } from "@/lib/agent/engine";
 import { checkAgentRateLimit } from "@/lib/agent/rate-limit";
+import type { AgentIntent } from "@/lib/agent/types";
+
+// ── Request validation ───────────────────────────────────────
 
 const requestSchema = z.object({
-  message: z.string().trim().min(2).max(320),
+  message: z.string().min(1).max(320),
   history: z
     .array(
       z.object({
         role: z.enum(["user", "assistant"]),
-        content: z.string().trim().min(1).max(320),
+        content: z.string().max(320),
+        intent: z.string().optional(),
       })
     )
-    .max(6)
-    .optional(),
+    .max(12)
+    .optional()
+    .default([]),
 });
+
+// ── CORS headers ─────────────────────────────────────────────
+
+/** Standard CORS headers applied to every response. */
+const CORS_HEADERS: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400",
+};
+
+// ── Helpers ──────────────────────────────────────────────────
 
 function getClientKey(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for") || "";
-  const ip = forwarded.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
-  const userAgent = (request.headers.get("user-agent") || "na").slice(0, 80);
+  const ip =
+    forwarded.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+  const userAgent = (request.headers.get("user-agent") || "na").slice(
+    0,
+    80
+  );
   return `${ip}:${userAgent}`;
 }
 
@@ -47,84 +70,173 @@ function hasAbusivePayload(message: string): boolean {
   );
 }
 
+/**
+ * Build a JSON response with standard CORS + timing headers.
+ */
+function jsonResponse(
+  body: Record<string, unknown>,
+  status: number,
+  extraHeaders: Record<string, string> = {}
+): NextResponse {
+  return NextResponse.json(body, {
+    status,
+    headers: { ...CORS_HEADERS, ...extraHeaders },
+  });
+}
+
+// ── CORS preflight ───────────────────────────────────────────
+
+/**
+ * Handle preflight OPTIONS requests for CORS.
+ * External SDK consumers need this when calling the endpoint from a browser.
+ */
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: CORS_HEADERS,
+  });
+}
+
+// ── Main handler ─────────────────────────────────────────────
+
 export async function POST(request: Request) {
+  const startTime = performance.now();
+
   try {
+    // ── Rate limiting ───────────────────────────────────
     const limit = checkAgentRateLimit(getClientKey(request));
     if (!limit.allowed) {
-      return NextResponse.json(
+      return jsonResponse(
         {
-          error: "Rate limit reached. Try again soon.",
+          error: "Rate limit reached.",
+          message: `You've exceeded the request limit. Please wait ${limit.retryAfterSeconds} seconds before trying again, or reduce the frequency of your requests.`,
+          retryAfterSeconds: limit.retryAfterSeconds,
         },
+        429,
         {
-          status: 429,
-          headers: {
-            "Retry-After": String(limit.retryAfterSeconds),
-          },
+          "Retry-After": String(limit.retryAfterSeconds),
+          "X-RateLimit-Remaining": "0",
+          "X-Response-Time": `${Math.round(performance.now() - startTime)}ms`,
         }
       );
     }
 
-    const payload = await request.json();
-    const parsed = requestSchema.safeParse(payload);
-
-    if (!parsed.success) {
-      return NextResponse.json(
+    // ── Parse & validate payload ────────────────────────
+    let payload: unknown;
+    try {
+      payload = await request.json();
+    } catch {
+      return jsonResponse(
         {
-          error: "Invalid request payload",
-          details: parsed.error.flatten(),
+          error: "Invalid JSON body.",
+          message:
+            "The request body must be valid JSON with a `message` string field. Example: { \"message\": \"Find React builders\" }",
         },
-        { status: 400 }
+        400,
+        {
+          "X-Response-Time": `${Math.round(performance.now() - startTime)}ms`,
+        }
       );
     }
 
+    const parsed = requestSchema.safeParse(payload);
+
+    if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      return jsonResponse(
+        {
+          error: "Invalid request payload.",
+          message:
+            "Check the `details` field below. The `message` field is required (1-320 chars), and `history` is an optional array of up to 12 chat turns.",
+          details: flat,
+        },
+        400,
+        {
+          "X-Response-Time": `${Math.round(performance.now() - startTime)}ms`,
+        }
+      );
+    }
+
+    // ── Abuse detection ─────────────────────────────────
     const totalHistoryChars = (parsed.data.history || []).reduce(
       (sum, turn) => sum + turn.content.length,
       0
     );
 
-    if (totalHistoryChars > 1400 || hasAbusivePayload(parsed.data.message)) {
-      return NextResponse.json(
+    if (
+      totalHistoryChars > 1400 ||
+      hasAbusivePayload(parsed.data.message)
+    ) {
+      return jsonResponse(
         {
-          error:
-            "Scout is limited to short, focused product queries while free access is active.",
+          error: "Payload too large or contains disallowed patterns.",
+          message:
+            "Scout is limited to short, focused queries. Keep your message under 60 words and history under 1 400 characters total. Avoid URLs and repetitive content.",
         },
-        { status: 413 }
+        413,
+        {
+          "X-Response-Time": `${Math.round(performance.now() - startTime)}ms`,
+        }
       );
     }
 
+    // ── Domain-scope check ──────────────────────────────
     if (!isDomainScopedAgentQuery(parsed.data.message)) {
-      return NextResponse.json(
+      return jsonResponse(
         {
-          error:
-            "Scout only answers Antry queries (builders, projects, hackathons, teams, comparisons, and stats).",
+          error: "Off-topic or prompt injection detected.",
+          message:
+            "Scout only answers questions about the Antry builder network. Try asking about builders, projects, hackathons, or teams.",
         },
-        { status: 422 }
+        422,
+        {
+          "X-Response-Time": `${Math.round(performance.now() - startTime)}ms`,
+        }
       );
     }
 
+    // ── Load dataset ────────────────────────────────────
     const dataset = await loadAgentDatasetStrict();
     if (!dataset) {
-      return NextResponse.json(
+      return jsonResponse(
         {
-          error: "Scout data source is unavailable right now.",
+          error: "Scout data source is unavailable.",
+          message:
+            "The builder database is temporarily unreachable. Please try again in a few seconds. If this persists, check https://status.antry.io for updates.",
         },
-        { status: 503 }
+        503,
+        {
+          "X-Response-Time": `${Math.round(performance.now() - startTime)}ms`,
+        }
       );
     }
 
-    const result = runAgent(
-      parsed.data.message,
-      parsed.data.history || [],
-      dataset
-    );
+    // ── Run agent engine ────────────────────────────────
+    const history = (parsed.data.history || []).map((h) => ({
+      role: h.role,
+      content: h.content,
+      intent: h.intent as AgentIntent | undefined,
+    }));
 
-    return NextResponse.json(result);
+    const result = runAgent(parsed.data.message, history, dataset);
+    const elapsed = Math.round(performance.now() - startTime);
+
+    return jsonResponse(result as unknown as Record<string, unknown>, 200, {
+      "X-Response-Time": `${elapsed}ms`,
+      "X-RateLimit-Remaining": String(limit.remaining),
+    });
   } catch {
-    return NextResponse.json(
+    const elapsed = Math.round(performance.now() - startTime);
+    return jsonResponse(
       {
-        error: "Failed to process request",
+        error: "Internal server error.",
+        message:
+          "Something went wrong processing your request. Please try again. If this keeps happening, reach out to support@antry.io.",
       },
-      { status: 500 }
+      500,
+      {
+        "X-Response-Time": `${elapsed}ms`,
+      }
     );
   }
 }

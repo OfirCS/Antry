@@ -8,7 +8,7 @@ export default async function BuildersPage() {
   const useDb = dbBuilders.length > 0;
 
   const builders = useDb
-    ? dbBuilders.map((b) => ({
+      ? dbBuilders.map((b) => ({
         id: b.id,
         username: b.username,
         name: b.full_name,
@@ -17,6 +17,7 @@ export default async function BuildersPage() {
         gradient: b.gradient,
         projectCount: b.project_count ?? 0,
         totalLikes: b.total_likes ?? 0,
+        joinedAt: b.created_at,
       }))
     : mockBuilders.map((b) => {
         const bp = mockProjects.filter((p) => p.builder.username === b.username);
@@ -30,6 +31,7 @@ export default async function BuildersPage() {
           gradient: b.gradient,
           projectCount: bp.length,
           totalLikes: likes,
+          joinedAt: b.joinedAt,
         };
       });
 

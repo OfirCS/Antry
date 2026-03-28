@@ -1,0 +1,419 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Antry" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e24]: Antry
+      - generic [ref=e25]:
+        - button "Community" [ref=e27]:
+          - text: Community
+          - img [ref=e28]
+        - button "Product" [ref=e32]:
+          - text: Product
+          - img [ref=e33]
+        - button "Company" [ref=e36]:
+          - text: Company
+          - img [ref=e37]
+  - main [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e47]:
+        - link "All Builders" [ref=e49] [cursor=pointer]:
+          - /url: /builders
+          - img [ref=e50]
+          - text: All Builders
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - paragraph [ref=e54]: Builder profile
+            - generic [ref=e55]:
+              - generic [ref=e56]: OS
+              - generic [ref=e57]:
+                - paragraph [ref=e58]: "@ofirsela"
+                - generic [ref=e59]:
+                  - generic [ref=e60]: Joined Dec 2025
+                  - generic [ref=e61]: 1 builds logged
+                  - generic [ref=e62]: 47 signal
+            - heading "Ofir Sela" [level=1] [ref=e63]
+            - paragraph [ref=e64]: Building the future of builder communities
+            - paragraph [ref=e65]: Founder of Antry. Obsessed with creating the platform where builders are discovered by what they ship, not what they say.
+            - generic [ref=e66]:
+              - link "Open shipping ledger" [ref=e67] [cursor=pointer]:
+                - /url: "#shipping-ledger"
+                - text: Open shipping ledger
+                - img [ref=e68]
+              - link "View full profile grid" [ref=e71] [cursor=pointer]:
+                - /url: "#profile-board"
+            - generic [ref=e72]:
+              - link "OfirCS" [ref=e73] [cursor=pointer]:
+                - /url: https://github.com/OfirCS
+                - img [ref=e75]
+                - generic [ref=e78]: OfirCS
+              - link "ofirsela" [ref=e79] [cursor=pointer]:
+                - /url: https://x.com/ofirsela
+                - img [ref=e81]
+                - generic [ref=e83]: ofirsela
+            - generic [ref=e84]:
+              - generic [ref=e85]: Next.js
+              - generic [ref=e86]: TypeScript
+              - generic [ref=e87]: Supabase
+              - generic [ref=e88]: Product
+              - generic [ref=e89]: AI Agents
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - generic [ref=e93]:
+                - paragraph [ref=e94]: Builder index
+                - paragraph [ref=e95]: "143"
+                - paragraph [ref=e96]: Composite of builds, stacks, and signal
+              - generic [ref=e97]:
+                - paragraph [ref=e98]: Signal
+                - paragraph [ref=e99]: "47"
+                - paragraph [ref=e100]: 47 avg per build
+              - generic [ref=e101]:
+                - paragraph [ref=e102]: Coverage
+                - paragraph [ref=e103]: "5"
+                - paragraph [ref=e104]: Unique tools listed across shipped work
+              - generic [ref=e105]:
+                - paragraph [ref=e106]: Open source
+                - paragraph [ref=e107]: "0"
+                - paragraph [ref=e108]: Projects with public source
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - paragraph [ref=e111]: Operating stack
+                - generic [ref=e112]:
+                  - generic [ref=e114]:
+                    - generic [ref=e115]: Next.js
+                    - generic [ref=e116]: 1 build
+                  - generic [ref=e120]:
+                    - generic [ref=e121]: TypeScript
+                    - generic [ref=e122]: 1 build
+                  - generic [ref=e126]:
+                    - generic [ref=e127]: AI Agents
+                    - generic [ref=e128]: 1 build
+                  - generic [ref=e132]:
+                    - generic [ref=e133]: Supabase
+                    - generic [ref=e134]: 1 build
+                  - generic [ref=e138]:
+                    - generic [ref=e139]: Tailwind CSS
+                    - generic [ref=e140]: 1 build
+              - generic [ref=e143]:
+                - paragraph [ref=e144]: Profile state
+                - generic [ref=e145]:
+                  - generic [ref=e146]:
+                    - generic [ref=e147]: Freshness
+                    - generic [ref=e148]: 86 days on Antry
+                  - generic [ref=e149]:
+                    - generic [ref=e150]: Hackathon posture
+                    - generic [ref=e151]: 0 events logged
+                  - generic [ref=e152]:
+                    - generic [ref=e153]: Spec completion
+                    - generic [ref=e154]: 83% complete
+                  - generic [ref=e155]:
+                    - generic [ref=e156]: Primary edge
+                    - generic [ref=e157]: Next.js
+      - generic [ref=e158]:
+        - generic [ref=e160]:
+          - generic [ref=e161]:
+            - paragraph [ref=e162]: Profile brief
+            - heading "A clean spec sheet for the builder behind the work." [level=2] [ref=e163]
+            - paragraph [ref=e164]: Founder of Antry. Obsessed with creating the platform where builders are discovered by what they ship, not what they say.
+            - generic [ref=e165]:
+              - generic [ref=e166]:
+                - paragraph [ref=e167]: Projects shipped
+                - paragraph [ref=e168]: "1"
+              - generic [ref=e169]:
+                - paragraph [ref=e170]: Prize pool touched
+                - paragraph [ref=e171]: None yet
+              - generic [ref=e172]:
+                - paragraph [ref=e173]: Joined
+                - paragraph [ref=e174]: Dec 2025
+          - generic [ref=e175]:
+            - paragraph [ref=e176]: Spec sheet
+            - generic [ref=e177]:
+              - generic [ref=e178]:
+                - term [ref=e179]: Handle
+                - definition [ref=e180]: "@ofirsela"
+              - generic [ref=e181]:
+                - term [ref=e182]: Joined
+                - definition [ref=e183]: Dec 31, 2025
+              - generic [ref=e184]:
+                - term [ref=e185]: Top stack
+                - definition [ref=e186]: Next.js
+              - generic [ref=e187]:
+                - term [ref=e188]: Average signal
+                - definition [ref=e189]: 47 per project
+              - generic [ref=e190]:
+                - term [ref=e191]: Shipping mode
+                - definition [ref=e192]: Demo-first portfolio
+              - generic [ref=e193]:
+                - term [ref=e194]: Hackathon state
+                - definition [ref=e195]: No events yet
+          - generic [ref=e196]:
+            - paragraph [ref=e197]: Live pulse
+            - generic [ref=e198]:
+              - generic [ref=e199]:
+                - paragraph [ref=e200]: Builder index
+                - paragraph [ref=e201]: "143"
+              - generic [ref=e202]: Live
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - img [ref=e206]
+                - generic [ref=e210]:
+                  - paragraph [ref=e211]: Stack depth
+                  - paragraph [ref=e212]: 5 tools across shipped work
+              - generic [ref=e213]:
+                - img [ref=e215]
+                - generic [ref=e220]:
+                  - paragraph [ref=e221]: Build cadence
+                  - paragraph [ref=e222]: 1 project logged
+              - generic [ref=e223]:
+                - img [ref=e225]
+                - generic [ref=e227]:
+                  - paragraph [ref=e228]: Freshness
+                  - paragraph [ref=e229]: 86 days since join
+              - generic [ref=e230]:
+                - img [ref=e232]
+                - generic [ref=e235]:
+                  - paragraph [ref=e236]: Current posture
+                  - paragraph [ref=e237]: Ready to be discovered
+          - generic [ref=e238]:
+            - paragraph [ref=e239]: Featured build
+            - generic [ref=e244]:
+              - generic [ref=e245]:
+                - generic [ref=e246]: ai agents
+                - generic [ref=e247]: 4 weeks
+                - generic [ref=e248]: Feb 28, 2026
+              - heading "Wealthy" [level=3] [ref=e249]
+              - paragraph [ref=e250]: Wealthy is an AI-powered financial tool that helps users navigate investment decisions with a smart Pathfinder feature. It analyzes market trends, personal risk profiles, and financial goals to create personalized investment strategies. Features include real-time portfolio tracking, AI-driven insights, and an intuitive dashboard.
+              - generic [ref=e251]:
+                - generic [ref=e252]: Next.js
+                - generic [ref=e253]: TypeScript
+                - generic [ref=e254]: AI Agents
+                - generic [ref=e255]: Supabase
+                - generic [ref=e256]: Tailwind CSS
+              - generic [ref=e257]:
+                - link "Live demo" [ref=e258] [cursor=pointer]:
+                  - /url: https://cap.so/s/9evpv4n3m2vpcgg
+                  - img [ref=e259]
+                  - text: Live demo
+                - generic [ref=e261]:
+                  - generic [ref=e262]:
+                    - img [ref=e263]
+                    - text: 47 signal
+                  - generic [ref=e265]: 5 tools
+          - generic [ref=e266]:
+            - paragraph [ref=e267]: Hackathon track
+            - generic [ref=e268]: No hackathons logged yet. Join one and this rail becomes a full competition record.
+          - generic [ref=e269]:
+            - paragraph [ref=e270]: Skill matrix
+            - generic [ref=e271]:
+              - generic [ref=e273]:
+                - generic [ref=e274]: Next.js
+                - generic [ref=e275]: 1 shipped
+              - generic [ref=e279]:
+                - generic [ref=e280]: TypeScript
+                - generic [ref=e281]: 1 shipped
+              - generic [ref=e285]:
+                - generic [ref=e286]: Supabase
+                - generic [ref=e287]: 1 shipped
+              - generic [ref=e291]:
+                - generic [ref=e292]: Product
+                - generic [ref=e293]: declared skill
+              - generic [ref=e297]:
+                - generic [ref=e298]: AI Agents
+                - generic [ref=e299]: 1 shipped
+          - generic [ref=e302]:
+            - paragraph [ref=e303]: Public links
+            - generic [ref=e304]:
+              - link "GitHub OfirCS" [ref=e305] [cursor=pointer]:
+                - /url: https://github.com/OfirCS
+                - img [ref=e307]
+                - generic [ref=e310]:
+                  - generic [ref=e311]: GitHub
+                  - generic [ref=e312]: OfirCS
+                - img [ref=e313]
+              - link "X ofirsela" [ref=e316] [cursor=pointer]:
+                - /url: https://x.com/ofirsela
+                - img [ref=e318]
+                - generic [ref=e320]:
+                  - generic [ref=e321]: X
+                  - generic [ref=e322]: ofirsela
+                - img [ref=e323]
+          - generic [ref=e326]:
+            - paragraph [ref=e327]: External footprint
+            - link "Antry Where builders are discovered — the platform itself" [ref=e329] [cursor=pointer]:
+              - /url: https://antry.dev
+              - generic [ref=e330]:
+                - generic [ref=e331]:
+                  - paragraph [ref=e332]: Antry
+                  - paragraph [ref=e333]: Where builders are discovered — the platform itself
+                - img [ref=e334]
+          - generic [ref=e337]:
+            - generic [ref=e338]:
+              - generic [ref=e339]:
+                - paragraph [ref=e340]: Shipping ledger
+                - heading "Every shipped build, lined up with the data that matters." [level=2] [ref=e341]
+              - generic [ref=e342]: 1 rows
+            - table [ref=e344]:
+              - rowgroup [ref=e345]:
+                - row "# Project Signal Stack Build time Launched Source Actions" [ref=e346]:
+                  - columnheader "#" [ref=e347]
+                  - columnheader "Project" [ref=e348]
+                  - columnheader "Signal" [ref=e349]
+                  - columnheader "Stack" [ref=e350]
+                  - columnheader "Build time" [ref=e351]
+                  - columnheader "Launched" [ref=e352]
+                  - columnheader "Source" [ref=e353]
+                  - columnheader "Actions" [ref=e354]
+              - rowgroup [ref=e355]:
+                - row "01 WE Wealthy AI-powered financial pathfinder for smart investing 47 Next.js TypeScript AI Agents 4 weeks Feb 28, 2026 Private Demo" [ref=e356]:
+                  - cell "01" [ref=e357]
+                  - cell "WE Wealthy AI-powered financial pathfinder for smart investing" [ref=e358]:
+                    - generic [ref=e359]:
+                      - generic [ref=e360]: WE
+                      - generic [ref=e361]:
+                        - paragraph [ref=e362]: Wealthy
+                        - paragraph [ref=e363]: AI-powered financial pathfinder for smart investing
+                  - cell "47" [ref=e364]
+                  - cell "Next.js TypeScript AI Agents" [ref=e365]:
+                    - generic [ref=e366]:
+                      - generic [ref=e367]: Next.js
+                      - generic [ref=e368]: TypeScript
+                      - generic [ref=e369]: AI Agents
+                  - cell "4 weeks" [ref=e370]
+                  - cell "Feb 28, 2026" [ref=e371]
+                  - cell "Private" [ref=e372]
+                  - cell "Demo" [ref=e373]:
+                    - link "Demo" [ref=e375] [cursor=pointer]:
+                      - /url: https://cap.so/s/9evpv4n3m2vpcgg
+                      - img [ref=e376]
+                      - text: Demo
+        - generic [ref=e378]:
+          - generic [ref=e379]:
+            - generic [ref=e380]:
+              - paragraph [ref=e381]: Related builders
+              - heading "Adjacent profiles worth opening next." [level=2] [ref=e382]
+            - link "Browse all builders" [ref=e383] [cursor=pointer]:
+              - /url: /builders
+          - generic [ref=e384]:
+            - link "MC Mara Chen AI engineer building things that think Python LangChain TypeScript" [ref=e385] [cursor=pointer]:
+              - /url: /builders/marachen
+              - generic [ref=e386]:
+                - generic [ref=e387]: MC
+                - generic [ref=e388]:
+                  - paragraph [ref=e389]: Mara Chen
+                  - paragraph [ref=e390]: AI engineer building things that think
+                - img [ref=e391]
+              - generic [ref=e394]:
+                - generic [ref=e395]: Python
+                - generic [ref=e396]: LangChain
+                - generic [ref=e397]: TypeScript
+            - link "JT Jake Torres Full-stack builder who ships fast React Next.js Node.js" [ref=e398] [cursor=pointer]:
+              - /url: /builders/jaketorres
+              - generic [ref=e399]:
+                - generic [ref=e400]: JT
+                - generic [ref=e401]:
+                  - paragraph [ref=e402]: Jake Torres
+                  - paragraph [ref=e403]: Full-stack builder who ships fast
+                - img [ref=e404]
+              - generic [ref=e407]:
+                - generic [ref=e408]: React
+                - generic [ref=e409]: Next.js
+                - generic [ref=e410]: Node.js
+            - link "AP Aisha Patel Design engineer bridging art and code React Figma Three.js" [ref=e411] [cursor=pointer]:
+              - /url: /builders/aishapatel
+              - generic [ref=e412]:
+                - generic [ref=e413]: AP
+                - generic [ref=e414]:
+                  - paragraph [ref=e415]: Aisha Patel
+                  - paragraph [ref=e416]: Design engineer bridging art and code
+                - img [ref=e417]
+              - generic [ref=e420]:
+                - generic [ref=e421]: React
+                - generic [ref=e422]: Figma
+                - generic [ref=e423]: Three.js
+  - contentinfo [ref=e424]:
+    - generic [ref=e427]:
+      - generic [ref=e428]:
+        - generic [ref=e429]:
+          - link "Antry" [ref=e430] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e431]:
+              - img [ref=e433]
+              - generic [ref=e449]: Antry
+          - paragraph [ref=e450]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+          - generic [ref=e451]:
+            - link "GitHub" [ref=e452] [cursor=pointer]:
+              - /url: https://github.com
+              - img [ref=e453]
+            - link "X (Twitter)" [ref=e455] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e456]
+            - link "LinkedIn" [ref=e458] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e459]
+        - generic [ref=e461]:
+          - heading "Product" [level=4] [ref=e462]
+          - list [ref=e463]:
+            - listitem [ref=e464]:
+              - link "Builders" [ref=e465] [cursor=pointer]:
+                - /url: /builders
+            - listitem [ref=e466]:
+              - link "Showcase" [ref=e467] [cursor=pointer]:
+                - /url: /showcase
+            - listitem [ref=e468]:
+              - link "Hackathons" [ref=e469] [cursor=pointer]:
+                - /url: /hackathons
+            - listitem [ref=e470]:
+              - link "Recruiters" [ref=e471] [cursor=pointer]:
+                - /url: /companies
+            - listitem [ref=e472]:
+              - link "Submit Project" [ref=e473] [cursor=pointer]:
+                - /url: /submit
+        - generic [ref=e474]:
+          - heading "Company" [level=4] [ref=e475]
+          - list [ref=e476]:
+            - listitem [ref=e477]:
+              - link "About" [ref=e478] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e479]:
+              - link "Blog" [ref=e480] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e481]:
+              - link "Careers" [ref=e482] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e483]:
+              - link "Contact" [ref=e484] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e485]:
+          - heading "Resources" [level=4] [ref=e486]
+          - list [ref=e487]:
+            - listitem [ref=e488]:
+              - link "Documentation" [ref=e489] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e490]:
+              - link "API" [ref=e491] [cursor=pointer]:
+                - /url: /api
+            - listitem [ref=e492]:
+              - link "Community" [ref=e493] [cursor=pointer]:
+                - /url: /community
+            - listitem [ref=e494]:
+              - link "Support" [ref=e495] [cursor=pointer]:
+                - /url: /support
+        - generic [ref=e496]:
+          - heading "Legal" [level=4] [ref=e497]
+          - list [ref=e498]:
+            - listitem [ref=e499]:
+              - link "Privacy Policy" [ref=e500] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e501]:
+              - link "Terms of Service" [ref=e502] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e503]:
+              - link "Cookie Policy" [ref=e504] [cursor=pointer]:
+                - /url: /cookies
+      - generic [ref=e505]:
+        - generic [ref=e506]: © 2026 Antry. All rights reserved.
+        - button "Back to top" [ref=e507]:
+          - text: Back to top
+          - img [ref=e509]

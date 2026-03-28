@@ -1,13 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, useState } from "react";
 import { Search, ArrowUpRight, Zap } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { getInitials } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
-const skillFilters = ["All", "AI", "React", "Python", "Go", "Design", "Mobile"] as const;
+const segments = [
+  { key: "all", label: "All" },
+  { key: "ai", label: "AI & ML", match: ["python", "langchain", "rag", "ai", "ml", "pytorch", "agents", "multi-agent"] },
+  { key: "frontend", label: "Frontend", match: ["react", "next.js", "figma", "framer", "three.js", "css"] },
+  { key: "backend", label: "Backend", match: ["go", "rust", "node.js", "postgres", "kubernetes", "terraform", "cli"] },
+  { key: "design", label: "Design", match: ["figma", "design", "ui", "ux", "framer"] },
+] as const;
+
+type SegmentKey = string;
 
 interface BuilderItem {
   id: string;
@@ -18,175 +26,160 @@ interface BuilderItem {
   gradient: string;
   projectCount: number;
   totalLikes: number;
+  joinedAt?: string;
+}
+
+function daysSince(date?: string) {
+  if (!date) return 999;
+  return Math.max(0, Math.floor((Date.now() - new Date(date).getTime()) / 86400000));
+}
+
+function matchesSegment(skills: string[], segment: SegmentKey) {
+  if (segment === "all") return true;
+  const config = segments.find((e) => e.key === segment);
+  if (!config || !("match" in config)) return true;
+  const norm = skills.map((s) => s.toLowerCase());
+  const matchList = "match" in config ? (config as unknown as { match: readonly string[] }).match : [];
+  return norm.some((s) => matchList.some((m) => s.includes(m)));
+}
+
+function builderSignal(b: BuilderItem) {
+  return b.totalLikes * 2 + b.projectCount * 18 + b.skills.length * 6 + Math.max(0, 45 - daysSince(b.joinedAt));
+}
+
+function BuilderRow({ builder, index }: { builder: BuilderItem; index: number }) {
+  const isNew = daysSince(builder.joinedAt) <= 14;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.03, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <Link
+        href={`/builders/${builder.username}`}
+        className="group flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-4 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-sm min-h-[64px]"
+      >
+        {/* Avatar */}
+        <div
+          className="w-11 h-11 rounded-full flex items-center justify-center text-white text-[13px] font-bold shrink-0 shadow-sm"
+          style={{ background: builder.gradient }}
+        >
+          {getInitials(builder.name)}
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-[14px] font-semibold text-[#111] truncate">{builder.name}</h3>
+            {isNew && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "#C6F135", color: "#111" }}>NEW</span>}
+          </div>
+          <p className="text-[12px] text-gray-400 truncate mt-0.5">{builder.tagline || "Builder on Antry"}</p>
+          {/* Mobile-only: show stats inline */}
+          <div className="flex items-center gap-3 mt-1 sm:hidden text-[11px] text-gray-400">
+            <span><span className="font-semibold text-[#111]">{builder.projectCount}</span> shipped</span>
+            <span><span className="font-semibold text-[#111]">{builder.totalLikes}</span> signal</span>
+          </div>
+        </div>
+
+        {/* Skills */}
+        <div className="hidden md:flex gap-1 shrink-0 max-w-[200px]">
+          {builder.skills.slice(0, 3).map((s) => (
+            <span key={s} className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-50 text-gray-500 truncate">{s}</span>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="hidden sm:flex items-center gap-4 shrink-0 text-[12px] text-gray-400">
+          <span><span className="font-semibold text-[#111]">{builder.projectCount}</span> shipped</span>
+          <span><span className="font-semibold text-[#111]">{builder.totalLikes}</span> signal</span>
+        </div>
+
+        {/* Arrow */}
+        <ArrowUpRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#111] transition-colors shrink-0 hidden sm:block" />
+      </Link>
+    </motion.div>
+  );
 }
 
 export default function BuildersClient({ builders }: { builders: BuilderItem[] }) {
   const [query, setQuery] = useState("");
-  const [activeSkill, setActiveSkill] = useState<string>("All");
+  const [activeSegment, setActiveSegment] = useState<SegmentKey>("all");
 
-  const filtered = builders.filter((b) => {
-    const matchesQuery =
-      !query ||
-      b.name.toLowerCase().includes(query.toLowerCase()) ||
-      b.tagline.toLowerCase().includes(query.toLowerCase()) ||
-      b.skills.some((s) => s.toLowerCase().includes(query.toLowerCase()));
-
-    const matchesSkill =
-      activeSkill === "All" ||
-      b.skills.some((s) => s.toLowerCase().includes(activeSkill.toLowerCase()));
-
-    return matchesQuery && matchesSkill;
-  });
+  const filteredBuilders = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return builders
+      .filter((b) => {
+        const matchesQuery = !q || b.name.toLowerCase().includes(q) || b.username.toLowerCase().includes(q) || b.tagline.toLowerCase().includes(q) || b.skills.some((s) => s.toLowerCase().includes(q));
+        return matchesQuery && matchesSegment(b.skills, activeSegment);
+      })
+      .sort((a, b) => builderSignal(b) - builderSignal(a));
+  }, [activeSegment, builders, query]);
 
   return (
-    <div className="bg-background-primary min-h-screen">
-      {/* Sticky search + filters */}
-      <div className="fixed top-[72px] left-0 right-0 z-40 bg-background-primary/90 backdrop-blur-xl border-b border-border-tertiary transition-all duration-300">
-        <div className="max-w-[1100px] mx-auto px-6 py-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="relative flex-1 max-w-[480px]">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-accent pointer-events-none" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search verified builders..."
-                className="w-full pl-12 pr-4 py-3 bg-surface border border-border-primary shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-full text-[15px] font-medium text-text-primary placeholder:text-text-tertiary focus:border-accent/40 focus:ring-4 focus:ring-accent/10 outline-none transition-all duration-300"
-              />
-            </div>
-
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
-              {skillFilters.map((skill) => (
-                <button
-                  key={skill}
-                  onClick={() => setActiveSkill(skill)}
-                  className={cn(
-                    "px-4 py-2 text-[12px] font-bold rounded-full transition-all whitespace-nowrap tracking-tight",
-                    activeSkill === skill
-                      ? "bg-text-primary text-background-primary shadow-md"
-                      : "bg-surface border border-border-primary text-text-secondary hover:text-text-primary hover:border-border-secondary hover:bg-background-secondary"
-                  )}
-                >
-                  {skill}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Builder grid */}
-      <div className="max-w-[1100px] mx-auto pt-52 pb-24 px-6">
-        <div className="flex items-end justify-between mb-12">
+    <div className="min-h-screen" style={{ background: "#FAFAF7" }}>
+      <div className="mx-auto max-w-[960px] px-4 sm:px-10 pb-20 pt-8 sm:pt-10">
+        {/* Header */}
+        <div className="flex items-end justify-between gap-4 mb-8">
           <div>
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display text-[clamp(2rem,4vw,3rem)] text-text-primary tracking-[-0.03em]"
-            >
-              The Network
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-[16px] text-text-secondary mt-2"
-            >
-              Discover builders by their verified shipping history.
-            </motion.p>
+            <h1 className="font-display text-[24px] sm:text-[28px] font-bold tracking-tight text-[#111]">Builders</h1>
+            <p className="text-[13px] sm:text-[14px] text-gray-400 mt-1">{builders.length} people building with AI</p>
           </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="hidden sm:flex items-center gap-2 text-[13px] font-bold text-text-tertiary uppercase tracking-wider"
-          >
-            <span className="text-text-primary">{filtered.length}</span> Builders Match
-          </motion.div>
+          <Link href="/signup" className="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2.5 text-[13px] font-semibold bg-[#111] text-white transition-all hover:scale-[1.02] min-h-[44px] shrink-0">
+            Join<span className="hidden sm:inline">&nbsp;the network</span>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((builder, i) => (
-              <motion.div
-                key={builder.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+          <div className="relative flex-1 sm:max-w-[360px]">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name or skill..."
+              className="w-full rounded-lg border border-gray-200 bg-white py-3 sm:py-2.5 pl-10 pr-3 text-[14px] sm:text-[13px] text-[#111] outline-none placeholder:text-gray-400 focus:border-[#C6F135] focus:ring-1 focus:ring-[#C6F135]/20"
+            />
+          </div>
+          <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1">
+            {segments.map((s) => (
+              <button
+                key={s.key}
+                onClick={() => setActiveSegment(s.key)}
+                className={cn(
+                  "rounded-lg px-3 py-2.5 sm:px-2.5 sm:py-1.5 text-[13px] sm:text-[12px] font-medium transition-all whitespace-nowrap min-h-[44px] sm:min-h-0",
+                  activeSegment === s.key ? "bg-[#111] text-white" : "text-gray-500 hover:text-[#111] hover:bg-gray-100"
+                )}
               >
-                <Link
-                  href={`/builders/${builder.username}`}
-                  className="group card-premium block p-8 h-full flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-start justify-between mb-6">
-                      <div
-                        className="w-14 h-14 rounded-2xl flex items-center justify-center text-[16px] font-bold text-white shrink-0 shadow-lg"
-                        style={{ background: builder.gradient }}
-                      >
-                        {getInitials(builder.name)}
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-background-secondary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <ArrowUpRight className="w-4 h-4 text-text-primary" />
-                      </div>
-                    </div>
-
-                    <h3 className="text-[18px] font-bold text-text-primary group-hover:text-accent transition-colors tracking-tight mb-1.5">
-                      {builder.name}
-                    </h3>
-                    <p className="text-[14px] text-text-secondary line-clamp-2 leading-relaxed mb-6">
-                      {builder.tagline}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-8">
-                      {builder.skills.slice(0, 3).map((skill) => (
-                        <span
-                          key={skill}
-                          className="text-[11px] font-bold text-text-tertiary bg-background-secondary border border-border-secondary rounded-md px-2.5 py-1"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                      {builder.skills.length > 3 && (
-                        <span className="text-[11px] font-bold text-text-tertiary px-1 py-1">
-                          +{builder.skills.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-5 border-t border-border-tertiary mt-auto">
-                    <div className="flex items-center gap-4 text-[12px] font-bold text-text-tertiary uppercase tracking-wider">
-                      <span>{builder.projectCount} SHIP{builder.projectCount !== 1 && "S"}</span>
-                      <span className="flex items-center gap-1.5 text-accent">
-                        <Zap className="w-3.5 h-3.5" /> {builder.totalLikes}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+                {s.label}
+              </button>
             ))}
-          </AnimatePresence>
+          </div>
         </div>
 
-        {filtered.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="py-32 text-center"
-          >
-            <p className="text-[16px] text-text-secondary font-medium">No builders match your search.</p>
-            <button
-              onClick={() => { setQuery(""); setActiveSkill("All"); }}
-              className="mt-4 text-accent text-[14px] font-bold hover:underline"
-            >
-              Clear filters
-            </button>
-          </motion.div>
-        )}
+        {/* Column headers -- hidden on mobile for clean list */}
+        <div className="hidden sm:flex items-center gap-4 px-4 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-300 border-b border-gray-100">
+          <span className="w-11" />
+          <span className="flex-1">Builder</span>
+          <span className="hidden md:block w-[200px]">Skills</span>
+          <span className="hidden sm:block w-[160px]">Output</span>
+          <span className="w-3.5" />
+        </div>
+
+        {/* List */}
+        <div className="divide-y divide-gray-50">
+          {filteredBuilders.length === 0 ? (
+            <div className="text-center py-16">
+              <Search className="w-5 h-5 text-gray-300 mx-auto mb-3" />
+              <p className="text-[14px] text-gray-400">No builders match your search</p>
+            </div>
+          ) : (
+            filteredBuilders.map((b, i) => (
+              <BuilderRow key={b.id} builder={b} index={i} />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

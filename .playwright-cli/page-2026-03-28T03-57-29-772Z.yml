@@ -1,0 +1,308 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Antry" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e24]: Antry
+        - generic [ref=e25]:
+          - button "Community" [ref=e27]:
+            - text: Community
+            - img [ref=e28]
+          - button "Product" [ref=e32]:
+            - text: Product
+            - img [ref=e33]
+          - button "Company" [ref=e36]:
+            - text: Company
+            - img [ref=e37]
+        - generic [ref=e40]:
+          - link "Log in" [ref=e364] [cursor=pointer]:
+            - /url: /login
+          - link "Get started" [ref=e365] [cursor=pointer]:
+            - /url: /signup
+    - main [ref=e41]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - img [ref=e47]
+              - text: Discovery lab
+            - heading "Scout the network like a recruiter board." [level=1] [ref=e51]
+            - paragraph [ref=e52]: Different question, different surface. This view is for scanning momentum, new arrivals, shipped output, and stack clusters without looking at another card gallery.
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - img [ref=e56]
+              - paragraph [ref=e61]: Visible
+              - paragraph [ref=e62]: "2"
+              - paragraph [ref=e63]: Builders in the active lens.
+            - generic [ref=e64]:
+              - img [ref=e66]
+              - paragraph [ref=e69]: Hot
+              - paragraph [ref=e70]: "0"
+              - paragraph [ref=e71]: Builders with strong combined signal.
+            - generic [ref=e72]:
+              - img [ref=e74]
+              - paragraph [ref=e78]: Avg ships
+              - paragraph [ref=e79]: "0.0"
+              - paragraph [ref=e80]: Average shipped projects in view.
+            - generic [ref=e81]:
+              - img [ref=e83]
+              - paragraph [ref=e85]: New
+              - paragraph [ref=e86]: "2"
+              - paragraph [ref=e87]: Joined within the last 30 days.
+        - generic [ref=e88]:
+          - complementary [ref=e89]:
+            - generic [ref=e90]:
+              - paragraph [ref=e91]: Lenses
+              - generic [ref=e92]:
+                - button "All signal Balanced signal across shipping, skills, and freshness." [ref=e93]:
+                  - paragraph [ref=e94]: All signal
+                  - paragraph [ref=e95]: Balanced signal across shipping, skills, and freshness.
+                - button "Most shipped Who already has the most visible output?" [ref=e96]:
+                  - paragraph [ref=e97]: Most shipped
+                  - paragraph [ref=e98]: Who already has the most visible output?
+                - button "High signal Who is drawing the strongest response?" [ref=e99]:
+                  - paragraph [ref=e100]: High signal
+                  - paragraph [ref=e101]: Who is drawing the strongest response?
+                - button "New arrivals Who is fresh in the network right now?" [ref=e102]:
+                  - paragraph [ref=e103]: New arrivals
+                  - paragraph [ref=e104]: Who is fresh in the network right now?
+                - button "AI builders Builders with clear AI and agent stack coverage." [ref=e105]:
+                  - paragraph [ref=e106]: AI builders
+                  - paragraph [ref=e107]: Builders with clear AI and agent stack coverage.
+                - button "UI builders Builders strongest in frontend and design systems." [ref=e108]:
+                  - paragraph [ref=e109]: UI builders
+                  - paragraph [ref=e110]: Builders strongest in frontend and design systems.
+            - generic [ref=e111]:
+              - generic [ref=e112]:
+                - img [ref=e113]
+                - paragraph [ref=e115]: Stack focus
+              - generic [ref=e116]:
+                - button "All" [ref=e117]
+                - button "React" [ref=e118]
+                - button "Python" [ref=e119]
+                - button "Next.js" [ref=e120]
+                - button "TypeScript" [ref=e121]
+                - button "Go" [ref=e122]
+                - button "Rust" [ref=e123]
+                - button "LangChain" [ref=e124]
+                - button "Design" [ref=e125]
+            - generic [ref=e126]:
+              - paragraph [ref=e127]: Coverage
+              - paragraph [ref=e129]: No stack coverage in this slice yet.
+          - generic [ref=e130]:
+            - generic [ref=e132]:
+              - generic [ref=e133]:
+                - img
+                - textbox "Search builders, usernames, stack, or edge..." [ref=e134]
+              - generic [ref=e135]:
+                - generic [ref=e136]: "Active lens: All signal"
+                - generic [ref=e137]: "Results: 2"
+            - generic [ref=e138]:
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - img [ref=e142]
+                  - generic [ref=e144]:
+                    - paragraph [ref=e145]: Spotlight
+                    - heading "Highest signal" [level=2] [ref=e146]
+                - generic [ref=e147]:
+                  - link "01 TA Test Admin 0 signal · 0 ships" [ref=e148] [cursor=pointer]:
+                    - /url: /builders/test-admin-415b
+                    - generic [ref=e149]: "01"
+                    - generic [ref=e150]: TA
+                    - generic [ref=e151]:
+                      - paragraph [ref=e152]: Test Admin
+                      - paragraph [ref=e153]: 0 signal · 0 ships
+                    - img [ref=e154]
+                  - link "02 OS ofir sela 0 signal · 0 ships" [ref=e157] [cursor=pointer]:
+                    - /url: /builders/ofir-sela-e8ff
+                    - generic [ref=e158]: "02"
+                    - generic [ref=e159]: OS
+                    - generic [ref=e160]:
+                      - paragraph [ref=e161]: ofir sela
+                      - paragraph [ref=e162]: 0 signal · 0 ships
+                    - img [ref=e163]
+              - generic [ref=e166]:
+                - generic [ref=e167]:
+                  - img [ref=e169]
+                  - generic [ref=e171]:
+                    - paragraph [ref=e172]: Spotlight
+                    - heading "New arrivals" [level=2] [ref=e173]
+                - generic [ref=e174]:
+                  - link "01 TA Test Admin 2d on Antry" [ref=e175] [cursor=pointer]:
+                    - /url: /builders/test-admin-415b
+                    - generic [ref=e176]: "01"
+                    - generic [ref=e177]: TA
+                    - generic [ref=e178]:
+                      - paragraph [ref=e179]: Test Admin
+                      - paragraph [ref=e180]: 2d on Antry
+                    - img [ref=e181]
+                  - link "02 OS ofir sela 3d on Antry" [ref=e184] [cursor=pointer]:
+                    - /url: /builders/ofir-sela-e8ff
+                    - generic [ref=e185]: "02"
+                    - generic [ref=e186]: OS
+                    - generic [ref=e187]:
+                      - paragraph [ref=e188]: ofir sela
+                      - paragraph [ref=e189]: 3d on Antry
+                    - img [ref=e190]
+              - generic [ref=e193]:
+                - generic [ref=e194]:
+                  - img [ref=e196]
+                  - generic [ref=e198]:
+                    - paragraph [ref=e199]: Spotlight
+                    - heading "Most shipped" [level=2] [ref=e200]
+                - generic [ref=e201]:
+                  - link "01 OS ofir sela 0 shipped projects" [ref=e202] [cursor=pointer]:
+                    - /url: /builders/ofir-sela-e8ff
+                    - generic [ref=e203]: "01"
+                    - generic [ref=e204]: OS
+                    - generic [ref=e205]:
+                      - paragraph [ref=e206]: ofir sela
+                      - paragraph [ref=e207]: 0 shipped projects
+                    - img [ref=e208]
+                  - link "02 TA Test Admin 0 shipped projects" [ref=e211] [cursor=pointer]:
+                    - /url: /builders/test-admin-415b
+                    - generic [ref=e212]: "02"
+                    - generic [ref=e213]: TA
+                    - generic [ref=e214]:
+                      - paragraph [ref=e215]: Test Admin
+                      - paragraph [ref=e216]: 0 shipped projects
+                    - img [ref=e217]
+            - generic [ref=e220]:
+              - generic [ref=e221]:
+                - paragraph [ref=e222]: Explorer sheet
+                - heading "Ranked builders for the current lens" [level=2] [ref=e223]
+              - table [ref=e226]:
+                - rowgroup [ref=e227]:
+                  - row "# Builder Why now Stack Ships Signal Joined Status" [ref=e228]:
+                    - columnheader "#" [ref=e229]
+                    - columnheader "Builder" [ref=e230]
+                    - columnheader "Why now" [ref=e231]
+                    - columnheader "Stack" [ref=e232]
+                    - columnheader "Ships" [ref=e233]
+                    - columnheader "Signal" [ref=e234]
+                    - columnheader "Joined" [ref=e235]
+                    - columnheader "Status" [ref=e236]
+                - rowgroup [ref=e237]:
+                  - row "01 TA Test Admin @test-admin-415b 0 ships, 0 signal, 0 visible stack entries. 0 ships 0 signal Mar 25 Fresh" [ref=e238]:
+                    - cell "01" [ref=e239]
+                    - cell "TA Test Admin @test-admin-415b" [ref=e240]:
+                      - link "TA Test Admin @test-admin-415b" [ref=e241] [cursor=pointer]:
+                        - /url: /builders/test-admin-415b
+                        - generic [ref=e242]: TA
+                        - generic [ref=e243]:
+                          - paragraph [ref=e244]: Test Admin
+                          - paragraph [ref=e245]: "@test-admin-415b"
+                    - cell "0 ships, 0 signal, 0 visible stack entries." [ref=e246]
+                    - cell [ref=e247]
+                    - cell "0 ships" [ref=e248]
+                    - cell "0 signal" [ref=e249]
+                    - cell "Mar 25" [ref=e250]
+                    - cell "Fresh" [ref=e251]:
+                      - generic [ref=e252]: Fresh
+                  - row "02 OS ofir sela @ofir-sela-e8ff 0 ships, 0 signal, 0 visible stack entries. 0 ships 0 signal Mar 24 Fresh" [ref=e253]:
+                    - cell "02" [ref=e254]
+                    - cell "OS ofir sela @ofir-sela-e8ff" [ref=e255]:
+                      - link "OS ofir sela @ofir-sela-e8ff" [ref=e256] [cursor=pointer]:
+                        - /url: /builders/ofir-sela-e8ff
+                        - generic [ref=e257]: OS
+                        - generic [ref=e258]:
+                          - paragraph [ref=e259]: ofir sela
+                          - paragraph [ref=e260]: "@ofir-sela-e8ff"
+                    - cell "0 ships, 0 signal, 0 visible stack entries." [ref=e261]
+                    - cell [ref=e262]
+                    - cell "0 ships" [ref=e263]
+                    - cell "0 signal" [ref=e264]
+                    - cell "Mar 24" [ref=e265]
+                    - cell "Fresh" [ref=e266]:
+                      - generic [ref=e267]: Fresh
+    - contentinfo [ref=e268]:
+      - generic [ref=e271]:
+        - generic [ref=e272]:
+          - generic [ref=e273]:
+            - link "Antry" [ref=e274] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e275]:
+                - img [ref=e277]
+                - generic [ref=e293]: Antry
+            - paragraph [ref=e294]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+            - generic [ref=e295]:
+              - link "GitHub" [ref=e296] [cursor=pointer]:
+                - /url: https://github.com
+                - img [ref=e297]
+              - link "X (Twitter)" [ref=e299] [cursor=pointer]:
+                - /url: https://x.com
+                - img [ref=e300]
+              - link "LinkedIn" [ref=e302] [cursor=pointer]:
+                - /url: https://linkedin.com
+                - img [ref=e303]
+          - generic [ref=e305]:
+            - heading "Product" [level=4] [ref=e306]
+            - list [ref=e307]:
+              - listitem [ref=e308]:
+                - link "Builders" [ref=e309] [cursor=pointer]:
+                  - /url: /builders
+              - listitem [ref=e310]:
+                - link "Showcase" [ref=e311] [cursor=pointer]:
+                  - /url: /showcase
+              - listitem [ref=e312]:
+                - link "Hackathons" [ref=e313] [cursor=pointer]:
+                  - /url: /hackathons
+              - listitem [ref=e314]:
+                - link "Recruiters" [ref=e315] [cursor=pointer]:
+                  - /url: /companies
+              - listitem [ref=e316]:
+                - link "Submit Project" [ref=e317] [cursor=pointer]:
+                  - /url: /submit
+          - generic [ref=e318]:
+            - heading "Company" [level=4] [ref=e319]
+            - list [ref=e320]:
+              - listitem [ref=e321]:
+                - link "About" [ref=e322] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e323]:
+                - link "Blog" [ref=e324] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=e325]:
+                - link "Careers" [ref=e326] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e327]:
+                - link "Contact" [ref=e328] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e329]:
+            - heading "Resources" [level=4] [ref=e330]
+            - list [ref=e331]:
+              - listitem [ref=e332]:
+                - link "Documentation" [ref=e333] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=e334]:
+                - link "API" [ref=e335] [cursor=pointer]:
+                  - /url: /api
+              - listitem [ref=e336]:
+                - link "Community" [ref=e337] [cursor=pointer]:
+                  - /url: /community
+              - listitem [ref=e338]:
+                - link "Support" [ref=e339] [cursor=pointer]:
+                  - /url: /support
+          - generic [ref=e340]:
+            - heading "Legal" [level=4] [ref=e341]
+            - list [ref=e342]:
+              - listitem [ref=e343]:
+                - link "Privacy Policy" [ref=e344] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e345]:
+                - link "Terms of Service" [ref=e346] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e347]:
+                - link "Cookie Policy" [ref=e348] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e349]:
+          - generic [ref=e350]: © 2026 Antry. All rights reserved.
+          - button "Back to top" [ref=e351]:
+            - text: Back to top
+            - img [ref=e353]
+  - button "Open Next.js Dev Tools" [ref=e360] [cursor=pointer]:
+    - img [ref=e361]
+  - alert [ref=e366]

@@ -1,0 +1,340 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Antry" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e24]: Antry
+      - generic [ref=e25]:
+        - button "Community" [ref=e27]:
+          - text: Community
+          - img [ref=e28]
+        - button "Product" [ref=e32]:
+          - text: Product
+          - img [ref=e33]
+        - button "Company" [ref=e36]:
+          - text: Company
+          - img [ref=e37]
+  - main [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e47]:
+        - link "All Builders" [ref=e49] [cursor=pointer]:
+          - /url: /builders
+          - img [ref=e50]
+          - text: All Builders
+        - generic [ref=e52]:
+          - generic [ref=e54]: MC
+          - generic [ref=e56]:
+            - heading "Mara Chen" [level=1] [ref=e57]
+            - paragraph [ref=e58]: AI engineer building things that think
+            - generic [ref=e59]:
+              - link "GitHub" [ref=e60] [cursor=pointer]:
+                - /url: https://github.com/marachen
+                - img [ref=e61]
+              - link "Twitter" [ref=e64] [cursor=pointer]:
+                - /url: https://x.com/marachenai
+                - img [ref=e65]
+              - link "Website" [ref=e67] [cursor=pointer]:
+                - /url: https://marachen.dev
+                - img [ref=e68]
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e75]:
+              - img [ref=e77]
+              - generic [ref=e82]: Projects Shipped
+            - generic [ref=e83]: "0"
+          - generic [ref=e84]:
+            - generic [ref=e86]:
+              - img [ref=e88]
+              - generic [ref=e90]: Total Signal
+            - generic [ref=e91]: "0"
+          - generic [ref=e92]:
+            - generic [ref=e94]:
+              - img [ref=e96]
+              - generic [ref=e102]: Hackathons
+            - generic [ref=e103]: "0"
+        - generic [ref=e104]:
+          - heading "Achievements" [level=3] [ref=e105]
+          - generic [ref=e106]:
+            - generic [ref=e107]:
+              - img [ref=e109]
+              - generic [ref=e114]: Prolific Shipper
+            - generic [ref=e115]:
+              - img [ref=e117]
+              - generic [ref=e119]: 100+ Signal
+            - generic [ref=e120]:
+              - img [ref=e122]
+              - generic [ref=e124]: Rising Star
+            - generic [ref=e125]:
+              - img [ref=e127]
+              - generic [ref=e133]: Hackathon Veteran
+            - generic [ref=e134]:
+              - img [ref=e136]
+              - generic [ref=e138]: Open Source
+        - generic [ref=e139]:
+          - heading "Skill Graph" [level=3] [ref=e140]
+          - generic [ref=e141]:
+            - generic [ref=e142]: Python
+            - generic [ref=e144]: LangChain
+            - generic [ref=e146]: TypeScript
+            - generic [ref=e148]: RAG
+            - generic [ref=e150]: Multi-agent systems
+        - generic [ref=e152]:
+          - heading "About" [level=3] [ref=e153]
+          - paragraph [ref=e154]: AI engineer obsessed with autonomous agents. Previously at DeepMind. I build things that think.
+        - generic [ref=e155]:
+          - heading "Project Timeline" [level=2] [ref=e157]
+          - generic [ref=e161]:
+            - generic [ref=e162]:
+              - generic [ref=e165]: SE
+              - generic [ref=e166]:
+                - generic [ref=e167]:
+                  - generic [ref=e168]:
+                    - heading "Sentinel" [level=4] [ref=e169]
+                    - paragraph [ref=e170]: AI code reviewer that catches what linters miss
+                  - generic [ref=e171]:
+                    - img [ref=e172]
+                    - text: "142"
+                - generic [ref=e174]:
+                  - generic [ref=e175]: Python
+                  - generic [ref=e176]: LangChain
+                  - generic [ref=e177]: Claude API
+                  - generic [ref=e178]: GitHub Actions
+                  - generic [ref=e179]: FastAPI
+                - generic [ref=e180]:
+                  - link "Demo" [ref=e181] [cursor=pointer]:
+                    - /url: https://sentinel-demo.vercel.app
+                    - img [ref=e182]
+                    - text: Demo
+                  - link "Source" [ref=e184] [cursor=pointer]:
+                    - /url: https://github.com/marachen/sentinel
+                    - img [ref=e185]
+                    - text: Source
+            - generic [ref=e189]:
+              - generic [ref=e192]: SC
+              - generic [ref=e193]:
+                - generic [ref=e194]:
+                  - generic [ref=e195]:
+                    - heading "Scribe" [level=4] [ref=e196]
+                    - paragraph [ref=e197]: Voice notes to structured docs in seconds
+                  - generic [ref=e198]:
+                    - img [ref=e199]
+                    - text: "117"
+                - generic [ref=e201]:
+                  - generic [ref=e202]: TypeScript
+                  - generic [ref=e203]: Whisper API
+                  - generic [ref=e204]: Claude API
+                  - generic [ref=e205]: Next.js
+                  - generic [ref=e206]: Vercel
+                - generic [ref=e207]:
+                  - link "Demo" [ref=e208] [cursor=pointer]:
+                    - /url: https://scribe-ai.vercel.app
+                    - img [ref=e209]
+                    - text: Demo
+                  - link "Source" [ref=e211] [cursor=pointer]:
+                    - /url: https://github.com/marachen/scribe
+                    - img [ref=e212]
+                    - text: Source
+            - generic [ref=e216]:
+              - generic [ref=e219]: AE
+              - generic [ref=e220]:
+                - generic [ref=e221]:
+                  - generic [ref=e222]:
+                    - heading "Aether" [level=4] [ref=e223]
+                    - paragraph [ref=e224]: Multi-agent orchestration made simple
+                  - generic [ref=e225]:
+                    - img [ref=e226]
+                    - text: "184"
+                - generic [ref=e228]:
+                  - generic [ref=e229]: Python
+                  - generic [ref=e230]: Claude API
+                  - generic [ref=e231]: Redis
+                  - generic [ref=e232]: React
+                  - generic [ref=e233]: WebSockets
+                - generic [ref=e234]:
+                  - link "Demo" [ref=e235] [cursor=pointer]:
+                    - /url: https://aether-agents.dev
+                    - img [ref=e236]
+                    - text: Demo
+                  - link "Source" [ref=e238] [cursor=pointer]:
+                    - /url: https://github.com/marachen/aether
+                    - img [ref=e239]
+                    - text: Source
+        - generic [ref=e246]:
+          - generic [ref=e247]:
+            - generic [ref=e248]:
+              - img [ref=e249]
+              - text: Featured project
+            - heading "Sentinel" [level=2] [ref=e251]
+            - paragraph [ref=e252]: AI code reviewer that catches what linters miss
+          - generic [ref=e253]:
+            - generic [ref=e254]:
+              - generic [ref=e255]: Python
+              - generic [ref=e256]: LangChain
+              - generic [ref=e257]: Claude API
+              - generic [ref=e258]: GitHub Actions
+              - generic [ref=e259]: FastAPI
+            - generic [ref=e260]:
+              - link "Live demo" [ref=e261] [cursor=pointer]:
+                - /url: https://sentinel-demo.vercel.app
+                - img [ref=e262]
+                - text: Live demo
+              - link "Source" [ref=e264] [cursor=pointer]:
+                - /url: https://github.com/marachen/sentinel
+                - img [ref=e265]
+                - text: Source
+              - generic [ref=e269]:
+                - img [ref=e270]
+                - text: "142"
+        - generic [ref=e272]:
+          - heading "Featured Demo" [level=3] [ref=e273]
+          - link "Sentinel -- Live Demo https://sentinel-demo.vercel.app" [ref=e274] [cursor=pointer]:
+            - /url: https://sentinel-demo.vercel.app
+            - img [ref=e276]
+            - generic [ref=e278]:
+              - heading "Sentinel -- Live Demo" [level=4] [ref=e279]
+              - paragraph [ref=e280]: https://sentinel-demo.vercel.app
+            - img [ref=e281]
+        - generic [ref=e284]:
+          - heading "Hackathon History" [level=2] [ref=e286]
+          - generic [ref=e288]:
+            - link "upcoming Build with AI Agents Autonomous agents that solve real problems $9,000" [ref=e292] [cursor=pointer]:
+              - /url: /hackathons/h1
+              - generic [ref=e294]: upcoming
+              - heading "Build with AI Agents" [level=4] [ref=e295]
+              - paragraph [ref=e296]: Autonomous agents that solve real problems
+              - generic [ref=e298]:
+                - img [ref=e299]
+                - text: $9,000
+            - link "completed Open Source Sprint Build something the colony can use forever $3,500 83" [ref=e308] [cursor=pointer]:
+              - /url: /hackathons/h3
+              - generic [ref=e310]: completed
+              - heading "Open Source Sprint" [level=4] [ref=e311]
+              - paragraph [ref=e312]: Build something the colony can use forever
+              - generic [ref=e313]:
+                - generic [ref=e314]:
+                  - img [ref=e315]
+                  - text: $3,500
+                - generic [ref=e321]:
+                  - img [ref=e322]
+                  - text: "83"
+        - generic [ref=e327]:
+          - generic [ref=e328]:
+            - heading "Similar Builders" [level=2] [ref=e329]
+            - link "View all" [ref=e331] [cursor=pointer]:
+              - /url: /builders
+          - generic [ref=e332]:
+            - link "AR Alex Rivera React Node.js" [ref=e334] [cursor=pointer]:
+              - /url: /builders
+              - generic [ref=e335]: AR
+              - generic [ref=e336]:
+                - heading "Alex Rivera" [level=4] [ref=e337]
+                - generic [ref=e338]:
+                  - generic [ref=e339]: React
+                  - generic [ref=e340]: Node.js
+              - img [ref=e342]
+            - link "SP Sam Patel Python AI" [ref=e346] [cursor=pointer]:
+              - /url: /builders
+              - generic [ref=e347]: SP
+              - generic [ref=e348]:
+                - heading "Sam Patel" [level=4] [ref=e349]
+                - generic [ref=e350]:
+                  - generic [ref=e351]: Python
+                  - generic [ref=e352]: AI
+              - img [ref=e354]
+            - link "JL Jordan Lee TypeScript Go" [ref=e358] [cursor=pointer]:
+              - /url: /builders
+              - generic [ref=e359]: JL
+              - generic [ref=e360]:
+                - heading "Jordan Lee" [level=4] [ref=e361]
+                - generic [ref=e362]:
+                  - generic [ref=e363]: TypeScript
+                  - generic [ref=e364]: Go
+              - img [ref=e366]
+  - contentinfo [ref=e369]:
+    - generic [ref=e372]:
+      - generic [ref=e373]:
+        - generic [ref=e374]:
+          - link "Antry" [ref=e375] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e376]:
+              - img [ref=e378]
+              - generic [ref=e394]: Antry
+          - paragraph [ref=e395]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+          - generic [ref=e396]:
+            - link "GitHub" [ref=e397] [cursor=pointer]:
+              - /url: https://github.com
+              - img [ref=e398]
+            - link "X (Twitter)" [ref=e400] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e401]
+            - link "LinkedIn" [ref=e403] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e404]
+        - generic [ref=e406]:
+          - heading "Product" [level=4] [ref=e407]
+          - list [ref=e408]:
+            - listitem [ref=e409]:
+              - link "Builders" [ref=e410] [cursor=pointer]:
+                - /url: /builders
+            - listitem [ref=e411]:
+              - link "Showcase" [ref=e412] [cursor=pointer]:
+                - /url: /showcase
+            - listitem [ref=e413]:
+              - link "Hackathons" [ref=e414] [cursor=pointer]:
+                - /url: /hackathons
+            - listitem [ref=e415]:
+              - link "Recruiters" [ref=e416] [cursor=pointer]:
+                - /url: /companies
+            - listitem [ref=e417]:
+              - link "Submit Project" [ref=e418] [cursor=pointer]:
+                - /url: /submit
+        - generic [ref=e419]:
+          - heading "Company" [level=4] [ref=e420]
+          - list [ref=e421]:
+            - listitem [ref=e422]:
+              - link "About" [ref=e423] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e424]:
+              - link "Blog" [ref=e425] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e426]:
+              - link "Careers" [ref=e427] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e428]:
+              - link "Contact" [ref=e429] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e430]:
+          - heading "Resources" [level=4] [ref=e431]
+          - list [ref=e432]:
+            - listitem [ref=e433]:
+              - link "Documentation" [ref=e434] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e435]:
+              - link "API" [ref=e436] [cursor=pointer]:
+                - /url: /api
+            - listitem [ref=e437]:
+              - link "Community" [ref=e438] [cursor=pointer]:
+                - /url: /community
+            - listitem [ref=e439]:
+              - link "Support" [ref=e440] [cursor=pointer]:
+                - /url: /support
+        - generic [ref=e441]:
+          - heading "Legal" [level=4] [ref=e442]
+          - list [ref=e443]:
+            - listitem [ref=e444]:
+              - link "Privacy Policy" [ref=e445] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e446]:
+              - link "Terms of Service" [ref=e447] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e448]:
+              - link "Cookie Policy" [ref=e449] [cursor=pointer]:
+                - /url: /cookies
+      - generic [ref=e450]:
+        - generic [ref=e451]: © 2026 Antry. All rights reserved.
+        - button "Back to top" [ref=e452]:
+          - text: Back to top
+          - img [ref=e454]

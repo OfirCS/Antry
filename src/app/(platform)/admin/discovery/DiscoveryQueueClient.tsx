@@ -12,7 +12,11 @@ import {
   Plus,
   Star,
   Clock,
-  GitBranch
+  GitBranch,
+  ShieldCheck,
+  ShieldX,
+  Hourglass,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,11 +44,11 @@ export function DiscoveryQueueClient({
   const [actionId, setActionId] = useState<string | null>(null);
   const [importError, setImportError] = useState("");
 
-  const tabs: { value: Tab; label: string }[] = [
-    { value: "pending", label: "Pending" },
-    { value: "approved", label: "Approved" },
-    { value: "rejected", label: "Rejected" },
-    { value: "all", label: "All" },
+  const tabs: { value: Tab; label: string; icon: React.ReactNode }[] = [
+    { value: "pending", label: "Pending", icon: <Hourglass className="w-3.5 h-3.5" /> },
+    { value: "approved", label: "Approved", icon: <ShieldCheck className="w-3.5 h-3.5" /> },
+    { value: "rejected", label: "Rejected", icon: <ShieldX className="w-3.5 h-3.5" /> },
+    { value: "all", label: "All", icon: null },
   ];
 
   const filtered =
@@ -126,14 +130,14 @@ export function DiscoveryQueueClient({
   return (
     <div className="max-w-[960px] mx-auto px-6 py-16 sm:py-20 min-h-screen">
       {/* Header */}
-      <div className="flex items-start justify-between gap-6 mb-8">
+      <div className="flex items-start justify-between gap-6 mb-6">
         <div>
           <h1 className="text-[clamp(1.5rem,3vw,2rem)] font-semibold tracking-tight text-text-primary mb-1">
             Discovery Queue
           </h1>
-          <p className="text-[14px] text-text-secondary">
-            Auto-discovered projects from GitHub. Review, approve, and share
-            claim links.
+          <p className="text-[14px] text-text-secondary leading-relaxed max-w-lg">
+            Review and approve projects discovered from GitHub. Approved projects
+            appear on Antry and can be claimed by their builders.
           </p>
         </div>
         <Button
@@ -148,6 +152,46 @@ export function DiscoveryQueueClient({
           )}
           Trigger Scan
         </Button>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Hourglass className="w-4 h-4 text-amber-600" />
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-amber-700">
+              Pending
+            </span>
+          </div>
+          <p className="text-[28px] font-bold text-amber-900 tracking-tight">
+            {counts.pending}
+          </p>
+          <p className="text-[12px] text-amber-600 mt-0.5">Awaiting review</p>
+        </div>
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <ShieldCheck className="w-4 h-4 text-green-600" />
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-green-700">
+              Approved
+            </span>
+          </div>
+          <p className="text-[28px] font-bold text-green-900 tracking-tight">
+            {counts.approved}
+          </p>
+          <p className="text-[12px] text-green-600 mt-0.5">Live on platform</p>
+        </div>
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <ShieldX className="w-4 h-4 text-red-500" />
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-red-600">
+              Rejected
+            </span>
+          </div>
+          <p className="text-[28px] font-bold text-red-900 tracking-tight">
+            {counts.rejected}
+          </p>
+          <p className="text-[12px] text-red-500 mt-0.5">Did not meet criteria</p>
+        </div>
       </div>
 
       {/* Scan result */}
@@ -196,23 +240,64 @@ export function DiscoveryQueueClient({
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-border-primary">
+      <div className="flex items-center gap-1 mb-4 p-1 rounded-xl" style={{ background: "#F5F5F5" }}>
         {tabs.map((t) => (
           <button
             key={t.value}
             onClick={() => setTab(t.value)}
-            className={`px-4 py-2.5 text-[13px] font-medium border-b-2 transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold rounded-lg transition-all duration-200 ${
               tab === t.value
-                ? "border-accent text-text-primary"
-                : "border-transparent text-text-tertiary hover:text-text-secondary"
+                ? "bg-white text-text-primary shadow-sm"
+                : "text-text-tertiary hover:text-text-secondary"
             }`}
           >
+            {t.icon}
             {t.label}
-            <span className="ml-1.5 text-[11px] text-text-tertiary">
+            <span
+              className={`ml-1 text-[11px] font-bold px-1.5 py-0.5 rounded-full ${
+                tab === t.value
+                  ? t.value === "pending"
+                    ? "bg-amber-100 text-amber-700"
+                    : t.value === "approved"
+                    ? "bg-green-100 text-green-700"
+                    : t.value === "rejected"
+                    ? "bg-red-100 text-red-600"
+                    : "bg-gray-100 text-gray-600"
+                  : "bg-transparent text-text-tertiary"
+              }`}
+            >
               {counts[t.value]}
             </span>
           </button>
         ))}
+      </div>
+
+      {/* Action descriptions */}
+      <div className="mb-6 rounded-lg border border-border-primary bg-background-secondary/30 p-3.5 flex items-start gap-2.5">
+        <Info className="w-4 h-4 text-text-tertiary shrink-0 mt-0.5" />
+        <div className="text-[12px] text-text-tertiary leading-relaxed">
+          {tab === "pending" && (
+            <>
+              <span className="font-semibold text-text-secondary">Approve</span> to publish the project on Antry and allow the builder to claim it.{" "}
+              <span className="font-semibold text-text-secondary">Reject</span> to hide it from the platform. You can always change status later.
+            </>
+          )}
+          {tab === "approved" && (
+            <>
+              These projects are live on the platform. <span className="font-semibold text-text-secondary">Generate a claim link</span> to let the original builder take ownership and edit the listing.
+            </>
+          )}
+          {tab === "rejected" && (
+            <>
+              Rejected projects are hidden from the public. They remain here for reference and can be re-approved if needed.
+            </>
+          )}
+          {tab === "all" && (
+            <>
+              All discovered projects across every status. Use the status-specific tabs above for batch actions.
+            </>
+          )}
+        </div>
       </div>
 
       {/* Project list */}
@@ -247,6 +332,22 @@ export function DiscoveryQueueClient({
                     <h3 className="text-[15px] font-semibold text-text-primary truncate">
                       {project.title}
                     </h3>
+                    {/* Status badge inline */}
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0 ${
+                        project.status === "pending"
+                          ? "bg-amber-100 text-amber-700"
+                          : project.status === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : project.status === "rejected"
+                          ? "bg-red-100 text-red-600"
+                          : project.status === "claimed"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {project.status}
+                    </span>
                     {project.repo_url && (
                       <a
                         href={project.repo_url}
@@ -302,6 +403,7 @@ export function DiscoveryQueueClient({
                       size="sm"
                       onClick={() => handleApprove(project.id)}
                       disabled={isPending && actionId === project.id}
+                      className="bg-green-600 hover:bg-green-700 text-white"
                     >
                       {isPending && actionId === project.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -315,6 +417,7 @@ export function DiscoveryQueueClient({
                       variant="outline"
                       onClick={() => handleReject(project.id)}
                       disabled={isPending && actionId === project.id}
+                      className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
                     >
                       <X className="w-3.5 h-3.5 mr-1" />
                       Reject
@@ -355,14 +458,22 @@ export function DiscoveryQueueClient({
                 )}
 
                 {project.status === "rejected" && (
-                  <span className="text-[12px] text-text-tertiary italic">
-                    Rejected
-                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleApprove(project.id)}
+                    disabled={isPending && actionId === project.id}
+                    className="text-text-tertiary"
+                  >
+                    <Check className="w-3.5 h-3.5 mr-1" />
+                    Re-approve
+                  </Button>
                 )}
 
                 {project.status === "claimed" && (
-                  <span className="text-[12px] text-green-600 font-medium">
-                    Claimed
+                  <span className="text-[12px] text-green-600 font-medium flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    Claimed by builder
                   </span>
                 )}
               </div>

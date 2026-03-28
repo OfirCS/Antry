@@ -1,0 +1,234 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Antry" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e8]
+          - generic [ref=e24]: Antry
+      - generic [ref=e25]:
+        - button "Community" [ref=e27]:
+          - text: Community
+          - img [ref=e28]
+        - button "Product" [ref=e32]:
+          - text: Product
+          - img [ref=e33]
+        - button "Company" [ref=e36]:
+          - text: Company
+          - img [ref=e37]
+  - main [ref=e41]:
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - img [ref=e47]
+            - text: Builder directory
+          - heading "The big sheet of people who actually ship." [level=1] [ref=e50]
+          - paragraph [ref=e51]: Search builders by rank, shipped work, signal, freshness, and stack.
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - img [ref=e55]
+            - paragraph [ref=e60]: Visible
+            - paragraph [ref=e61]: "2"
+            - paragraph [ref=e62]: In current slice
+          - generic [ref=e63]:
+            - img [ref=e65]
+            - paragraph [ref=e69]: Ships
+            - paragraph [ref=e70]: "0"
+            - paragraph [ref=e71]: Projects attached
+          - generic [ref=e72]:
+            - img [ref=e74]
+            - paragraph [ref=e76]: Avg stack
+            - paragraph [ref=e77]: "0.0"
+            - paragraph [ref=e78]: 0 total signal
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - generic [ref=e82]:
+              - img
+              - textbox "Search builder, handle, or stack..." [ref=e83]
+            - generic [ref=e84]:
+              - generic [ref=e85]:
+                - img [ref=e86]
+                - text: Sort
+              - button "Signal" [ref=e87]
+              - button "Ships" [ref=e88]
+              - button "Freshness" [ref=e89]
+              - button "Name" [ref=e90]
+          - generic [ref=e91]:
+            - button "All builders" [ref=e92]
+            - button "AI systems" [ref=e93]
+            - button "Frontend" [ref=e94]
+            - button "Backend" [ref=e95]
+            - button "Mobile" [ref=e96]
+          - generic [ref=e97]:
+            - generic [ref=e98]: Quick stack
+            - button "All" [ref=e99]
+            - button "React" [ref=e100]
+            - button "Python" [ref=e101]
+            - button "Next.js" [ref=e102]
+            - button "TypeScript" [ref=e103]
+            - button "Go" [ref=e104]
+            - button "Rust" [ref=e105]
+            - button "Design" [ref=e106]
+            - button "LangChain" [ref=e107]
+        - generic [ref=e109]:
+          - generic [ref=e110]: Showing 2 builders
+          - generic [ref=e111]: Avg freshness 43
+          - generic [ref=e112]: Top signal 0
+        - table [ref=e115]:
+          - rowgroup [ref=e116]:
+            - row "# Builder Focus Stack Ships Signal Joined Heat Profile" [ref=e117]:
+              - columnheader "#" [ref=e118]
+              - columnheader "Builder" [ref=e119]
+              - columnheader "Focus" [ref=e120]
+              - columnheader "Stack" [ref=e121]
+              - columnheader "Ships" [ref=e122]
+              - columnheader "Signal" [ref=e123]
+              - columnheader "Joined" [ref=e124]
+              - columnheader "Heat" [ref=e125]
+              - columnheader "Profile" [ref=e126]
+          - rowgroup [ref=e127]:
+            - row "01 TA Test Admin Generalist @test-admin-415b Builder profile in progress. 0 shipped 0 signal Mar 25 Steady Open" [ref=e128]:
+              - cell "01" [ref=e129]
+              - cell "TA Test Admin Generalist @test-admin-415b" [ref=e130]:
+                - link "TA Test Admin Generalist @test-admin-415b" [ref=e131] [cursor=pointer]:
+                  - /url: /builders/test-admin-415b
+                  - generic [ref=e132]: TA
+                  - generic [ref=e133]:
+                    - generic [ref=e134]:
+                      - generic [ref=e135]: Test Admin
+                      - generic [ref=e136]: Generalist
+                    - paragraph [ref=e137]: "@test-admin-415b"
+              - cell "Builder profile in progress." [ref=e138]:
+                - generic [ref=e139]: Builder profile in progress.
+              - cell [ref=e140]
+              - cell "0 shipped" [ref=e141]
+              - cell "0 signal" [ref=e142]
+              - cell "Mar 25" [ref=e143]
+              - cell "Steady" [ref=e144]:
+                - generic [ref=e145]: Steady
+              - cell "Open" [ref=e146]:
+                - link "Open" [ref=e147] [cursor=pointer]:
+                  - /url: /builders/test-admin-415b
+                  - text: Open
+                  - img [ref=e148]
+            - row "02 OS ofir sela Generalist @ofir-sela-e8ff Builder profile in progress. 0 shipped 0 signal Mar 24 Steady Open" [ref=e151]:
+              - cell "02" [ref=e152]
+              - cell "OS ofir sela Generalist @ofir-sela-e8ff" [ref=e153]:
+                - link "OS ofir sela Generalist @ofir-sela-e8ff" [ref=e154] [cursor=pointer]:
+                  - /url: /builders/ofir-sela-e8ff
+                  - generic [ref=e155]: OS
+                  - generic [ref=e156]:
+                    - generic [ref=e157]:
+                      - generic [ref=e158]: ofir sela
+                      - generic [ref=e159]: Generalist
+                    - paragraph [ref=e160]: "@ofir-sela-e8ff"
+              - cell "Builder profile in progress." [ref=e161]:
+                - generic [ref=e162]: Builder profile in progress.
+              - cell [ref=e163]
+              - cell "0 shipped" [ref=e164]
+              - cell "0 signal" [ref=e165]
+              - cell "Mar 24" [ref=e166]
+              - cell "Steady" [ref=e167]:
+                - generic [ref=e168]: Steady
+              - cell "Open" [ref=e169]:
+                - link "Open" [ref=e170] [cursor=pointer]:
+                  - /url: /builders/ofir-sela-e8ff
+                  - text: Open
+                  - img [ref=e171]
+      - generic [ref=e174]:
+        - generic [ref=e175]:
+          - img [ref=e176]
+          - generic [ref=e179]: Signal = loudest shipped proof
+        - generic [ref=e180]:
+          - img [ref=e181]
+          - generic [ref=e183]: Freshness = newest builders first
+        - generic [ref=e184]:
+          - img [ref=e185]
+          - generic [ref=e188]: Lane filters tighten the sheet fast
+  - contentinfo [ref=e189]:
+    - generic [ref=e192]:
+      - generic [ref=e193]:
+        - generic [ref=e194]:
+          - link "Antry" [ref=e195] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e196]:
+              - img [ref=e198]
+              - generic [ref=e214]: Antry
+          - paragraph [ref=e215]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+          - generic [ref=e216]:
+            - link "GitHub" [ref=e217] [cursor=pointer]:
+              - /url: https://github.com
+              - img [ref=e218]
+            - link "X (Twitter)" [ref=e220] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e221]
+            - link "LinkedIn" [ref=e223] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e224]
+        - generic [ref=e226]:
+          - heading "Product" [level=4] [ref=e227]
+          - list [ref=e228]:
+            - listitem [ref=e229]:
+              - link "Builders" [ref=e230] [cursor=pointer]:
+                - /url: /builders
+            - listitem [ref=e231]:
+              - link "Showcase" [ref=e232] [cursor=pointer]:
+                - /url: /showcase
+            - listitem [ref=e233]:
+              - link "Hackathons" [ref=e234] [cursor=pointer]:
+                - /url: /hackathons
+            - listitem [ref=e235]:
+              - link "Recruiters" [ref=e236] [cursor=pointer]:
+                - /url: /companies
+            - listitem [ref=e237]:
+              - link "Submit Project" [ref=e238] [cursor=pointer]:
+                - /url: /submit
+        - generic [ref=e239]:
+          - heading "Company" [level=4] [ref=e240]
+          - list [ref=e241]:
+            - listitem [ref=e242]:
+              - link "About" [ref=e243] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e244]:
+              - link "Blog" [ref=e245] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e246]:
+              - link "Careers" [ref=e247] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e248]:
+              - link "Contact" [ref=e249] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e250]:
+          - heading "Resources" [level=4] [ref=e251]
+          - list [ref=e252]:
+            - listitem [ref=e253]:
+              - link "Documentation" [ref=e254] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e255]:
+              - link "API" [ref=e256] [cursor=pointer]:
+                - /url: /api
+            - listitem [ref=e257]:
+              - link "Community" [ref=e258] [cursor=pointer]:
+                - /url: /community
+            - listitem [ref=e259]:
+              - link "Support" [ref=e260] [cursor=pointer]:
+                - /url: /support
+        - generic [ref=e261]:
+          - heading "Legal" [level=4] [ref=e262]
+          - list [ref=e263]:
+            - listitem [ref=e264]:
+              - link "Privacy Policy" [ref=e265] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e266]:
+              - link "Terms of Service" [ref=e267] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e268]:
+              - link "Cookie Policy" [ref=e269] [cursor=pointer]:
+                - /url: /cookies
+      - generic [ref=e270]:
+        - generic [ref=e271]: © 2026 Antry. All rights reserved.
+        - button "Back to top" [ref=e272]:
+          - text: Back to top
+          - img [ref=e274]

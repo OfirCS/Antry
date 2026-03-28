@@ -1,0 +1,256 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Antry" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e24]: Antry
+        - generic [ref=e25]:
+          - button "Community" [ref=e27]:
+            - text: Community
+            - img [ref=e28]
+          - button "Product" [ref=e32]:
+            - text: Product
+            - img [ref=e33]
+          - button "Company" [ref=e36]:
+            - text: Company
+            - img [ref=e37]
+    - main [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e47]:
+          - generic [ref=e49]:
+            - img [ref=e50]
+            - text: Hackathons
+          - heading "Build something amazing in 48 hours" [level=1] [ref=e55]:
+            - text: Build something amazing
+            - text: in 48 hours
+          - paragraph [ref=e56]: Join fellow AI builders in fast-paced hackathons. Ship projects, grow your portfolio, and get noticed.
+          - paragraph [ref=e58]: 130 builders have shipped 130 projects across 3 hackathons
+          - generic [ref=e59]:
+            - paragraph [ref=e60]:
+              - generic [ref=e61]:
+                - img [ref=e62]
+                - text: Ship in 48 Hours ends in
+            - generic [ref=e64]:
+              - generic [ref=e65]:
+                - generic [ref=e67]: "00"
+                - generic [ref=e68]: Days
+              - generic [ref=e69]: ":"
+              - generic [ref=e70]:
+                - generic [ref=e72]: "00"
+                - generic [ref=e73]: Hrs
+              - generic [ref=e74]: ":"
+              - generic [ref=e75]:
+                - generic [ref=e77]: "00"
+                - generic [ref=e78]: Min
+              - generic [ref=e79]: ":"
+              - generic [ref=e80]:
+                - generic [ref=e82]: "00"
+                - generic [ref=e83]: Sec
+          - link "Join the next one" [ref=e85] [cursor=pointer]:
+            - /url: /hackathons/h2
+            - text: Join the next one
+            - img [ref=e86]
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - heading "Why join a hackathon?" [level=2] [ref=e91]
+            - paragraph [ref=e92]: It is the fastest way to go from idea to shipped product while building real connections.
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - img [ref=e96]
+              - heading "Ship Fast" [level=3] [ref=e101]
+              - paragraph [ref=e102]: Build and deploy a working project in 48 hours. Constraints breed creativity — you will be surprised what you can ship.
+            - generic [ref=e103]:
+              - img [ref=e105]
+              - heading "Grow Your Network" [level=3] [ref=e110]
+              - paragraph [ref=e111]: Meet builders with complementary skills. Form teams, make friends, and find your next co-founder or collaborator.
+            - generic [ref=e112]:
+              - img [ref=e114]
+              - heading "Get Noticed" [level=3] [ref=e116]
+              - paragraph [ref=e117]: Every hackathon project goes on your builder profile. Proof of work speaks louder than resumes.
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - img
+            - textbox "Search hackathons..." [ref=e121]
+          - generic [ref=e122]:
+            - button "all" [ref=e124]
+            - button "active" [ref=e125]
+            - button "upcoming" [ref=e126]
+            - button "completed" [ref=e127]
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - heading "All Hackathons" [level=2] [ref=e130]
+            - paragraph [ref=e131]: 3 hackathons
+          - generic [ref=e132]:
+            - link "B Build with AI Agents upcoming Autonomous agents that solve real problems Starts in 7d 20h 30m 39s Builders 0 Format 48h sprint Join" [ref=e134] [cursor=pointer]:
+              - /url: /hackathons/h1
+              - generic [ref=e135]: B
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - heading "Build with AI Agents" [level=2] [ref=e138]
+                  - generic [ref=e139]: upcoming
+                - paragraph [ref=e140]: Autonomous agents that solve real problems
+                - generic [ref=e141]:
+                  - img [ref=e142]
+                  - generic [ref=e145]: Starts in 7d 20h 30m 39s
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: Builders
+                  - generic [ref=e149]:
+                    - img [ref=e150]
+                    - text: "0"
+                - generic [ref=e156]:
+                  - generic [ref=e157]: Format
+                  - generic [ref=e158]:
+                    - img [ref=e159]
+                    - text: 48h sprint
+                - generic [ref=e163]:
+                  - text: Join
+                  - img [ref=e164]
+            - link "S Ship in 48 Hours active From zero to deployed in a single weekend Ends in 0d 0h 0m 0s Builders 47 Format 48h sprint Join" [ref=e167] [cursor=pointer]:
+              - /url: /hackathons/h2
+              - generic [ref=e168]: S
+              - generic [ref=e169]:
+                - generic [ref=e170]:
+                  - heading "Ship in 48 Hours" [level=2] [ref=e171]
+                  - generic [ref=e172]: active
+                - paragraph [ref=e174]: From zero to deployed in a single weekend
+                - generic [ref=e175]:
+                  - img [ref=e176]
+                  - generic [ref=e179]: Ends in 0d 0h 0m 0s
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - generic [ref=e182]: Builders
+                  - generic [ref=e183]:
+                    - img [ref=e184]
+                    - text: "47"
+                - generic [ref=e190]:
+                  - generic [ref=e191]: Format
+                  - generic [ref=e192]:
+                    - img [ref=e193]
+                    - text: 48h sprint
+                - generic [ref=e197]:
+                  - text: Join
+                  - img [ref=e198]
+            - link "O Open Source Sprint completed Build something the colony can use forever Builders 83 Format 48h sprint View" [ref=e201] [cursor=pointer]:
+              - /url: /hackathons/h3
+              - generic [ref=e202]: O
+              - generic [ref=e203]:
+                - generic [ref=e204]:
+                  - heading "Open Source Sprint" [level=2] [ref=e205]
+                  - generic [ref=e206]: completed
+                - paragraph [ref=e207]: Build something the colony can use forever
+              - generic [ref=e208]:
+                - generic [ref=e209]:
+                  - generic [ref=e210]: Builders
+                  - generic [ref=e211]:
+                    - img [ref=e212]
+                    - text: "83"
+                - generic [ref=e218]:
+                  - generic [ref=e219]: Format
+                  - generic [ref=e220]:
+                    - img [ref=e221]
+                    - text: 48h sprint
+                - generic [ref=e225]:
+                  - text: View
+                  - img [ref=e226]
+        - generic [ref=e230]:
+          - img [ref=e232]
+          - heading "Have a hackathon idea?" [level=2] [ref=e234]
+          - paragraph [ref=e235]: We love community-driven hackathons. If you have a theme, a challenge, or just a wild idea for builders to rally around, let's make it happen.
+          - link "Propose a hackathon" [ref=e236] [cursor=pointer]:
+            - /url: mailto:hello@antry.app?subject=Hackathon%20Idea
+            - img [ref=e237]
+            - text: Propose a hackathon
+            - img [ref=e239]
+          - paragraph [ref=e241]: No formal process needed. Just share your idea.
+    - contentinfo [ref=e242]:
+      - generic [ref=e245]:
+        - generic [ref=e246]:
+          - generic [ref=e247]:
+            - link "Antry" [ref=e248] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e249]:
+                - img [ref=e251]
+                - generic [ref=e267]: Antry
+            - paragraph [ref=e268]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+            - generic [ref=e269]:
+              - link "GitHub" [ref=e270] [cursor=pointer]:
+                - /url: https://github.com
+                - img [ref=e271]
+              - link "X (Twitter)" [ref=e273] [cursor=pointer]:
+                - /url: https://x.com
+                - img [ref=e274]
+              - link "LinkedIn" [ref=e276] [cursor=pointer]:
+                - /url: https://linkedin.com
+                - img [ref=e277]
+          - generic [ref=e279]:
+            - heading "Product" [level=4] [ref=e280]
+            - list [ref=e281]:
+              - listitem [ref=e282]:
+                - link "Builders" [ref=e283] [cursor=pointer]:
+                  - /url: /builders
+              - listitem [ref=e284]:
+                - link "Showcase" [ref=e285] [cursor=pointer]:
+                  - /url: /showcase
+              - listitem [ref=e286]:
+                - link "Hackathons" [ref=e287] [cursor=pointer]:
+                  - /url: /hackathons
+              - listitem [ref=e288]:
+                - link "Recruiters" [ref=e289] [cursor=pointer]:
+                  - /url: /companies
+              - listitem [ref=e290]:
+                - link "Submit Project" [ref=e291] [cursor=pointer]:
+                  - /url: /submit
+          - generic [ref=e292]:
+            - heading "Company" [level=4] [ref=e293]
+            - list [ref=e294]:
+              - listitem [ref=e295]:
+                - link "About" [ref=e296] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e297]:
+                - link "Blog" [ref=e298] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=e299]:
+                - link "Careers" [ref=e300] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e301]:
+                - link "Contact" [ref=e302] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e303]:
+            - heading "Resources" [level=4] [ref=e304]
+            - list [ref=e305]:
+              - listitem [ref=e306]:
+                - link "Documentation" [ref=e307] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=e308]:
+                - link "API" [ref=e309] [cursor=pointer]:
+                  - /url: /api
+              - listitem [ref=e310]:
+                - link "Community" [ref=e311] [cursor=pointer]:
+                  - /url: /community
+              - listitem [ref=e312]:
+                - link "Support" [ref=e313] [cursor=pointer]:
+                  - /url: /support
+          - generic [ref=e314]:
+            - heading "Legal" [level=4] [ref=e315]
+            - list [ref=e316]:
+              - listitem [ref=e317]:
+                - link "Privacy Policy" [ref=e318] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e319]:
+                - link "Terms of Service" [ref=e320] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e321]:
+                - link "Cookie Policy" [ref=e322] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e323]:
+          - generic [ref=e324]: © 2026 Antry. All rights reserved.
+          - button "Back to top" [ref=e325]:
+            - text: Back to top
+            - img [ref=e327]
+  - button "Open Next.js Dev Tools" [ref=e334] [cursor=pointer]:
+    - img [ref=e335]
+  - alert [ref=e338]

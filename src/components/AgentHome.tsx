@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
@@ -17,41 +17,82 @@ import {
   Zap,
   Code2,
   Sparkles,
-  Database,
-  Bot,
+  Compass,
+  UsersRound,
+  Layers,
+  User,
+  Clock,
+  ArrowUp,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  builders as mockBuilders,
-  projects as mockProjects,
-  antathons as mockAntathons,
-} from "@/lib/mock-data";
-import { Badge } from "@/components/ui/badge";
-import { HeroAnimation } from "@/components/HeroAnimation";
-import type { AgentResponseBody, AgentRichCard } from "@/lib/agent/types";
-
-/* ── Constants ─────────────────────────────────────────── */
+import type { AgentResponseBody, AgentRichCard, AgentSuggestion } from "@/lib/agent/types";
 
 const MAX_CHARS = 320;
-const WARN_CHARS = 240;
-
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const SUGGESTIONS = [
-  { icon: Search, label: "Find AI builders", prompt: "Find builders who work with AI agents" },
-  { icon: Trophy, label: "Active hackathons", prompt: "What hackathons are active right now?" },
-  { icon: Users, label: "Build a team", prompt: "Build me a team for the AI hackathon" },
-  { icon: GitCompare, label: "Compare builders", prompt: "Compare Mara and Jake" },
+  { icon: Compass, label: "Find builders", prompt: "Find builders who work with AI agents" },
+  { icon: Trophy, label: "View hackathons", prompt: "What hackathons are active right now?" },
+  { icon: UsersRound, label: "Build a team", prompt: "Build me a team for the AI hackathon" },
+  { icon: Layers, label: "Compare profiles", prompt: "Compare Mara and Jake" },
 ];
 
 const FOLLOW_UPS = [
-  "Tell me more about the top result",
-  "Show me their projects",
-  "Which hackathon should I join?",
-  "Build me a team",
+  "Show the strongest matches",
+  "Show the best projects",
+  "Which hackathon fits best?",
+  "Build the best team",
 ];
 
-/* ── Types ─────────────────────────────────────────────── */
+const SKILL_EMOJI_MAP: Record<string, string> = {
+  react: "\u269B\uFE0F",
+  "react.js": "\u269B\uFE0F",
+  "next.js": "\u25B2",
+  nextjs: "\u25B2",
+  typescript: "\uD83D\uDCD8",
+  javascript: "\uD83D\uDFE1",
+  python: "\uD83D\uDC0D",
+  rust: "\u2699\uFE0F",
+  "node.js": "\uD83D\uDFE2",
+  nodejs: "\uD83D\uDFE2",
+  ai: "\uD83E\uDDE0",
+  ml: "\uD83E\uDDE0",
+  "machine learning": "\uD83E\uDDE0",
+  docker: "\uD83D\uDC33",
+  aws: "\u2601\uFE0F",
+  gcp: "\u2601\uFE0F",
+  firebase: "\uD83D\uDD25",
+  graphql: "\u25C6",
+  postgresql: "\uD83D\uDC18",
+  postgres: "\uD83D\uDC18",
+  mongodb: "\uD83C\uDF43",
+  tailwind: "\uD83C\uDFA8",
+  "tailwindcss": "\uD83C\uDFA8",
+  figma: "\uD83C\uDFA8",
+  design: "\uD83C\uDFA8",
+  swift: "\uD83C\uDF4E",
+  ios: "\uD83D\uDCF1",
+  android: "\uD83E\uDD16",
+  blockchain: "\u26D3\uFE0F",
+  web3: "\u26D3\uFE0F",
+  solidity: "\u26D3\uFE0F",
+  langchain: "\uD83E\uDD9C",
+  openai: "\uD83E\uDDE0",
+  vue: "\uD83D\uDFE9",
+  "vue.js": "\uD83D\uDFE9",
+  go: "\uD83D\uDC39",
+  golang: "\uD83D\uDC39",
+  java: "\u2615",
+  kubernetes: "\u2638\uFE0F",
+  devops: "\uD83D\uDD27",
+  sql: "\uD83D\uDDC3\uFE0F",
+};
+
+function getSkillEmoji(skill: string): string {
+  const key = skill.toLowerCase().trim();
+  return SKILL_EMOJI_MAP[key] || "\uD83D\uDCA0";
+}
 
 interface ConversationTurn {
   id: string;
@@ -59,146 +100,433 @@ interface ConversationTurn {
   response: string | null;
   steps: { tool: string; result: string }[];
   cards: AgentRichCard[];
+  suggestions: AgentSuggestion[];
+  intent: string | null;
   error: string | null;
   isLoading: boolean;
+  timestamp: number;
 }
 
-/* ── Markdown line renderer ────────────────────────────── */
+/* -- useTypewriter hook ----------------------------------- */
+
+function useTypewriter(text: string | null, speed: number = 22) {
+  const [displayed, setDisplayed] = useState("");
+  const [isDone, setIsDone] = useState(false);
+  const prevTextRef = useRef<string | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!text) {
+      setDisplayed("");
+      setIsDone(false);
+      prevTextRef.current = null;
+      return;
+    }
+
+    if (text !== prevTextRef.current) {
+      prevTextRef.current = text;
+      setDisplayed("");
+      setIsDone(false);
+
+      // Split into tokens: words and whitespace chunks, but keep markdown
+      // markers attached to adjacent words so **bold** stays as one token.
+      const tokens: string[] = [];
+      let buffer = "";
+      const chars = [...text];
+      let i = 0;
+      while (i < chars.length) {
+        const ch = chars[i];
+        const isWhitespace = /\s/.test(ch);
+        if (isWhitespace) {
+          if (buffer.length > 0) {
+            tokens.push(buffer);
+            buffer = "";
+          }
+          // Collect all contiguous whitespace
+          let ws = "";
+          while (i < chars.length && /\s/.test(chars[i])) {
+            ws += chars[i];
+            i++;
+          }
+          tokens.push(ws);
+        } else {
+          buffer += ch;
+          i++;
+        }
+      }
+      if (buffer.length > 0) tokens.push(buffer);
+
+      let currentIndex = 0;
+      let accumulated = "";
+      let lastTime = performance.now();
+
+      const step = (now: number) => {
+        const elapsed = now - lastTime;
+        if (elapsed >= speed && currentIndex < tokens.length) {
+          accumulated += tokens[currentIndex];
+          setDisplayed(accumulated);
+          currentIndex++;
+          lastTime = now;
+        }
+        if (currentIndex < tokens.length) {
+          rafRef.current = requestAnimationFrame(step);
+        } else {
+          setDisplayed(text); // ensure final state is exact
+          setIsDone(true);
+        }
+      };
+
+      rafRef.current = requestAnimationFrame(step);
+
+      return () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      };
+    }
+  }, [text, speed]);
+
+  return { displayed, isDone };
+}
+
+/* -- Relative time formatter ------------------------------ */
+
+function getRelativeTime(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  if (diff < 5000) return "just now";
+  if (diff < 30000) return "a moment ago";
+  if (diff < 60000) return `${Math.floor(diff / 1000)}s ago`;
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+  return `${Math.floor(diff / 3600000)}h ago`;
+}
+
+/* -- Timestamp component (live-updates) ------------------- */
+
+function Timestamp({ ts }: { ts: number }) {
+  const [label, setLabel] = useState(() => getRelativeTime(ts));
+
+  useEffect(() => {
+    const interval = setInterval(() => setLabel(getRelativeTime(ts)), 5000);
+    return () => clearInterval(interval);
+  }, [ts]);
+
+  return (
+    <span className="flex items-center gap-1 text-[10px] text-[#A3A3A3] font-medium">
+      <Clock className="w-2.5 h-2.5" />
+      {label}
+    </span>
+  );
+}
+
+/* -- Markdown line renderer ------------------------------- */
 
 function RenderLine({ line }: { line: string }) {
   if (line.trim() === "") return <br />;
 
-  const parts: React.ReactNode[] = [];
-  let remaining = line;
-  let key = 0;
+  // Handle list items (- item)
+  const listMatch = line.match(/^(\s*)-\s+(.*)/);
+  const isListItem = !!listMatch;
+  const lineContent = isListItem ? listMatch![2] : line;
 
+  const parts: React.ReactNode[] = [];
+  let remaining = lineContent;
+  let key = 0;
   while (remaining.length > 0) {
     const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
     if (boldMatch && boldMatch.index !== undefined) {
-      if (boldMatch.index > 0) {
-        parts.push(<span key={key++}>{remaining.slice(0, boldMatch.index)}</span>);
-      }
-      parts.push(
-        <strong key={key++} className="font-semibold text-text-primary">
-          {boldMatch[1]}
-        </strong>
-      );
+      if (boldMatch.index > 0) parts.push(<span key={key++}>{remaining.slice(0, boldMatch.index)}</span>);
+      parts.push(<strong key={key++} className="font-semibold text-[#111111]">{boldMatch[1]}</strong>);
       remaining = remaining.slice(boldMatch.index + boldMatch[0].length);
       continue;
     }
-
     const italicMatch = remaining.match(/\*(.+?)\*/);
     if (italicMatch && italicMatch.index !== undefined) {
-      if (italicMatch.index > 0) {
-        parts.push(<span key={key++}>{remaining.slice(0, italicMatch.index)}</span>);
-      }
-      parts.push(
-        <em key={key++} className="italic text-text-tertiary">
-          {italicMatch[1]}
-        </em>
-      );
+      if (italicMatch.index > 0) parts.push(<span key={key++}>{remaining.slice(0, italicMatch.index)}</span>);
+      parts.push(<em key={key++} className="italic text-[#737373]">{italicMatch[1]}</em>);
       remaining = remaining.slice(italicMatch.index + italicMatch[0].length);
       continue;
     }
-
+    // Handle incomplete markdown markers gracefully -- render them as plain text
     parts.push(<span key={key++}>{remaining}</span>);
     break;
   }
 
+  if (isListItem) {
+    return (
+      <div className="flex items-start gap-2 pl-1">
+        <span className="mt-[7px] w-1 h-1 rounded-full bg-[#737373] shrink-0" />
+        <p className="leading-relaxed">{parts}</p>
+      </div>
+    );
+  }
   return <p className="leading-relaxed">{parts}</p>;
 }
 
-/* ── Source pill ──────────── */
+/* -- Source pill ------------------------------------------- */
 
 function SourcePill({ tool, result }: { tool: string; result: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background-secondary border border-border-primary text-[11px] shrink-0"
+      className="inline-flex items-center gap-1 shrink-0 rounded-full bg-[#F5F5F5] px-2 py-0.5 text-[10px] font-medium text-[#525252]"
       title={result}
     >
-      <Zap className="w-2.5 h-2.5 text-accent" />
-      <span className="font-medium text-text-secondary truncate max-w-[140px]">
-        {tool.replace(/_/g, " ")}
-      </span>
+      <Zap className="w-2.5 h-2.5 text-[#C6F135]" />
+      <span className="truncate max-w-[120px]">{tool.replace(/_/g, " ")}</span>
     </motion.div>
   );
 }
 
-/* ── Shimmer skeleton ──────────────────────────────────── */
+/* -- Thinking indicator (animated dots with text) --------- */
 
-function ThinkingSkeleton() {
+function ThinkingIndicator() {
   return (
-    <div className="space-y-3 py-2">
-      {[0.8, 1, 0.6].map((width, i) => (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.2 }}
+      className="flex items-start gap-3"
+    >
+      <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#F5F5F5] shrink-0">
+        <Sparkles className="h-3.5 w-3.5 text-[#111111]" />
+      </div>
+      <div className="rounded-2xl rounded-tl-md bg-[#F5F5F5] px-4 py-3 inline-flex items-center gap-2">
+        <span className="text-[13px] text-[#737373] font-medium">Scout is thinking</span>
+        <span className="inline-flex items-center gap-1">
+          {[0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              className="block w-[5px] h-[5px] rounded-full bg-[#737373]"
+              animate={{
+                y: [0, -5, 0],
+                opacity: [0.3, 1, 0.3],
+              }}
+              transition={{
+                duration: 0.8,
+                repeat: Infinity,
+                delay: i * 0.15,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+/* -- Shimmer border wrapper ------------------------------- */
+
+function ShimmerBorder({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 + delay * 0.08, duration: 0.35, ease }}
+      className="relative rounded-2xl"
+    >
+      <motion.div
+        className="absolute -inset-[1px] rounded-2xl pointer-events-none"
+        style={{
+          background: "linear-gradient(90deg, transparent, #C6F135, transparent)",
+          backgroundSize: "200% 100%",
+        }}
+        initial={{ opacity: 0.8 }}
+        animate={{
+          opacity: [0.8, 0],
+          backgroundPosition: ["-100% 0", "200% 0"],
+        }}
+        transition={{
+          duration: 1.5,
+          delay: 0.1 + delay * 0.08,
+          ease: "easeOut",
+        }}
+      />
+      {children}
+    </motion.div>
+  );
+}
+
+/* -- Match score badge ------------------------------------ */
+
+function MatchScoreBadge({ score }: { score: number }) {
+  const color = score >= 90 ? "#C6F135" : score >= 75 ? "#28C840" : "#FEBC2E";
+  return (
+    <motion.div
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 20 }}
+      className="flex items-center gap-1 shrink-0"
+    >
+      <div
+        className="flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold"
+        style={{ backgroundColor: `${color}20`, color: score >= 90 ? "#111111" : color }}
+      >
         <motion.div
-          key={i}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: i * 0.15 }}
-          className="h-3 rounded-full bg-border-secondary overflow-hidden"
-          style={{ width: `${width * 100}%` }}
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ backgroundColor: color }}
+          animate={{ scale: [1, 1.3, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        {score}%
+      </div>
+    </motion.div>
+  );
+}
+
+/* -- Team Chemistry Score --------------------------------- */
+
+function TeamChemistryScore({ members }: { members: { builder: { skills: string[] }; role: string }[] }) {
+  const allSkills = members.flatMap((m) => m.builder.skills.map((s) => s.toLowerCase()));
+  const uniqueSkills = new Set(allSkills);
+  const roleSet = new Set(members.map((m) => m.role.toLowerCase()));
+  const diversityScore = Math.min((uniqueSkills.size / Math.max(allSkills.length, 1)) * 100, 100);
+  const roleDiversity = Math.min((roleSet.size / members.length) * 100, 100);
+  const chemistry = Math.round((diversityScore * 0.6 + roleDiversity * 0.4));
+
+  const label = chemistry >= 85 ? "Excellent" : chemistry >= 70 ? "Strong" : chemistry >= 50 ? "Good" : "Developing";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4, duration: 0.3 }}
+      className="flex items-center justify-between rounded-xl bg-gradient-to-r from-[#C6F135]/10 via-[#C6F135]/5 to-transparent px-3 py-2"
+    >
+      <div className="flex items-center gap-2">
+        <motion.div
+          animate={{ rotate: [0, 10, -10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="text-[14px]"
         >
-          <motion.div
-            className="h-full w-full bg-gradient-to-r from-transparent via-border-primary/40 to-transparent"
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          />
+          {"\u2728"}
         </motion.div>
+        <span className="text-[11px] font-semibold text-[#525252]">Team Chemistry</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="w-16 h-1.5 rounded-full bg-[#EBEBEB] overflow-hidden">
+          <motion.div
+            className="h-full rounded-full bg-[#C6F135]"
+            initial={{ width: 0 }}
+            animate={{ width: `${chemistry}%` }}
+            transition={{ delay: 0.6, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </div>
+        <span className="text-[11px] font-bold text-[#111111] tabular-nums">{chemistry}%</span>
+        <span className="text-[10px] font-medium text-[#737373]">{label}</span>
+      </div>
+    </motion.div>
+  );
+}
+
+/* -- Typewriter response renderer ------------------------- */
+
+function TypewriterResponse({ text }: { text: string }) {
+  const { displayed, isDone } = useTypewriter(text, 22);
+
+  const lines = useMemo(() => displayed.split("\n"), [displayed]);
+
+  return (
+    <div className="text-[14px] text-[#525252] space-y-1.5">
+      {lines.map((line, i) => (
+        <div key={i}>
+          <RenderLine line={line} />
+        </div>
       ))}
+      {!isDone && (
+        <motion.span
+          className="inline-block w-[2px] h-[16px] bg-[#C6F135] ml-0.5 align-text-bottom"
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.53, repeat: Infinity }}
+        />
+      )}
     </div>
   );
 }
 
-/* ── Rich card renderers ───────────────────────────────── */
+/* -- Inline rich cards (inside agent results) ------------- */
 
-function BuilderCard({ data }: { data: AgentRichCard & { type: "builder" } }) {
+function InlineBuilderCard({ data }: { data: AgentRichCard & { type: "builder" } }) {
   const b = data.data;
+  const matchScore = data.relevanceScore ?? 75;
+
   return (
     <Link
       href={`/builders/${b.username}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary bg-surface hover:border-accent/30 hover:shadow-sm transition-all"
+      className="group flex items-center gap-3 rounded-2xl border border-[#EBEBEB] bg-white p-3 transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-[1px]"
     >
       <div
-        className="w-9 h-9 rounded-lg flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+        className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-semibold text-white shrink-0"
         style={{ background: b.gradient }}
       >
         {b.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[13px] font-semibold text-text-primary group-hover:text-accent truncate transition-colors">
-          {b.name}
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[#111111] group-hover:text-[#111111] truncate transition-colors tracking-tight">
+            {b.name}
+          </span>
+          <MatchScoreBadge score={matchScore} />
         </div>
-        <div className="text-[11px] text-text-tertiary truncate">{b.tagline}</div>
+        <div className="text-[11px] text-[#737373] truncate">{b.tagline}</div>
+        {b.skills.length > 0 && (
+          <div className="flex items-center gap-1 mt-1 overflow-hidden">
+            {b.skills.slice(0, 3).map((s) => (
+              <span
+                key={s}
+                className="inline-flex items-center gap-0.5 rounded-full bg-[#F5F5F5] px-1.5 py-0.5 text-[9px] font-medium text-[#525252] shrink-0"
+              >
+                <span className="text-[8px]">{getSkillEmoji(s)}</span>
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
-      <ArrowUpRight className="w-3.5 h-3.5 text-text-tertiary group-hover:text-accent shrink-0 transition-colors" />
+      <ArrowUpRight className="w-3.5 h-3.5 text-[#737373] group-hover:text-[#111111] shrink-0 transition-colors" />
     </Link>
   );
 }
 
-function ProjectCard({ data }: { data: AgentRichCard & { type: "project" } }) {
+function InlineProjectCard({ data }: { data: AgentRichCard & { type: "project" } }) {
   const p = data.data;
+  const matchScore = data.relevanceScore ?? 75;
   return (
     <Link
       href={`/projects/${p.id}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary bg-surface hover:border-accent/30 hover:shadow-sm transition-all"
+      className="group flex items-center gap-3 rounded-2xl border border-[#EBEBEB] bg-white p-3 transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-[1px]"
     >
       <div
-        className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
         style={{ background: p.gradient }}
       >
         <Code2 className="w-4 h-4 text-white" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[13px] font-semibold text-text-primary group-hover:text-accent truncate transition-colors">
-          {p.title}
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[#111111] group-hover:text-[#111111] truncate transition-colors tracking-tight">
+            {p.title}
+          </span>
+          <MatchScoreBadge score={matchScore} />
         </div>
-        <div className="text-[11px] text-text-tertiary truncate">
+        <div className="text-[11px] text-[#737373] truncate">
           {p.builder.name} · {p.techStack.slice(0, 2).join(", ")}
         </div>
+        {p.techStack.length > 0 && (
+          <div className="flex items-center gap-1 mt-1 overflow-hidden">
+            {p.techStack.slice(0, 3).map((s) => (
+              <span
+                key={s}
+                className="inline-flex items-center gap-0.5 rounded-full bg-[#F5F5F5] px-1.5 py-0.5 text-[9px] font-medium text-[#525252] shrink-0"
+              >
+                <span className="text-[8px]">{getSkillEmoji(s)}</span>
+                {s}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
-      <div className="flex items-center gap-1 text-[11px] text-text-tertiary shrink-0">
+      <div className="flex items-center gap-1 text-[11px] text-[#737373] shrink-0">
         <Heart className="w-3 h-3" />
         {p.likes}
       </div>
@@ -206,97 +534,140 @@ function ProjectCard({ data }: { data: AgentRichCard & { type: "project" } }) {
   );
 }
 
-function HackathonCard({ data }: { data: AgentRichCard & { type: "hackathon" } }) {
+function InlineHackathonCard({ data }: { data: AgentRichCard & { type: "hackathon" } }) {
   const h = data.data;
-  const statusColor = h.status === "active" ? "text-green-500 bg-green-500/10" : h.status === "upcoming" ? "text-blue-500 bg-blue-500/10" : "text-text-tertiary bg-background-secondary";
+  const matchScore = data.relevanceScore ?? 75;
+  const statusCls =
+    h.status === "active"
+      ? "text-emerald-700 bg-emerald-50"
+      : h.status === "upcoming"
+        ? "text-blue-700 bg-blue-50"
+        : "text-[#737373] bg-[#F5F5F5]";
   return (
     <Link
       href={`/hackathons/${h.id}`}
-      className="group flex items-center gap-3 p-3 rounded-xl border border-border-primary bg-surface hover:border-accent/30 hover:shadow-sm transition-all"
+      className="group flex items-center gap-3 rounded-2xl border border-[#EBEBEB] bg-white p-3 transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-[1px]"
     >
-      <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center shrink-0">
-        <Trophy className="w-4 h-4 text-amber-500" />
+      <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+        <Trophy className="w-4 h-4 text-amber-600" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[13px] font-semibold text-text-primary group-hover:text-accent truncate transition-colors">
-          {h.title}
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[#111111] group-hover:text-[#111111] truncate transition-colors tracking-tight">
+            {h.title}
+          </span>
+          <MatchScoreBadge score={matchScore} />
         </div>
-        <div className="text-[11px] text-text-tertiary truncate">{h.theme}</div>
+        <div className="text-[11px] text-[#737373] truncate">{h.theme}</div>
       </div>
-      <span className={cn("text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0", statusColor)}>
+      <span className={cn("text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0", statusCls)}>
         {h.status}
       </span>
     </Link>
   );
 }
 
-function TeamCard({ data }: { data: AgentRichCard & { type: "team" } }) {
+function InlineTeamCard({ data }: { data: AgentRichCard & { type: "team" } }) {
   const t = data.data;
   return (
-    <div className="p-4 rounded-xl border border-accent/20 bg-accent-muted space-y-3">
-      <div className="flex items-center gap-2 text-[12px] font-semibold text-accent">
+    <div className="rounded-2xl bg-[#C6F135]/10 border border-[#C6F135]/20 p-4 space-y-3 overflow-hidden relative">
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: "radial-gradient(circle, #111111 1px, transparent 1px)",
+          backgroundSize: "16px 16px",
+        }}
+      />
+
+      <div className="relative flex items-center gap-2 text-[12px] font-semibold text-[#111111]">
         <Users className="w-3.5 h-3.5" />
         Team for &ldquo;{t.theme}&rdquo;
       </div>
-      <div className="space-y-2">
-        {t.members.map((m) => (
-          <Link
+
+      <TeamChemistryScore members={t.members} />
+
+      <div className="relative space-y-2">
+        {t.members.map((m, mi) => (
+          <motion.div
             key={m.builder.id || m.builder.username}
-            href={`/builders/${m.builder.username}`}
-            className="group flex items-center gap-3 p-2 rounded-lg hover:bg-surface transition-colors"
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 + mi * 0.08, duration: 0.3 }}
           >
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-              style={{ background: m.builder.gradient }}
+            <Link
+              href={`/builders/${m.builder.username}`}
+              className="group flex items-center gap-3 p-2 rounded-xl hover:bg-white/60 transition-colors"
             >
-              {m.builder.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13px] font-semibold text-text-primary group-hover:text-accent truncate transition-colors">
-                {m.builder.name}
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-semibold text-white shrink-0"
+                style={{ background: m.builder.gradient }}
+              >
+                {m.builder.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
               </div>
-              <div className="text-[11px] text-accent">{m.role}</div>
-            </div>
-          </Link>
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-semibold text-[#111111] group-hover:text-[#111111] truncate transition-colors">
+                  {m.builder.name}
+                </div>
+                <div className="text-[11px] text-[#525252]">{m.role}</div>
+              </div>
+              {m.builder.skills.length > 0 && (
+                <div className="hidden sm:flex items-center gap-1">
+                  {m.builder.skills.slice(0, 2).map((s) => (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-0.5 rounded-full bg-white/80 px-1.5 py-0.5 text-[9px] font-medium text-[#525252] shrink-0"
+                    >
+                      <span className="text-[8px]">{getSkillEmoji(s)}</span>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Link>
+          </motion.div>
         ))}
       </div>
     </div>
   );
 }
 
-function BuilderDetailCard({ data }: { data: AgentRichCard & { type: "builder_detail" } }) {
+function InlineBuilderDetailCard({ data }: { data: AgentRichCard & { type: "builder_detail" } }) {
   const d = data.data;
   return (
-    <div className="p-4 rounded-xl border border-border-primary bg-surface space-y-3">
+    <div className="rounded-2xl border border-[#EBEBEB] bg-white p-4 space-y-3">
       <Link href={`/builders/${d.builder.username}`} className="group flex items-center gap-3">
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-[12px] font-bold text-white shrink-0"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-semibold text-white shrink-0"
           style={{ background: d.builder.gradient }}
         >
           {d.builder.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
         </div>
         <div>
-          <div className="text-[14px] font-semibold text-text-primary group-hover:text-accent transition-colors">
+          <div className="text-[14px] font-semibold text-[#111111] group-hover:text-[#111111] transition-colors">
             {d.builder.name}
           </div>
-          <div className="text-[12px] text-text-tertiary">
+          <div className="text-[12px] text-[#737373]">
             {d.projects.length} projects · {d.totalLikes} likes
           </div>
         </div>
       </Link>
       <div className="flex flex-wrap gap-1.5">
         {d.builder.skills.slice(0, 5).map((s) => (
-          <span key={s} className="text-[10px] font-medium text-text-tertiary bg-background-secondary rounded-full px-2 py-0.5">
+          <span
+            key={s}
+            className="inline-flex items-center gap-0.5 rounded-full bg-[#F5F5F5] px-2 py-0.5 text-[10px] font-medium text-[#525252]"
+          >
+            <span className="text-[9px]">{getSkillEmoji(s)}</span>
             {s}
           </span>
         ))}
       </div>
       {d.projects.length > 0 && (
-        <div className="space-y-1.5 pt-2 border-t border-border-primary">
+        <div className="space-y-1.5 pt-2 border-t border-[#EBEBEB]">
           {d.projects.slice(0, 3).map((p) => (
             <div key={p.id} className="flex items-center justify-between text-[12px]">
-              <span className="font-medium text-text-primary truncate">{p.title}</span>
-              <span className="flex items-center gap-1 text-text-tertiary shrink-0">
+              <span className="font-medium text-[#111111] truncate">{p.title}</span>
+              <span className="flex items-center gap-1 text-[#737373] shrink-0">
                 <Heart className="w-2.5 h-2.5" /> {p.likes}
               </span>
             </div>
@@ -307,12 +678,12 @@ function BuilderDetailCard({ data }: { data: AgentRichCard & { type: "builder_de
   );
 }
 
-function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" } }) {
+function InlineComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" } }) {
   const c = data.data;
   return (
-    <div className="p-4 rounded-xl border border-border-primary bg-surface space-y-3">
-      <div className="flex items-center gap-2 text-[12px] font-semibold text-text-primary">
-        <GitCompare className="w-3.5 h-3.5 text-accent" /> Builder Comparison
+    <div className="rounded-2xl border border-[#EBEBEB] bg-white p-4 space-y-3">
+      <div className="flex items-center gap-2 text-[12px] font-semibold text-[#111111]">
+        <GitCompare className="w-3.5 h-3.5 text-[#C6F135]" /> Builder Comparison
       </div>
       <div className="grid grid-cols-2 gap-4">
         {[
@@ -321,21 +692,25 @@ function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" }
         ].map(({ b, projects, likes, unique }) => (
           <Link key={b.id || b.username} href={`/builders/${b.username}`} className="group text-center">
             <div
-              className="w-10 h-10 mx-auto rounded-xl flex items-center justify-center text-[11px] font-bold text-white mb-2"
+              className="w-10 h-10 mx-auto rounded-full flex items-center justify-center text-[11px] font-semibold text-white mb-2"
               style={{ background: b.gradient }}
             >
               {b.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
             </div>
-            <div className="text-[13px] font-semibold text-text-primary group-hover:text-accent transition-colors">
+            <div className="text-[13px] font-semibold text-[#111111] group-hover:text-[#111111] transition-colors">
               {b.name}
             </div>
-            <div className="text-[11px] text-text-tertiary mt-1">
+            <div className="text-[11px] text-[#737373] mt-1">
               {projects} projects · {likes} likes
             </div>
             {unique.length > 0 && (
               <div className="mt-2 flex flex-wrap justify-center gap-1">
                 {unique.slice(0, 3).map((s) => (
-                  <span key={s} className="text-[9px] font-medium text-accent bg-accent-muted rounded-full px-1.5 py-0.5">
+                  <span
+                    key={s}
+                    className="inline-flex items-center gap-0.5 text-[9px] font-medium text-[#111111] bg-[#C6F135]/12 rounded-full px-1.5 py-0.5"
+                  >
+                    <span className="text-[8px]">{getSkillEmoji(s)}</span>
                     {s}
                   </span>
                 ))}
@@ -345,9 +720,9 @@ function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" }
         ))}
       </div>
       {c.sharedSkills.length > 0 && (
-        <div className="text-center pt-2 border-t border-border-primary">
-          <span className="text-[10px] text-text-tertiary">
-            Shared: {c.sharedSkills.join(", ")}
+        <div className="text-center pt-2 border-t border-[#EBEBEB]">
+          <span className="text-[10px] text-[#737373]">
+            Shared: {c.sharedSkills.map((s) => `${getSkillEmoji(s)} ${s}`).join(", ")}
           </span>
         </div>
       )}
@@ -355,104 +730,189 @@ function ComparisonCard({ data }: { data: AgentRichCard & { type: "comparison" }
   );
 }
 
-function RichCardRenderer({ card }: { card: AgentRichCard }) {
-  switch (card.type) {
-    case "builder":
-      return <BuilderCard data={card as AgentRichCard & { type: "builder" }} />;
-    case "project":
-      return <ProjectCard data={card as AgentRichCard & { type: "project" }} />;
-    case "hackathon":
-      return <HackathonCard data={card as AgentRichCard & { type: "hackathon" }} />;
-    case "team":
-      return <TeamCard data={card as AgentRichCard & { type: "team" }} />;
-    case "builder_detail":
-      return <BuilderDetailCard data={card as AgentRichCard & { type: "builder_detail" }} />;
-    case "comparison":
-      return <ComparisonCard data={card as AgentRichCard & { type: "comparison" }} />;
-    default:
-      return null;
-  }
+function RichCardRenderer({ card, index }: { card: AgentRichCard; index: number }) {
+  const inner = (() => {
+    switch (card.type) {
+      case "builder":
+        return <InlineBuilderCard data={card as AgentRichCard & { type: "builder" }} />;
+      case "project":
+        return <InlineProjectCard data={card as AgentRichCard & { type: "project" }} />;
+      case "hackathon":
+        return <InlineHackathonCard data={card as AgentRichCard & { type: "hackathon" }} />;
+      case "team":
+        return <InlineTeamCard data={card as AgentRichCard & { type: "team" }} />;
+      case "builder_detail":
+        return <InlineBuilderDetailCard data={card as AgentRichCard & { type: "builder_detail" }} />;
+      case "comparison":
+        return <InlineComparisonCard data={card as AgentRichCard & { type: "comparison" }} />;
+      default:
+        return null;
+    }
+  })();
+
+  return <ShimmerBorder delay={index}>{inner}</ShimmerBorder>;
 }
 
-/* ── Main component ────────────────────────────────────── */
+/* -- Welcome message (shown before any conversation) ------ */
 
-export function AgentHome() {
+const WELCOME_TEXT = `Hey! I'm **Scout**, your guide to the Antry builder network.\n\nI can help you discover builders, explore projects, find hackathons, and assemble teams -- all from real platform data. What would you like to explore?`;
+
+function WelcomeMessage() {
+  const { displayed, isDone } = useTypewriter(WELCOME_TEXT, 18);
+  const lines = useMemo(() => displayed.split("\n"), [displayed]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease }}
+      className="flex items-start gap-3"
+    >
+      <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[#111111] shrink-0">
+        <Sparkles className="h-4 w-4 text-[#C6F135]" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-[14px] text-[#525252] space-y-1.5">
+          {lines.map((line, i) => (
+            <div key={i}>
+              <RenderLine line={line} />
+            </div>
+          ))}
+          {!isDone && (
+            <motion.span
+              className="inline-block w-[2px] h-[16px] bg-[#C6F135] ml-0.5 align-text-bottom"
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 0.53, repeat: Infinity }}
+            />
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* -- Suggestion pill buttons ------------------------------ */
+
+function SuggestionPills({
+  suggestions,
+  onSelect,
+  disabled,
+}: {
+  suggestions: { label: string; prompt: string; icon?: React.ComponentType<{ className?: string }> }[];
+  onSelect: (prompt: string) => void;
+  disabled: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.15, duration: 0.3, ease }}
+      className="flex flex-wrap gap-2"
+    >
+      {suggestions.map((s, i) => (
+        <motion.button
+          key={s.label}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 + i * 0.05, duration: 0.25 }}
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onSelect(s.prompt)}
+          disabled={disabled}
+          className="inline-flex items-center gap-1.5 rounded-full border border-[#EBEBEB] bg-white px-3.5 py-2 text-[13px] font-medium text-[#525252] transition-all duration-200 hover:text-[#111111] hover:border-[#C6F135]/40 hover:shadow-[0_2px_8px_rgba(198,241,53,0.1)] disabled:opacity-40"
+        >
+          {s.icon && <s.icon className="w-3.5 h-3.5 text-[#737373]" />}
+          {s.label}
+        </motion.button>
+      ))}
+    </motion.div>
+  );
+}
+
+/* -- Main component --------------------------------------- */
+
+export interface AgentHomeHandle {
+  triggerSearch: (text: string) => void;
+  focusInput: () => void;
+}
+
+interface AgentHomeProps {
+  embedded?: boolean;
+}
+
+export const AgentHome = forwardRef<AgentHomeHandle, AgentHomeProps>(function AgentHome({ embedded = false }, ref) {
   const [query, setQuery] = useState("");
   const [turns, setTurns] = useState<ConversationTurn[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
-
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const hasResults = turns.length > 0;
 
-  const scrollToResults = useCallback(() => {
-    if (resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  // Auto-scroll to bottom when new content arrives
+  const scrollToBottom = useCallback(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, []);
+
+  // Cmd+K shortcut to focus search
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
   useEffect(() => {
-    if (turns.length > 0) {
-      const timer = setTimeout(scrollToResults, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [turns.length, scrollToResults]);
+    const t = setTimeout(scrollToBottom, 120);
+    return () => clearTimeout(t);
+  }, [turns, scrollToBottom]);
 
   const handleSearch = async (text?: string) => {
     const msg = (text || query).trim();
     if (!msg || isSearching) return;
-
     const turnId = Date.now().toString();
-    const turn: ConversationTurn = {
-      id: turnId,
-      query: msg,
-      response: null,
-      steps: [],
-      cards: [],
-      error: null,
-      isLoading: true,
-    };
-
-    setTurns((prev) => [...prev, turn]);
+    const timestamp = Date.now();
+    setTurns((prev) => [
+      ...prev,
+      { id: turnId, query: msg, response: null, steps: [], cards: [], suggestions: [], intent: null, error: null, isLoading: true, timestamp },
+    ]);
     setQuery("");
     setIsSearching(true);
-
     try {
       const history = turns
-        .filter((t) => t.response)
+        .filter((t) => t.response && t.response.trim().length > 0)
         .slice(-6)
-        .flatMap((t) => [
-          { role: "user" as const, content: t.query },
-          { role: "assistant" as const, content: t.response! },
-        ]);
-
+        .flatMap((t) => {
+          const items: { role: "user" | "assistant"; content: string; intent?: string }[] = [
+            { role: "user", content: t.query.slice(0, 320) },
+            { role: "assistant", content: (t.response || "ok").slice(0, 320) },
+          ];
+          if (t.intent) items[1].intent = t.intent;
+          return items;
+        });
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg, history }),
       });
-
       if (!res.ok) {
         const body = (await res.json().catch(() => null)) as { error?: string } | null;
         throw new Error(body?.error || `Request failed (${res.status})`);
       }
-
       const json = (await res.json()) as AgentResponseBody;
-
       setTurns((prev) =>
         prev.map((t) =>
-          t.id === turnId
-            ? { ...t, response: json.response, steps: json.steps, cards: json.cards, isLoading: false }
-            : t
+          t.id === turnId ? { ...t, response: json.response, steps: json.steps, cards: json.cards, suggestions: json.suggestions || [], intent: json.intent, isLoading: false } : t
         )
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong.";
-      setTurns((prev) =>
-        prev.map((t) =>
-          t.id === turnId ? { ...t, error: message, isLoading: false } : t
-        )
-      );
+      setTurns((prev) => prev.map((t) => (t.id === turnId ? { ...t, error: message, isLoading: false } : t)));
     } finally {
       setIsSearching(false);
     }
@@ -471,220 +931,249 @@ export function AgentHome() {
     inputRef.current?.focus();
   };
 
+  // Expose triggerSearch to parent via ref
+  useImperativeHandle(ref, () => ({
+    triggerSearch: (text: string) => {
+      handleSearch(text);
+    },
+    focusInput: () => {
+      inputRef.current?.focus();
+      inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    },
+  }));
+
   return (
-    <section className="relative overflow-hidden px-6 py-18 md:py-22">
-      <div className="relative mx-auto max-w-[780px]">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease }}
-          className={cn("text-center transition-all duration-500", hasResults ? "mb-8" : "mb-16")}
+    <section className={cn(
+      "relative flex flex-col",
+      embedded ? "h-[calc(100vh-200px)] min-h-[500px]" : "h-[calc(100vh-80px)] min-h-[600px]",
+    )}>
+      <div className={cn("relative mx-auto flex flex-col flex-1 w-full", embedded ? "max-w-[1000px]" : "max-w-[720px]", "px-4 sm:px-6")}>
+
+        {/* Chat messages area -- scrollable, grows to fill space */}
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto py-6 space-y-6 scrollbar-none"
         >
+          {/* Welcome message when no conversation */}
           {!hasResults && (
-            <>
-              <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded border border-border-primary bg-background-secondary px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-text-secondary">
-                <Database className="h-3 w-3" />
-                Retrieval Engine v1.2
+            <div className="space-y-5">
+              <WelcomeMessage />
+              <div className="pl-11">
+                <SuggestionPills
+                  suggestions={SUGGESTIONS.map((s) => ({ ...s, icon: s.icon }))}
+                  onSelect={(prompt) => handleSearch(prompt)}
+                  disabled={isSearching}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Conversation turns */}
+          {turns.map((turn) => (
+            <motion.div
+              key={turn.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease }}
+              className="space-y-4"
+            >
+              {/* User message */}
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[#F5F5F5] shrink-0">
+                  <User className="h-4 w-4 text-[#525252]" />
+                </div>
+                <div className="flex-1 min-w-0 pt-1">
+                  <p className="text-[14px] font-medium text-[#111111] leading-relaxed">{turn.query}</p>
+                  <div className="mt-1">
+                    <Timestamp ts={turn.timestamp} />
+                  </div>
+                </div>
               </div>
 
-              <h1 className="font-display mb-6 text-[clamp(2.7rem,6.5vw,4.5rem)] leading-[0.92] tracking-[-0.04em] text-text-primary">
-                Discover builders
-                <br />
-                by what they ship.
-              </h1>
-              <p className="mx-auto max-w-lg text-[16px] leading-relaxed text-text-secondary">
-                Search verified builders, projects, and hackathons from your production data. Structured results, zero hallucinations.
-              </p>
-            </>
-          )}
-        </motion.div>
+              {/* Thinking indicator */}
+              <AnimatePresence>
+                {turn.isLoading && !turn.response && !turn.error && (
+                  <ThinkingIndicator />
+                )}
+              </AnimatePresence>
 
-        {/* Search input */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15, ease }}
-          className={cn(
-            "relative bg-surface border transition-all duration-200",
-            isSearching
-              ? "border-text-primary"
-              : "border-border-primary shadow-sm hover:border-text-tertiary focus-within:border-text-primary"
-          )}
-        >
-          <div className="flex items-center gap-4 px-5 py-4">
-            {isSearching ? (
-              <Loader2 className="w-5 h-5 text-text-primary animate-spin shrink-0" />
-            ) : (
-              <Search className="w-5 h-5 text-text-tertiary shrink-0" />
-            )}
-            <input
-              ref={inputRef}
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value.slice(0, MAX_CHARS))}
-              onKeyDown={handleKeyDown}
-              placeholder="Query builders, projects, or active hackathons..."
-              disabled={isSearching}
-              maxLength={MAX_CHARS}
-              className="flex-1 bg-transparent text-[15px] font-medium text-text-primary placeholder:text-text-tertiary/50 outline-none disabled:opacity-50"
-              autoComplete="off"
-            />
-            {query.trim() && (
-              <button
-                onClick={() => handleSearch()}
-                disabled={isSearching}
-                className="flex h-8 w-8 items-center justify-center rounded bg-text-primary text-background-primary hover:opacity-90 disabled:opacity-20 transition-opacity"
-              >
-                <CornerDownLeft className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Suggestion chips */}
-        <AnimatePresence>
-          {!hasResults && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-              className="flex flex-wrap justify-center gap-2 mt-6"
-            >
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s.label}
-                  onClick={() => handleSearch(s.prompt)}
-                  disabled={isSearching}
-                  className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border-primary bg-surface text-[13px] font-medium text-text-secondary hover:border-accent/40 hover:text-text-primary hover:shadow-sm disabled:opacity-40 transition-all"
-                >
-                  <s.icon className="w-3.5 h-3.5 text-text-tertiary group-hover:text-accent transition-colors" />
-                  {s.label}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Security note */}
-        {!hasResults && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-5 text-center text-[11px] text-text-tertiary/70"
-          >
-            Scout only answers Antry queries. Rate-limited. No external web context.
-          </motion.p>
-        )}
-
-        {/* Results */}
-        {hasResults && (
-          <div ref={resultsRef} className="mt-8 space-y-8">
-            <div className="flex justify-center">
-              <button
-                onClick={resetConversation}
-                className="flex items-center gap-1.5 text-[12px] font-medium text-text-tertiary hover:text-text-primary transition-colors"
-              >
-                <RotateCcw className="w-3 h-3" />
-                New search
-              </button>
-            </div>
-
-            {turns.map((turn) => (
-              <motion.div
-                key={turn.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease }}
-                className="space-y-4"
-              >
+              {/* AI response */}
+              {(turn.response || turn.error) && (
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center shrink-0 mt-0.5">
-                    <Search className="w-3.5 h-3.5 text-white" />
+                  <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[#111111] shrink-0">
+                    <Sparkles className="h-4 w-4 text-[#C6F135]" />
                   </div>
-                  <p className="text-[15px] font-medium text-text-primary pt-1">{turn.query}</p>
-                </div>
-
-                {turn.steps.length > 0 && (
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                    <span className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider shrink-0">
-                      Sources
-                    </span>
-                    {turn.steps.map((step, i) => (
-                      <SourcePill key={i} tool={step.tool} result={step.result} />
-                    ))}
-                  </div>
-                )}
-
-                {turn.isLoading && <ThinkingSkeleton />}
-
-                {turn.error && (
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10">
-                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-[13px] font-medium text-red-600 dark:text-red-400">{turn.error}</p>
-                      <button
-                        onClick={() => handleSearch(turn.query)}
-                        className="text-[12px] font-medium text-text-tertiary hover:text-text-primary mt-2 transition-colors"
+                  <div className="flex-1 min-w-0 space-y-3">
+                    {/* Source pills */}
+                    {turn.steps.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.1, duration: 0.3 }}
+                        className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none"
                       >
-                        Try again
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {turn.response && (
-                  <div className="space-y-4">
-                    <div className="text-[14px] text-text-secondary space-y-1.5">
-                      {turn.response.split("\n").map((line, i) => (
-                        <RenderLine key={i} line={line} />
-                      ))}
-                    </div>
-
-                    {turn.cards.length > 0 && (
-                      <div className="space-y-2">
-                        {turn.cards.map((card, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.05, duration: 0.3 }}
-                          >
-                            <RichCardRenderer card={card} />
-                          </motion.div>
+                        {turn.steps.map((step, i) => (
+                          <SourcePill key={i} tool={step.tool} result={step.result} />
                         ))}
+                      </motion.div>
+                    )}
+
+                    {/* Error state */}
+                    {turn.error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex items-start gap-3 p-3 bg-red-50 rounded-xl border border-red-100"
+                      >
+                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-[13px] text-red-600">{turn.error}</p>
+                          <button
+                            onClick={() => handleSearch(turn.query)}
+                            className="text-[12px] font-medium text-[#737373] hover:text-[#111111] mt-1.5 transition-colors"
+                          >
+                            Try again
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Response text */}
+                    {turn.response && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-3"
+                      >
+                        <TypewriterResponse text={turn.response} />
+
+                        {/* Rich cards */}
+                        {turn.cards.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2, duration: 0.3 }}
+                            className="space-y-2"
+                          >
+                            {turn.cards.map((card, i) => (
+                              <RichCardRenderer key={i} card={card} index={i} />
+                            ))}
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    )}
+
+                    {/* Timestamp */}
+                    {(turn.response || turn.error) && (
+                      <div className="pt-0.5">
+                        <Timestamp ts={turn.timestamp + 1200} />
                       </div>
                     )}
                   </div>
-                )}
+                </div>
+              )}
 
-                {turn.response && <div className="border-t border-border-primary" />}
-              </motion.div>
-            ))}
+              {/* Follow-up suggestion pills after this turn's response */}
+              {turn.response && !isSearching && turn.id === turns[turns.length - 1]?.id && (() => {
+                const dynamicSuggestions = turn.suggestions.length > 0
+                  ? turn.suggestions.map((s) => ({ label: s.label, prompt: s.prompt }))
+                  : FOLLOW_UPS.map((fu) => ({ label: fu, prompt: fu }));
+                return (
+                  <div className="pl-11">
+                    <SuggestionPills
+                      suggestions={dynamicSuggestions}
+                      onSelect={(prompt) => handleSearch(prompt)}
+                      disabled={isSearching}
+                    />
+                  </div>
+                );
+              })()}
+            </motion.div>
+          ))}
 
-            {!isSearching && turns[turns.length - 1]?.response && (
+          {/* Invisible scroll anchor */}
+          <div ref={chatEndRef} />
+        </div>
+
+        {/* Input area -- pinned to bottom */}
+        <div className="shrink-0 pb-4 pt-2">
+          {/* New conversation button */}
+          <AnimatePresence>
+            {hasResults && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
-                className="flex flex-wrap gap-2"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex justify-center mb-2"
               >
-                {FOLLOW_UPS.map((fu) => (
-                  <button
-                    key={fu}
-                    onClick={() => handleSearch(fu)}
-                    className="px-3.5 py-2 rounded-xl border border-border-primary bg-surface text-[12px] font-medium text-text-secondary hover:border-accent/30 hover:text-text-primary hover:shadow-sm transition-all"
-                  >
-                    {fu}
-                  </button>
-                ))}
+                <button
+                  onClick={resetConversation}
+                  className="flex items-center gap-1.5 text-[12px] font-medium text-[#A3A3A3] hover:text-[#525252] transition-colors"
+                >
+                  <RotateCcw className="w-3 h-3" /> New conversation
+                </button>
               </motion.div>
             )}
+          </AnimatePresence>
+
+          <div
+            className={cn(
+              "relative rounded-2xl border transition-all duration-300",
+              isFocused
+                ? "border-[#C6F135] shadow-[0_0_0_3px_rgba(198,241,53,0.15)]"
+                : "border-[#EBEBEB] shadow-sm",
+            )}
+          >
+            <div className="flex items-center gap-3 px-4 py-3">
+              {isSearching ? (
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  <Loader2 className="w-5 h-5 text-[#C6F135] shrink-0" />
+                </motion.div>
+              ) : (
+                <MessageSquare className="w-5 h-5 text-[#A3A3A3] shrink-0" />
+              )}
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value.slice(0, MAX_CHARS))}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder={hasResults ? "Ask a follow-up..." : "Ask Scout anything about the network..."}
+                disabled={isSearching}
+                maxLength={MAX_CHARS}
+                className="flex-1 bg-transparent text-[14px] font-medium text-[#111111] placeholder:text-[#A3A3A3] outline-none disabled:opacity-50"
+                autoComplete="off"
+              />
+              <AnimatePresence>
+                {query.trim() && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                    onClick={() => handleSearch()}
+                    disabled={isSearching}
+                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#111111] text-[#C6F135] hover:bg-[#1a1a1a] disabled:opacity-20 transition-all duration-200 shrink-0"
+                  >
+                    <ArrowUp className="h-4 w-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
-        )}
+
+          <p className="mt-2 text-center text-[11px] text-[#A3A3A3]">
+            Scout searches only Antry platform data. No external browsing.
+          </p>
+        </div>
       </div>
     </section>
   );
-}
+});

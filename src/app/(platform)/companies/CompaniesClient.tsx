@@ -9,22 +9,23 @@ import {
   Trophy,
   Eye,
   Zap,
-  Target,
-  Play,
-  Layers,
-  CheckCircle2,
-  Heart,
-  Building2,
+  Search,
   Sparkles,
-  Quote,
+  FileText,
+  ShieldCheck,
+  Copy,
+  Layers,
+  Heart,
+  Code2,
+  CheckCircle2,
+  Wrench,
 } from "lucide-react";
-import { getInitials } from "@/lib/mock-data";
 import { WaitlistForm } from "@/components/WaitlistForm";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 1, y: 0 },
   visible: { opacity: 1, y: 0 },
 };
 
@@ -46,66 +47,378 @@ interface PlatformStats {
   totalLikes: number;
 }
 
+/* ── Mock builder profile card (used in "How Antry is Different") ─── */
+function MockBuilderProfile() {
+  return (
+    <div
+      className="rounded-2xl p-6 w-full max-w-[380px]"
+      style={{
+        background: "#FFFFFF",
+        border: "1px solid #EBEBEB",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="w-11 h-11 rounded-xl flex items-center justify-center text-[13px] font-bold text-white"
+          style={{ background: "linear-gradient(135deg, #8B5CF6, #6366F1)" }}
+        >
+          MR
+        </div>
+        <div>
+          <div className="text-[15px] font-bold" style={{ color: "#111111" }}>Maya Rodriguez</div>
+          <div className="text-[12px]" style={{ color: "#737373" }}>Full-stack AI builder</div>
+        </div>
+      </div>
+      {/* Skills */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {["React", "Python", "LangChain", "Next.js"].map((s) => (
+          <span
+            key={s}
+            className="text-[11px] font-medium px-2.5 py-1 rounded-lg"
+            style={{ background: "#F5F5F5", color: "#525252" }}
+          >
+            {s}
+          </span>
+        ))}
+      </div>
+      {/* Project preview */}
+      <div
+        className="rounded-xl p-3 mb-3"
+        style={{ background: "#FAFAF7", border: "1px solid #F5F5F5" }}
+      >
+        <div className="flex items-center gap-2 mb-1.5">
+          <div
+            className="w-6 h-6 rounded-md flex items-center justify-center"
+            style={{ background: "rgba(198,241,53,0.15)" }}
+          >
+            <Layers className="w-3.5 h-3.5" style={{ color: "#111111" }} />
+          </div>
+          <span className="text-[13px] font-semibold" style={{ color: "#111111" }}>AgentFlow</span>
+          <span
+            className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(198,241,53,0.15)", color: "#525252" }}
+          >
+            LIVE DEMO
+          </span>
+        </div>
+        <p className="text-[11px] leading-relaxed" style={{ color: "#737373" }}>
+          Multi-agent orchestration framework. Built in 12 days.
+        </p>
+      </div>
+      {/* Stats */}
+      <div
+        className="flex items-center gap-4 pt-3 text-[12px] font-medium"
+        style={{ borderTop: "1px solid #F5F5F5", color: "#737373" }}
+      >
+        <span className="flex items-center gap-1">
+          <Layers className="w-3.5 h-3.5" /> 7 projects
+        </span>
+        <span className="flex items-center gap-1">
+          <Heart className="w-3.5 h-3.5" /> 142 likes
+        </span>
+        <span className="flex items-center gap-1">
+          <Trophy className="w-3.5 h-3.5" /> 2 wins
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Mock Scout AI search card ─── */
+function MockScoutSearch() {
+  return (
+    <div
+      className="rounded-2xl p-6 w-full max-w-[380px]"
+      style={{
+        background: "#FFFFFF",
+        border: "1px solid #EBEBEB",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+      }}
+    >
+      {/* Search bar */}
+      <div
+        className="flex items-center gap-2 rounded-xl px-4 py-3 mb-4"
+        style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
+      >
+        <Sparkles className="w-4 h-4" style={{ color: "#C6F135" }} />
+        <span className="text-[13px]" style={{ color: "#525252" }}>
+          &ldquo;React + AI builders who ship fast&rdquo;
+        </span>
+      </div>
+      {/* Results */}
+      <div className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: "#A3A3A3" }}>
+        Scout found 3 matches
+      </div>
+      {[
+        { name: "Maya R.", match: "97%", skills: "React, LangChain" },
+        { name: "James K.", match: "94%", skills: "Next.js, GPT-4" },
+        { name: "Priya S.", match: "91%", skills: "React, Python" },
+      ].map((r, i) => (
+        <div
+          key={r.name}
+          className="flex items-center gap-3 py-2.5"
+          style={{ borderTop: i > 0 ? "1px solid #F5F5F5" : "none" }}
+        >
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-bold text-white"
+            style={{
+              background: i === 0
+                ? "linear-gradient(135deg, #8B5CF6, #6366F1)"
+                : i === 1
+                ? "linear-gradient(135deg, #F59E0B, #F97316)"
+                : "linear-gradient(135deg, #34D399, #14B8A6)",
+            }}
+          >
+            {r.name.slice(0, 2)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-semibold" style={{ color: "#111111" }}>{r.name}</div>
+            <div className="text-[11px]" style={{ color: "#737373" }}>{r.skills}</div>
+          </div>
+          <div
+            className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(198,241,53,0.15)", color: "#525252" }}
+          >
+            {r.match}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ── Mock hackathon card ─── */
+function MockHackathonCard() {
+  return (
+    <div
+      className="rounded-2xl p-6 w-full max-w-[380px]"
+      style={{
+        background: "#FFFFFF",
+        border: "1px solid #EBEBEB",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-4">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center"
+          style={{ background: "rgba(198,241,53,0.15)" }}
+        >
+          <Trophy className="w-4 h-4" style={{ color: "#111111" }} />
+        </div>
+        <div>
+          <div className="text-[14px] font-bold" style={{ color: "#111111" }}>AI Agents Antathon</div>
+          <div className="text-[11px]" style={{ color: "#737373" }}>48 hours &middot; 124 participants</div>
+        </div>
+      </div>
+      {/* Winners */}
+      <div
+        className="text-[11px] font-bold uppercase tracking-wider mb-2"
+        style={{ color: "#A3A3A3" }}
+      >
+        Top performers
+      </div>
+      {[
+        { rank: "1st", name: "Maya R.", project: "AgentFlow", color: "#C6F135" },
+        { rank: "2nd", name: "James K.", project: "ChatOps", color: "#E5E5E5" },
+        { rank: "3rd", name: "Alex T.", project: "DevAssist", color: "#F5D0A9" },
+      ].map((w, i) => (
+        <div
+          key={w.name}
+          className="flex items-center gap-3 py-2"
+          style={{ borderTop: i > 0 ? "1px solid #F5F5F5" : "none" }}
+        >
+          <div
+            className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold"
+            style={{ background: w.color, color: "#111111" }}
+          >
+            {w.rank}
+          </div>
+          <div className="flex-1">
+            <span className="text-[13px] font-semibold" style={{ color: "#111111" }}>{w.name}</span>
+            <span className="text-[12px] ml-2" style={{ color: "#737373" }}>{w.project}</span>
+          </div>
+        </div>
+      ))}
+      {/* Footer */}
+      <div
+        className="mt-3 pt-3 text-[12px] flex items-center gap-2"
+        style={{ borderTop: "1px solid #F5F5F5", color: "#737373" }}
+      >
+        <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
+        <span>All projects have live demos</span>
+      </div>
+    </div>
+  );
+}
+
 export default function CompaniesClient({
   stats,
-  builders,
 }: {
   stats: PlatformStats;
   builders: BuilderPreview[];
 }) {
+  const heroSignals = [
+    { icon: Users, value: stats.builderCount, suffix: "+", label: "builders" },
+    { icon: Layers, value: stats.projectCount, suffix: "+", label: "live demos" },
+    { icon: Trophy, value: stats.hackathonCount, suffix: "", label: "events tracked" },
+  ];
+
+  const heroProof = [
+    { icon: CheckCircle2, label: "Live demos" },
+    { icon: Code2, label: "Stack visible" },
+    { icon: Sparkles, label: "Scout match" },
+  ];
+
   return (
-    <div className="bg-background-primary min-h-screen">
-      {/* HERO */}
-      <section className="pt-24 pb-20 px-8">
-        <div className="max-w-[900px] mx-auto text-center">
+    <div className="min-h-screen" style={{ background: "#FAFAF7" }}>
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 1: HERO — Hire builders who actually ship
+          ═══════════════════════════════════════════════════════ */}
+      <section className="relative pt-28 pb-24 px-6 overflow-hidden" style={{ background: "#FAFAF7" }}>
+        {/* Soft background orbs */}
+        <div
+          className="absolute top-[-120px] left-[-80px] w-[600px] h-[600px] rounded-full opacity-40 blur-[120px] pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(198,241,53,0.15) 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute bottom-[-80px] right-[-60px] w-[500px] h-[500px] rounded-full opacity-30 blur-[100px] pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(198,241,53,0.08) 0%, transparent 70%)" }}
+        />
+
+        <div className="max-w-[980px] mx-auto text-center relative z-10">
           <motion.div
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            transition={{ duration: 0.6, ease }}
+            transition={{ duration: 0.7, ease }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-muted border border-accent/15 rounded-lg text-[12px] font-semibold text-accent mb-8">
-              <Building2 className="w-3.5 h-3.5" />
-              For Companies &amp; Sponsors
-            </div>
-
-            <h1 className="font-display text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[0.92] tracking-[-0.035em] text-text-primary mb-6">
-              Stop reading resumes.
+            <h1
+              className="font-display leading-[0.95] tracking-[-0.035em] mb-6"
+              style={{
+                fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+                color: "#111111",
+              }}
+            >
+              Hire builders who
               <br />
-              <span className="italic text-accent">Watch people build.</span>
+              actually{" "}
+              <span
+                className="relative inline-block"
+              >
+                <span className="relative z-10">ship</span>
+                <span
+                  className="absolute bottom-[0.08em] left-[-0.05em] right-[-0.05em] h-[0.32em] rounded-sm z-0"
+                  style={{ background: "rgba(198,241,53,0.45)" }}
+                />
+              </span>
             </h1>
 
-            <p className="text-[17px] md:text-[19px] text-text-secondary max-w-[620px] mx-auto leading-relaxed mb-10">
-              The industry has changed. You&apos;re not hiring a &ldquo;React developer&rdquo; or a
-              &ldquo;Python engineer&rdquo; anymore. You need people who can think across
-              domains, ship fast, and explain their decisions. The best way to
-              find them? <span className="text-text-primary font-medium">See what they build.</span>
+            <p
+              className="max-w-[660px] mx-auto leading-relaxed mb-6"
+              style={{ fontSize: "18px", color: "#525252" }}
+            >
+              Search live demos, inspect stack, and shortlist builders fast.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 mb-10">
+              {heroProof.map((item) => (
+                <span
+                  key={item.label}
+                  className="inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[12px] font-semibold"
+                  style={{
+                    borderColor: "rgba(17, 17, 17, 0.08)",
+                    background: "rgba(255,255,255,0.85)",
+                    color: "#525252",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+                  }}
+                >
+                  <item.icon className="w-3.5 h-3.5" style={{ color: "#111111" }} />
+                  {item.label}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
               <Link
-                href="#sponsor"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-text-primary text-background-primary rounded-lg text-[14px] font-semibold hover:opacity-80 transition-opacity"
+                href="/builders"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-[15px] font-bold transition-all duration-200 hover:-translate-y-[1px]"
+                style={{
+                  background: "#C6F135",
+                  color: "#111111",
+                  boxShadow: "0 0 20px rgba(198,241,53,0.25), 0 4px 12px rgba(0,0,0,0.05)",
+                }}
               >
-                Become a sponsor
+                Browse builders
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <a
-                href="https://newsroom.wealthsimple.com/we-asked-canadians-to-build-something-instead-of-sending-a-resume-heres-what-happened"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 border border-border-primary text-text-secondary rounded-lg text-[14px] font-medium hover:text-text-primary hover:border-text-tertiary transition-colors"
+              <Link
+                href="/agent"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-[15px] font-semibold transition-all duration-200 hover:-translate-y-[1px]"
+                style={{
+                  background: "#FFFFFF",
+                  color: "#111111",
+                  border: "1.5px solid #D4D4D4",
+                }}
               >
-                See how Wealthsimple did it
+                Use Scout search
                 <ArrowUpRight className="w-4 h-4" />
-              </a>
+              </Link>
             </div>
+
+            <motion.div
+              initial={false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25, ease }}
+              className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+            >
+              {heroSignals.map((item, index) => (
+                <motion.div
+                  key={item.label}
+                  initial={false}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: 0.3 + index * 0.08, ease }}
+                  className="rounded-2xl p-5 text-left"
+                  style={{
+                    background: "rgba(255,255,255,0.85)",
+                    border: "1px solid rgba(17,17,17,0.06)",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.04)",
+                  }}
+                >
+                  <div
+                    className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl"
+                    style={{ background: "rgba(198,241,53,0.15)" }}
+                  >
+                    <item.icon className="w-4.5 h-4.5" style={{ color: "#111111" }} />
+                  </div>
+                  <div className="text-[24px] font-display font-bold tracking-[-0.03em]" style={{ color: "#111111" }}>
+                    {item.value.toLocaleString()}
+                    {item.suffix}
+                  </div>
+                  <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "#525252" }}>
+                    {item.label}
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            <p className="mt-5 text-[13px] font-medium" style={{ color: "#737373" }}>
+              Hiring? Email{" "}
+              <a href="mailto:sponsors@antry.dev" className="underline" style={{ color: "#111111" }}>
+                sponsors@antry.dev
+              </a>
+              .
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* THE SHIFT (Problem) */}
-      <section className="py-24 px-8 bg-background-secondary">
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 2: THE PROBLEM — Resumes don't tell the real story
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 px-6" style={{ background: "#FFFFFF" }}>
         <div className="max-w-[900px] mx-auto">
           <motion.div
             variants={fadeUp}
@@ -113,39 +426,299 @@ export default function CompaniesClient({
             whileInView="visible"
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease }}
-            className="mb-16"
+            className="text-center mb-14"
           >
-            <span className="text-[12px] font-semibold text-accent uppercase tracking-widest">
+            <span
+              className="text-[12px] font-bold uppercase tracking-widest"
+              style={{ color: "#A3A3A3" }}
+            >
               The Problem
             </span>
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] text-text-primary tracking-[-0.02em] mt-4 mb-6 leading-[1.1]">
-              Hiring is broken.
-              <br />
-              Resumes don&apos;t tell you anything.
+            <h2
+              className="font-display mt-3 tracking-[-0.03em]"
+              style={{
+                fontSize: "clamp(1.75rem, 4.5vw, 2.75rem)",
+                color: "#111111",
+              }}
+            >
+              Hiring hides the work
+            </h2>
+            <p
+              className="mt-4 max-w-[520px] mx-auto"
+              style={{ fontSize: "16px", color: "#737373" }}
+            >
+              Resumes and keyword scans miss real shipping signal.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: FileText,
+                title: "Keyword-stuffed profiles",
+                desc: "Tool lists look identical and proof stays hidden.",
+              },
+              {
+                icon: ShieldCheck,
+                title: "No way to verify skills",
+                desc: "References are slow and stale links do not help.",
+              },
+              {
+                icon: Copy,
+                title: "Same candidates everywhere",
+                desc: "The best builders are usually shipping, not refreshing LinkedIn.",
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease }}
+                className="p-8 rounded-2xl text-center"
+                style={{
+                  background: "#FAFAF7",
+                  border: "1px solid #EBEBEB",
+                }}
+              >
+                <div
+                  className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center mb-5"
+                  style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+                >
+                  <item.icon className="w-5 h-5" style={{ color: "#737373" }} />
+                </div>
+                <h3
+                  className="text-[16px] font-bold mb-2"
+                  style={{ color: "#111111" }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="text-[14px] leading-relaxed"
+                  style={{ color: "#525252" }}
+                >
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 3: HOW ANTRY IS DIFFERENT — Alternating mockups
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-22 px-6" style={{ background: "#FAFAF7" }}>
+        <div className="max-w-[1000px] mx-auto">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease }}
+            className="text-center mb-20"
+          >
+            <span
+              className="text-[12px] font-bold uppercase tracking-widest"
+              style={{ color: "#C6F135" }}
+            >
+              How Antry is Different
+            </span>
+            <h2
+              className="font-display mt-3 tracking-[-0.03em]"
+              style={{
+                fontSize: "clamp(2rem, 4.5vw, 3rem)",
+                color: "#111111",
+              }}
+            >
+              Open proof before the call
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Row 1: Real portfolios */}
+          <div className="flex flex-col md:flex-row items-center gap-12 mb-24">
+            <motion.div
+              className="flex-1"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease }}
+            >
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-4"
+                style={{ background: "rgba(198,241,53,0.12)", color: "#525252" }}
+              >
+                <Layers className="w-3 h-3" />
+                Builder Profiles
+              </div>
+              <h3
+                className="font-display text-[24px] md:text-[28px] tracking-[-0.02em] mb-4 leading-tight"
+                style={{ color: "#111111" }}
+              >
+                Open the build, not a PDF
+              </h3>
+              <p
+                className="text-[15px] leading-relaxed mb-4"
+                style={{ color: "#525252" }}
+              >
+                Open demos, scan stack, and judge quality quickly.
+              </p>
+            </motion.div>
+            <motion.div
+              className="flex-shrink-0"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15, ease }}
+            >
+              <MockBuilderProfile />
+            </motion.div>
+          </div>
+
+          {/* Row 2: AI-powered search (reversed) */}
+          <div className="flex flex-col md:flex-row-reverse items-center gap-12 mb-24">
+            <motion.div
+              className="flex-1"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease }}
+            >
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-4"
+                style={{ background: "rgba(198,241,53,0.12)", color: "#525252" }}
+              >
+                <Sparkles className="w-3 h-3" />
+                AI Scout
+              </div>
+              <h3
+                className="font-display text-[24px] md:text-[28px] tracking-[-0.02em] mb-4 leading-tight"
+                style={{ color: "#111111" }}
+              >
+                Describe the builder you need
+              </h3>
+              <p
+                className="text-[15px] leading-relaxed mb-4"
+                style={{ color: "#525252" }}
+              >
+                Use plain English and Scout returns the closest matches.
+              </p>
+            </motion.div>
+            <motion.div
+              className="flex-shrink-0"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15, ease }}
+            >
+              <MockScoutSearch />
+            </motion.div>
+          </div>
+
+          {/* Row 3: Hackathon-tested */}
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            <motion.div
+              className="flex-1"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease }}
+            >
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-4"
+                style={{ background: "rgba(198,241,53,0.12)", color: "#525252" }}
+              >
+                <Trophy className="w-3 h-3" />
+                Antathons
+              </div>
+              <h3
+                className="font-display text-[24px] md:text-[28px] tracking-[-0.02em] mb-4 leading-tight"
+                style={{ color: "#111111" }}
+              >
+                Pressure-tested builders
+              </h3>
+              <p
+                className="text-[15px] leading-relaxed mb-4"
+                style={{ color: "#525252" }}
+              >
+                Hackathon results show who ships fast and lands polished work.
+              </p>
+            </motion.div>
+            <motion.div
+              className="flex-shrink-0"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15, ease }}
+            >
+              <MockHackathonCard />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 4: FOR RECRUITERS — Value props
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 px-6" style={{ background: "#FFFFFF" }}>
+        <div className="max-w-[1000px] mx-auto">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease }}
+            className="text-center mb-14"
+          >
+            <span
+              className="text-[12px] font-bold uppercase tracking-widest"
+              style={{ color: "#C6F135" }}
+            >
+              For Recruiters
+            </span>
+            <h2
+              className="font-display mt-3 tracking-[-0.03em]"
+              style={{
+                fontSize: "clamp(1.75rem, 4.5vw, 2.75rem)",
+                color: "#111111",
+              }}
+            >
+              What you can verify fast
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
               {
-                icon: Target,
-                title: "You're not hiring one skill anymore",
-                desc: "Companies don't search for a specific niche developer. You need someone who can do frontend, backend, AI, design thinking — someone who ships entire products, not just tickets.",
+                icon: CheckCircle2,
+                title: "Verified shipped work",
+                desc: "Open work instead of reading bullets.",
+                accent: "#C6F135",
               },
               {
-                icon: Eye,
-                title: "Resumes can't show thinking",
-                desc: "A resume says \"built a dashboard.\" But you need to see how they approached it, what tradeoffs they made, how they explained their architecture. That's what separates good from great.",
+                icon: Sparkles,
+                title: "AI Scout search",
+                desc: "Describe the role and get ranked matches.",
+                accent: "#C6F135",
               },
               {
-                icon: Zap,
-                title: "Speed matters more than credentials",
-                desc: "In the AI era, the best builders ship in days, not quarters. You need to see their velocity — how fast they go from idea to deployed product with real users.",
+                icon: Trophy,
+                title: "Hackathon track records",
+                desc: "See pressure-tested results with receipts.",
+                accent: "#C6F135",
               },
               {
-                icon: Play,
-                title: "3-minute demos beat 30-minute interviews",
-                desc: "A live demo tells you more about a builder in 3 minutes than a technical interview does in 30. You see the product, the polish, the thinking — all at once.",
+                icon: Wrench,
+                title: "Stack decisions visible",
+                desc: "Filter by stack and scan real strengths.",
+                accent: "#C6F135",
               },
             ].map((item, i) => (
               <motion.div
@@ -155,13 +728,29 @@ export default function CompaniesClient({
                 whileInView="visible"
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease }}
-                className="p-8 bg-surface rounded-lg border border-border-primary"
+                className="group p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: "#FAFAF7",
+                  border: "1px solid #EBEBEB",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                }}
               >
-                <item.icon className="w-5 h-5 text-accent mb-5" />
-                <h3 className="text-[16px] font-semibold text-text-primary mb-2">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
+                  style={{ background: "rgba(198,241,53,0.12)" }}
+                >
+                  <item.icon className="w-5 h-5" style={{ color: "#111111" }} />
+                </div>
+                <h3
+                  className="text-[17px] font-bold mb-2 tracking-tight"
+                  style={{ color: "#111111" }}
+                >
                   {item.title}
                 </h3>
-                <p className="text-[14px] text-text-secondary leading-relaxed">
+                <p
+                  className="text-[14px] leading-relaxed"
+                  style={{ color: "#525252" }}
+                >
                   {item.desc}
                 </p>
               </motion.div>
@@ -170,132 +759,10 @@ export default function CompaniesClient({
         </div>
       </section>
 
-      {/* WEALTHSIMPLE PROOF POINT */}
-      <section className="py-24 px-8">
-        <div className="max-w-[720px] mx-auto">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease }}
-            className="relative p-10 md:p-14 rounded-lg bg-text-primary text-white overflow-hidden"
-          >
-            <div
-              className="absolute inset-0 opacity-30"
-              style={{
-                background:
-                  "radial-gradient(ellipse at 20% 30%, #e8590c44 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, #7c3aed33 0%, transparent 50%)",
-              }}
-            />
-            <div className="relative z-10">
-              <Quote className="w-8 h-8 text-white/20 mb-6" />
-              <p className="text-[18px] md:text-[22px] font-display leading-relaxed tracking-[-0.01em] mb-8">
-                &ldquo;We asked Canadians to build something instead of sending a resume.
-                Here&apos;s what happened.&rdquo;
-              </p>
-              <p className="text-[14px] text-white/50 leading-relaxed mb-8">
-                Wealthsimple proved that when you let people show their work
-                instead of listing their credentials, you find better talent faster.
-                Antry is the permanent infrastructure for this approach —
-                a platform where every builder has a living portfolio of shipped work.
-              </p>
-              <a
-                href="https://newsroom.wealthsimple.com/we-asked-canadians-to-build-something-instead-of-sending-a-resume-heres-what-happened"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-text-primary rounded-lg text-[13px] font-semibold hover:bg-white/90 transition-colors"
-              >
-                Read the Wealthsimple story
-                <ArrowUpRight className="w-4 h-4" />
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* WHY ANTRY (Solution) */}
-      <section className="py-24 px-8 bg-background-secondary">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease }}
-            className="mb-16"
-          >
-            <span className="text-[12px] font-semibold text-accent uppercase tracking-widest">
-              The Solution
-            </span>
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] text-text-primary tracking-[-0.02em] mt-4 mb-6 leading-[1.1]">
-              Antry: where builders prove their work.
-            </h2>
-            <p className="text-[16px] text-text-secondary leading-relaxed max-w-[600px]">
-              Named after the ant — tiny creatures that collaborate to build
-              something massive, and quick. That&apos;s our builders. They work fast,
-              they ship real products, and they show the thinking behind every
-              decision.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Layers,
-                title: "Bento profiles",
-                desc: "Every builder has a visual showcase grid — live demos, hackathon wins, skills, stats. You see everything in seconds, not pages.",
-              },
-              {
-                icon: Play,
-                title: "Live demos, not screenshots",
-                desc: "Every project links to a working demo. Click and see the product run. No guesswork about whether they can actually build.",
-              },
-              {
-                icon: Sparkles,
-                title: "AI Scout agent",
-                desc: "\"Find me 3 builders who know AI and React.\" Our agent searches the entire platform and builds teams for you in seconds.",
-              },
-              {
-                icon: Trophy,
-                title: "Hackathon track records",
-                desc: "Builders compete in Antathons — timed hackathons with real prizes. You see who performs under pressure.",
-              },
-              {
-                icon: Users,
-                title: "Team dynamics visible",
-                desc: "See who builds well together, who has complementary skills, and who has shipped multiple projects with the same team.",
-              },
-              {
-                icon: Zap,
-                title: "Ship velocity",
-                desc: "Every project shows build time. 3 weeks for a multi-agent framework? 10 days for a CLI tool? Speed is visible.",
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.06, ease }}
-                className="p-6 bg-surface rounded-lg border border-border-primary"
-              >
-                <item.icon className="w-5 h-5 text-accent mb-4" />
-                <h3 className="text-[15px] font-semibold text-text-primary mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-[13px] text-text-secondary leading-relaxed">
-                  {item.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PLATFORM NUMBERS */}
-      <section className="py-24 px-8">
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 5: HOW IT WORKS — 3 Steps
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 px-6" style={{ background: "#F5F5F5" }}>
         <div className="max-w-[900px] mx-auto">
           <motion.div
             variants={fadeUp}
@@ -305,199 +772,105 @@ export default function CompaniesClient({
             transition={{ duration: 0.6, ease }}
             className="text-center mb-16"
           >
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] text-text-primary tracking-[-0.02em] mb-3">
-              The platform right now.
+            <span
+              className="text-[12px] font-bold uppercase tracking-widest"
+              style={{ color: "#A3A3A3" }}
+            >
+              Workflow
+            </span>
+            <h2
+              className="font-display mt-3 tracking-[-0.03em]"
+              style={{
+                fontSize: "clamp(2rem, 4.5vw, 2.75rem)",
+                color: "#111111",
+              }}
+            >
+              Shortlist flow
             </h2>
-            <p className="text-[14px] text-text-tertiary">Growing fast — and your brand could be part of it.</p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { num: `${stats.builderCount}+`, label: "Builders" },
-              { num: `${stats.projectCount}`, label: "Projects shipped" },
-              { num: `${stats.hackathonCount}`, label: "Hackathons" },
-              { num: stats.totalLikes.toLocaleString(), label: "Total likes" },
-            ].map((stat, i) => (
+              {
+                step: "01",
+                icon: Search,
+                title: "Search",
+                desc: "Use Scout or filters to find the right slice.",
+              },
+              {
+                step: "02",
+                icon: Eye,
+                title: "Review portfolios",
+                desc: "Open demos and scan build history.",
+              },
+              {
+                step: "03",
+                icon: Zap,
+                title: "Connect",
+                desc: "Reach out or sponsor a hackathon.",
+              },
+            ].map((item, i) => (
               <motion.div
-                key={stat.label}
+                key={item.title}
                 variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.06, ease }}
-                className="text-center p-8 rounded-lg bg-surface border border-border-primary shadow-sm "
+                transition={{ duration: 0.5, delay: i * 0.1, ease }}
+                className="relative p-7 rounded-2xl"
+                style={{
+                  background: "#FFFFFF",
+                  border: "1px solid #EBEBEB",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
+                }}
               >
-                <div className="text-[clamp(2rem,4vw,3rem)] font-bold text-text-primary tracking-tight">
-                  {stat.num}
-                </div>
-                <div className="text-[13px] text-text-tertiary mt-1 font-medium">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* WHAT SPONSORS GET */}
-      <section className="py-24 px-8 bg-background-secondary">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease }}
-            className="mb-16"
-          >
-            <span className="text-[12px] font-semibold text-accent uppercase tracking-widest">
-              Sponsorship
-            </span>
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] text-text-primary tracking-[-0.02em] mt-4 leading-[1.1]">
-              What you get as a sponsor.
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Tier 1 */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease }}
-              className="relative p-8 rounded-lg border-2 border-accent/20 bg-surface overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 px-4 py-1.5 bg-accent text-white text-[11px] font-semibold uppercase tracking-wider rounded-bl-xl">
-                Title Sponsor
-              </div>
-              <h3 className="text-[20px] font-semibold text-text-primary mb-6 mt-2">
-                Hackathon Title Sponsor
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  "Your brand on the hackathon — name, logo, theme",
-                  "Direct access to every builder who competes",
-                  "Featured on the platform homepage during the event",
-                  "Judge seat — you see the demos first",
-                  "Recruit directly from the hackathon pool",
-                  "Post-event report with builder profiles and project data",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-[14px] text-text-secondary">
-                    <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Tier 2 */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.08, ease }}
-              className="p-8 rounded-lg border border-border-primary bg-surface"
-            >
-              <h3 className="text-[20px] font-semibold text-text-primary mb-6">
-                Platform Partner
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  "Logo on the Antry sponsors page and footer",
-                  "Builder directory access — search and filter by skills",
-                  "Featured in the AI Scout agent responses",
-                  "Monthly digest of top builders and trending projects",
-                  "Early access to new platform features",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-[14px] text-text-secondary">
-                    <CheckCircle2 className="w-4 h-4 text-text-tertiary shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURED BUILDERS PREVIEW */}
-      <section className="py-24 px-8">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease }}
-            className="text-center mb-12"
-          >
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.5rem)] text-text-primary tracking-[-0.02em] mb-3">
-              Meet the builders.
-            </h2>
-            <p className="text-[14px] text-text-tertiary">
-              This is who your brand gets in front of.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {builders.slice(0, 6).map((builder, i) => (
-              <motion.div
-                key={builder.id}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05, ease }}
-              >
-                <Link
-                  href={`/builders/${builder.username}`}
-                  className="group block p-6 rounded-lg border border-border-primary bg-surface hover:border-black/10 dark:hover:border-white/10 hover:-translate-y-1 transition-all duration-300 ease-out"
+                {/* Step number watermark */}
+                <div
+                  className="absolute top-6 right-6 text-[52px] font-display font-bold leading-none"
+                  style={{ color: "rgba(198,241,53,0.12)" }}
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center text-[12px] font-bold text-white shrink-0"
-                      style={{ background: builder.gradient }}
-                    >
-                      {getInitials(builder.name)}
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-[14px] font-semibold text-text-primary group-hover:text-accent transition-colors truncate">
-                        {builder.name}
-                      </h4>
-                      <p className="text-[12px] text-text-tertiary truncate">
-                        {builder.tagline}
-                      </p>
-                    </div>
+                  {item.step}
+                </div>
+
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6"
+                  style={{ background: "rgba(198,241,53,0.12)" }}
+                >
+                  <item.icon className="w-5 h-5" style={{ color: "#111111" }} />
+                </div>
+                <h3
+                  className="text-[18px] font-bold mb-3 tracking-tight"
+                  style={{ color: "#111111" }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="text-[14px] leading-relaxed"
+                  style={{ color: "#525252" }}
+                >
+                  {item.desc}
+                </p>
+
+                {/* Connector arrow for desktop */}
+                {i < 2 && (
+                  <div
+                    className="hidden md:flex absolute top-1/2 -right-[18px] -translate-y-1/2 z-10 w-8 h-8 rounded-full items-center justify-center"
+                    style={{ background: "#F5F5F5" }}
+                  >
+                    <ArrowRight className="w-4 h-4" style={{ color: "#A3A3A3" }} />
                   </div>
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {builder.skills.slice(0, 3).map((s) => (
-                      <span
-                        key={s}
-                        className="text-[10px] font-medium text-text-tertiary bg-background-secondary rounded-lg px-2 py-0.5"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px] text-text-tertiary">
-                    <span>{builder.projectCount} projects</span>
-                    <span className="text-border-primary">·</span>
-                    <span className="flex items-center gap-1">
-                      <Heart className="w-3 h-3" /> {builder.totalLikes}
-                    </span>
-                  </div>
-                </Link>
+                )}
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* THE ANT PHILOSOPHY */}
-      <section className="py-24 px-8 bg-background-secondary">
-        <div className="max-w-[680px] mx-auto">
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 6: CTA — Start finding talent today
+          ═══════════════════════════════════════════════════════ */}
+      <section id="join" className="py-24 px-6" style={{ background: "#FAFAF7" }}>
+        <div className="max-w-[580px] mx-auto text-center">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -505,62 +878,31 @@ export default function CompaniesClient({
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease }}
           >
-            <span className="text-[12px] font-semibold text-accent uppercase tracking-widest">
-              Why &ldquo;Antry&rdquo;
-            </span>
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] text-text-primary tracking-[-0.02em] mt-4 mb-8 leading-[1.1]">
-              Tiny builders. Massive impact.
+            <h2
+              className="font-display tracking-[-0.03em] mb-5 leading-[0.95]"
+              style={{
+                fontSize: "clamp(2rem, 5vw, 3rem)",
+                color: "#111111",
+              }}
+            >
+              Open the directory
             </h2>
-            <div className="space-y-5 text-[16px] text-text-secondary leading-relaxed">
-              <p>
-                An ant is a tiny animal that does something extraordinary — it
-                collaborates with other ants to build structures thousands of
-                times its own size. And it does it{" "}
-                <span className="text-text-primary font-medium">fast</span>.
-              </p>
-              <p>
-                That&apos;s exactly what our builders do. They&apos;re individuals who come
-                together — in hackathons, in teams, in open source — to build
-                things bigger than any one person could. They ship in days, not
-                months. They iterate publicly. They explain their thinking.
-              </p>
-              <p>
-                <span className="text-text-primary font-medium">Antry</span>{" "}
-                is the colony. It&apos;s where these builders live, showcase their
-                work, and get discovered. When you sponsor Antry, you&apos;re not
-                buying ad space — you&apos;re investing in the community that&apos;s
-                changing how talent is discovered.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section id="sponsor" className="py-32 px-8 bg-text-primary text-white">
-        <div className="max-w-[560px] mx-auto text-center">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease }}
-          >
-            <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] tracking-[-0.025em] mb-6 leading-[0.95]">
-              Be part of
-              <br />
-              the change.
-            </h2>
-            <p className="text-[16px] text-white/40 mb-10 leading-relaxed">
-              The industry is shifting from resumes to real work. Companies like
-              Wealthsimple already proved it works. Antry makes it permanent.
-              <br />
-              <span className="text-white/60 font-medium">We need you to take part in this change.</span>
+            <p
+              className="text-[16px] leading-relaxed mb-10"
+              style={{ color: "#525252" }}
+            >
+              Get early access to builders, Scout, and sponsorship.
             </p>
-            <WaitlistForm dark />
-            <p className="text-[13px] text-white/30 mt-6">
-              Or email us directly at{" "}
-              <a href="mailto:sponsors@antry.dev" className="text-white/50 hover:text-white/70 underline transition-colors">
+
+            <WaitlistForm />
+
+            <p className="text-[13px] mt-6" style={{ color: "#737373" }}>
+              Free for early companies. Email{" "}
+              <a
+                href="mailto:sponsors@antry.dev"
+                className="underline transition-colors"
+                style={{ color: "#111111" }}
+              >
                 sponsors@antry.dev
               </a>
             </p>

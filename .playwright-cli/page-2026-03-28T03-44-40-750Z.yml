@@ -1,0 +1,271 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Antry" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e24]: Antry
+        - generic [ref=e25]:
+          - button "Community" [ref=e27]:
+            - text: Community
+            - img [ref=e28]
+          - button "Product" [ref=e31]:
+            - text: Product
+            - img [ref=e32]
+          - button "Company" [ref=e36]:
+            - text: Company
+            - img [ref=e37]
+    - main [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e46]
+            - text: AI-Powered Agent
+          - heading "Meet Scout" [level=1] [ref=e54]:
+            - text: Meet
+            - generic [ref=e55]: Scout
+          - paragraph [ref=e56]: Ask Scout in plain English and it searches builder profiles, shipped work, projects, and hackathons to help you move faster.
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - img [ref=e59]
+              - text: Natural Language Search
+            - generic [ref=e61]:
+              - img [ref=e62]
+              - text: Builder Matching
+            - generic [ref=e66]:
+              - img [ref=e67]
+              - text: Team Assembly
+            - generic [ref=e72]:
+              - img [ref=e73]
+              - text: Hackathon Discovery
+          - generic [ref=e76]:
+            - generic [ref=e77]: Platform-only answers
+            - generic [ref=e78]: Shipped work and live demos
+            - generic [ref=e79]: Team building in one prompt
+        - generic [ref=e82]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e91]: antry terminal
+              - generic [ref=e92]:
+                - generic [ref=e93]:
+                  - generic [ref=e94]:
+                    - img [ref=e95]
+                    - text: K
+                  - generic [ref=e97]: to focus
+                - generic [ref=e100]: Ready
+            - generic [ref=e101]:
+              - img [ref=e102]
+              - textbox "Ask anything about the network..." [ref=e105]
+              - button "Voice search (coming soon)" [ref=e106]:
+                - img [ref=e107]
+          - generic [ref=e110]:
+            - generic [ref=e112]:
+              - button "Find builders" [ref=e113]:
+                - img [ref=e115]
+                - text: Find builders
+              - button "View hackathons" [ref=e118]:
+                - img [ref=e120]
+                - text: View hackathons
+              - button "Build a team" [ref=e126]:
+                - img [ref=e128]
+                - text: Build a team
+              - button "Compare profiles" [ref=e132]:
+                - img [ref=e134]
+                - text: Compare profiles
+            - generic [ref=e138]:
+              - paragraph [ref=e139]: People are searching
+              - paragraph [ref=e141]: “Who's building AI agents right now?”
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - img [ref=e145]
+                - generic [ref=e147]: 0+
+              - generic [ref=e148]: builders indexed
+          - paragraph [ref=e149]: Search runs only against Antry data. No external browsing.
+        - generic [ref=e151]:
+          - generic [ref=e152]:
+            - heading "How Scout Works" [level=2] [ref=e153]
+            - paragraph [ref=e154]: Powerful AI capabilities at your fingertips
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - img [ref=e158]
+              - heading "Smart Search" [level=3] [ref=e161]
+              - paragraph [ref=e162]: Search builders by skills, experience, shipped projects
+            - generic [ref=e163]:
+              - img [ref=e165]
+              - heading "Team Building" [level=3] [ref=e170]
+              - paragraph [ref=e171]: AI assembles balanced teams for any hackathon theme
+            - generic [ref=e172]:
+              - img [ref=e174]
+              - heading "Profile Comparison" [level=3] [ref=e179]
+              - paragraph [ref=e180]: Side-by-side analysis of builder strengths
+            - generic [ref=e181]:
+              - img [ref=e183]
+              - heading "Hackathon Discovery" [level=3] [ref=e189]
+              - paragraph [ref=e190]: Find events that match your interests and skills
+        - generic [ref=e192]:
+          - generic [ref=e193]:
+            - heading "Try Asking Scout" [level=2] [ref=e194]
+            - paragraph [ref=e195]: Click any query to try it out
+          - generic [ref=e196]:
+            - generic [ref=e197]:
+              - generic [ref=e198]:
+                - img [ref=e200]
+                - heading "Find Builders" [level=3] [ref=e203]
+              - generic [ref=e204]:
+                - button "Find React developers" [ref=e205]:
+                  - img [ref=e206]
+                  - text: Find React developers
+                  - img [ref=e209]
+                - button "Who's good at AI agents?" [ref=e211]:
+                  - img [ref=e212]
+                  - text: Who's good at AI agents?
+                  - img [ref=e215]
+            - generic [ref=e217]:
+              - generic [ref=e218]:
+                - img [ref=e220]
+                - heading "Explore Projects" [level=3] [ref=e224]
+              - generic [ref=e225]:
+                - button "Show projects using Next.js" [ref=e226]:
+                  - img [ref=e227]
+                  - text: Show projects using Next.js
+                  - img [ref=e230]
+                - button "Latest shipped projects" [ref=e232]:
+                  - img [ref=e233]
+                  - text: Latest shipped projects
+                  - img [ref=e236]
+            - generic [ref=e238]:
+              - generic [ref=e239]:
+                - img [ref=e241]
+                - heading "Build Teams" [level=3] [ref=e246]
+              - generic [ref=e247]:
+                - button "Build a team for an AI hackathon" [ref=e248]:
+                  - img [ref=e249]
+                  - text: Build a team for an AI hackathon
+                  - img [ref=e252]
+                - button "Assemble a full-stack team" [ref=e254]:
+                  - img [ref=e255]
+                  - text: Assemble a full-stack team
+                  - img [ref=e258]
+            - generic [ref=e260]:
+              - generic [ref=e261]:
+                - img [ref=e263]
+                - heading "Hackathons" [level=3] [ref=e269]
+              - generic [ref=e270]:
+                - button "Active hackathons" [ref=e271]:
+                  - img [ref=e272]
+                  - text: Active hackathons
+                  - img [ref=e275]
+                - button "Upcoming events with AI theme" [ref=e277]:
+                  - img [ref=e278]
+                  - text: Upcoming events with AI theme
+                  - img [ref=e281]
+        - generic [ref=e284]:
+          - generic [ref=e285]:
+            - heading "Scout's Knowledge Base" [level=2] [ref=e286]
+            - paragraph [ref=e287]: Continuously indexed and growing
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - paragraph [ref=e290]: 0+
+              - paragraph [ref=e291]: data points indexed
+            - generic [ref=e292]:
+              - paragraph [ref=e293]: 0+
+              - paragraph [ref=e294]: builder profiles
+            - generic [ref=e295]:
+              - paragraph [ref=e296]: "0"
+              - paragraph [ref=e297]: hackathons tracked
+        - generic [ref=e299]:
+          - img [ref=e300]
+          - heading "Ready to explore?" [level=3] [ref=e305]
+          - paragraph [ref=e306]: Search builders, compare profiles, or assemble a team without leaving the network.
+          - button "Ask Scout now" [ref=e307]:
+            - img [ref=e308]
+            - text: Ask Scout now
+    - contentinfo [ref=e311]:
+      - generic [ref=e314]:
+        - generic [ref=e315]:
+          - generic [ref=e316]:
+            - link "Antry" [ref=e317] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e318]:
+                - img [ref=e320]
+                - generic [ref=e336]: Antry
+            - paragraph [ref=e337]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+            - generic [ref=e338]:
+              - link "GitHub" [ref=e339] [cursor=pointer]:
+                - /url: https://github.com
+                - img [ref=e340]
+              - link "X (Twitter)" [ref=e342] [cursor=pointer]:
+                - /url: https://x.com
+                - img [ref=e343]
+              - link "LinkedIn" [ref=e345] [cursor=pointer]:
+                - /url: https://linkedin.com
+                - img [ref=e346]
+          - generic [ref=e348]:
+            - heading "Product" [level=4] [ref=e349]
+            - list [ref=e350]:
+              - listitem [ref=e351]:
+                - link "Builders" [ref=e352] [cursor=pointer]:
+                  - /url: /builders
+              - listitem [ref=e353]:
+                - link "Showcase" [ref=e354] [cursor=pointer]:
+                  - /url: /showcase
+              - listitem [ref=e355]:
+                - link "Hackathons" [ref=e356] [cursor=pointer]:
+                  - /url: /hackathons
+              - listitem [ref=e357]:
+                - link "Recruiters" [ref=e358] [cursor=pointer]:
+                  - /url: /companies
+              - listitem [ref=e359]:
+                - link "Submit Project" [ref=e360] [cursor=pointer]:
+                  - /url: /submit
+          - generic [ref=e361]:
+            - heading "Company" [level=4] [ref=e362]
+            - list [ref=e363]:
+              - listitem [ref=e364]:
+                - link "About" [ref=e365] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e366]:
+                - link "Blog" [ref=e367] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=e368]:
+                - link "Careers" [ref=e369] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e370]:
+                - link "Contact" [ref=e371] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e372]:
+            - heading "Resources" [level=4] [ref=e373]
+            - list [ref=e374]:
+              - listitem [ref=e375]:
+                - link "Documentation" [ref=e376] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=e377]:
+                - link "API" [ref=e378] [cursor=pointer]:
+                  - /url: /api
+              - listitem [ref=e379]:
+                - link "Community" [ref=e380] [cursor=pointer]:
+                  - /url: /community
+              - listitem [ref=e381]:
+                - link "Support" [ref=e382] [cursor=pointer]:
+                  - /url: /support
+          - generic [ref=e383]:
+            - heading "Legal" [level=4] [ref=e384]
+            - list [ref=e385]:
+              - listitem [ref=e386]:
+                - link "Privacy Policy" [ref=e387] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e388]:
+                - link "Terms of Service" [ref=e389] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e390]:
+                - link "Cookie Policy" [ref=e391] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e392]:
+          - generic [ref=e393]: © 2026 Antry. All rights reserved.
+          - button "Back to top" [ref=e394]:
+            - text: Back to top
+            - img [ref=e396]
+  - button "Open Next.js Dev Tools" [ref=e403] [cursor=pointer]:
+    - img [ref=e404]

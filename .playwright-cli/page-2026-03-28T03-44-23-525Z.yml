@@ -1,0 +1,325 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Antry" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]:
+            - img [ref=e8]
+            - generic [ref=e24]: Antry
+        - generic [ref=e25]:
+          - button "Community" [ref=e27]:
+            - text: Community
+            - img [ref=e28]
+          - button "Product" [ref=e31]:
+            - text: Product
+            - img [ref=e32]
+          - button "Company" [ref=e35]:
+            - text: Company
+            - img [ref=e36]
+    - main [ref=e41]:
+      - generic [ref=e42]:
+        - generic [ref=e45]:
+          - heading "Hire builders who actually ship" [level=1] [ref=e46]:
+            - text: Hire builders who
+            - text: actually
+            - generic [ref=e47]: ship
+          - paragraph [ref=e49]: Search by shipped proof, not keyword stuffing. Open real demos, inspect stack decisions, and use Scout to surface builders who already move fast.
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - img [ref=e52]
+              - text: Live demos
+            - generic [ref=e55]:
+              - img [ref=e56]
+              - text: Stack decisions
+            - generic [ref=e60]:
+              - img [ref=e61]
+              - text: Scout matches
+          - generic [ref=e64]:
+            - link "Browse builders" [ref=e65] [cursor=pointer]:
+              - /url: /builders
+              - text: Browse builders
+              - img [ref=e66]
+            - link "Ask Scout for a match" [ref=e68] [cursor=pointer]:
+              - /url: /agent
+              - text: Ask Scout for a match
+              - img [ref=e69]
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - img [ref=e75]
+              - generic [ref=e80]: 2+
+              - paragraph [ref=e81]: verified AI builders
+            - generic [ref=e82]:
+              - img [ref=e84]
+              - generic [ref=e88]: 0+
+              - paragraph [ref=e89]: projects with live signal
+            - generic [ref=e90]:
+              - img [ref=e92]
+              - generic [ref=e98]: "0"
+              - paragraph [ref=e99]: hackathons with visible results
+          - paragraph [ref=e100]:
+            - text: Prefer a hands-on hiring conversation? Email
+            - link "sponsors@antry.dev" [ref=e101] [cursor=pointer]:
+              - /url: mailto:sponsors@antry.dev
+            - text: .
+        - generic [ref=e103]:
+          - generic [ref=e104]:
+            - text: The Problem
+            - heading "Resumes don't tell the real story" [level=2] [ref=e105]
+            - paragraph [ref=e106]: Traditional hiring is broken for technical talent. Here's what recruiters deal with every day.
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - img [ref=e110]
+              - heading "Keyword-stuffed profiles" [level=3] [ref=e113]
+              - paragraph [ref=e114]: Candidates list every framework they've touched. You can't tell who actually built with it and who just did a tutorial.
+            - generic [ref=e115]:
+              - img [ref=e117]
+              - heading "No way to verify skills" [level=3] [ref=e120]
+              - paragraph [ref=e121]: References are slow, take-home tests are hated, and portfolio links are often broken or outdated.
+            - generic [ref=e122]:
+              - img [ref=e124]
+              - heading "Same candidates everywhere" [level=3] [ref=e127]
+              - paragraph [ref=e128]: Every recruiter is fishing in the same LinkedIn pool. The best builders aren't actively looking -- they're building.
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - text: How Antry is Different
+            - heading "See proof before you schedule a call" [level=2] [ref=e132]
+          - generic [ref=e133]:
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - img [ref=e136]
+                - text: Builder Profiles
+              - heading "Open a working portfolio, not a PDF" [level=3] [ref=e140]
+              - paragraph [ref=e141]: Every builder has a visual showcase with live project demos, tech stacks, build timelines, and community engagement. You see what they actually built -- not what they claim they can do.
+              - paragraph [ref=e142]: Click into a project, open the demo, and understand quality fast.
+            - generic [ref=e144]:
+              - generic [ref=e145]:
+                - generic [ref=e146]: MR
+                - generic [ref=e147]:
+                  - generic [ref=e148]: Maya Rodriguez
+                  - generic [ref=e149]: Full-stack AI builder
+              - generic [ref=e150]:
+                - generic [ref=e151]: React
+                - generic [ref=e152]: Python
+                - generic [ref=e153]: LangChain
+                - generic [ref=e154]: Next.js
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - img [ref=e158]
+                  - generic [ref=e162]: AgentFlow
+                  - generic [ref=e163]: LIVE DEMO
+                - paragraph [ref=e164]: Multi-agent orchestration framework. Built in 12 days.
+              - generic [ref=e165]:
+                - generic [ref=e166]:
+                  - img [ref=e167]
+                  - text: 7 projects
+                - generic [ref=e171]:
+                  - img [ref=e172]
+                  - text: 142 likes
+                - generic [ref=e174]:
+                  - img [ref=e175]
+                  - text: 2 wins
+          - generic [ref=e181]:
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - img [ref=e184]
+                - text: AI Scout
+              - heading "Describe the teammate you need" [level=3] [ref=e187]
+              - paragraph [ref=e188]: Describe the builder you need in plain English. Our Scout agent searches the entire platform -- analyzing projects, skills, and hackathon results -- to surface the best matches.
+              - paragraph [ref=e189]: No boolean strings. No resume theater. Just tell Scout what great looks like.
+            - generic [ref=e191]:
+              - generic [ref=e192]:
+                - img [ref=e193]
+                - generic [ref=e196]: “React + AI builders who ship fast”
+              - generic [ref=e197]: Scout found 3 matches
+              - generic [ref=e198]:
+                - generic [ref=e199]: Ma
+                - generic [ref=e200]:
+                  - generic [ref=e201]: Maya R.
+                  - generic [ref=e202]: React, LangChain
+                - generic [ref=e203]: 97%
+              - generic [ref=e204]:
+                - generic [ref=e205]: Ja
+                - generic [ref=e206]:
+                  - generic [ref=e207]: James K.
+                  - generic [ref=e208]: Next.js, GPT-4
+                - generic [ref=e209]: 94%
+              - generic [ref=e210]:
+                - generic [ref=e211]: Pr
+                - generic [ref=e212]:
+                  - generic [ref=e213]: Priya S.
+                  - generic [ref=e214]: React, Python
+                - generic [ref=e215]: 91%
+          - generic [ref=e216]:
+            - generic [ref=e217]:
+              - generic [ref=e218]:
+                - img [ref=e219]
+                - text: Antathons
+              - heading "See who ships under pressure" [level=3] [ref=e225]
+              - paragraph [ref=e226]: Antathons are timed hackathons where builders compete under real pressure. You see who can ship fast, handle constraints, and produce polished work when it counts.
+              - paragraph [ref=e227]: Every submission includes a live demo and build timeline. No theory, only signal.
+            - generic [ref=e229]:
+              - generic [ref=e230]:
+                - img [ref=e232]
+                - generic [ref=e238]:
+                  - generic [ref=e239]: AI Agents Antathon
+                  - generic [ref=e240]: 48 hours · 124 participants
+              - generic [ref=e241]: Top performers
+              - generic [ref=e242]:
+                - generic [ref=e243]: 1st
+                - generic [ref=e244]: Maya R.AgentFlow
+              - generic [ref=e245]:
+                - generic [ref=e246]: 2nd
+                - generic [ref=e247]: James K.ChatOps
+              - generic [ref=e248]:
+                - generic [ref=e249]: 3rd
+                - generic [ref=e250]: Alex T.DevAssist
+              - generic [ref=e251]:
+                - img [ref=e252]
+                - generic [ref=e255]: All projects have live demos
+        - generic [ref=e257]:
+          - generic [ref=e258]:
+            - text: For Recruiters
+            - heading "What recruiters can verify in minutes" [level=2] [ref=e259]
+          - generic [ref=e260]:
+            - generic [ref=e261]:
+              - img [ref=e263]
+              - heading "Verified shipped work" [level=3] [ref=e266]
+              - paragraph [ref=e267]: Every project links to a live demo. See real products running, not static screenshots or bullet points on a resume.
+            - generic [ref=e268]:
+              - img [ref=e270]
+              - heading "AI Scout search" [level=3] [ref=e273]
+              - paragraph [ref=e274]: Describe who you need in plain English. Our agent analyzes the entire builder pool and returns the best matches with match scores.
+            - generic [ref=e275]:
+              - img [ref=e277]
+              - heading "Hackathon track records" [level=3] [ref=e283]
+              - paragraph [ref=e284]: Builders proven under real pressure. See rankings, build times, and competition results. Speed and quality, visible at a glance.
+            - generic [ref=e285]:
+              - img [ref=e287]
+              - heading "Stack decisions visible" [level=3] [ref=e289]
+              - paragraph [ref=e290]: See exactly which tools each builder chose and why. Filter by framework, language, or AI model. Know their real strengths.
+        - generic [ref=e292]:
+          - generic [ref=e293]:
+            - text: How It Works
+            - heading "From search to shortlist in 3 steps" [level=2] [ref=e294]
+          - generic [ref=e295]:
+            - generic [ref=e296]:
+              - generic [ref=e297]: "01"
+              - img [ref=e299]
+              - heading "Search" [level=3] [ref=e302]
+              - paragraph [ref=e303]: Use AI Scout or browse by skill, framework, or hackathon results. Find builders who match exactly what you need.
+              - img [ref=e305]
+            - generic [ref=e307]:
+              - generic [ref=e308]: "02"
+              - img [ref=e310]
+              - heading "Review portfolios" [level=3] [ref=e313]
+              - paragraph [ref=e314]: See live project demos, build timelines, and tech stack decisions. Evaluate real work in minutes, not hours.
+              - img [ref=e316]
+            - generic [ref=e318]:
+              - generic [ref=e319]: "03"
+              - img [ref=e321]
+              - heading "Connect" [level=3] [ref=e323]
+              - paragraph [ref=e324]: Reach out directly to builders you like. Or sponsor a hackathon and get in front of the entire community at once.
+        - generic [ref=e327]:
+          - heading "Start building your shortlist" [level=2] [ref=e328]
+          - paragraph [ref=e329]: Get early access to the builder directory, Scout search, and hackathon sponsorship before the rest of the market catches up.
+          - generic [ref=e330]:
+            - generic [ref=e332]:
+              - textbox "Enter your email" [ref=e334]
+              - button "Join waitlist" [ref=e335]:
+                - text: Join waitlist
+                - img [ref=e336]
+            - paragraph [ref=e346]: 247 builders ahead of you
+          - paragraph [ref=e347]:
+            - generic [ref=e348]: Free for early companies
+          - paragraph [ref=e349]:
+            - text: Or email us directly at
+            - link "sponsors@antry.dev" [ref=e350] [cursor=pointer]:
+              - /url: mailto:sponsors@antry.dev
+    - contentinfo [ref=e351]:
+      - generic [ref=e354]:
+        - generic [ref=e355]:
+          - generic [ref=e356]:
+            - link "Antry" [ref=e357] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e358]:
+                - img [ref=e360]
+                - generic [ref=e376]: Antry
+            - paragraph [ref=e377]: The builder network for the AI era. Ship projects, join hackathons, and connect with top recruiters.
+            - generic [ref=e378]:
+              - link "GitHub" [ref=e379] [cursor=pointer]:
+                - /url: https://github.com
+                - img [ref=e380]
+              - link "X (Twitter)" [ref=e382] [cursor=pointer]:
+                - /url: https://x.com
+                - img [ref=e383]
+              - link "LinkedIn" [ref=e385] [cursor=pointer]:
+                - /url: https://linkedin.com
+                - img [ref=e386]
+          - generic [ref=e388]:
+            - heading "Product" [level=4] [ref=e389]
+            - list [ref=e390]:
+              - listitem [ref=e391]:
+                - link "Builders" [ref=e392] [cursor=pointer]:
+                  - /url: /builders
+              - listitem [ref=e393]:
+                - link "Showcase" [ref=e394] [cursor=pointer]:
+                  - /url: /showcase
+              - listitem [ref=e395]:
+                - link "Hackathons" [ref=e396] [cursor=pointer]:
+                  - /url: /hackathons
+              - listitem [ref=e397]:
+                - link "Recruiters" [ref=e398] [cursor=pointer]:
+                  - /url: /companies
+              - listitem [ref=e399]:
+                - link "Submit Project" [ref=e400] [cursor=pointer]:
+                  - /url: /submit
+          - generic [ref=e401]:
+            - heading "Company" [level=4] [ref=e402]
+            - list [ref=e403]:
+              - listitem [ref=e404]:
+                - link "About" [ref=e405] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e406]:
+                - link "Blog" [ref=e407] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=e408]:
+                - link "Careers" [ref=e409] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=e410]:
+                - link "Contact" [ref=e411] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e412]:
+            - heading "Resources" [level=4] [ref=e413]
+            - list [ref=e414]:
+              - listitem [ref=e415]:
+                - link "Documentation" [ref=e416] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=e417]:
+                - link "API" [ref=e418] [cursor=pointer]:
+                  - /url: /api
+              - listitem [ref=e419]:
+                - link "Community" [ref=e420] [cursor=pointer]:
+                  - /url: /community
+              - listitem [ref=e421]:
+                - link "Support" [ref=e422] [cursor=pointer]:
+                  - /url: /support
+          - generic [ref=e423]:
+            - heading "Legal" [level=4] [ref=e424]
+            - list [ref=e425]:
+              - listitem [ref=e426]:
+                - link "Privacy Policy" [ref=e427] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e428]:
+                - link "Terms of Service" [ref=e429] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e430]:
+                - link "Cookie Policy" [ref=e431] [cursor=pointer]:
+                  - /url: /cookies
+        - generic [ref=e432]:
+          - generic [ref=e433]: © 2026 Antry. All rights reserved.
+          - button "Back to top" [ref=e434]:
+            - text: Back to top
+            - img [ref=e436]
+  - button "Open Next.js Dev Tools" [ref=e443] [cursor=pointer]:
+    - img [ref=e444]
