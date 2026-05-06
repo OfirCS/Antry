@@ -11,6 +11,7 @@ import {
 } from "@/lib/receipts/demo-data";
 import { BuilderFingerprint, FingerprintGlyph } from "@/components/BuilderFingerprint";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
+import { CursorStartPanel } from "@/components/CursorStartPanel";
 
 export async function generateStaticParams() {
   return demoBriefs.map((b) => ({ slug: b.slug }));
@@ -134,6 +135,7 @@ export default async function BriefDetailPage({
                       color: "#0A0A0A",
                       boxShadow: "0 8px 24px rgba(198,241,53,0.35)",
                     }}
+                    data-cta="lime"
                   >
                     Enter the Lab <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -142,8 +144,12 @@ export default async function BriefDetailPage({
                     style={{ color: "rgba(255,255,255,0.5)" }}
                   >
                     <Shield className="w-3.5 h-3.5" />
-                    Instrumented sandbox · trace stays private until you mint
+                    Instrumented · signed at the gateway
                   </span>
+                </div>
+
+                <div className="mt-5 max-w-[520px]">
+                  <CursorStartPanel briefSlug={brief.slug} />
                 </div>
               </div>
 

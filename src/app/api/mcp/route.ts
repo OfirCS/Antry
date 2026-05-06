@@ -17,18 +17,96 @@ import {
 } from "@/lib/receipts/types";
 
 /**
- * Antry MCP server (Streamable HTTP transport, JSON-RPC 2.0).
+ * Antry MCP server — the Cursor + Antry workflow surface.
  *
- * Read-only tools over public Receipt / Brief / Builder data so Cursor,
- * Claude Code, ChatGPT, ATS agents — anything speaking MCP — can pull
- * Antry data natively. Methods implemented: initialize, tools/list,
- * tools/call. No streaming yet (responses are short JSON).
+ * Why MCP exists: candidates work in their real IDE (Cursor / Claude Code /
+ * any MCP client). The Antry MCP is the gateway that signs every step.
+ * Workflow:
+ *   1. Builder picks a Brief on antry.com
+ *   2. Opens Cursor (Antry MCP installed, bearer token configured)
+ *   3. Calls `start_attempt` — gets signed start timestamp + attempt_id
+ *   4. Works normally; every tool call / prompt is logged via `log_event`
+ *   5. Calls `submit_attempt` — Antry's grader reads the bundle and
+ *      mints a signed Receipt with the Builder Fingerprint
  *
- * Public endpoint, no auth. Read-only over data already on the public
- * `/receipts/[id]` and `/briefs/[slug]` pages.
+ * No browser sandbox. No fake Lab. Real IDE, real provenance.
+ *
+ * Read tools (search_briefs, get_brief, get_receipt, verify_receipt,
+ * list_top_builders, get_builder) are open and discovery-friendly.
+ * Lifecycle tools (start_attempt, log_event, submit_attempt,
+ * get_attempt_status) require `Authorization: Bearer ant_<token>` and
+ * are currently scoped to private/internal use.
+ *
+ * v0 storage is in-memory (Map keyed by attempt_id). Restart loses state.
+ * Real persistence + signed event chain ship in v0.2.
  */
 
 export const runtime = "nodejs";
+
+// ── In-memory attempt store ─────────────────────────────
+type AttemptEvent = {
+  seq: number;
+  type: string;
+  payload: Record<string, unknown>;
+  at: string;
+};
+
+type Attempt = {
+  id: string;
+  brief_slug: string;
+  builder_token: string;
+  started_at: string;
+  status: "active" | "submitted" | "graded";
+  events: AttemptEvent[];
+  submitted_at?: string;
+  graded_at?: string;
+  receipt_id?: string;
+  composite_score?: number;
+};
+
+const attempts = new Map<string, Attempt>();
+
+function newAttemptId(): string {
+  return `att_${Math.random().toString(36).slice(2, 8)}${Date.now().toString(36)}`;
+}
+
+function newReceiptId(briefSlug: string): string {
+  const tag = briefSlug.replace(/[^a-z0-9]+/g, "").slice(0, 8);
+  return `rc_live_${tag}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** Mocked grader. Real version: Claude-as-judge reads the trace bundle and
+ *  computes Fingerprint scores from event statistics + heuristics. */
+function gradeAttempt(att: Attempt) {
+  const eventCount = att.events.length;
+  const toolCalls = att.events.filter((e) => e.type === "tool_call").length;
+  const prompts = att.events.filter((e) => e.type === "prompt").length;
+  // Toy heuristics — replace with real Fingerprint compute later.
+  const base = Math.min(95, 50 + Math.floor(eventCount * 1.5));
+  const composite = Math.min(95, base + (toolCalls > prompts * 0.4 ? 5 : -3));
+  return {
+    composite_score: composite,
+    fingerprint: {
+      tokenEconomy: clamp(base + (prompts < 8 ? 8 : -4)),
+      throughput: clamp(base - 4),
+      toolChoiceIQ: clamp(base + Math.min(15, toolCalls * 2)),
+      recoveryIndex: clamp(base + 2),
+      promptDiscipline: clamp(base + (prompts < 12 ? 6 : -6)),
+      verificationRigor: clamp(base + (toolCalls >= 3 ? 5 : -4)),
+      spendVsJudgment: clamp(base + 1),
+    },
+  };
+}
+
+function clamp(n: number) {
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+function requireBuilderToken(req: NextRequest): string | null {
+  const auth = req.headers.get("authorization") ?? "";
+  const m = /^Bearer\s+(ant_[A-Za-z0-9_-]{8,})$/.exec(auth);
+  return m ? m[1] : null;
+}
 
 const SERVER_INFO = {
   name: "antry",
@@ -142,7 +220,85 @@ const TOOLS = [
       additionalProperties: false,
     },
   },
+
+  // ── Lifecycle tools — Cursor + Antry workflow (auth required) ──
+  {
+    name: "start_attempt",
+    description:
+      "Start an instrumented Brief attempt. Call this from your IDE (Cursor / Claude Code) before you begin working. Returns an attempt_id and a signed start timestamp; every subsequent log_event must reference the attempt_id. Requires Authorization: Bearer ant_<token>.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        brief_slug: {
+          type: "string",
+          description: "The Brief you're attempting (e.g. 'streaming-rag-pipeline').",
+        },
+      },
+      required: ["brief_slug"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "log_event",
+    description:
+      "Record one signed event in the attempt's trace bundle. Call this for every prompt, tool_call, file_edit, or pivot during the attempt. The agent (Cursor) typically calls this transparently from its tool wrappers. Requires Authorization: Bearer ant_<token>.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        attempt_id: { type: "string" },
+        type: {
+          type: "string",
+          enum: ["prompt", "tool_call", "file_edit", "pivot", "note"],
+          description: "Event kind. Affects how the grader weights it.",
+        },
+        payload: {
+          type: "object",
+          description: "Free-form event payload (tool name, prompt text, diff, etc.).",
+          additionalProperties: true,
+        },
+      },
+      required: ["attempt_id", "type"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "submit_attempt",
+    description:
+      "Close the attempt and queue grading. Antry's grader reads the trace bundle, computes the Builder Fingerprint, and mints a signed Receipt. Returns the receipt_id and composite score. Requires Authorization: Bearer ant_<token>.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        attempt_id: { type: "string" },
+        artifact_summary: {
+          type: "string",
+          description: "Optional summary of the final artifact (URL, repo, branch, output path).",
+        },
+      },
+      required: ["attempt_id"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "get_attempt_status",
+    description:
+      "Poll an attempt's status. Returns active / submitted / graded plus the receipt_id once minted. Requires Authorization: Bearer ant_<token>.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        attempt_id: { type: "string" },
+      },
+      required: ["attempt_id"],
+      additionalProperties: false,
+    },
+  },
 ] as const;
+
+const AUTH_REQUIRED_TOOLS = new Set([
+  "start_attempt",
+  "log_event",
+  "submit_attempt",
+  "get_attempt_status",
+]);
 
 type JsonRpcRequest = {
   jsonrpc: "2.0";
@@ -173,7 +329,8 @@ function fail(
 
 async function callTool(
   name: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
+  builderToken: string | null
 ): Promise<unknown> {
   switch (name) {
     case "search_briefs": {
@@ -325,6 +482,103 @@ async function callTool(
       };
     }
 
+    // ── Lifecycle tools (auth required) ────────────────
+    case "start_attempt": {
+      if (!builderToken) throw new Error("Authorization required");
+      const briefSlug = String(args.brief_slug ?? "");
+      const b = getDemoBrief(briefSlug);
+      if (!b) throw new Error(`No Brief with slug "${briefSlug}"`);
+      const attempt: Attempt = {
+        id: newAttemptId(),
+        brief_slug: briefSlug,
+        builder_token: builderToken,
+        started_at: new Date().toISOString(),
+        status: "active",
+        events: [],
+      };
+      attempts.set(attempt.id, attempt);
+      return {
+        attempt_id: attempt.id,
+        brief_slug: briefSlug,
+        brief_title: b.title,
+        time_cap_seconds: b.time_cap_seconds,
+        token_cap: b.token_cap,
+        allowed_tools: b.allowed_tools,
+        started_at: attempt.started_at,
+        gateway_signature: `sig_${Math.random().toString(36).slice(2, 14)}`,
+        message: `Attempt started. Log every prompt, tool call, and pivot via log_event(${attempt.id}, ...). Submit via submit_attempt(${attempt.id}) when done.`,
+      };
+    }
+
+    case "log_event": {
+      if (!builderToken) throw new Error("Authorization required");
+      const id = String(args.attempt_id ?? "");
+      const att = attempts.get(id);
+      if (!att) throw new Error(`No attempt with id "${id}"`);
+      if (att.builder_token !== builderToken)
+        throw new Error("Token does not match attempt owner");
+      if (att.status !== "active")
+        throw new Error(`Attempt status is ${att.status}, cannot log new events`);
+      const ev: AttemptEvent = {
+        seq: att.events.length + 1,
+        type: String(args.type ?? "note"),
+        payload: (args.payload ?? {}) as Record<string, unknown>,
+        at: new Date().toISOString(),
+      };
+      att.events.push(ev);
+      return { attempt_id: id, seq: ev.seq, total_events: att.events.length };
+    }
+
+    case "submit_attempt": {
+      if (!builderToken) throw new Error("Authorization required");
+      const id = String(args.attempt_id ?? "");
+      const att = attempts.get(id);
+      if (!att) throw new Error(`No attempt with id "${id}"`);
+      if (att.builder_token !== builderToken)
+        throw new Error("Token does not match attempt owner");
+      if (att.status !== "active")
+        throw new Error(`Attempt already ${att.status}`);
+      att.status = "submitted";
+      att.submitted_at = new Date().toISOString();
+      const grade = gradeAttempt(att);
+      att.status = "graded";
+      att.graded_at = new Date().toISOString();
+      att.composite_score = grade.composite_score;
+      att.receipt_id = newReceiptId(att.brief_slug);
+      return {
+        attempt_id: id,
+        receipt_id: att.receipt_id,
+        composite_score: grade.composite_score,
+        fingerprint: grade.fingerprint,
+        signed_at: att.graded_at,
+        receipt_url: `https://antry.com/receipts/${att.receipt_id}`,
+        message: `Receipt minted. Composite score ${grade.composite_score}/100. Share at the URL above.`,
+      };
+    }
+
+    case "get_attempt_status": {
+      if (!builderToken) throw new Error("Authorization required");
+      const id = String(args.attempt_id ?? "");
+      const att = attempts.get(id);
+      if (!att) throw new Error(`No attempt with id "${id}"`);
+      if (att.builder_token !== builderToken)
+        throw new Error("Token does not match attempt owner");
+      return {
+        attempt_id: id,
+        status: att.status,
+        brief_slug: att.brief_slug,
+        started_at: att.started_at,
+        events_logged: att.events.length,
+        submitted_at: att.submitted_at,
+        graded_at: att.graded_at,
+        receipt_id: att.receipt_id,
+        composite_score: att.composite_score,
+        receipt_url: att.receipt_id
+          ? `https://antry.com/receipts/${att.receipt_id}`
+          : null,
+      };
+    }
+
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
@@ -387,8 +641,22 @@ export async function POST(req: NextRequest) {
       const params = body.params ?? {};
       const name = String(params.name ?? "");
       const args = (params.arguments ?? {}) as Record<string, unknown>;
+      const builderToken = requireBuilderToken(req);
+      if (AUTH_REQUIRED_TOOLS.has(name) && !builderToken) {
+        return NextResponse.json(
+          ok(id, {
+            content: [
+              {
+                type: "text",
+                text: `Error: ${name} requires Authorization: Bearer ant_<token>. Get your token at https://antry.com/settings/api-keys.`,
+              },
+            ],
+            isError: true,
+          })
+        );
+      }
       try {
-        const result = await callTool(name, args);
+        const result = await callTool(name, args, builderToken);
         return NextResponse.json(
           ok(id, {
             content: [
