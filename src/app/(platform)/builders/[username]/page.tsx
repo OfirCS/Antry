@@ -111,19 +111,34 @@ export default async function BuilderProfilePage({
             category: p.category || undefined,
             createdAt: p.created_at || undefined,
           })),
-          hackathons: hackathons.map((h) => ({
-            id: h.id,
-            title: h.title,
-            theme: h.theme,
-            status: h.status,
-            gradient: h.gradient,
-            prizes: Array.isArray(h.prizes) ? h.prizes : [],
-            participantCount: h.participant_count,
-            submissionCount: h.submission_count,
-            startDate: h.start_date || undefined,
-            endDate: h.end_date || undefined,
-            sponsors: Array.isArray(h.sponsors) ? h.sponsors : [],
-          })),
+          hackathons: hackathons.map((h) => {
+            // h.sponsors is text[] in the schema; coerce to SponsorItem[].
+            const rawSponsors = (h as { sponsors?: unknown }).sponsors;
+            const sponsors: { name: string; tier: string }[] = Array.isArray(rawSponsors)
+              ? rawSponsors.map((s) =>
+                  typeof s === "string"
+                    ? { name: s, tier: "" }
+                    : (s as { name: string; tier: string })
+                )
+              : [];
+            // h.gradient isn't in the row schema; fall back to the per-builder gradient.
+            const gradient =
+              (h as { gradient?: string }).gradient ||
+              "linear-gradient(135deg, #18181b 0%, #000000 100%)";
+            return {
+              id: h.id,
+              title: h.title,
+              theme: h.theme,
+              status: h.status,
+              gradient,
+              prizes: Array.isArray(h.prizes) ? (h.prizes as { place: string; reward: string }[]) : [],
+              participantCount: h.participant_count,
+              submissionCount: h.submission_count,
+              startDate: h.start_date || undefined,
+              endDate: h.end_date || undefined,
+              sponsors,
+            };
+          }),
         }}
       />
     );
