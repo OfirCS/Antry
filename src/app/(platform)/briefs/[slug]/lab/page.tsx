@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { getDemoBrief, demoBriefs } from "@/lib/receipts/demo-data";
-import { LabPreviewClient } from "./LabPreviewClient";
+import { LabClient } from "./LabClient";
+import { enterBriefAction } from "./actions";
 
 export async function generateStaticParams() {
   return demoBriefs.map((b) => ({ slug: b.slug }));
 }
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -34,6 +37,11 @@ export default async function LabPage({
   const brief = getDemoBrief(slug);
   if (!brief) notFound();
 
+  // Mint a fresh Lab session (4-hour TTL).
+  const { attemptId, sessionToken } = await enterBriefAction(slug);
+
+  const gatewayMode = process.env.ANTHROPIC_API_KEY ? "anthropic" : "mock";
+
   return (
     <>
       <Nav />
@@ -49,24 +57,37 @@ export default async function LabPage({
               Back to Brief
             </Link>
 
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1.5"
-              style={{
-                background: "rgba(245,158,11,0.14)",
-                border: "1px solid rgba(245,158,11,0.32)",
-              }}
-            >
-              <AlertCircle className="w-3 h-3" style={{ color: "#F59E0B" }} />
+            <div className="inline-flex items-center gap-2 flex-wrap">
               <span
-                className="text-[10px] font-bold tracking-[0.18em] uppercase"
-                style={{ color: "#F59E0B" }}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
+                style={{
+                  background: "rgba(198,241,53,0.12)",
+                  border: "1px solid rgba(198,241,53,0.28)",
+                }}
               >
-                Lab preview · gateway not live yet (v0.2)
+                <ShieldCheck className="w-3 h-3" style={{ color: "#C6F135" }} />
+                <span
+                  className="text-[10px] font-bold tracking-[0.18em] uppercase"
+                  style={{ color: "#C6F135" }}
+                >
+                  Gateway live · {gatewayMode}
+                </span>
               </span>
+              {gatewayMode === "mock" && (
+                <span
+                  className="text-[10px] font-medium px-2.5 py-1 rounded"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    color: "rgba(255,255,255,0.5)",
+                  }}
+                >
+                  set ANTHROPIC_API_KEY for real Anthropic streaming
+                </span>
+              )}
             </div>
           </div>
 
-          <LabPreviewClient brief={brief} />
+          <LabClient brief={brief} attemptId={attemptId} sessionToken={sessionToken} />
         </div>
       </main>
     </>
