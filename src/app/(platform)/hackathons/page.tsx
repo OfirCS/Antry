@@ -1,6 +1,29 @@
+import type { Metadata } from "next";
 import { getHackathons } from "@/lib/supabase/queries";
 import { antathons as mockAntathons } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import HackathonsClient from "./HackathonsClient";
+
+const TITLE = "Antathons — 48-hour build events on Antry";
+const DESCRIPTION =
+  "Themed 48-hour build events for AI engineers. Ship something real, mint a Receipt, and let your work speak.";
+
+export const metadata: Metadata = {
+  title: "Antathons",
+  description: DESCRIPTION,
+  alternates: { canonical: "/hackathons" },
+  openGraph: defaultOpenGraph({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/hackathons",
+    image: ogImageUrl({
+      title: "Antathons.",
+      subtitle: "48-hour focused build events for AI engineers.",
+      eyebrow: "Antry · Antathons",
+    }),
+  }),
+  twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
+};
 
 export default async function HackathonsPage() {
   const dbHackathons = await getHackathons();

@@ -1,10 +1,33 @@
+import type { Metadata } from "next";
 import { getPlatformStats, getBuilders } from "@/lib/supabase/queries";
 import {
   builders as mockBuilders,
   projects as mockProjects,
   antathons as mockAntathons,
 } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import CompaniesClient from "./CompaniesClient";
+
+const TITLE = "For companies — hire AI engineers by what they shipped";
+const DESCRIPTION =
+  "Antry helps teams find AI engineers by signed Receipts — not résumés. Post a Brief, see how candidates think, hire on output.";
+
+export const metadata: Metadata = {
+  title: "For companies",
+  description: DESCRIPTION,
+  alternates: { canonical: "/companies" },
+  openGraph: defaultOpenGraph({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/companies",
+    image: ogImageUrl({
+      title: "Hire by Receipt.",
+      subtitle: "How AI engineers actually solve your problems.",
+      eyebrow: "Antry · For companies",
+    }),
+  }),
+  twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
+};
 
 export default async function CompaniesPage() {
   const dbStats = await getPlatformStats();

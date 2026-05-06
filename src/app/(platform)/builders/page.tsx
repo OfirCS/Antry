@@ -1,6 +1,29 @@
+import type { Metadata } from "next";
 import { getBuilders } from "@/lib/supabase/queries";
 import { builders as mockBuilders, projects as mockProjects } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import BuildersClient from "./BuildersClient";
+
+const TITLE = "Builders — AI engineers shipping on Antry";
+const DESCRIPTION =
+  "Find AI builders by what they shipped. Real projects, signed Receipts, and verifiable Builder Fingerprints.";
+
+export const metadata: Metadata = {
+  title: "Builders",
+  description: DESCRIPTION,
+  alternates: { canonical: "/builders" },
+  openGraph: defaultOpenGraph({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/builders",
+    image: ogImageUrl({
+      title: "Builders shipping on Antry.",
+      subtitle: "Find engineers by Receipt — not résumé.",
+      eyebrow: "Antry · Builders",
+    }),
+  }),
+  twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
+};
 
 export default async function BuildersPage() {
   const dbBuilders = await getBuilders();

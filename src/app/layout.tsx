@@ -17,9 +17,45 @@ const sans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const TITLE = "Antry — Where builders ship, not pitch";
+const TITLE = "Antry — Show your receipts.";
 const DESCRIPTION =
-  "Antry is the proof-of-work network for AI builders. Showcase shipped projects, join hackathons, and get discovered by teams that hire on output — not resumes.";
+  "Antry is the proof-of-work network for AI builders. Companies post Briefs. Builders solve them in an instrumented Lab. Antry mints a signed Receipt that captures not just what shipped — but how you got there.";
+
+function siteJsonLd(base: string) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${base}/#organization`,
+        name: "Antry",
+        url: base,
+        logo: `${base}/logo.png`,
+        description:
+          "Antry is the proof-of-work network for AI builders. Receipts show how you got there, not just what you shipped.",
+        sameAs: [
+          "https://github.com/OfirCS/Antry",
+          "https://x.com/antrynetwork",
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${base}/#website`,
+        name: "Antry",
+        url: base,
+        publisher: { "@id": `${base}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${base}/discover?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -79,9 +115,18 @@ export default function RootLayout({
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
   const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC || "https://plausible.io/js/script.js";
 
+  const base = siteUrl().replace(/\/$/, "");
+
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} h-full antialiased`}>
       <body className="min-h-full">
+        <Script
+          id="antry-org-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(siteJsonLd(base)),
+          }}
+        />
         <AuthProvider>{children}</AuthProvider>
         {plausibleDomain ? (
           <Script

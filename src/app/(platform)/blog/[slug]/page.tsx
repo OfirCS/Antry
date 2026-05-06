@@ -50,6 +50,29 @@ export async function generateMetadata({
   };
 }
 
+function blogJsonLd(post: {
+  slug: string;
+  title: string;
+  excerpt: string;
+  publishedAt: string;
+  author: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: { "@type": "Person", name: post.author },
+    publisher: { "@type": "Organization", name: "Antry" },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://antry.com/blog/${post.slug}`,
+    },
+  };
+}
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -61,18 +84,34 @@ export default async function BlogPostPage({
   // Try database first, then fall back to static posts
   if (post) {
     return (
-      <BlogPostClient
-        post={{
-          slug: post.slug,
-          title: post.title,
-          excerpt: post.excerpt,
-          content: post.content,
-          category: post.category,
-          read_time: post.read_time,
-          published_at: post.published_at,
-          author: "Antry Team",
-        }}
-      />
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              blogJsonLd({
+                slug: post.slug,
+                title: post.title,
+                excerpt: post.excerpt,
+                publishedAt: post.published_at ?? new Date().toISOString(),
+                author: "Antry Team",
+              })
+            ),
+          }}
+        />
+        <BlogPostClient
+          post={{
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            content: post.content,
+            category: post.category,
+            read_time: post.read_time,
+            published_at: post.published_at,
+            author: "Antry Team",
+          }}
+        />
+      </>
     );
   }
 

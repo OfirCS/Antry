@@ -117,6 +117,10 @@ export type Receipt = {
   composite_score: number;
   trace_visibility: TraceVisibility;
   display_visibility: ReceiptVisibility;
+  // Signature persisted at mint time. Verifier compares against this — never
+  // re-signs and self-verifies. May be undefined for demo rows where the
+  // signature is computed lazily.
+  signature?: string;
   content_hash: string;
   signed_at: string;
   tokens_spent: number;

@@ -15,9 +15,12 @@ import {
 } from "@/lib/receipts/fingerprint";
 import type { AttemptTelemetry } from "@/lib/receipts/fingerprint";
 import { getDemoBrief } from "@/lib/receipts/demo-data";
+import { createClient } from "@/lib/supabase/server";
 
 // Open a new Lab session for a builder on a Brief.
-// Returns: a signed session token + the attempt ID, scoped to a 4-hour TTL.
+// Requires authentication in production so the gateway can't be used as a
+// free Anthropic relay. Set ANTRY_ALLOW_ANON_LAB=1 to permit anonymous Lab
+// sessions in non-production environments only.
 export async function enterBriefAction(briefSlug: string): Promise<{
   attemptId: string;
   briefId: string;
@@ -26,10 +29,19 @@ export async function enterBriefAction(briefSlug: string): Promise<{
   const brief = getDemoBrief(briefSlug);
   if (!brief) throw new Error("brief_not_found");
 
-  // In dev: stable builder id. In prod: from supabase auth.uid().
-  // We use a per-session value so each browser tab gets a fresh attempt.
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  const user = data.user;
+
+  const allowAnonymous =
+    process.env.NODE_ENV !== "production" || process.env.ANTRY_ALLOW_ANON_LAB === "1";
+
+  if (!user && !allowAnonymous) {
+    throw new Error("authentication_required");
+  }
+
   const attemptId = `att_${randomUUID()}`;
-  const builderId = "anonymous-builder";
+  const builderId = user?.id ?? "anonymous-builder";
 
   createAttempt({
     attemptId,

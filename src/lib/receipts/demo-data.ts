@@ -6,6 +6,7 @@
 // and reference content.
 
 import type { Brief, Fingerprint, Receipt } from "./types";
+import { signReceipt, type CanonicalReceipt } from "./sign";
 
 export const demoCompanies = {
   anthropic: {
@@ -458,4 +459,31 @@ export function getDemoReceiptsForBuilder(username: string): Receipt[] {
 
 export function getDemoReceipt(id: string): Receipt | null {
   return demoReceipts.find((r) => r.id === id) ?? null;
+}
+
+/**
+ * Signatures minted at module load — simulates the production flow where the
+ * signature is computed once at mint time and stored on the row. The verifier
+ * compares against this value rather than re-signing the live data, so mutating
+ * any field after this point breaks the verification.
+ *
+ * In dev/preview the signing key is the documented fallback. In production
+ * (RECEIPT_HMAC_SECRET set) these are signed with the real key.
+ */
+const STORED_SIGNATURES: ReadonlyMap<string, string> = new Map(
+  demoReceipts.map((r) => {
+    const canonical: CanonicalReceipt = {
+      id: r.id,
+      brief_id: r.brief_id,
+      builder_id: r.builder.username,
+      fingerprint: r.fingerprint as Record<string, number>,
+      composite_score: r.composite_score,
+      signed_at: r.signed_at,
+    };
+    return [r.id, signReceipt(canonical)] as const;
+  })
+);
+
+export function getStoredReceiptSignature(id: string): string | undefined {
+  return STORED_SIGNATURES.get(id);
 }

@@ -21,6 +21,8 @@
 import { NextResponse } from "next/server";
 import { createHash, createHmac } from "node:crypto";
 import { verifyLabSession } from "@/lib/receipts/lab-session";
+import { getReceiptSecret } from "@/lib/receipts/secret";
+import { createClient } from "@/lib/supabase/server";
 import {
   getAttempt,
   appendCall,
@@ -53,17 +55,42 @@ type GatewayRequest = {
   [k: string]: unknown;
 };
 
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
+// Same-origin only. The gateway is not a public API; the only consumer is the
+// Antry Lab UI on the same domain. Reject cross-origin requests outright so a
+// stolen session token can't be used from a phishing page.
+const ALLOWED_ORIGINS = (process.env.GATEWAY_ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return true; // same-origin requests omit Origin
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  // Localhost dev convenience.
+  if (process.env.NODE_ENV !== "production" && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+    return true;
+  }
+  return false;
+}
+
+function corsHeaders(origin: string | null) {
+  const h: Record<string, string> = {
+    Vary: "Origin",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Antry-Lab-Session",
     "Access-Control-Max-Age": "86400",
   };
+  if (origin && isAllowedOrigin(origin)) {
+    h["Access-Control-Allow-Origin"] = origin;
+  }
+  return h;
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+export async function OPTIONS(req: Request) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders(req.headers.get("origin")),
+  });
 }
 
 function toolType(name: string): "deterministic" | "generative" {
@@ -72,10 +99,6 @@ function toolType(name: string): "deterministic" | "generative" {
   // judge, summarize, classify → generative.
   const det = new Set(["file_search", "code_run", "schema_lookup", "grep", "fetch_url"]);
   return det.has(name) ? "deterministic" : "generative";
-}
-
-function getSecret(): string {
-  return process.env.RECEIPT_HMAC_SECRET || "antry-dev-receipt-secret-do-not-use-in-prod";
 }
 
 function signCall(call: Omit<StoredCall, "receiptSignature" | "responseHash">): string {
@@ -88,18 +111,28 @@ function signCall(call: Omit<StoredCall, "receiptSignature" | "responseHash">): 
     toolCalls: call.toolCalls,
     createdAt: call.createdAt,
   });
-  return createHmac("sha256", getSecret()).update(canonical).digest("base64url");
+  return createHmac("sha256", getReceiptSecret()).update(canonical).digest("base64url");
 }
 
 export async function POST(req: Request) {
   const start = Date.now();
+  const origin = req.headers.get("origin");
+
+  // Same-origin enforcement — reject before doing any work.
+  if (origin && !isAllowedOrigin(origin)) {
+    return NextResponse.json(
+      { error: "origin_not_allowed" },
+      { status: 403, headers: corsHeaders(origin) }
+    );
+  }
+
   let body: GatewayRequest;
   try {
     body = (await req.json()) as GatewayRequest;
   } catch {
     return NextResponse.json(
       { error: "invalid_json" },
-      { status: 400, headers: corsHeaders() }
+      { status: 400, headers: corsHeaders(origin) }
     );
   }
 
@@ -108,14 +141,41 @@ export async function POST(req: Request) {
   if (!session.ok) {
     return NextResponse.json(
       { error: "lab_session_invalid", reason: session.reason },
-      { status: 401, headers: corsHeaders() }
+      { status: 401, headers: corsHeaders(origin) }
     );
   }
   const { attemptId, briefId, builderId } = session.payload;
 
+  // Bind the session to the calling user. This stops a leaked token from being
+  // replayed by another account. We accept anonymous-builder sessions only
+  // outside production (e.g. local dev) where authentication isn't required.
+  let callerId: string | null = null;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    callerId = data.user?.id ?? null;
+  } catch {
+    callerId = null;
+  }
+  const allowAnonymous =
+    process.env.NODE_ENV !== "production" || process.env.ANTRY_ALLOW_ANON_LAB === "1";
+  const expectingAnon = builderId === "anonymous-builder";
+
+  if (!expectingAnon && callerId !== builderId) {
+    return NextResponse.json(
+      { error: "session_owner_mismatch" },
+      { status: 403, headers: corsHeaders(origin) }
+    );
+  }
+  if (expectingAnon && !allowAnonymous) {
+    return NextResponse.json(
+      { error: "authentication_required" },
+      { status: 401, headers: corsHeaders(origin) }
+    );
+  }
+
   // Lazy-create the attempt if missing — session token is verified, so the
-  // (attemptId, builderId, briefId) tuple is trustworthy. Survives in-memory
-  // store rotations across HMR and route-handler boundaries in dev.
+  // (attemptId, builderId, briefId) tuple is trustworthy.
   let attempt = getAttempt(attemptId);
   if (!attempt) {
     attempt = createAttempt({ attemptId, briefId, builderId });
@@ -124,7 +184,7 @@ export async function POST(req: Request) {
   if (attempt.status !== "in_progress") {
     return NextResponse.json(
       { error: "attempt_closed", status: attempt.status },
-      { status: 409, headers: corsHeaders() }
+      { status: 409, headers: corsHeaders(origin) }
     );
   }
 
@@ -136,7 +196,7 @@ export async function POST(req: Request) {
     setAttemptStatus(attemptId, "budget_exceeded");
     return NextResponse.json(
       { error: "budget_exceeded" },
-      { status: 402, headers: corsHeaders() }
+      { status: 402, headers: corsHeaders(origin) }
     );
   }
 
@@ -314,7 +374,7 @@ export async function POST(req: Request) {
   // Compute headers (best-effort — exact totals known after stream completes).
   const remaining = Math.max(0, budgetCap - attempt.tokensSpent);
   const headers = new Headers({
-    ...corsHeaders(),
+    ...corsHeaders(origin),
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache, no-transform",
     "X-Response-Time": `${Date.now() - start}ms`,

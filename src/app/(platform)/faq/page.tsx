@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
-import { defaultOpenGraph, defaultTwitter, ogImageUrl, siteUrl } from "@/lib/seo";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { FaqClient, type FaqItem } from "./FaqClient";
 
 const TITLE = "FAQ — answers about Antry";
@@ -104,7 +104,6 @@ export default function FaqPage() {
           </div>
         </section>
       </main>
-      <link rel="canonical" href={`${siteUrl()}/faq`} />
     </>
   );
 }

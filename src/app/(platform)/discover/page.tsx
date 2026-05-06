@@ -1,7 +1,30 @@
+import type { Metadata } from "next";
 import { getProjects } from "@/lib/supabase/queries";
 import { getBuilders } from "@/lib/supabase/queries";
 import { projects as mockProjects, builders as mockBuilders } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import DiscoverClient from "./DiscoverClient";
+
+const TITLE = "Discover — projects shipped on Antry";
+const DESCRIPTION =
+  "Browse real projects shipped by AI builders on Antry. Demo links, tech stacks, and signed Receipts that show how each one came together.";
+
+export const metadata: Metadata = {
+  title: "Discover",
+  description: DESCRIPTION,
+  alternates: { canonical: "/discover" },
+  openGraph: defaultOpenGraph({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/discover",
+    image: ogImageUrl({
+      title: "Discover what builders ship.",
+      subtitle: "Real projects. Live demos. Verifiable Receipts.",
+      eyebrow: "Antry · Discover",
+    }),
+  }),
+  twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
+};
 
 export default async function DiscoverPage() {
   const [dbProjects, dbBuilders] = await Promise.all([

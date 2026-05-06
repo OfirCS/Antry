@@ -3,6 +3,7 @@
 // short-lived. Verified at the top of every gateway request.
 
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { getReceiptSecret } from "./secret";
 
 export type LabSessionPayload = {
   attemptId: string;
@@ -12,10 +13,6 @@ export type LabSessionPayload = {
 };
 
 const SESSION_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
-
-function getSecret(): string {
-  return process.env.RECEIPT_HMAC_SECRET || "antry-dev-receipt-secret-do-not-use-in-prod";
-}
 
 function b64url(buf: Buffer): string {
   return buf.toString("base64url");
@@ -35,7 +32,7 @@ export function signLabSession(
   };
   const json = JSON.stringify(full);
   const body = b64url(Buffer.from(json));
-  const sig = createHmac("sha256", getSecret()).update(body).digest("base64url");
+  const sig = createHmac("sha256", getReceiptSecret()).update(body).digest("base64url");
   return `${body}.${sig}`;
 }
 
@@ -46,7 +43,7 @@ export function verifyLabSession(
   const [body, sig] = token.split(".");
   if (!body || !sig) return { ok: false, reason: "malformed" };
 
-  const expected = createHmac("sha256", getSecret()).update(body).digest("base64url");
+  const expected = createHmac("sha256", getReceiptSecret()).update(body).digest("base64url");
   // Constant-time comparison.
   const a = Buffer.from(sig);
   const b = Buffer.from(expected);

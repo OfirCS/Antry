@@ -2,12 +2,16 @@
 //
 // Confirms the Receipt is signed by Antry. Companies (and anyone else) can
 // hit this endpoint to cryptographically verify a Receipt without trusting
-// the rendered page. Returns the canonical signed object + verification
-// status, with CORS so it can be consumed from any origin.
+// the rendered page. CORS-enabled GET; consumable from any origin.
+//
+// SECURITY NOTE: this endpoint compares the freshly-canonicalized receipt
+// against the signature persisted at mint time. It never signs the live
+// values and reports them verified. If a row has been tampered with after
+// minting, `verified` is false and a 422 is returned.
 
 import { NextResponse } from "next/server";
-import { signReceipt, verifyReceipt, contentHash } from "@/lib/receipts/sign";
-import { getDemoReceipt } from "@/lib/receipts/demo-data";
+import { verifyReceipt, contentHash } from "@/lib/receipts/sign";
+import { getDemoReceipt, getStoredReceiptSignature } from "@/lib/receipts/demo-data";
 
 export const runtime = "nodejs";
 
@@ -29,8 +33,6 @@ export async function GET(
 ) {
   const { id } = await ctx.params;
 
-  // For now, source from demo data. When Supabase has real receipts,
-  // this resolves there too.
   const r = getDemoReceipt(id);
   if (!r) {
     return NextResponse.json(
@@ -48,16 +50,24 @@ export async function GET(
     signed_at: r.signed_at,
   };
 
-  const expectedSig = signReceipt(canonical);
-  // Demo receipts get a server-side signature; in production this is the
-  // signature stored at mint time.
-  const ver = verifyReceipt(canonical, expectedSig);
+  // Stored signature: r.signature on real prod rows, else the signature minted
+  // at module load for demo rows. NEVER recompute and self-compare.
+  const storedSignature = r.signature ?? getStoredReceiptSignature(r.id);
+  if (!storedSignature) {
+    return NextResponse.json(
+      { ok: false, verified: false, error: "no_signature_on_record" },
+      { status: 422, headers: cors() }
+    );
+  }
+
+  const ver = verifyReceipt(canonical, storedSignature);
   const computedHash = contentHash(canonical);
 
   return NextResponse.json(
     {
       ok: ver.ok,
       verified: ver.ok,
+      reason: ver.reason,
       receipt: canonical,
       brief: {
         id: r.brief_id,
@@ -70,13 +80,16 @@ export async function GET(
       signed_at: r.signed_at,
       content_hash: r.content_hash,
       computed_content_hash: computedHash,
-      signature: expectedSig,
+      signature: storedSignature,
       tokens_spent: r.tokens_spent,
       cost_usd_cents: r.cost_usd_cents,
       attempt_duration_seconds: r.attempt_duration_seconds,
       issuer: "antry",
       verification_url: `https://antry.com/api/v1/receipts/${id}/verify`,
     },
-    { headers: { ...cors(), "Cache-Control": "public, max-age=60" } }
+    {
+      status: ver.ok ? 200 : 422,
+      headers: { ...cors(), "Cache-Control": "public, max-age=60" },
+    }
   );
 }
