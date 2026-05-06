@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl, siteUrl } from "@/lib/seo";
+import { FaqClient, type FaqItem } from "./FaqClient";
 
 const TITLE = "FAQ — answers about Antry";
 const DESCRIPTION = "How Antry works, who it's for, what's free, and what's coming next.";
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
-const faqs: { q: string; a: string }[] = [
+const faqs: FaqItem[] = [
   {
     q: "What is Antry?",
     a: "Antry is a community for AI builders. Instead of resumes or LinkedIn profiles, your identity on Antry is a set of shipped projects with live demos, real tech stacks, and verifiable build histories. Recruiters and teams find you through the Scout agent — natural-language search across the network.",
@@ -78,48 +78,29 @@ export default function FaqPage() {
   return (
     <>
       <Nav />
-      <main className="bg-white">
+      <main>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd()) }}
         />
+
         <section className="bg-white">
-          <div className="mx-auto max-w-[760px] px-6 py-20 sm:px-10 sm:py-28">
-            <p className="text-[12px] font-bold uppercase tracking-[0.2em] text-gray-400">FAQ</p>
-            <h1 className="mt-3 font-display text-[clamp(2rem,4.5vw,3rem)] font-bold tracking-[-0.03em] text-black">
+          <div className="mx-auto max-w-[760px] px-6 pt-20 sm:pt-28 pb-6 sm:px-10">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">FAQ</p>
+            <h1 className="mt-3 font-display text-[clamp(2.2rem,4.8vw,3.2rem)] font-bold tracking-[-0.035em] text-black leading-[1.05]">
               Answers, in plain English.
             </h1>
-            <p className="mt-3 text-[15px] text-gray-500 max-w-[560px]">
+            <p className="mt-4 text-[15px] text-gray-600 max-w-[560px] leading-relaxed">
               Got a question we missed? Email{" "}
-              <a className="underline" href="mailto:[email protected]">[email protected]</a>{" "}
+              <a className="text-black font-semibold underline underline-offset-4" href="mailto:[email protected]">[email protected]</a>{" "}
               — a real person reads it.
             </p>
+          </div>
+        </section>
 
-            <div className="mt-12 divide-y divide-gray-100 border-t border-gray-100">
-              {faqs.map((f) => (
-                <details key={f.q} className="group py-6">
-                  <summary className="cursor-pointer list-none flex items-start justify-between gap-4">
-                    <h3 className="text-[17px] font-bold tracking-tight text-black pr-4">{f.q}</h3>
-                    <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 text-gray-500 group-open:rotate-45 transition-transform">+</span>
-                  </summary>
-                  <p className="mt-3 text-[15px] leading-relaxed text-gray-600">{f.a}</p>
-                </details>
-              ))}
-            </div>
-
-            <div className="mt-14 rounded-[20px] border border-gray-200 bg-[#FAFAF7] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h3 className="text-[16px] font-bold tracking-tight text-black">Ready to claim your card?</h3>
-                <p className="mt-1 text-[14px] text-gray-600">Takes 5 seconds. Paste your GitHub username.</p>
-              </div>
-              <Link
-                href="/claim-card"
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-5 h-[44px] text-[14px] font-semibold whitespace-nowrap"
-                style={{ background: "#C6F135", color: "#111" }}
-              >
-                Try Antry Card
-              </Link>
-            </div>
+        <section className="bg-white pb-24">
+          <div className="mx-auto max-w-[760px] px-6 sm:px-10">
+            <FaqClient faqs={faqs} />
           </div>
         </section>
       </main>

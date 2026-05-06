@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   ArrowRight,
@@ -311,63 +312,133 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Onboarding checklist (until all steps done) ──── */}
-      {showOnboarding && (
-        <div className="mb-10 rounded-2xl border border-[#EBEBEB] bg-white overflow-hidden">
-          <div className="px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5] bg-[#FAFAF7]">
-            <div className="flex items-center gap-2.5">
-              <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(198,241,53,0.18)" }}>
-                <Sparkles className="w-3.5 h-3.5 text-[#0A0A0A]" />
-              </div>
-              <div>
-                <p className="text-[13px] font-bold text-[#111111] tracking-tight">Get set up</p>
-                <p className="text-[11px] text-[#A3A3A3] tabular-nums">
-                  {completedSteps}/{onboardingSteps.length} complete
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {onboardingSteps.map((s) => (
-                <span
-                  key={s.key}
-                  className="h-1.5 w-6 rounded-full transition-colors"
-                  style={{ background: s.done ? "#C6F135" : "#EBEBEB" }}
-                />
-              ))}
-            </div>
-          </div>
-          <ul className="divide-y divide-[#F5F5F5]">
-            {onboardingSteps.map((s) => (
-              <li key={s.key}>
-                <Link
-                  href={s.href}
-                  className="flex items-center gap-3.5 px-5 py-3.5 group hover:bg-[#FAFAFA] transition-colors"
+      <AnimatePresence>
+        {showOnboarding && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-10 rounded-2xl bg-white overflow-hidden relative"
+            style={{
+              border: "1px solid #EBEBEB",
+              boxShadow: "0 1px 0 rgba(0,0,0,0.03), 0 12px 32px -16px rgba(0,0,0,0.08)",
+            }}
+          >
+            <div
+              className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
+              style={{
+                background: "radial-gradient(circle, rgba(198,241,53,0.12) 0%, transparent 70%)",
+              }}
+            />
+            <div className="relative px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
+              <div className="flex items-center gap-2.5">
+                <motion.div
+                  animate={{ rotate: [0, 8, -6, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="h-8 w-8 rounded-lg flex items-center justify-center"
+                  style={{ background: "rgba(198,241,53,0.18)" }}
                 >
-                  <span
-                    className="h-7 w-7 rounded-full flex items-center justify-center shrink-0 border transition-colors"
-                    style={{
-                      background: s.done ? "#C6F135" : "transparent",
-                      borderColor: s.done ? "#C6F135" : "#D4D4D4",
-                      color: s.done ? "#0A0A0A" : "#737373",
+                  <Sparkles className="w-3.5 h-3.5 text-[#0A0A0A]" />
+                </motion.div>
+                <div>
+                  <p className="text-[13px] font-bold text-[#111111] tracking-tight">Get set up</p>
+                  <p className="text-[11px] text-[#A3A3A3] tabular-nums">
+                    {completedSteps}/{onboardingSteps.length} complete
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {onboardingSteps.map((s, i) => (
+                  <motion.span
+                    key={s.key}
+                    initial={false}
+                    animate={{
+                      backgroundColor: s.done ? "#C6F135" : "#EBEBEB",
+                      width: s.done ? 28 : 24,
+                    }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className="h-1.5 rounded-full"
+                  />
+                ))}
+              </div>
+            </div>
+            <ul className="divide-y divide-[#F5F5F5]">
+              {onboardingSteps.map((s, i) => (
+                <motion.li
+                  key={s.key}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.06, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <Link
+                    href={s.href}
+                    className="flex items-center gap-3.5 px-5 py-4 group transition-colors"
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = s.done
+                        ? "transparent"
+                        : "rgba(198,241,53,0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
                     }}
                   >
-                    {s.done ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : s.icon}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className="text-[14px] font-medium text-[#111111]"
-                      style={{ textDecoration: s.done ? "line-through" : "none", opacity: s.done ? 0.5 : 1 }}
+                    <motion.span
+                      animate={{
+                        background: s.done ? "#C6F135" : "transparent",
+                        borderColor: s.done ? "#C6F135" : "#D4D4D4",
+                        scale: s.done ? [1, 1.15, 1] : 1,
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 border"
+                      style={{ color: s.done ? "#0A0A0A" : "#737373" }}
                     >
-                      {s.title}
-                    </p>
-                    <p className="text-[12px] text-[#A3A3A3]">{s.desc}</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-[#D4D4D4] group-hover:text-[#111111] transition-colors shrink-0" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                      <AnimatePresence mode="wait" initial={false}>
+                        {s.done ? (
+                          <motion.span
+                            key="check"
+                            initial={{ scale: 0, rotate: -90 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            exit={{ scale: 0 }}
+                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                          </motion.span>
+                        ) : (
+                          <motion.span
+                            key="icon"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {s.icon}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </motion.span>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-[14px] font-semibold transition-all"
+                        style={{
+                          textDecoration: s.done ? "line-through" : "none",
+                          color: s.done ? "#A3A3A3" : "#111111",
+                        }}
+                      >
+                        {s.title}
+                      </p>
+                      <p className="text-[12px] text-[#737373]">{s.desc}</p>
+                    </div>
+                    {!s.done && (
+                      <ArrowRight className="w-4 h-4 text-[#D4D4D4] group-hover:text-[#0A0A0A] group-hover:translate-x-0.5 transition-all shrink-0" />
+                    )}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Quick actions ────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3 mb-10">
@@ -508,44 +579,78 @@ export default function DashboardPage() {
 
       {/* ── Invite codes ─────────────────────────────────── */}
       {profileData.invite_code && (
-        <div className="mb-10 rounded-2xl border border-[#EBEBEB] bg-white overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-10 rounded-2xl bg-white overflow-hidden relative"
+          style={{
+            border: "1px solid #EBEBEB",
+            boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
+          }}
+        >
           <div className="px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
             <div>
               <p className="text-[13px] font-bold text-[#111111] tracking-tight">Invite a builder</p>
               <p className="text-[12px] text-[#A3A3A3] mt-0.5">
-                You have invites. Friends who use this link skip the waitlist.
+                Friends who use this link skip the waitlist.
               </p>
             </div>
             <span
-              className="text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-1 rounded"
-              style={{ background: "rgba(198,241,53,0.18)", color: "#0A0A0A" }}
+              className="text-[10px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded-md"
+              style={{ background: "rgba(198,241,53,0.20)", color: "#0A0A0A" }}
             >
               Beta perk
             </span>
           </div>
           <div className="px-5 py-4 flex items-center gap-3">
-            <code className="flex-1 min-w-0 text-[13px] font-mono text-[#525252] truncate">
+            <div
+              className="flex-1 min-w-0 text-[13px] font-mono text-[#525252] truncate px-3 py-2 rounded-lg"
+              style={{ background: "#FAFAF7", border: "1px solid #F5F5F5" }}
+            >
               {inviteUrl || `Code: ${profileData.invite_code}`}
-            </code>
-            <button
+            </div>
+            <motion.button
               type="button"
               onClick={handleCopyInvite}
               disabled={!inviteUrl}
-              className="inline-flex items-center gap-1.5 rounded-lg px-3 h-8 text-[12px] font-semibold transition-colors shrink-0 disabled:opacity-50"
-              style={{ background: "#0A0A0A", color: "#fff" }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.15 }}
+              className="inline-flex items-center gap-1.5 rounded-lg px-4 h-9 text-[12px] font-semibold transition-all shrink-0 disabled:opacity-50"
+              style={{
+                background: inviteCopied ? "#C6F135" : "#0A0A0A",
+                color: inviteCopied ? "#0A0A0A" : "#fff",
+              }}
             >
-              {inviteCopied ? (
-                <>
-                  <Check className="w-3.5 h-3.5" /> Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" /> Copy link
-                </>
-              )}
-            </button>
+              <AnimatePresence mode="wait" initial={false}>
+                {inviteCopied ? (
+                  <motion.span
+                    key="copied"
+                    initial={{ scale: 0, rotate: -90 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="inline-flex items-center gap-1.5"
+                  >
+                    <Check className="w-3.5 h-3.5" strokeWidth={3} /> Copied
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="copy"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-1.5"
+                  >
+                    <Copy className="w-3.5 h-3.5" /> Copy link
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* ── Activity ─────────────────────────────────────── */}

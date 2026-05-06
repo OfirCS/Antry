@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
+import { ArrowRight } from "lucide-react";
 
 const TITLE = "Changelog — what shipped on Antry";
 const DESCRIPTION = "We ship every week. Here's what landed and when.";
@@ -114,63 +115,149 @@ const RELEASES: Release[] = [
 ];
 
 const tagStyles: Record<Release["category"], { bg: string; color: string; label: string }> = {
-  feature: { bg: "rgba(198,241,53,0.18)", color: "#0A0A0A", label: "Feature" },
-  fix: { bg: "rgba(245,158,11,0.18)", color: "#7c2d12", label: "Fix" },
-  infra: { bg: "rgba(99,102,241,0.18)", color: "#312e81", label: "Infra" },
+  feature: { bg: "rgba(198,241,53,0.20)", color: "#0A0A0A", label: "Feature" },
+  fix: { bg: "rgba(245,158,11,0.18)", color: "#92400E", label: "Fix" },
+  infra: { bg: "rgba(99,102,241,0.16)", color: "#3730A3", label: "Infra" },
 };
 
 export default function ChangelogPage() {
   return (
     <>
       <Nav />
-      <main className="bg-white">
-        <section className="bg-white">
-          <div className="mx-auto max-w-[760px] px-6 py-20 sm:px-10 sm:py-28">
-            <p className="text-[12px] font-bold uppercase tracking-[0.2em] text-gray-400">Changelog</p>
-            <h1 className="mt-3 font-display text-[clamp(2rem,4.5vw,3rem)] font-bold tracking-[-0.03em] text-black">
-              What shipped, when.
-            </h1>
-            <p className="mt-3 text-[15px] text-gray-500 max-w-[560px]">
-              We ship every week. The list grows from here. Subscribe to the{" "}
-              <Link href="/blog" className="underline">build log</Link> for the &quot;why&quot; behind each release.
-            </p>
+      <main>
+        <ChangelogHero />
 
-            <ol className="mt-14 space-y-12 relative border-l border-gray-100 pl-8">
-              {RELEASES.map((r) => {
+        <section className="bg-white">
+          <div className="mx-auto max-w-[760px] px-6 sm:px-10 -mt-20 sm:-mt-24 pb-24 relative z-10">
+            <ol className="space-y-12 sm:space-y-16 relative">
+              {/* Timeline rail */}
+              <div
+                className="absolute left-[7px] top-1.5 bottom-2 w-px"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #C6F135 0%, #EBEBEB 12%, #EBEBEB 100%)",
+                }}
+                aria-hidden="true"
+              />
+
+              {RELEASES.map((r, i) => {
                 const tag = tagStyles[r.category];
+                const isLatest = i === 0;
                 return (
-                  <li key={r.version} className="relative">
+                  <li key={r.version} className="relative pl-9">
+                    {/* Timeline dot */}
                     <span
-                      className="absolute -left-[37px] top-1 inline-flex items-center justify-center w-4 h-4 rounded-full"
-                      style={{ background: "#C6F135", border: "3px solid #fff", boxShadow: "0 0 0 1px #EBEBEB" }}
-                    />
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span
-                        className="text-[11px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded"
-                        style={{ background: tag.bg, color: tag.color }}
-                      >
-                        {tag.label}
-                      </span>
-                      <span className="text-[13px] text-gray-500 font-mono">v{r.version}</span>
-                      <span className="text-[13px] text-gray-400">·</span>
-                      <span className="text-[13px] text-gray-500">{r.date}</span>
+                      className="absolute left-0 top-1 inline-flex items-center justify-center w-[15px] h-[15px] rounded-full"
+                      style={{
+                        background: isLatest ? "#C6F135" : "#FFFFFF",
+                        border: isLatest ? "none" : "2px solid #D4D4D4",
+                        boxShadow: isLatest
+                          ? "0 0 0 4px #FFFFFF, 0 0 0 5px #C6F135"
+                          : "0 0 0 3px #FFFFFF",
+                      }}
+                    >
+                      {isLatest && (
+                        <span
+                          className="absolute inset-0 rounded-full animate-ping"
+                          style={{ background: "#C6F135", opacity: 0.6 }}
+                        />
+                      )}
+                    </span>
+
+                    <div className="rounded-[20px] p-5 sm:p-6 bg-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-16px_rgba(0,0,0,0.10)]"
+                         style={{ border: "1px solid #EBEBEB" }}>
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded-md"
+                          style={{ background: tag.bg, color: tag.color }}
+                        >
+                          {tag.label}
+                        </span>
+                        <span
+                          className="text-[12px] font-mono font-semibold tabular-nums px-2 py-0.5 rounded-md"
+                          style={{ background: "#F5F5F5", color: "#525252" }}
+                        >
+                          v{r.version}
+                        </span>
+                        <span className="text-gray-300">·</span>
+                        <span className="text-[12px] text-gray-500 tabular-nums">{r.date}</span>
+                        {isLatest && (
+                          <span
+                            className="ml-auto text-[10px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded-md"
+                            style={{ background: "#0A0A0A", color: "#C6F135" }}
+                          >
+                            Latest
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-[18px] sm:text-[19px] font-bold tracking-[-0.015em] text-black leading-[1.3]">
+                        {r.title}
+                      </h3>
+                      <ul className="mt-4 space-y-2 text-[14px] leading-[1.6] text-gray-700">
+                        {r.highlights.map((h) => (
+                          <li key={h} className="flex items-start gap-2.5">
+                            <span
+                              className="mt-[7px] inline-block w-1 h-1 rounded-full shrink-0"
+                              style={{ background: "#C6F135" }}
+                            />
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <h3 className="mt-2 text-[18px] font-bold tracking-tight text-black">{r.title}</h3>
-                    <ul className="mt-3 space-y-2 text-[14px] leading-relaxed text-gray-700">
-                      {r.highlights.map((h) => (
-                        <li key={h} className="flex items-start gap-2">
-                          <span className="mt-2 inline-block w-1 h-1 rounded-full bg-gray-400 shrink-0" />
-                          <span>{h}</span>
-                        </li>
-                      ))}
-                    </ul>
                   </li>
                 );
               })}
             </ol>
+
+            {/* Subscribe CTA */}
+            <div className="mt-16 rounded-[24px] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative overflow-hidden"
+                 style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}>
+              <div>
+                <h3 className="text-[16px] sm:text-[17px] font-bold tracking-[-0.01em] text-black">
+                  Want the &quot;why&quot; behind each release?
+                </h3>
+                <p className="mt-1 text-[14px] text-gray-600">
+                  Read the build log — short essays on what we shipped and why.
+                </p>
+              </div>
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-1.5 rounded-[12px] px-4 h-[42px] text-[13px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+                style={{ background: "#0A0A0A", color: "#fff" }}
+              >
+                Read the blog <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </section>
       </main>
     </>
+  );
+}
+
+function ChangelogHero() {
+  return (
+    <section className="relative overflow-hidden" style={{ background: "#0A0A0A" }}>
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(198,241,53,0.14) 0%, transparent 55%)",
+        }}
+      />
+      <div className="relative mx-auto max-w-[920px] px-6 pt-24 pb-32 sm:px-10 sm:pt-28 sm:pb-36 text-center">
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: "#C6F135" }}>
+          Changelog
+        </p>
+        <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.035em]"
+            style={{ color: "#FFFFFF" }}>
+          What shipped, when.
+        </h1>
+        <p className="mt-6 max-w-[520px] mx-auto text-[16px] leading-[1.6]" style={{ color: "rgba(255,255,255,0.65)" }}>
+          We ship every week. The list grows from here.
+        </p>
+      </div>
+    </section>
   );
 }
