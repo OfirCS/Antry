@@ -20,6 +20,7 @@ function checkIsAdmin(userId: string | undefined): boolean {
 const navLinks = [
   { href: "/discover", label: "Discover" },
   { href: "/builders", label: "Builders" },
+  { href: "/briefs", label: "Briefs" },
   { href: "/hackathons", label: "Hackathons" },
   { href: "/agent", label: "Scout" },
 ];

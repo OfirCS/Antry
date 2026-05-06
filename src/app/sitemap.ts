@@ -2,13 +2,17 @@ import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 import { staticPosts } from "@/app/(platform)/blog/posts";
 import { getProjects, getBuilders, getHackathons, getBlogPosts } from "@/lib/supabase/queries";
+import { demoBriefs, demoReceipts, demoCompanies } from "@/lib/receipts/demo-data";
 
 const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/discover", changeFrequency: "daily", priority: 0.9 },
   { path: "/builders", changeFrequency: "daily", priority: 0.9 },
+  { path: "/briefs", changeFrequency: "daily", priority: 0.95 },
+  { path: "/receipts/methodology", changeFrequency: "monthly", priority: 0.7 },
   { path: "/hackathons", changeFrequency: "weekly", priority: 0.8 },
+  { path: "/claim-card", changeFrequency: "monthly", priority: 0.85 },
   { path: "/companies", changeFrequency: "monthly", priority: 0.6 },
   { path: "/showcase", changeFrequency: "weekly", priority: 0.6 },
   { path: "/blog", changeFrequency: "weekly", priority: 0.7 },
@@ -40,6 +44,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: post.date ? new Date(post.date) : now,
       changeFrequency: "monthly",
       priority: 0.6,
+    });
+  }
+
+  // Briefs (demo + future Supabase merge)
+  for (const brief of demoBriefs) {
+    entries.push({
+      url: `${base}/briefs/${brief.slug}`,
+      lastModified: new Date(brief.created_at),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    });
+  }
+
+  // Receipts (public artifacts)
+  for (const r of demoReceipts) {
+    if (r.display_visibility !== "public") continue;
+    entries.push({
+      url: `${base}/receipts/${r.id}`,
+      lastModified: new Date(r.signed_at),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
+
+  // Companies
+  for (const c of Object.values(demoCompanies)) {
+    entries.push({
+      url: `${base}/c/${c.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.7,
     });
   }
 
