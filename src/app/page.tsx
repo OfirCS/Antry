@@ -1718,15 +1718,30 @@ export default function Home() {
                 {[
                   {
                     title: "Product",
-                    links: ["Builders", "Hackathons", "AI Scout", "Pricing"],
+                    links: [
+                      { label: "Builders", href: "/builders" },
+                      { label: "Hackathons", href: "/hackathons" },
+                      { label: "AI Scout", href: "/agent" },
+                      { label: "Antry Card", href: "/claim-card" },
+                      { label: "Pricing", href: "/pricing" },
+                    ],
                   },
                   {
                     title: "Company",
-                    links: ["About", "Blog", "Careers", "Contact"],
+                    links: [
+                      { label: "About", href: "/about" },
+                      { label: "Blog", href: "/blog" },
+                      { label: "Changelog", href: "/changelog" },
+                      { label: "Press", href: "/press" },
+                      { label: "FAQ", href: "/faq" },
+                    ],
                   },
                   {
                     title: "Legal",
-                    links: ["Privacy", "Terms", "Security"],
+                    links: [
+                      { label: "Privacy", href: "/privacy" },
+                      { label: "Terms", href: "/terms" },
+                    ],
                   },
                 ].map((col) => (
                   <div key={col.title}>
@@ -1735,12 +1750,12 @@ export default function Home() {
                     </p>
                     <ul className="space-y-1 sm:space-y-2.5">
                       {col.links.map((link) => (
-                        <li key={link}>
+                        <li key={link.label}>
                           <Link
-                            href="#"
+                            href={link.href}
                             className="text-[14px] sm:text-[15px] text-white/55 hover:text-white transition-colors inline-block py-1.5 sm:py-0"
                           >
-                            {link}
+                            {link.label}
                           </Link>
                         </li>
                       ))}

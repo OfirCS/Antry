@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   ArrowRight,
@@ -12,6 +13,10 @@ import {
   Heart,
   Rocket,
   Trash2,
+  Github,
+  Check,
+  Copy,
+  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/supabase/auth-context";
@@ -150,11 +155,15 @@ export default function DashboardPage() {
     bio?: string;
     skills?: string[];
     full_name?: string;
+    username?: string;
     github_url?: string;
     twitter_url?: string;
     website_url?: string;
     avatar_url?: string;
+    invite_code?: string;
   }>({});
+  const [hasJoinedHackathon, setHasJoinedHackathon] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -162,7 +171,7 @@ export default function DashboardPage() {
     const fetchData = async () => {
       const supabase = createClient();
 
-      const [projectsResult, profileResult] = await Promise.all([
+      const [projectsResult, profileResult, hackathonsResult] = await Promise.all([
         supabase
           .from("projects")
           .select("id, title, tagline, category, likes_count, created_at, demo_url")
@@ -170,9 +179,16 @@ export default function DashboardPage() {
           .order("created_at", { ascending: false }),
         supabase
           .from("profiles")
-          .select("bio, skills, full_name, github_url, twitter_url, website_url, avatar_url")
+          .select(
+            "bio, skills, full_name, username, github_url, twitter_url, website_url, avatar_url, invite_code"
+          )
           .eq("id", user.id)
           .single(),
+        supabase
+          .from("hackathon_participants")
+          .select("hackathon_id", { head: false })
+          .eq("user_id", user.id)
+          .limit(1),
       ]);
 
       setProjects(projectsResult.data || []);
@@ -180,6 +196,8 @@ export default function DashboardPage() {
       if (profileResult.data) {
         setProfileData(profileResult.data);
       }
+
+      setHasJoinedHackathon(((hackathonsResult.data as unknown[]) || []).length > 0);
 
       setLoading(false);
     };
@@ -191,6 +209,49 @@ export default function DashboardPage() {
     user?.user_metadata?.full_name || profileData.full_name || user?.email?.split("@")[0] || "Builder";
   const completeness = calculateCompleteness(profileData);
   const activities = useMemo(() => generateActivity(projects), [projects]);
+
+  const onboardingSteps = [
+    {
+      key: "profile",
+      title: "Finish your profile",
+      desc: "Add a bio, skills, and links so Scout can index you.",
+      done: completeness >= 80,
+      href: "/settings",
+      icon: <UserCircle className="w-4 h-4" />,
+    },
+    {
+      key: "import",
+      title: "Import a project from GitHub",
+      desc: "Paste a username on Antry Card to auto-import your top shipped repos.",
+      done: projects.length > 0,
+      href: "/claim-card",
+      icon: <Github className="w-4 h-4" />,
+    },
+    {
+      key: "hackathon",
+      title: "Join the next Antathon",
+      desc: "Ship something real in 48 hours alongside other builders.",
+      done: hasJoinedHackathon,
+      href: "/hackathons",
+      icon: <Trophy className="w-4 h-4" />,
+    },
+  ];
+
+  const completedSteps = onboardingSteps.filter((s) => s.done).length;
+  const showOnboarding = completedSteps < onboardingSteps.length;
+
+  const inviteUrl =
+    profileData.invite_code && typeof window !== "undefined"
+      ? `${window.location.origin}/signup?invite=${encodeURIComponent(profileData.invite_code)}`
+      : null;
+
+  const handleCopyInvite = () => {
+    if (!inviteUrl) return;
+    navigator.clipboard.writeText(inviteUrl).then(() => {
+      setInviteCopied(true);
+      setTimeout(() => setInviteCopied(false), 2000);
+    });
+  };
 
   if (authLoading || loading) {
     return (
@@ -249,6 +310,135 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Onboarding checklist (until all steps done) ──── */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-10 rounded-2xl bg-white overflow-hidden relative"
+            style={{
+              border: "1px solid #EBEBEB",
+              boxShadow: "0 1px 0 rgba(0,0,0,0.03), 0 12px 32px -16px rgba(0,0,0,0.08)",
+            }}
+          >
+            <div
+              className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
+              style={{
+                background: "radial-gradient(circle, rgba(198,241,53,0.12) 0%, transparent 70%)",
+              }}
+            />
+            <div className="relative px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
+              <div className="flex items-center gap-2.5">
+                <motion.div
+                  animate={{ rotate: [0, 8, -6, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="h-8 w-8 rounded-lg flex items-center justify-center"
+                  style={{ background: "rgba(198,241,53,0.18)" }}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#0A0A0A]" />
+                </motion.div>
+                <div>
+                  <p className="text-[13px] font-bold text-[#111111] tracking-tight">Get set up</p>
+                  <p className="text-[11px] text-[#A3A3A3] tabular-nums">
+                    {completedSteps}/{onboardingSteps.length} complete
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {onboardingSteps.map((s, i) => (
+                  <motion.span
+                    key={s.key}
+                    initial={false}
+                    animate={{
+                      backgroundColor: s.done ? "#C6F135" : "#EBEBEB",
+                      width: s.done ? 28 : 24,
+                    }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className="h-1.5 rounded-full"
+                  />
+                ))}
+              </div>
+            </div>
+            <ul className="divide-y divide-[#F5F5F5]">
+              {onboardingSteps.map((s, i) => (
+                <motion.li
+                  key={s.key}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.06, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <Link
+                    href={s.href}
+                    className="flex items-center gap-3.5 px-5 py-4 group transition-colors"
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = s.done
+                        ? "transparent"
+                        : "rgba(198,241,53,0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                    }}
+                  >
+                    <motion.span
+                      animate={{
+                        background: s.done ? "#C6F135" : "transparent",
+                        borderColor: s.done ? "#C6F135" : "#D4D4D4",
+                        scale: s.done ? [1, 1.15, 1] : 1,
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 border"
+                      style={{ color: s.done ? "#0A0A0A" : "#737373" }}
+                    >
+                      <AnimatePresence mode="wait" initial={false}>
+                        {s.done ? (
+                          <motion.span
+                            key="check"
+                            initial={{ scale: 0, rotate: -90 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            exit={{ scale: 0 }}
+                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                          </motion.span>
+                        ) : (
+                          <motion.span
+                            key="icon"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {s.icon}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </motion.span>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-[14px] font-semibold transition-all"
+                        style={{
+                          textDecoration: s.done ? "line-through" : "none",
+                          color: s.done ? "#A3A3A3" : "#111111",
+                        }}
+                      >
+                        {s.title}
+                      </p>
+                      <p className="text-[12px] text-[#737373]">{s.desc}</p>
+                    </div>
+                    {!s.done && (
+                      <ArrowRight className="w-4 h-4 text-[#D4D4D4] group-hover:text-[#0A0A0A] group-hover:translate-x-0.5 transition-all shrink-0" />
+                    )}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Quick actions ────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3 mb-10">
@@ -386,6 +576,82 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* ── Invite codes ─────────────────────────────────── */}
+      {profileData.invite_code && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-10 rounded-2xl bg-white overflow-hidden relative"
+          style={{
+            border: "1px solid #EBEBEB",
+            boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
+          }}
+        >
+          <div className="px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
+            <div>
+              <p className="text-[13px] font-bold text-[#111111] tracking-tight">Invite a builder</p>
+              <p className="text-[12px] text-[#A3A3A3] mt-0.5">
+                Friends who use this link skip the waitlist.
+              </p>
+            </div>
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded-md"
+              style={{ background: "rgba(198,241,53,0.20)", color: "#0A0A0A" }}
+            >
+              Beta perk
+            </span>
+          </div>
+          <div className="px-5 py-4 flex items-center gap-3">
+            <div
+              className="flex-1 min-w-0 text-[13px] font-mono text-[#525252] truncate px-3 py-2 rounded-lg"
+              style={{ background: "#FAFAF7", border: "1px solid #F5F5F5" }}
+            >
+              {inviteUrl || `Code: ${profileData.invite_code}`}
+            </div>
+            <motion.button
+              type="button"
+              onClick={handleCopyInvite}
+              disabled={!inviteUrl}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.15 }}
+              className="inline-flex items-center gap-1.5 rounded-lg px-4 h-9 text-[12px] font-semibold transition-all shrink-0 disabled:opacity-50"
+              style={{
+                background: inviteCopied ? "#C6F135" : "#0A0A0A",
+                color: inviteCopied ? "#0A0A0A" : "#fff",
+              }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {inviteCopied ? (
+                  <motion.span
+                    key="copied"
+                    initial={{ scale: 0, rotate: -90 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="inline-flex items-center gap-1.5"
+                  >
+                    <Check className="w-3.5 h-3.5" strokeWidth={3} /> Copied
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="copy"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-1.5"
+                  >
+                    <Copy className="w-3.5 h-3.5" /> Copy link
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </div>
+        </motion.div>
+      )}
 
       {/* ── Activity ─────────────────────────────────────── */}
       <div>

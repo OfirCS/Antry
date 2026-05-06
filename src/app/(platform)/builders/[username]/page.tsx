@@ -1,10 +1,70 @@
+import type { Metadata } from "next";
 import { getBuilder as getBuilderFromDb } from "@/lib/supabase/queries";
 import {
   getBuilder as getMockBuilder,
   getBuilderProjects as getMockBuilderProjects,
   getBuilderAntathons as getMockBuilderAntathons,
 } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import BuilderProfileClient from "./BuilderProfileClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
+  const { username } = await params;
+  const dbResult = await getBuilderFromDb(username).catch(() => null);
+
+  let name: string | null = null;
+  let bio = "";
+  let skills: string[] = [];
+  let projectCount = 0;
+
+  if (dbResult) {
+    name = dbResult.profile.full_name;
+    bio = dbResult.profile.bio || "";
+    skills = dbResult.profile.skills || [];
+    projectCount = dbResult.projects.length;
+  } else {
+    const mock = getMockBuilder(username);
+    if (mock) {
+      name = mock.name;
+      bio = mock.bio;
+      skills = mock.skills;
+      projectCount = getMockBuilderProjects(username).length;
+    }
+  }
+
+  if (!name) {
+    return {
+      title: `@${username}`,
+      description: "Builder profile not found.",
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const path = `/builders/${username}`;
+  const title = `${name} (@${username})`;
+  const tagline = bio.includes(".") ? bio.split(".")[0] + "." : bio;
+  const description =
+    tagline ||
+    `${name} ships projects on Antry${skills.length ? ` — ${skills.slice(0, 3).join(", ")}` : ""}.`;
+  const image = ogImageUrl({
+    title: name,
+    subtitle: `${projectCount} shipped${skills.length ? ` · ${skills.slice(0, 3).join(" · ")}` : ""}`,
+    eyebrow: "Builder",
+    variant: "builder",
+  });
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: defaultOpenGraph({ title, description, path, image }),
+    twitter: defaultTwitter({ title, description, image }),
+  };
+}
 
 export default async function BuilderProfilePage({
   params,
@@ -51,19 +111,34 @@ export default async function BuilderProfilePage({
             category: p.category || undefined,
             createdAt: p.created_at || undefined,
           })),
-          hackathons: hackathons.map((h) => ({
-            id: h.id,
-            title: h.title,
-            theme: h.theme,
-            status: h.status,
-            gradient: h.gradient,
-            prizes: Array.isArray(h.prizes) ? h.prizes : [],
-            participantCount: h.participant_count,
-            submissionCount: h.submission_count,
-            startDate: h.start_date || undefined,
-            endDate: h.end_date || undefined,
-            sponsors: Array.isArray(h.sponsors) ? h.sponsors : [],
-          })),
+          hackathons: hackathons.map((h) => {
+            // h.sponsors is text[] in the schema; coerce to SponsorItem[].
+            const rawSponsors = (h as { sponsors?: unknown }).sponsors;
+            const sponsors: { name: string; tier: string }[] = Array.isArray(rawSponsors)
+              ? rawSponsors.map((s) =>
+                  typeof s === "string"
+                    ? { name: s, tier: "" }
+                    : (s as { name: string; tier: string })
+                )
+              : [];
+            // h.gradient isn't in the row schema; fall back to the per-builder gradient.
+            const gradient =
+              (h as { gradient?: string }).gradient ||
+              "linear-gradient(135deg, #18181b 0%, #000000 100%)";
+            return {
+              id: h.id,
+              title: h.title,
+              theme: h.theme,
+              status: h.status,
+              gradient,
+              prizes: Array.isArray(h.prizes) ? (h.prizes as { place: string; reward: string }[]) : [],
+              participantCount: h.participant_count,
+              submissionCount: h.submission_count,
+              startDate: h.start_date || undefined,
+              endDate: h.end_date || undefined,
+              sponsors,
+            };
+          }),
         }}
       />
     );

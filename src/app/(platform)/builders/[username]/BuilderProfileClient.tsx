@@ -312,6 +312,65 @@ export default function BuilderProfileClient({
           <p className="mt-5 text-[14px] text-[#737373]">No projects yet.</p>
         )}
       </div>
+
+      {/* Receipts (Antry Receipts integration) */}
+      <BuilderReceipts username={builder.username} />
+    </div>
+  );
+}
+
+function BuilderReceipts({ username }: { username: string }) {
+  // Demo-data sourced — when Supabase has receipts, this becomes a real query.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getDemoReceiptsForBuilder } = require("@/lib/receipts/demo-data") as typeof import("@/lib/receipts/demo-data");
+  const receipts = getDemoReceiptsForBuilder(username);
+  if (receipts.length === 0) return null;
+
+  return (
+    <div className="mx-auto max-w-3xl px-6 py-10 sm:px-8">
+      <div className="flex items-end justify-between mb-5 flex-wrap gap-2">
+        <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#8E8A7E]">
+          Receipts
+          <span className="ml-2 text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded" style={{ background: "rgba(198,241,53,0.30)", color: "#0A0A0A" }}>
+            New
+          </span>
+        </h2>
+        <a
+          href="/briefs"
+          className="text-[12px] font-semibold text-[#111111] hover:underline underline-offset-2"
+        >
+          Earn one →
+        </a>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {receipts.map((r) => (
+          <a
+            key={r.id}
+            href={`/receipts/${r.id}`}
+            className="group rounded-2xl border border-[#E8E4DA] bg-white p-4 transition-colors hover:border-[#D2CBB9]"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <span
+                className="text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded"
+                style={{ background: r.company.sponsor_color, color: "#FFFFFF" }}
+              >
+                {r.company.name}
+              </span>
+              <span className="text-[11px] text-[#8E8A7E] tabular-nums">
+                Score {r.composite_score}
+              </span>
+            </div>
+            <h3 className="text-[14px] font-semibold tracking-[-0.01em] text-[#111111] line-clamp-2">
+              {r.brief_title}
+            </h3>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-[#8E8A7E]">
+              <span>{r.tokens_spent.toLocaleString()} tokens</span>
+              <span>{Math.round(r.attempt_duration_seconds / 60)}m</span>
+            </div>
+          </a>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,10 +1,68 @@
+import type { Metadata } from "next";
 import { getHackathon } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 import {
   getAntathon as getMockAntathon,
   getAntathonProjects as getMockAntathonProjects,
 } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import HackathonDetailClient from "./HackathonDetailClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const dbResult = await getHackathon(id).catch(() => null);
+
+  const hackathon =
+    dbResult?.hackathon ??
+    (() => {
+      const mock = getMockAntathon(id);
+      return mock
+        ? {
+            title: mock.title,
+            theme: mock.theme,
+            description: mock.description,
+            status: mock.status,
+            participant_count: mock.participantCount,
+          }
+        : null;
+    })();
+
+  if (!hackathon) {
+    return {
+      title: "Hackathon not found",
+      description: "This Antathon doesn't exist or hasn't started yet.",
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const path = `/hackathons/${id}`;
+  const title = `${hackathon.title} — Antathon`;
+  const description =
+    hackathon.theme ||
+    hackathon.description?.slice(0, 160) ||
+    "A focused build event for AI builders on Antry.";
+  const subtitle =
+    hackathon.theme ||
+    `${hackathon.participant_count ?? 0} builders shipping · status: ${hackathon.status}`;
+  const image = ogImageUrl({
+    title: hackathon.title,
+    subtitle,
+    eyebrow: "Antathon",
+    variant: "hackathon",
+  });
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: defaultOpenGraph({ title, description, path, image }),
+    twitter: defaultTwitter({ title, description, image }),
+  };
+}
 
 export default async function AntathonDetailPage({
   params,

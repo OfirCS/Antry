@@ -4,9 +4,18 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Dev-friendly fallback: if Supabase isn't configured, pass through
+  // unprotected requests so the marketing surface still renders.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
@@ -25,16 +34,22 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh the auth token
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Refresh the auth token. Network errors (e.g. bad placeholder URL)
+  // shouldn't 500 the entire app — fall through as anonymous.
+  let user: { id: string } | null = null;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user as typeof user;
+  } catch {
+    user = null;
+  }
 
-  // Protected routes — redirect to login if not authenticated
+  // Protected routes — redirect to login if not authenticated.
+  // Use exact-or-slash matching so siblings like /claim-card stay public.
   const protectedPaths = ["/dashboard", "/submit", "/settings", "/admin", "/claim"];
   const pathname = request.nextUrl.pathname;
   const isProtected =
-    protectedPaths.some((p) => pathname.startsWith(p)) ||
+    protectedPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
     /^\/projects\/[^/]+\/edit$/.test(pathname);
 
   if (isProtected && !user) {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   getProject as getProjectFromDb,
   getProjects as getProjectsFromDb,
@@ -8,7 +9,61 @@ import {
   getBuilderProjects as getMockBuilderProjects,
 } from "@/lib/mock-data";
 import type { Project } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import ProjectDetailClient from "./ProjectDetailClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const dbProject = await getProjectFromDb(id).catch(() => null);
+  const project =
+    dbProject ??
+    (() => {
+      const mock = getMockProject(id);
+      return mock
+        ? {
+            title: mock.title,
+            tagline: mock.tagline,
+            description: mock.description,
+            tech_stack: mock.techStack,
+            profiles: { full_name: mock.builder.name, username: mock.builder.username },
+          }
+        : null;
+    })();
+
+  if (!project) {
+    return {
+      title: "Project not found",
+      description: "This project doesn't exist or hasn't been published yet.",
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const builderName =
+    "profiles" in project && project.profiles ? project.profiles.full_name : "an Antry builder";
+  const techStack = (project.tech_stack || []).slice(0, 4).join(" · ");
+  const subtitle = project.tagline || project.description?.slice(0, 140) || "";
+  const path = `/projects/${id}`;
+  const title = `${project.title} — by ${builderName}`;
+  const description = project.tagline || project.description?.slice(0, 160) || "A shipped project on Antry.";
+  const image = ogImageUrl({
+    title: project.title,
+    subtitle: subtitle || `By ${builderName}${techStack ? ` · ${techStack}` : ""}`,
+    eyebrow: "Project",
+    variant: "project",
+  });
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: defaultOpenGraph({ title, description, path, image }),
+    twitter: defaultTwitter({ title, description, image }),
+  };
+}
 
 export default async function ProjectDetailPage({
   params,
