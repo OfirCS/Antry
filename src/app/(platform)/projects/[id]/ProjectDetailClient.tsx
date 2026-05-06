@@ -186,7 +186,17 @@ function LikeButton({
 
 /* ── Share Buttons ──────────────────────────────────── */
 
-function ShareButtons({ projectTitle, projectId }: { projectTitle: string; projectId: string }) {
+function ShareButtons({
+  projectTitle,
+  projectTagline,
+  projectId,
+  builderHandle,
+}: {
+  projectTitle: string;
+  projectTagline?: string;
+  projectId: string;
+  builderHandle?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = useCallback(() => {
@@ -199,38 +209,48 @@ function ShareButtons({ projectTitle, projectId }: { projectTitle: string; proje
 
   const handleShareTwitter = useCallback(() => {
     const url = `${window.location.origin}/projects/${projectId}`;
-    const text = `Check out "${projectTitle}" on Antry`;
+    const tagline = projectTagline?.trim();
+    const builderTag = builderHandle ? ` by @${builderHandle}` : "";
+    const text = tagline
+      ? `${projectTitle}${builderTag} — ${tagline}\n\nShipped on @antrynetwork`
+      : `Just shipped "${projectTitle}"${builderTag} on @antrynetwork`;
     window.open(
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-      "_blank"
+      `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      "_blank",
+      "noopener,noreferrer"
     );
-  }, [projectId, projectTitle]);
+  }, [projectId, projectTitle, projectTagline, builderHandle]);
+
+  const handleNativeShare = useCallback(async () => {
+    const url = `${window.location.origin}/projects/${projectId}`;
+    const text = projectTagline ? `${projectTitle} — ${projectTagline}` : `${projectTitle} — shipped on Antry`;
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      try {
+        await navigator.share({ title: projectTitle, text, url });
+        return;
+      } catch {
+        // User cancelled — fall through to copy.
+      }
+    }
+    handleCopyLink();
+  }, [projectId, projectTitle, projectTagline, handleCopyLink]);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 flex-wrap">
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleCopyLink}
         className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBEB] bg-white text-[13px] font-medium text-[#525252] hover:border-[#D4D4D4] hover:text-[#111111] transition-all duration-200"
+        aria-label="Copy project link"
       >
         <AnimatePresence mode="wait">
           {copied ? (
-            <motion.span
-              key="check"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-            >
-              <Check className="w-3.5 h-3.5 text-[#C6F135]" />
+            <motion.span key="check" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+              <Check className="w-3.5 h-3.5 text-[#0A0A0A]" />
             </motion.span>
           ) : (
-            <motion.span
-              key="link"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-            >
+            <motion.span key="link" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
               <Link2 className="w-3.5 h-3.5" />
             </motion.span>
           )}
@@ -241,9 +261,20 @@ function ShareButtons({ projectTitle, projectId }: { projectTitle: string; proje
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleShareTwitter}
-        className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBEB] bg-white text-[13px] font-medium text-[#525252] hover:border-[#D4D4D4] hover:text-[#111111] transition-all duration-200"
+        className="flex items-center gap-2 px-4 py-2 rounded-full bg-black text-[13px] font-medium text-white hover:bg-[#1a1a1a] transition-all duration-200"
+        aria-label="Share on X"
       >
         <XIcon className="w-3.5 h-3.5" />
+        Post on X
+      </motion.button>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleNativeShare}
+        className="md:hidden flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBEBEB] bg-white text-[13px] font-medium text-[#525252] hover:border-[#D4D4D4] transition-all duration-200"
+        aria-label="Share"
+      >
+        <Share2 className="w-3.5 h-3.5" />
         Share
       </motion.button>
     </div>
@@ -501,7 +532,12 @@ export default function ProjectDetailClient({
           </a>
         )}
         <div className="ml-auto">
-          <ShareButtons projectTitle={project.title} projectId={project.id} />
+          <ShareButtons
+            projectTitle={project.title}
+            projectTagline={project.tagline}
+            projectId={project.id}
+            builderHandle={project.builder.username}
+          />
         </div>
       </motion.div>
 

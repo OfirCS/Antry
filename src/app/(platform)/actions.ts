@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { projectSchema, profileSchema } from "@/lib/schemas";
+import { sendEmail, welcomeEmailHtml, welcomeEmailText } from "@/lib/email/resend";
 
 export type FormState = {
   error?: string;
@@ -305,12 +306,28 @@ export async function joinWaitlist(
 
   const { error } = await supabase.from("waitlist").insert({ email });
 
+  let isNewSignup = true;
   if (error) {
     if (error.code === "23505") {
-      // unique_violation — already on waitlist
-      return { success: true };
+      // unique_violation — already on waitlist; don't re-send the welcome.
+      isNewSignup = false;
+    } else {
+      return { error: "Something went wrong. Please try again." };
     }
-    return { error: "Something went wrong. Please try again." };
+  }
+
+  // Fire-and-forget welcome email. Inert without RESEND_API_KEY,
+  // never blocks the user even on transient send failure.
+  if (isNewSignup) {
+    void sendEmail({
+      to: email,
+      subject: "Welcome to Antry — what are you building?",
+      html: welcomeEmailHtml(),
+      text: welcomeEmailText(),
+      tags: [{ name: "category", value: "waitlist_welcome" }],
+    }).catch(() => {
+      // Swallow — signup succeeded; email is best-effort.
+    });
   }
 
   return { success: true };

@@ -1,10 +1,70 @@
+import type { Metadata } from "next";
 import { getBuilder as getBuilderFromDb } from "@/lib/supabase/queries";
 import {
   getBuilder as getMockBuilder,
   getBuilderProjects as getMockBuilderProjects,
   getBuilderAntathons as getMockBuilderAntathons,
 } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import BuilderProfileClient from "./BuilderProfileClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
+  const { username } = await params;
+  const dbResult = await getBuilderFromDb(username).catch(() => null);
+
+  let name: string | null = null;
+  let bio = "";
+  let skills: string[] = [];
+  let projectCount = 0;
+
+  if (dbResult) {
+    name = dbResult.profile.full_name;
+    bio = dbResult.profile.bio || "";
+    skills = dbResult.profile.skills || [];
+    projectCount = dbResult.projects.length;
+  } else {
+    const mock = getMockBuilder(username);
+    if (mock) {
+      name = mock.name;
+      bio = mock.bio;
+      skills = mock.skills;
+      projectCount = getMockBuilderProjects(username).length;
+    }
+  }
+
+  if (!name) {
+    return {
+      title: `@${username}`,
+      description: "Builder profile not found.",
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const path = `/builders/${username}`;
+  const title = `${name} (@${username})`;
+  const tagline = bio.includes(".") ? bio.split(".")[0] + "." : bio;
+  const description =
+    tagline ||
+    `${name} ships projects on Antry${skills.length ? ` — ${skills.slice(0, 3).join(", ")}` : ""}.`;
+  const image = ogImageUrl({
+    title: name,
+    subtitle: `${projectCount} shipped${skills.length ? ` · ${skills.slice(0, 3).join(" · ")}` : ""}`,
+    eyebrow: "Builder",
+    variant: "builder",
+  });
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: defaultOpenGraph({ title, description, path, image }),
+    twitter: defaultTwitter({ title, description, image }),
+  };
+}
 
 export default async function BuilderProfilePage({
   params,

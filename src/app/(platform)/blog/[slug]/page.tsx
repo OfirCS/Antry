@@ -1,7 +1,54 @@
+import type { Metadata } from "next";
 import { getBlogPost } from "@/lib/supabase/queries";
 import Link from "next/link";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import BlogPostClient from "./BlogPostClient";
 import { staticPosts, postContent } from "../posts";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const dbPost = await getBlogPost(slug).catch(() => null);
+  const staticPost = !dbPost ? staticPosts.find((p) => p.slug === slug) : null;
+
+  const title = dbPost?.title || staticPost?.title;
+  const description = dbPost?.excerpt || staticPost?.excerpt;
+  const category = dbPost?.category || staticPost?.category || "Build Log";
+  const author = staticPost?.author || "Antry";
+  const publishedAt = dbPost?.published_at || staticPost?.date;
+
+  if (!title || !description) {
+    return {
+      title: "Post not found",
+      description: "This post doesn't exist or hasn't been published yet.",
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const path = `/blog/${slug}`;
+  const image = ogImageUrl({
+    title,
+    subtitle: `${category} · by ${author}`,
+    eyebrow: "Build Log",
+    variant: "blog",
+  });
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      ...defaultOpenGraph({ title, description, path, image }),
+      type: "article",
+      publishedTime: publishedAt || undefined,
+      authors: [author],
+    },
+    twitter: defaultTwitter({ title, description, image }),
+  };
+}
 
 export default async function BlogPostPage({
   params,

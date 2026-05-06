@@ -12,6 +12,10 @@ import {
   Heart,
   Rocket,
   Trash2,
+  Github,
+  Check,
+  Copy,
+  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/supabase/auth-context";
@@ -150,11 +154,15 @@ export default function DashboardPage() {
     bio?: string;
     skills?: string[];
     full_name?: string;
+    username?: string;
     github_url?: string;
     twitter_url?: string;
     website_url?: string;
     avatar_url?: string;
+    invite_code?: string;
   }>({});
+  const [hasJoinedHackathon, setHasJoinedHackathon] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -162,7 +170,7 @@ export default function DashboardPage() {
     const fetchData = async () => {
       const supabase = createClient();
 
-      const [projectsResult, profileResult] = await Promise.all([
+      const [projectsResult, profileResult, hackathonsResult] = await Promise.all([
         supabase
           .from("projects")
           .select("id, title, tagline, category, likes_count, created_at, demo_url")
@@ -170,9 +178,16 @@ export default function DashboardPage() {
           .order("created_at", { ascending: false }),
         supabase
           .from("profiles")
-          .select("bio, skills, full_name, github_url, twitter_url, website_url, avatar_url")
+          .select(
+            "bio, skills, full_name, username, github_url, twitter_url, website_url, avatar_url, invite_code"
+          )
           .eq("id", user.id)
           .single(),
+        supabase
+          .from("hackathon_participants")
+          .select("hackathon_id", { head: false })
+          .eq("user_id", user.id)
+          .limit(1),
       ]);
 
       setProjects(projectsResult.data || []);
@@ -180,6 +195,8 @@ export default function DashboardPage() {
       if (profileResult.data) {
         setProfileData(profileResult.data);
       }
+
+      setHasJoinedHackathon(((hackathonsResult.data as unknown[]) || []).length > 0);
 
       setLoading(false);
     };
@@ -191,6 +208,49 @@ export default function DashboardPage() {
     user?.user_metadata?.full_name || profileData.full_name || user?.email?.split("@")[0] || "Builder";
   const completeness = calculateCompleteness(profileData);
   const activities = useMemo(() => generateActivity(projects), [projects]);
+
+  const onboardingSteps = [
+    {
+      key: "profile",
+      title: "Finish your profile",
+      desc: "Add a bio, skills, and links so Scout can index you.",
+      done: completeness >= 80,
+      href: "/settings",
+      icon: <UserCircle className="w-4 h-4" />,
+    },
+    {
+      key: "import",
+      title: "Import a project from GitHub",
+      desc: "Paste a username on Antry Card to auto-import your top shipped repos.",
+      done: projects.length > 0,
+      href: "/claim-card",
+      icon: <Github className="w-4 h-4" />,
+    },
+    {
+      key: "hackathon",
+      title: "Join the next Antathon",
+      desc: "Ship something real in 48 hours alongside other builders.",
+      done: hasJoinedHackathon,
+      href: "/hackathons",
+      icon: <Trophy className="w-4 h-4" />,
+    },
+  ];
+
+  const completedSteps = onboardingSteps.filter((s) => s.done).length;
+  const showOnboarding = completedSteps < onboardingSteps.length;
+
+  const inviteUrl =
+    profileData.invite_code && typeof window !== "undefined"
+      ? `${window.location.origin}/signup?invite=${encodeURIComponent(profileData.invite_code)}`
+      : null;
+
+  const handleCopyInvite = () => {
+    if (!inviteUrl) return;
+    navigator.clipboard.writeText(inviteUrl).then(() => {
+      setInviteCopied(true);
+      setTimeout(() => setInviteCopied(false), 2000);
+    });
+  };
 
   if (authLoading || loading) {
     return (
@@ -249,6 +309,65 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Onboarding checklist (until all steps done) ──── */}
+      {showOnboarding && (
+        <div className="mb-10 rounded-2xl border border-[#EBEBEB] bg-white overflow-hidden">
+          <div className="px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5] bg-[#FAFAF7]">
+            <div className="flex items-center gap-2.5">
+              <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(198,241,53,0.18)" }}>
+                <Sparkles className="w-3.5 h-3.5 text-[#0A0A0A]" />
+              </div>
+              <div>
+                <p className="text-[13px] font-bold text-[#111111] tracking-tight">Get set up</p>
+                <p className="text-[11px] text-[#A3A3A3] tabular-nums">
+                  {completedSteps}/{onboardingSteps.length} complete
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {onboardingSteps.map((s) => (
+                <span
+                  key={s.key}
+                  className="h-1.5 w-6 rounded-full transition-colors"
+                  style={{ background: s.done ? "#C6F135" : "#EBEBEB" }}
+                />
+              ))}
+            </div>
+          </div>
+          <ul className="divide-y divide-[#F5F5F5]">
+            {onboardingSteps.map((s) => (
+              <li key={s.key}>
+                <Link
+                  href={s.href}
+                  className="flex items-center gap-3.5 px-5 py-3.5 group hover:bg-[#FAFAFA] transition-colors"
+                >
+                  <span
+                    className="h-7 w-7 rounded-full flex items-center justify-center shrink-0 border transition-colors"
+                    style={{
+                      background: s.done ? "#C6F135" : "transparent",
+                      borderColor: s.done ? "#C6F135" : "#D4D4D4",
+                      color: s.done ? "#0A0A0A" : "#737373",
+                    }}
+                  >
+                    {s.done ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : s.icon}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-[14px] font-medium text-[#111111]"
+                      style={{ textDecoration: s.done ? "line-through" : "none", opacity: s.done ? 0.5 : 1 }}
+                    >
+                      {s.title}
+                    </p>
+                    <p className="text-[12px] text-[#A3A3A3]">{s.desc}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-[#D4D4D4] group-hover:text-[#111111] transition-colors shrink-0" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* ── Quick actions ────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3 mb-10">
@@ -386,6 +505,48 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* ── Invite codes ─────────────────────────────────── */}
+      {profileData.invite_code && (
+        <div className="mb-10 rounded-2xl border border-[#EBEBEB] bg-white overflow-hidden">
+          <div className="px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
+            <div>
+              <p className="text-[13px] font-bold text-[#111111] tracking-tight">Invite a builder</p>
+              <p className="text-[12px] text-[#A3A3A3] mt-0.5">
+                You have invites. Friends who use this link skip the waitlist.
+              </p>
+            </div>
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-1 rounded"
+              style={{ background: "rgba(198,241,53,0.18)", color: "#0A0A0A" }}
+            >
+              Beta perk
+            </span>
+          </div>
+          <div className="px-5 py-4 flex items-center gap-3">
+            <code className="flex-1 min-w-0 text-[13px] font-mono text-[#525252] truncate">
+              {inviteUrl || `Code: ${profileData.invite_code}`}
+            </code>
+            <button
+              type="button"
+              onClick={handleCopyInvite}
+              disabled={!inviteUrl}
+              className="inline-flex items-center gap-1.5 rounded-lg px-3 h-8 text-[12px] font-semibold transition-colors shrink-0 disabled:opacity-50"
+              style={{ background: "#0A0A0A", color: "#fff" }}
+            >
+              {inviteCopied ? (
+                <>
+                  <Check className="w-3.5 h-3.5" /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" /> Copy link
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Activity ─────────────────────────────────────── */}
       <div>
