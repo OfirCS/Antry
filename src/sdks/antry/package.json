@@ -1,0 +1,14 @@
+{
+  "name": "@antry/sdk",
+  "version": "0.1.0",
+  "description": "Antry Receipts SDK — programmatically post Briefs, list candidates, and verify Receipts.",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "files": ["index.ts", "README.md"],
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "homepage": "https://antry.com/docs/sdk"
+}
