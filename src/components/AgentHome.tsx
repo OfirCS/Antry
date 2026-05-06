@@ -895,11 +895,20 @@ export const AgentHome = forwardRef<AgentHomeHandle, AgentHomeProps>(function Ag
           if (t.intent) items[1].intent = t.intent;
           return items;
         });
-      const res = await fetch("/api/agent", {
+      // Try Scout's real-LLM endpoint first; if it 503s (no API key) or
+      // 502s (transient), fall through to the legacy TF-IDF route.
+      let res = await fetch("/api/agent/scout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg, history }),
       });
+      if (!res.ok && (res.status === 503 || res.status === 502)) {
+        res = await fetch("/api/agent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg, history }),
+        });
+      }
       if (!res.ok) {
         const body = (await res.json().catch(() => null)) as { error?: string } | null;
         throw new Error(body?.error || `Request failed (${res.status})`);
