@@ -247,7 +247,7 @@ function ChangelogHero() {
         }}
       />
       <div className="relative mx-auto max-w-[920px] px-6 pt-24 pb-32 sm:px-10 sm:pt-28 sm:pb-36 text-center">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: "#C6F135" }}>
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: "#C6F135" }}>
           Changelog
         </p>
         <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.035em]"

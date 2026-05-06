@@ -863,7 +863,7 @@ export function LabClient({
                     <Check className="w-3.5 h-3.5" style={{ color: "#0A0A0A" }} strokeWidth={3} />
                   </div>
                   <p
-                    className="text-[11px] font-bold uppercase tracking-[0.18em]"
+                    className="text-[11px] font-bold uppercase tracking-[0.22em]"
                     style={{ color: "#C6F135" }}
                   >
                     Receipt minted
@@ -921,7 +921,7 @@ export function LabClient({
                 )}
                 <div>
                   <p
-                    className="text-[11px] font-bold uppercase tracking-[0.18em]"
+                    className="text-[11px] font-bold uppercase tracking-[0.22em]"
                     style={{ color: "#C6F135" }}
                   >
                     Mint Receipt

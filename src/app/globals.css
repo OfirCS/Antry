@@ -2,6 +2,11 @@
 
 @theme {
   /* ── Color: Core ─────────────────────────────────────── */
+  /* Canonical "ink" black is #0A0A0A — use this on every new surface.
+     The legacy --color-black=#111 stays for backwards compat with the
+     pre-Receipts pages and existing Tailwind class usage. */
+  --color-ink: #0A0A0A;
+  --color-ink-soft: #1A1A1A;
   --color-black: #111111;
   --color-black-soft: #1a1a1a;
   --color-white: #ffffff;
@@ -457,20 +462,79 @@ h4, h5, h6 {
    EYEBROW LABEL
    =================================================================== */
 
+/* Canonical eyebrow label.
+   Pairs with the <Eyebrow> primitive in src/components/design/primitives.tsx. */
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-text-tertiary);
 }
 
 .eyebrow-lime {
   color: var(--color-lime);
+}
+
+.eyebrow-muted {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Editorial typography — canonical type scale used across new surfaces.
+   Prefer the React primitives in primitives.tsx; these utility classes
+   are for plain-HTML cases. */
+
+.editorial-h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--color-ink);
+}
+
+.editorial-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--color-ink);
+}
+
+.editorial-h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+}
+
+.editorial-h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+}
+
+/* Section padding utility — keeps vertical rhythm consistent. */
+.section-pad {
+  padding-top: 6rem;
+  padding-bottom: 7rem;
+}
+
+@media (min-width: 640px) {
+  .section-pad {
+    padding-top: 7rem;
+    padding-bottom: 8rem;
+  }
 }
 
 

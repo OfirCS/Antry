@@ -50,7 +50,7 @@ export default async function LabPage({
           <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
             <Link
               href={`/briefs/${slug}`}
-              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] hover:opacity-80 transition-opacity"
+              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] hover:opacity-80 transition-opacity"
               style={{ color: "rgba(255,255,255,0.5)" }}
             >
               <ArrowLeft className="w-3.5 h-3.5" />

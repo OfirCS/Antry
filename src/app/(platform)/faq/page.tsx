@@ -86,7 +86,7 @@ export default function FaqPage() {
 
         <section className="bg-white">
           <div className="mx-auto max-w-[760px] px-6 pt-20 sm:pt-28 pb-6 sm:px-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">FAQ</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500">FAQ</p>
             <h1 className="mt-3 font-display text-[clamp(2.2rem,4.8vw,3.2rem)] font-bold tracking-[-0.035em] text-black leading-[1.05]">
               Answers, in plain English.
             </h1>

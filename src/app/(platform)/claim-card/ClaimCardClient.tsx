@@ -413,7 +413,7 @@ function ProjectGrid({ projects }: { projects: BuilderCardPreview["projects"] })
     <div>
       <div className="flex items-end justify-between mb-4 gap-3">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500">
+          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500">
             Top scored projects
           </p>
           <h3 className="mt-1 text-[20px] sm:text-[22px] font-bold tracking-[-0.02em] text-black">
@@ -573,7 +573,7 @@ function ClaimCTA({
 
       <div className="relative flex-1 min-w-0">
         <p
-          className="text-[11px] font-bold uppercase tracking-[0.18em]"
+          className="text-[11px] font-bold uppercase tracking-[0.22em]"
           style={{ color: "#C6F135" }}
         >
           Looks like you?

@@ -89,7 +89,7 @@ function Hero({ plan, planKey }: { plan: PlanPreset; planKey: string }) {
       <div className="relative mx-auto max-w-[920px] px-6 sm:px-10 pt-20 pb-32 sm:pt-24 sm:pb-36">
         <Link
           href="/pricing"
-          className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] mb-6 hover:opacity-80 transition-opacity"
+          className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] mb-6 hover:opacity-80 transition-opacity"
           style={{ color: "rgba(255,255,255,0.5)" }}
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to pricing
@@ -211,7 +211,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="block text-[12px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-2">
+      <span className="block text-[12px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-2">
         {label}
       </span>
       <span

@@ -18,7 +18,7 @@ export function Testimonials() {
           className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
         >
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-text-tertiary">
+            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-text-tertiary">
               {hasVerifiedTestimonials ? "Success Stories" : "Early Access Feedback"}
             </span>
             <h2 className="mt-4 font-display text-[clamp(2.3rem,6vw,4.2rem)] leading-[0.95] tracking-[-0.04em] text-text-primary">

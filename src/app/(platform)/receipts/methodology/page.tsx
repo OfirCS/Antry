@@ -46,7 +46,7 @@ export default function MethodologyPage() {
           />
           <div className="relative mx-auto max-w-[920px] px-6 pt-24 pb-32 sm:px-10 sm:pt-28 sm:pb-36 text-center">
             <p
-              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              className="text-[11px] font-bold uppercase tracking-[0.22em]"
               style={{ color: "#C6F135" }}
             >
               Methodology
@@ -197,7 +197,7 @@ hold_out:
               <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                 <div>
                   <p
-                    className="text-[11px] font-bold uppercase tracking-[0.18em] inline-flex items-center gap-1.5"
+                    className="text-[11px] font-bold uppercase tracking-[0.22em] inline-flex items-center gap-1.5"
                     style={{ color: "#C6F135" }}
                   >
                     <Sparkles className="w-3 h-3" />

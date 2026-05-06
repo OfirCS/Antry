@@ -81,7 +81,7 @@ export default async function CompanyPage({
           <div className="relative mx-auto max-w-[1080px] px-6 pt-20 pb-32 sm:px-10 sm:pt-24 sm:pb-36">
             <Link
               href="/briefs"
-              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] mb-8 hover:opacity-80 transition-opacity"
+              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] mb-8 hover:opacity-80 transition-opacity"
               style={{ color: "rgba(255,255,255,0.5)" }}
             >
               ← All Briefs
@@ -102,7 +102,7 @@ export default async function CompanyPage({
               </div>
               <div>
                 <p
-                  className="text-[11px] font-bold uppercase tracking-[0.2em] mb-1"
+                  className="text-[11px] font-bold uppercase tracking-[0.22em] mb-1"
                   style={{ color: company.sponsor_color }}
                 >
                   Brief sponsor
@@ -153,7 +153,7 @@ export default async function CompanyPage({
           <div className="mx-auto max-w-[1080px] px-6 sm:px-10 -mt-20 sm:-mt-24 pb-24 relative z-10">
             <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500">
                   Briefs by {company.name}
                 </p>
                 <h2 className="mt-2 text-[clamp(1.6rem,3.5vw,2.2rem)] font-bold tracking-[-0.025em] text-black">

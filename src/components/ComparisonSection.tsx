@@ -32,7 +32,7 @@ export function ComparisonSection() {
           transition={{ duration: 0.6, ease }}
           className="mb-16 max-w-[800px]"
         >
-          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-text-tertiary">Signal Comparison</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-text-tertiary">Signal Comparison</span>
           <h2 className="mt-4 font-display text-[clamp(2.2rem,6vw,4.2rem)] leading-[0.95] tracking-[-0.04em] text-text-primary">
             The internet has profiles.
             <br />
@@ -95,14 +95,14 @@ export function ComparisonSection() {
 
           <div className="bg-surface flex flex-col justify-between p-8">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-text-tertiary">Hiring Velocity</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-text-tertiary">Hiring Velocity</p>
               <p className="mt-4 font-display text-6xl tracking-[-0.05em] text-text-primary">2.7x</p>
               <p className="mt-4 text-[14px] leading-relaxed text-text-secondary">
                 Teams using builder-proof data cut the discovery cycle and spend less time on manual screening.
               </p>
             </div>
             <div className="mt-12 border-t border-border-primary pt-8">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-text-tertiary">Industrial Logic</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-text-tertiary">Industrial Logic</p>
               <p className="mt-3 text-[13px] leading-relaxed text-text-secondary">
                 AI recommendations become reliable only when the dataset is narrow, trusted, and behavior-linked.
               </p>

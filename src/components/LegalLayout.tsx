@@ -29,7 +29,7 @@ export function LegalLayout({
       <main>
         <section className="bg-white border-b border-gray-100">
           <div className="mx-auto max-w-[1080px] px-6 sm:px-10 pt-16 sm:pt-20 pb-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">{eyebrow}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500">{eyebrow}</p>
             <motion.h1
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
@@ -60,7 +60,7 @@ export function LegalLayout({
               {/* Sidebar TOC (sticky on desktop) */}
               <aside className="hidden lg:block">
                 <div className="sticky top-24">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-4">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400 mb-4">
                     On this page
                   </p>
                   <ul className="space-y-2">

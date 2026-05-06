@@ -488,7 +488,7 @@ function SignedSection() {
         </div>
 
         <div className="mt-10 flex items-center gap-x-5 gap-y-2 flex-wrap">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400">
             7 dimensions
           </p>
           {ALL_DIMENSIONS.map((d, i) => (
@@ -779,7 +779,7 @@ function SiteFooter() {
 
           {cols.map((c) => (
             <div key={c.title}>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400 mb-4">
                 {c.title}
               </p>
               <ul className="space-y-2.5">

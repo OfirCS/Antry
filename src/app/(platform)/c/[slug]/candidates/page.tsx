@@ -128,7 +128,7 @@ function Hero({
       <div className="relative mx-auto max-w-[1240px] px-6 pt-20 pb-32 sm:px-10 sm:pt-24 sm:pb-36">
         <Link
           href={`/c/${company.slug}`}
-          className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] mb-6 hover:opacity-80 transition-opacity"
+          className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] mb-6 hover:opacity-80 transition-opacity"
           style={{ color: "rgba(255,255,255,0.5)" }}
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -224,7 +224,7 @@ function FilterBar() {
       className="rounded-[16px] p-4 mb-6 flex items-center gap-3 flex-wrap"
       style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
     >
-      <span className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-gray-500 pl-2 pr-3">
+      <span className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.22em] text-gray-500 pl-2 pr-3">
         <Filter className="w-3.5 h-3.5" />
         Filter
       </span>

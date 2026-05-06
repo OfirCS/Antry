@@ -215,7 +215,7 @@ function HowItWorks() {
     <section style={{ background: "#FAFAF7" }}>
       <div className="mx-auto max-w-[1080px] px-6 sm:px-10 py-24 sm:py-28">
         <div className="text-center mb-14 sm:mb-16">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-4">
+          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
             How it works
           </p>
           <h2 className="text-[clamp(1.8rem,4vw,2.6rem)] font-bold tracking-[-0.025em] text-black max-w-[640px] mx-auto leading-[1.1]">

@@ -119,7 +119,7 @@ function PressHero() {
       />
       <div className="relative mx-auto max-w-[920px] px-6 pt-24 pb-32 sm:px-10 sm:pt-28 sm:pb-36 text-center">
         <p
-          className="text-[11px] font-bold uppercase tracking-[0.2em]"
+          className="text-[11px] font-bold uppercase tracking-[0.22em]"
           style={{ color: "#C6F135" }}
         >
           Press kit

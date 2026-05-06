@@ -154,7 +154,7 @@ function HowItWorks() {
   return (
     <section className="mt-24">
       <div className="text-center mb-12">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-4">
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
           How it works
         </p>
         <h2 className="text-[clamp(1.8rem,4vw,2.6rem)] font-bold tracking-[-0.025em] text-black max-w-[640px] mx-auto leading-[1.1]">

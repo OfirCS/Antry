@@ -173,7 +173,7 @@ function Hero({
       <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-20 pb-32 sm:pt-24 sm:pb-36">
         <Link
           href={`/c/${company.slug}`}
-          className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] mb-8 hover:opacity-80 transition-opacity"
+          className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] mb-8 hover:opacity-80 transition-opacity"
           style={{ color: "rgba(255,255,255,0.5)" }}
         >
           <ArrowLeft className="w-3.5 h-3.5" /> {company.name} workspace

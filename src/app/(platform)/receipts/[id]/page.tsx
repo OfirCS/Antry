@@ -175,7 +175,7 @@ export default async function ReceiptPage({
 
             {/* Dimension breakdown */}
             <div className="mt-10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-2">
                 Dimension breakdown
               </p>
               <h2 className="text-[clamp(1.6rem,3.5vw,2.2rem)] font-bold tracking-[-0.025em] text-black leading-[1.1]">
@@ -249,7 +249,7 @@ export default async function ReceiptPage({
                 energy, code volume, and CO2 to get this Receipt */}
             {r.compute_footprint && (
               <div className="mt-10">
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-2">
                   Compute footprint
                 </p>
                 <h2
@@ -360,7 +360,7 @@ function ReceiptHero({
         <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
           <Link
             href="/briefs"
-            className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] hover:opacity-80 transition-opacity"
+            className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] hover:opacity-80 transition-opacity"
             style={{ color: "rgba(255,255,255,0.5)" }}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -393,7 +393,7 @@ function ReceiptHero({
 
           <div>
             <p
-              className="text-[11px] font-bold uppercase tracking-[0.2em] mb-2"
+              className="text-[11px] font-bold uppercase tracking-[0.22em] mb-2"
               style={{ color: companyColor }}
             >
               {companyName} Brief · 001

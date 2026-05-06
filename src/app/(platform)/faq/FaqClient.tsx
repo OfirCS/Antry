@@ -79,7 +79,7 @@ export function FaqClient({ faqs }: { faqs: FaqItem[] }) {
         />
         <div className="relative">
           <p
-            className="text-[11px] font-bold uppercase tracking-[0.18em]"
+            className="text-[11px] font-bold uppercase tracking-[0.22em]"
             style={{ color: "#C6F135" }}
           >
             Ready to claim?

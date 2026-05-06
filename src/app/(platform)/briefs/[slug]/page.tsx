@@ -96,7 +96,7 @@ export default async function BriefDetailPage({
           <div className="relative mx-auto max-w-[1080px] px-6 pt-20 pb-32 sm:px-10 sm:pt-24 sm:pb-36">
             <Link
               href="/briefs"
-              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.18em] mb-6 hover:opacity-80 transition-opacity"
+              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] mb-6 hover:opacity-80 transition-opacity"
               style={{ color: "rgba(255,255,255,0.5)" }}
             >
               ← All Briefs
@@ -106,7 +106,7 @@ export default async function BriefDetailPage({
               <div>
                 {brief.sponsor_label && (
                   <p
-                    className="text-[11px] font-bold uppercase tracking-[0.2em] mb-4"
+                    className="text-[11px] font-bold uppercase tracking-[0.22em] mb-4"
                     style={{ color: brief.company.sponsor_color }}
                   >
                     {brief.sponsor_label}
@@ -228,7 +228,7 @@ export default async function BriefDetailPage({
                   boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
                 }}
               >
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500 mb-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-3">
                   The Brief
                 </p>
                 <BriefMarkdown md={brief.prompt_md} />
@@ -303,7 +303,7 @@ export default async function BriefDetailPage({
             <div className="mx-auto max-w-[1080px] px-6 sm:px-10 py-20 sm:py-24">
               <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500">
                     Receipts
                   </p>
                   <h2 className="mt-2 text-[clamp(1.6rem,3.5vw,2.2rem)] font-bold tracking-[-0.025em] text-black">
