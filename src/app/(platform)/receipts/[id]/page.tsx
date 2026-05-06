@@ -17,14 +17,12 @@ import {
   Zap,
 } from "lucide-react";
 import {
-  formatEnergy,
-  formatCo2,
-  formatWater,
-  formatCost,
   co2EquivalentLine,
   energyEquivalentLine,
   type ComputeFootprint,
 } from "@/lib/receipts/compute-footprint";
+import { CountUp } from "@/components/design/CountUp";
+import { Tooltip } from "@/components/design/Tooltip";
 import { Nav } from "@/components/Nav";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import {
@@ -173,96 +171,97 @@ export default async function ReceiptPage({
               </div>
             </div>
 
-            {/* Dimension breakdown */}
+            {/* Dimension breakdown — score + 1-line label, blurb on hover */}
             <div className="mt-10">
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-2">
                 Dimension breakdown
               </p>
               <h2 className="text-[clamp(1.6rem,3.5vw,2.2rem)] font-bold tracking-[-0.025em] text-black leading-[1.1]">
-                Each axis. The score. What it means.
+                Each axis. The score.
               </h2>
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <p className="mt-3 text-[13px] text-gray-500">
+                Hover any card for the formula and antagonist.
+              </p>
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {ALL_DIMENSIONS.map((d) => {
                   const score = r.fingerprint[d];
                   const dimTier = fingerprintTier(score);
                   const antagonist = DIMENSION_ANTAGONIST[d];
                   return (
-                    <div
+                    <Tooltip
                       key={d}
-                      className="rounded-[20px] p-5 bg-white"
-                      style={{
-                        border: "1px solid #EBEBEB",
-                        boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
-                      }}
-                    >
-                      <div className="flex items-start justify-between gap-3 mb-3">
-                        <div>
-                          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">
-                            Dimension
-                          </p>
-                          <h3 className="text-[16px] font-bold tracking-[-0.01em] text-black mt-0.5">
+                      className="block w-full"
+                      content={
+                        <>
+                          <p className="font-bold text-[12px] mb-1 text-white">
                             {DIMENSION_LABELS[d]}
-                          </h3>
-                        </div>
-                        <div className="text-right">
+                          </p>
+                          <p className="text-white/80 leading-[1.5]">
+                            {DIMENSION_BLURB[d]}
+                          </p>
+                          {antagonist && (
+                            <p className="mt-2 text-[11px] text-white/55">
+                              Antagonist: {DIMENSION_LABELS[antagonist]}
+                            </p>
+                          )}
+                        </>
+                      }
+                    >
+                      <div
+                        className="rounded-[16px] p-4 bg-white w-full transition-transform duration-200 hover:-translate-y-0.5"
+                        style={{
+                          border: "1px solid #EBEBEB",
+                          boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
+                        }}
+                      >
+                        <div className="flex items-baseline justify-between gap-3 mb-2.5">
                           <p
                             className="text-[28px] font-bold tracking-tight font-display tabular-nums"
                             style={{ color: "#0A0A0A", lineHeight: 1 }}
                           >
-                            {score}
+                            <CountUp to={score} durationMs={900} />
                           </p>
                           <span
-                            className="text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded mt-1 inline-block"
+                            className="text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded"
                             style={{ background: dimTier.bg, color: dimTier.color }}
                           >
                             {dimTier.label}
                           </span>
                         </div>
-                      </div>
-                      <div
-                        className="h-1.5 rounded-full overflow-hidden mb-3"
-                        style={{ background: "#F5F5F5" }}
-                      >
                         <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: `${score}%`,
-                            background: r.company.sponsor_color,
-                          }}
-                        />
-                      </div>
-                      <p className="text-[13px] leading-[1.55] text-gray-600">
-                        {DIMENSION_BLURB[d]}
-                      </p>
-                      {antagonist && (
-                        <p className="mt-2.5 text-[11px] text-gray-400">
-                          Antagonist: <span className="font-semibold text-gray-600">{DIMENSION_LABELS[antagonist]}</span>
+                          className="h-1 rounded-full overflow-hidden mb-2"
+                          style={{ background: "#F5F5F5" }}
+                        >
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${score}%`,
+                              background: r.company.sponsor_color,
+                            }}
+                          />
+                        </div>
+                        <p className="text-[12px] font-semibold tracking-[-0.005em] text-black">
+                          {DIMENSION_LABELS[d]}
                         </p>
-                      )}
-                    </div>
+                      </div>
+                    </Tooltip>
                   );
                 })}
               </div>
             </div>
 
-            {/* Compute footprint block — what the company actually paid in
-                energy, code volume, and CO2 to get this Receipt */}
+            {/* Compute footprint — what this trace burned */}
             {r.compute_footprint && (
-              <div className="mt-10">
+              <div className="mt-12">
                 <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-2">
                   Compute footprint
                 </p>
                 <h2
-                  className="font-display font-bold tracking-[-0.025em] text-black leading-[1.1] mb-2"
+                  className="font-display font-bold tracking-[-0.025em] text-black leading-[1.1] mb-6"
                   style={{ fontSize: "clamp(1.4rem, 3vw, 1.9rem)" }}
                 >
                   How much energy this trace burned.
                 </h2>
-                <p className="text-[14px] text-gray-600 max-w-[640px] mb-6">
-                  Companies hire on energy efficiency, not just output. Token
-                  economy was the radar dimension; here&apos;s the absolute
-                  number it represents.
-                </p>
                 <ComputeFootprintGrid footprint={r.compute_footprint} />
               </div>
             )}
@@ -434,7 +433,7 @@ function ReceiptHero({
                   lineHeight: 0.95,
                 }}
               >
-                {composite}
+                <CountUp to={composite} durationMs={1100} />
               </span>
               <span
                 className="text-[14px]"
@@ -485,53 +484,111 @@ function KV({ label, value, mono = false }: { label: string; value: string; mono
 }
 
 function ComputeFootprintGrid({ footprint }: { footprint: ComputeFootprint }) {
-  const cells = [
+  // Energy is in kWh — show in Wh when small for readability.
+  const energyWh = footprint.energy_kwh * 1000;
+  const energyShowsKwh = footprint.energy_kwh >= 1;
+  const wallSec = footprint.wall_clock_seconds;
+  const wallMin = Math.floor(wallSec / 60);
+  const wallRem = wallSec % 60;
+
+  const cells: {
+    icon: React.ReactNode;
+    label: string;
+    value: React.ReactNode;
+    sub: string;
+    tint: string;
+  }[] = [
     {
       icon: <Zap className="w-4 h-4" />,
       label: "Energy",
-      value: formatEnergy(footprint.energy_kwh),
+      value: energyShowsKwh ? (
+        <>
+          <CountUp to={footprint.energy_kwh} durationMs={900} decimals={2} /> kWh
+        </>
+      ) : (
+        <>
+          <CountUp to={energyWh} durationMs={900} decimals={1} /> Wh
+        </>
+      ),
       sub: energyEquivalentLine(footprint.energy_kwh),
       tint: "#C6F135",
     },
     {
       icon: <Leaf className="w-4 h-4" />,
       label: "CO₂",
-      value: formatCo2(footprint.co2_grams),
+      value:
+        footprint.co2_grams >= 1000 ? (
+          <>
+            <CountUp
+              to={footprint.co2_grams / 1000}
+              durationMs={900}
+              decimals={2}
+            />{" "}
+            kg
+          </>
+        ) : (
+          <>
+            <CountUp
+              to={footprint.co2_grams}
+              durationMs={900}
+              decimals={1}
+            />{" "}
+            g
+          </>
+        ),
       sub: co2EquivalentLine(footprint.co2_grams),
       tint: "#22C55E",
     },
     {
       icon: <Droplet className="w-4 h-4" />,
       label: "Water (cooling)",
-      value: formatWater(footprint.water_litres),
+      value: (
+        <>
+          <CountUp to={footprint.water_litres} durationMs={900} decimals={2} /> L
+        </>
+      ),
       sub: "data-centre cooling proxy",
       tint: "#06B6D4",
     },
     {
       icon: <Code2 className="w-4 h-4" />,
       label: "Lines of code",
-      value: footprint.lines_of_code.toLocaleString(),
+      value: <CountUp to={footprint.lines_of_code} durationMs={900} />,
       sub: `${footprint.constants.tokens_per_loc} tokens/line, est.`,
       tint: "#A78BFA",
     },
     {
       icon: <Cpu className="w-4 h-4" />,
       label: "Tokens",
-      value: footprint.total_tokens.toLocaleString(),
+      value: <CountUp to={footprint.total_tokens} durationMs={1000} />,
       sub: `${footprint.input_tokens.toLocaleString()} in · ${footprint.output_tokens.toLocaleString()} out`,
       tint: "#0A0A0A",
     },
     {
       icon: <Clock className="w-4 h-4" />,
       label: "Wall-clock",
-      value: `${Math.round(footprint.wall_clock_seconds / 60)}m ${footprint.wall_clock_seconds % 60}s`,
+      value: (
+        <>
+          <CountUp to={wallMin} durationMs={800} />m{" "}
+          <CountUp to={wallRem} durationMs={800} />s
+        </>
+      ),
       sub: `peak ~${footprint.peak_memory_mb} MB`,
       tint: "#F59E0B",
     },
     {
       icon: <Sparkles className="w-4 h-4" />,
       label: "Total cost",
-      value: formatCost(footprint.cost_usd_cents),
+      value: (
+        <>
+          $
+          <CountUp
+            to={footprint.cost_usd_cents / 100}
+            durationMs={1000}
+            decimals={2}
+          />
+        </>
+      ),
       sub: "API + Antry overhead",
       tint: "#EC4899",
     },
@@ -568,16 +625,19 @@ function ComputeFootprintGrid({ footprint }: { footprint: ComputeFootprint }) {
         ))}
       </div>
       <p className="mt-4 text-[11px] text-gray-400 leading-relaxed max-w-[640px]">
-        Estimates derived from gateway telemetry using the constants in
-        compute-footprint.ts. Energy figure assumes US grid intensity{" "}
+        Estimates from gateway telemetry. Grid intensity{" "}
         <span className="font-mono">
           {footprint.constants.co2_grams_per_kwh}g CO₂/kWh
         </span>
-        ; LOC estimated from output tokens at{" "}
+        , LOC at{" "}
         <span className="font-mono">
           {footprint.constants.tokens_per_loc} tokens/line
         </span>
-        . The methodology page documents every assumption.
+        . Full methodology on{" "}
+        <Link href="/receipts/methodology" className="underline">
+          /receipts/methodology
+        </Link>
+        .
       </p>
     </>
   );

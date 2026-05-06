@@ -93,13 +93,11 @@ function Hero({ used, remaining }: { used: number; remaining: number }) {
               <span style={{ color: "#C6F135" }}>Mint a Receipt.</span>
             </h1>
             <p
-              className="mt-6 max-w-[560px] text-[16px] leading-[1.6]"
+              className="mt-6 max-w-[520px] text-[16px] leading-[1.6]"
               style={{ color: "rgba(255,255,255,0.66)" }}
             >
-              Eight graded missions per builder, per month, free forever. Attempts
-              that fall below the quality floor stay private — protect your
-              fingerprint. Re-attempts allowed once per Brief if your composite
-              came in under 60.
+              Eight graded missions per builder, per month — free forever.
+              Composites under 60 stay private until you re-attempt.
             </p>
           </div>
 
@@ -380,8 +378,7 @@ function ResetCallout() {
           Quota resets in {daysUntilReset} {daysUntilReset === 1 ? "day" : "days"}.
         </h3>
         <p className="mt-1 text-[13px] text-gray-600">
-          Each builder gets 8 graded missions per month, free forever. Save your
-          best for the Briefs that match your stack.
+          8 graded missions per month, free forever.
         </p>
       </div>
       <Link

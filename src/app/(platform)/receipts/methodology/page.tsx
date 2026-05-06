@@ -58,12 +58,10 @@ export default function MethodologyPage() {
               How Builder Fingerprints work.
             </h1>
             <p
-              className="mt-6 max-w-[640px] mx-auto text-[16px] sm:text-[17px] leading-[1.6]"
-              style={{ color: "rgba(255,255,255,0.65)" }}
+              className="mt-6 max-w-[560px] mx-auto text-[16px] leading-[1.55]"
+              style={{ color: "rgba(255,255,255,0.6)" }}
             >
-              Seven dimensions. Each with an antagonist that punishes single-axis gaming. The
-              composite uses a min-of-quartile rule, so an uneven shape always loses to a
-              balanced one. Everything below is the formal description — open and unchanged.
+              Seven dimensions. Antagonist-paired. Min-of-quartile composite.
             </p>
           </div>
         </section>
@@ -72,16 +70,10 @@ export default function MethodologyPage() {
           <div className="mx-auto max-w-[920px] px-6 sm:px-10 -mt-20 sm:-mt-24 pb-24 relative z-10 space-y-12">
             <Section title="The principle">
               <p>
-                Resumes show what people <em>say</em> they can do. GitHub shows what they shipped. But in
-                2026, a working result no longer separates senior engineers from junior ones — anyone can
-                prompt their way to an answer. The signal that matters is <em>how</em> you got there:
-                token efficiency, tool taste, recovery from dead-ends, when to spend compute and when to
-                pause.
+                In 2026, a working result no longer separates senior from junior — anyone can prompt to an answer. The signal is <em>how</em> you got there: token efficiency, tool taste, recovery, when to spend.
               </p>
               <p>
-                A Builder Fingerprint is a 7-dimension radar derived from the gateway-signed telemetry of
-                a Brief Attempt. It captures both the final result and the journey, and it&apos;s designed
-                so no single dimension can be optimized at the expense of the others.
+                A Builder Fingerprint is a 7-dimension radar from gateway-signed telemetry. No single axis can be optimised at the cost of the others.
               </p>
             </Section>
 
@@ -121,53 +113,36 @@ export default function MethodologyPage() {
 
             <Section title="Composite score: min-of-quartile">
               <p>
-                The composite is not a simple average. We take the bottom quartile of dimensions, average
-                them (call it <code>bottomMean</code>), then average the rest (<code>restMean</code>),
-                and weight 60% to the bottom quartile and 40% to the rest. The math:
+                Not an average. We weight the bottom quartile of dimensions at 60%, the rest at 40%:
               </p>
               <pre className="text-[13px] bg-gray-50 border border-gray-100 rounded-lg p-4 overflow-x-auto">{`composite = bottomMean × 0.6 + restMean × 0.4`}</pre>
               <p>
-                Practical effect: a Receipt with one weak dimension can&apos;t hide behind six strong
-                ones. The shape of your radar — not just its area — is the signal.
+                One weak dimension can&apos;t hide behind six strong ones. The shape of your radar is the signal.
               </p>
             </Section>
 
             <Section title="Anti-gaming: the antagonist principle">
               <p>
-                Each measurable dimension has a counter-dimension that pulls the other direction.
-                Token Economy and Throughput trade off — minimizing tokens by stalling kills throughput.
-                Tool-Choice IQ and Recovery Index trade off — over-relying on deterministic tools
-                without LLM judgment dries up your recovery options. Prompt Discipline and Verification
-                Rigor trade off — terse prompting with no self-checks is brittle.
+                Each measurable dimension has a counter-dimension. Token Economy ↔ Throughput. Tool-Choice IQ ↔ Recovery Index. Prompt Discipline ↔ Verification Rigor. Maximising one axis at the cost of its pair pulls down the composite.
               </p>
               <p>
-                <strong>Spend-vs-Judgment Curve</strong> is a meta-dimension that integrates over the
-                whole Attempt. It rewards convex spending profiles — burn early, taper late — and
-                penalizes uniform spend that runs out the clock.
+                <strong>Spend-vs-Judgment Curve</strong> is the meta-dimension. It rewards convex spending — burn early, taper late — and penalises uniform spend.
               </p>
             </Section>
 
             <Section title="Anti-cheat: signed receipts and gateway lock">
               <p>
-                Every LLM call during a Brief Attempt flows through Antry&apos;s gateway. Each call
-                produces a signed receipt — HMAC-SHA256 over a canonical JSON of the call&apos;s
-                metadata, signed with the company&apos;s secret. At submission, the full receipt chain
-                must validate. A builder cannot complete a Brief by hitting Anthropic directly — there
-                is no signed proof, and the Receipt is rejected.
+                Every LLM call flows through Antry&apos;s gateway and produces an HMAC-SHA256 receipt. At submission, the full chain must validate — a builder can&apos;t bypass to Anthropic directly.
               </p>
               <p>
-                Lab heartbeats compare the rendered conversation hash to the streamed{" "}
-                <code>response_hash</code> chain. Mismatch = invalidated Attempt. Focus loss greater
-                than 90 seconds flags the Attempt for human review and shows the Receipt as &quot;review
-                pending&quot; until cleared.
+                Lab heartbeats hash the visible transcript against the streamed{" "}
+                <code>response_hash</code> chain. Mismatch invalidates the Attempt; focus loss &gt;90s flags it for human review.
               </p>
             </Section>
 
             <Section title="Open rubric format">
               <p>
-                Briefs are versioned YAML+tests. Anyone can author one in the same format Antry uses.
-                The repo is open and lives next to the methodology page so the community can audit and
-                contribute Briefs. Antry curates which ones go live.
+                Briefs are versioned YAML+tests. The format is open; the repo lives next to this page so the community can audit and contribute.
               </p>
               <pre className="text-[13px] bg-gray-50 border border-gray-100 rounded-lg p-4 overflow-x-auto">{`# brief.yaml
 title: Streaming RAG with citation discipline

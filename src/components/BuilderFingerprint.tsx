@@ -136,7 +136,8 @@ export function BuilderFingerprint({
           strokeWidth={1.5}
           strokeDasharray="4 4"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.6 }}
+          whileInView={{ opacity: 0.6 }}
+          viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.5 }}
         />
       )}
@@ -148,7 +149,8 @@ export function BuilderFingerprint({
         stroke={primaryColor}
         strokeWidth={2}
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.7, ease }}
         style={{ transformOrigin: `${cx}px ${cy}px` }}
       />
@@ -167,7 +169,8 @@ export function BuilderFingerprint({
             stroke={isDark ? "#0A0A0A" : "#FFFFFF"}
             strokeWidth={2}
             initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-40px" }}
             transition={{ delay: 0.4 + i * 0.05, duration: 0.3, ease }}
           />
         );
@@ -196,7 +199,8 @@ export function BuilderFingerprint({
                   fill: labelColor,
                 }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-40px" }}
                 transition={{ delay: 0.5 + i * 0.04, duration: 0.3 }}
               >
                 {DIMENSION_SHORT[d]}
@@ -213,7 +217,8 @@ export function BuilderFingerprint({
                   letterSpacing: "-0.01em",
                 }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-40px" }}
                 transition={{ delay: 0.6 + i * 0.04, duration: 0.3 }}
               >
                 {fingerprint[d]}

@@ -6,6 +6,7 @@ import { Sparkles, Cpu, Clock } from "lucide-react";
 import { BuilderFingerprint } from "@/components/BuilderFingerprint";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
 import type { Receipt } from "@/lib/receipts/types";
+import { CountUp } from "@/components/design/CountUp";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -75,7 +76,7 @@ export function LandingHeroAside({ receipt }: { receipt: Receipt }) {
                 fontSize: "clamp(2rem, 3.6vw, 2.8rem)",
               }}
             >
-              {receipt.composite_score}
+              <CountUp to={receipt.composite_score} durationMs={1100} />
               <span className="text-[14px] text-gray-400 ml-1">/100</span>
             </div>
           </div>
@@ -98,18 +99,37 @@ export function LandingHeroAside({ receipt }: { receipt: Receipt }) {
           <Stat
             icon={<Cpu className="w-3 h-3" />}
             label="Tokens"
-            value={receipt.tokens_spent.toLocaleString()}
+            value={
+              <CountUp to={receipt.tokens_spent} durationMs={1200} />
+            }
           />
           <Stat
             icon={<Clock className="w-3 h-3" />}
             label="Duration"
-            value={`${Math.round(receipt.attempt_duration_seconds / 60)}m`}
+            value={
+              <>
+                <CountUp
+                  to={Math.round(receipt.attempt_duration_seconds / 60)}
+                  durationMs={1000}
+                />
+                m
+              </>
+            }
             border
           />
           <Stat
             icon={<Sparkles className="w-3 h-3" />}
             label="Cost"
-            value={`$${(receipt.cost_usd_cents / 100).toFixed(2)}`}
+            value={
+              <>
+                $
+                <CountUp
+                  to={receipt.cost_usd_cents / 100}
+                  durationMs={1000}
+                  decimals={2}
+                />
+              </>
+            }
           />
         </div>
       </Link>
@@ -136,7 +156,7 @@ function Stat({
 }: {
   icon: React.ReactNode;
   label: string;
-  value: string;
+  value: React.ReactNode;
   border?: boolean;
 }) {
   return (
@@ -152,6 +172,34 @@ function Stat({
         {label}
       </p>
       <p className="mt-1 text-[14px] font-bold tabular-nums text-black">{value}</p>
+    </div>
+  );
+}
+
+/** Stagger children into view as the user scrolls. */
+export function StaggerInView({
+  children,
+  delayStep = 0.06,
+  className,
+}: {
+  children: React.ReactNode;
+  delayStep?: number;
+  className?: string;
+}) {
+  const items = Array.isArray(children) ? children : [children];
+  return (
+    <div className={className}>
+      {items.map((child, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, ease, delay: i * delayStep }}
+        >
+          {child}
+        </motion.div>
+      ))}
     </div>
   );
 }

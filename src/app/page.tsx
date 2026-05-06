@@ -12,7 +12,7 @@ import {
 } from "@/lib/receipts/demo-data";
 import { ALL_DIMENSIONS } from "@/lib/receipts/fingerprint";
 import { DIMENSION_SHORT } from "@/lib/receipts/types";
-import { LandingHeroAside, ReceiptCompare } from "./_landing/LandingClient";
+import { LandingHeroAside, ReceiptCompare, StaggerInView } from "./_landing/LandingClient";
 
 const TITLE = "Antry — Show your receipts.";
 const DESCRIPTION =
@@ -84,7 +84,7 @@ function Hero({ receipt }: { receipt: typeof demoReceipts[number] }) {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1240px] px-6 sm:px-10 pt-20 pb-24 sm:pt-28 sm:pb-32 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-14 lg:gap-20 items-center">
+      <div className="relative mx-auto max-w-[1240px] px-6 sm:px-10 pt-20 pb-24 sm:pt-28 sm:pb-32 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-16 lg:gap-24 items-center">
         <div>
           <p
             className="text-[11px] font-bold tracking-[0.28em] uppercase mb-7 inline-flex items-center gap-2"
@@ -165,20 +165,32 @@ function Hero({ receipt }: { receipt: typeof demoReceipts[number] }) {
    ───────────────────────────────────────────── */
 function SponsorWall() {
   const sponsors = Object.values(demoCompanies);
+  // Duplicate the list so the marquee can loop seamlessly.
+  const loop = [...sponsors, ...sponsors];
   return (
-    <section className="bg-white border-y border-gray-100">
-      <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-10">
-        <div className="flex items-center gap-x-12 gap-y-5 flex-wrap justify-center sm:justify-between">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400 shrink-0">
-            Brief sponsors
-          </p>
-          <div className="flex items-center gap-x-10 gap-y-4 flex-wrap">
-            {sponsors.map((c) => (
+    <section className="bg-white border-y border-gray-100 overflow-hidden">
+      <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-9 grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-6 items-center">
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400 shrink-0">
+          Brief sponsors
+        </p>
+        <div
+          className="relative overflow-hidden"
+          style={{
+            maskImage:
+              "linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)",
+          }}
+        >
+          <div className="flex items-center gap-x-14 animate-trustbar-marquee w-max group-hover:[animation-play-state:paused]">
+            {loop.map((c, i) => (
               <Link
-                key={c.slug}
+                key={`${c.slug}-${i}`}
                 href={`/c/${c.slug}`}
-                className="inline-flex items-center gap-2.5 transition-opacity hover:opacity-100"
-                style={{ opacity: 0.6 }}
+                className="inline-flex items-center gap-2.5 transition-opacity hover:opacity-100 shrink-0"
+                style={{ opacity: 0.55 }}
+                aria-hidden={i >= sponsors.length || undefined}
+                tabIndex={i >= sponsors.length ? -1 : 0}
               >
                 <span
                   className="inline-flex items-center justify-center w-7 h-7 rounded-md font-bold text-[12px] font-display"
@@ -207,6 +219,26 @@ function SponsorWall() {
    3. WEDGE — the thesis in 3 columns
    ───────────────────────────────────────────── */
 function Wedge() {
+  const cards = [
+    {
+      eyebrow: "01 / Resume",
+      title: "What you said",
+      tone: "muted",
+      caption: "Self-reported. Unverifiable.",
+    },
+    {
+      eyebrow: "02 / GitHub",
+      title: "What you shipped",
+      tone: "muted",
+      caption: "Output, not process.",
+    },
+    {
+      eyebrow: "03 / Antry",
+      title: "How you got there",
+      tone: "lime",
+      caption: "Signed at the gateway.",
+    },
+  ];
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-24 sm:py-32">
@@ -232,77 +264,37 @@ function Wedge() {
           .
         </h2>
 
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[
-            {
-              eyebrow: "01 / Resume",
-              title: "What you said",
-              tone: "muted",
-              body: (
-                <>
-                  <span className="block text-[13px] text-gray-400 leading-[1.6]">
-                    “8 years of Python experience. Built scalable ML pipelines at scale.”
-                  </span>
-                  <span className="mt-3 block text-[12px] text-gray-400">
-                    No way to verify. Indexes title, not output.
-                  </span>
-                </>
-              ),
-            },
-            {
-              eyebrow: "02 / GitHub",
-              title: "What you shipped",
-              tone: "muted",
-              body: (
-                <>
-                  <span className="block text-[13px] text-gray-500 leading-[1.6]">
-                    142 commits, 4 stars, working demo at the URL in the README.
-                  </span>
-                  <span className="mt-3 block text-[12px] text-gray-400">
-                    Output. Doesn’t say if Cursor wrote it in an afternoon.
-                  </span>
-                </>
-              ),
-            },
-            {
-              eyebrow: "03 / Antry",
-              title: "How you got there",
-              tone: "lime",
-              body: (
-                <>
-                  <span className="block text-[13px] text-black leading-[1.6]">
-                    Used <code className="px-1 py-0.5 rounded bg-gray-100 text-[12px]">file_search</code> 14× before any LLM call. Two retracted plans, both followed by passing pivots. Spent 70% of token budget in first third, then converged.
-                  </span>
-                  <span className="mt-3 block text-[12px] font-semibold" style={{ color: "#0A0A0A" }}>
-                    Signed at the gateway. Cannot be fabricated.
-                  </span>
-                </>
-              ),
-            },
-          ].map((c, i) => (
+        <StaggerInView className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5" delayStep={0.08}>
+          {cards.map((c) => (
             <article
-              key={i}
-              className="rounded-[20px] p-7 sm:p-8 transition-all duration-300 hover:-translate-y-[2px]"
+              key={c.eyebrow}
+              className="rounded-[20px] p-7 sm:p-8 h-full transition-all duration-300 hover:-translate-y-[2px]"
               style={{
                 background: c.tone === "lime" ? "rgba(198,241,53,0.10)" : "#FAFAF7",
-                border: c.tone === "lime"
-                  ? "1px solid rgba(198,241,53,0.45)"
-                  : "1px solid #EBEBEB",
+                border:
+                  c.tone === "lime"
+                    ? "1px solid rgba(198,241,53,0.45)"
+                    : "1px solid #EBEBEB",
               }}
             >
               <p
-                className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4"
+                className="text-[10px] font-bold uppercase tracking-[0.18em] mb-5"
                 style={{ color: c.tone === "lime" ? "#0A0A0A" : "rgba(0,0,0,0.4)" }}
               >
                 {c.eyebrow}
               </p>
-              <h3 className="text-[20px] font-bold tracking-[-0.015em] text-black mb-4">
+              <h3 className="text-[22px] font-bold tracking-[-0.015em] text-black leading-[1.2]">
                 {c.title}
               </h3>
-              {c.body}
+              <p
+                className="mt-3 text-[13px] leading-[1.5]"
+                style={{ color: c.tone === "lime" ? "#0A0A0A" : "rgba(0,0,0,0.55)" }}
+              >
+                {c.caption}
+              </p>
             </article>
           ))}
-        </div>
+        </StaggerInView>
       </div>
     </section>
   );
@@ -434,23 +426,23 @@ function SignedSection() {
     {
       icon: <ShieldCheck className="w-4 h-4" />,
       label: "Gateway-signed",
-      body: "Every LLM call is HMAC-signed server-side. No way to forge a Receipt without going through Antry.",
+      body: "Every LLM call HMAC-signed server-side.",
     },
     {
       icon: <Wrench className="w-4 h-4" />,
       label: "Tool-aware",
-      body: "We tag every tool call as deterministic vs generative. Reaching for grep before tokens earns you points.",
+      body: "Deterministic tools score above raw tokens.",
     },
     {
       icon: <Sparkles className="w-4 h-4" />,
-      label: "7 dimensions, antagonist-paired",
-      body: "No single-axis gaming. Each dimension has a counter-axis that pulls in the opposite direction.",
+      label: "Antagonist-paired",
+      body: "Single-axis gaming pulled down by counter-axis.",
     },
   ];
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-24 sm:py-28 border-t border-gray-100">
+      <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-28 sm:py-36 border-t border-gray-100">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 lg:gap-16 items-end mb-12">
           <h2
             className="font-display font-bold tracking-[-0.03em] text-black leading-[1.05] max-w-[820px]"
@@ -534,9 +526,6 @@ function CardCallout() {
             >
               Paste your GitHub URL. Get a profile in 5 seconds.
             </h2>
-            <p className="mt-4 max-w-[520px] text-[15px] leading-[1.6] text-gray-600">
-              No form. No resume. We scan public repos, score them on shipped-quality signals, and draft an Antry profile from your real work. Claim it in one click and move straight to a Brief.
-            </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/claim-card"
@@ -636,10 +625,10 @@ function MethodologyHook() {
           <span style={{ color: "rgba(255,255,255,0.5)" }}>is the signal.</span>
         </h2>
         <p
-          className="mt-7 max-w-[640px] mx-auto text-[16px] sm:text-[17px] leading-[1.6]"
-          style={{ color: "rgba(255,255,255,0.65)" }}
+          className="mt-7 max-w-[560px] mx-auto text-[16px] leading-[1.55]"
+          style={{ color: "rgba(255,255,255,0.55)" }}
         >
-          The composite uses a min-of-quartile rule. A weak axis pulls down the whole score, so a Receipt that maxes Token Economy at the cost of Verification Rigor never wins. Every formula is published, every rubric is open YAML.
+          Min-of-quartile composite. Open YAML rubric. Every formula published.
         </p>
         <div className="mt-9">
           <Link

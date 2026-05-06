@@ -102,7 +102,7 @@ export default async function BriefDetailPage({
               ← All Briefs
             </Link>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-16 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20 items-start">
               <div>
                 {brief.sponsor_label && (
                   <p
