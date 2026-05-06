@@ -125,35 +125,19 @@ const COMPARE_ROWS: {
 const FAQ: { q: string; a: string }[] = [
   {
     q: "Why are builders free forever?",
-    a: "Because the moment builders pay to be discoverable, the incentive corrupts the network. The signal is what makes Antry valuable; charging the side that produces signal would destroy it.",
+    a: "Charging the side that produces signal would destroy it.",
   },
   {
     q: "What's a Receipt seat?",
-    a: "One surfaced Receipt — meaning a Receipt that's been opened, attributed to a real person, and made available for an intro request. We only count a seat as consumed when you actually open the trace, not when it appears in a list.",
-  },
-  {
-    q: "Can a Brief get more attempts than I have seats for?",
-    a: "Yes. Public Briefs accept unlimited builder attempts; you only consume a seat when you open a specific Receipt to evaluate it. The rest stay free in the network.",
+    a: "One opened trace. We only count a seat when you actually evaluate the Receipt.",
   },
   {
     q: "What if I run out mid-month?",
-    a: "Solo and Growth roll over unused seats once. After that, you can either upgrade or buy individual seats at the pay-as-you-go rate ($15/seat, 5 minimum).",
+    a: "Roll one month over, then upgrade or buy at $15/seat (5 minimum).",
   },
   {
     q: "How is private mode different?",
-    a: "A private Brief never appears on /briefs, only invited builders see it, the trace stays company-only, and the resulting Receipt is invisible to non-company users.",
-  },
-  {
-    q: "Can I cancel any time?",
-    a: "Yes. Cancellation takes effect at the end of the current period. Receipts you already opened stay yours; remaining seats expire.",
-  },
-  {
-    q: "Why is enterprise so much more than Growth?",
-    a: "Concierge sourcing, custom rubric authoring, hold-out Briefs (separate test set per company), SSO, DPA, and a dedicated success engineer aren't features — they're a relationship. Pricing reflects it.",
-  },
-  {
-    q: "Do builders ever see who paid for their Receipt?",
-    a: "Only when a company sends an intro request. Receipt views are anonymous; intros are explicit.",
+    a: "Invite-only Briefs, company-only traces, hidden from /briefs.",
   },
 ];
 
@@ -228,7 +212,7 @@ function TierGrid() {
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-[1180px] px-6 sm:px-10 -mt-24 sm:-mt-28 pb-16 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {TIERS.filter((t) => t.slug !== "payg").map((t) => (
             <TierCard key={t.slug} tier={t} />
           ))}
@@ -408,7 +392,7 @@ function ComparisonTable() {
             style={{ background: "#FAFAF7", borderBottom: "1px solid #EBEBEB" }}
           >
             <div>Feature</div>
-            <div>Solo</div>
+            <div>Free</div>
             <div>Growth</div>
             <div>Enterprise</div>
           </div>
@@ -453,13 +437,13 @@ function MathCallout() {
     <section style={{ background: "#FAFAF7" }} className="border-y border-gray-100">
       <div className="mx-auto max-w-[920px] px-6 sm:px-10 py-20 sm:py-24">
         <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-3">
-          How the math works
+          The math
         </p>
         <h2
           className="font-display font-bold tracking-[-0.025em] text-black leading-[1.08] mb-6"
           style={{ fontSize: "clamp(1.6rem, 3.2vw, 2.2rem)" }}
         >
-          What one Receipt actually costs us.
+          What one Receipt costs us.
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div
@@ -544,13 +528,10 @@ function FairnessNote() {
             <h3 className="text-[18px] font-bold tracking-[-0.015em] text-black">
               Why builders are free forever
             </h3>
-            <p className="mt-3 text-[14px] leading-[1.65] text-gray-700">
-              The moment builders pay to be discoverable, the incentive
-              corrupts the network. The signal Antry surfaces is what makes
-              Receipts valuable — charging the side that produces signal would
-              destroy the very thing companies pay for. So builders mint, share,
-              and earn intros for free. Companies pay only when a Receipt
-              actually surfaces a hire-worthy human.
+            <p className="mt-3 text-[15px] leading-[1.6] text-gray-700">
+              Charging the side that produces signal would destroy the signal.
+              Builders mint free; companies pay only when a Receipt surfaces a
+              hire-worthy human.
             </p>
           </div>
         </div>
