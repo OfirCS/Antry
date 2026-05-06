@@ -15,6 +15,11 @@ import {
   Loader2,
   Check,
   Zap,
+  MessageSquare,
+  Code2,
+  Eye,
+  Play,
+  AlertCircle,
 } from "lucide-react";
 import { BuilderFingerprint } from "@/components/BuilderFingerprint";
 import {
@@ -49,6 +54,36 @@ type ReceiptEvent = {
   tokens_remaining: number;
 };
 
+type LabTab = "chat" | "code" | "preview";
+
+type TestResult = {
+  name: string;
+  passed: boolean;
+  reason?: string;
+  durationMs: number;
+};
+
+const STARTER_CODE = `// Write your solution. We'll run it in the Antry sandbox against the
+// Brief's tests. Export the entry function on globalThis.
+
+function answer(query) {
+  // TODO: implement
+  return { answer: "", citations: [] };
+}
+
+globalThis.answer = answer;
+`;
+
+const STARTER_HTML = `<!doctype html>
+<html><head><style>
+  body { font-family: system-ui; padding: 24px; background: #0A0A0A; color: #fff; }
+  h1 { color: #C6F135; }
+</style></head>
+<body>
+  <h1>Hello from the Lab.</h1>
+  <p>Edit this preview. Companies see it on your Receipt.</p>
+</body></html>`;
+
 const SUGGESTED_PROMPTS = [
   "Map the corpus first, then plan chunking strategy.",
   "Implement streaming with citation guards.",
@@ -65,12 +100,18 @@ export function LabClient({
   sessionToken: string;
 }) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<LabTab>("chat");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [composing, setComposing] = useState("");
   const [sending, setSending] = useState(false);
   const [tokensSpent, setTokensSpent] = useState(0);
   const [costCents, setCostCents] = useState(0);
   const [elapsed, setElapsed] = useState(0);
+  const [code, setCode] = useState(STARTER_CODE);
+  const [previewHtml, setPreviewHtml] = useState(STARTER_HTML);
+  const [testResults, setTestResults] = useState<TestResult[] | null>(null);
+  const [judgeCritique, setJudgeCritique] = useState<string | null>(null);
+  const [finalRubricScore, setFinalRubricScore] = useState<number | null>(null);
   const [mintingPending, startMint] = useTransition();
   const [mintResult, setMintResult] = useState<{
     receiptId: string;
@@ -257,11 +298,42 @@ export function LabClient({
     }
   };
 
+  const handleRunTests = () => {
+    startMint(async () => {
+      // The action runs sandbox + judge as a side-effect when code is
+      // included; we re-use it here without setting mintResult so the
+      // candidate can iterate before locking the Receipt.
+      const result = await mintReceiptAction(attemptId, {
+        code,
+        visualEvidenceHtml: previewHtml,
+        transcript: turns.filter((t) => !t.streaming).map((t) => ({
+          role: t.role,
+          content: t.text,
+        })),
+      });
+      if (result.ok) {
+        setTestResults(result.testResults);
+        setJudgeCritique(result.judgeCritique);
+        setFinalRubricScore(result.finalRubricScore);
+      }
+    });
+  };
+
   const handleMint = () => {
     startMint(async () => {
-      const result = await mintReceiptAction(attemptId);
+      const result = await mintReceiptAction(attemptId, {
+        code,
+        visualEvidenceHtml: previewHtml,
+        transcript: turns.filter((t) => !t.streaming).map((t) => ({
+          role: t.role,
+          content: t.text,
+        })),
+      });
       if (result.ok) {
         setMintResult({ receiptId: result.receiptId, score: result.compositeScore });
+        setTestResults(result.testResults);
+        setJudgeCritique(result.judgeCritique);
+        setFinalRubricScore(result.finalRubricScore);
       }
     });
   };
@@ -322,6 +394,38 @@ export function LabClient({
           </span>
         </div>
 
+        {/* Tab bar */}
+        <div
+          className="flex items-center gap-1 px-3 py-2"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          {([
+            { key: "chat" as const, label: "Chat", icon: <MessageSquare className="w-3.5 h-3.5" /> },
+            { key: "code" as const, label: "Code", icon: <Code2 className="w-3.5 h-3.5" /> },
+            { key: "preview" as const, label: "Preview", icon: <Eye className="w-3.5 h-3.5" /> },
+          ]).map((tab) => {
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className="inline-flex items-center gap-1.5 rounded-md px-3 h-8 text-[12px] font-semibold transition-colors"
+                style={{
+                  background: isActive ? "rgba(198,241,53,0.16)" : "transparent",
+                  color: isActive ? "#C6F135" : "rgba(255,255,255,0.55)",
+                }}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* CHAT TAB */}
+        {activeTab === "chat" && (
+        <>
         <div
           ref={conversationRef}
           className="flex-1 overflow-y-auto p-5 space-y-4 hide-scrollbar"
@@ -481,6 +585,168 @@ export function LabClient({
             </button>
           </form>
         </div>
+        </>
+        )}
+
+        {/* CODE TAB */}
+        {activeTab === "code" && (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 hide-scrollbar">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    Solution · runs in Antry sandbox
+                  </p>
+                  <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+                    TypeScript · isolated · 5s budget
+                  </span>
+                </div>
+                <textarea
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  spellCheck={false}
+                  className="w-full font-mono text-[12.5px] leading-[1.55] rounded-[12px] p-4 outline-none resize-none"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    color: "rgba(255,255,255,0.92)",
+                    minHeight: "360px",
+                  }}
+                />
+              </div>
+
+              {/* Test results */}
+              {testResults && testResults.length > 0 && (
+                <div
+                  className="rounded-[12px] p-4"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "rgba(255,255,255,0.55)" }}>
+                      Test results
+                    </p>
+                    <span
+                      className="text-[11px] font-mono tabular-nums"
+                      style={{ color: "rgba(255,255,255,0.55)" }}
+                    >
+                      {testResults.filter((t) => t.passed).length}/{testResults.length} passing
+                    </span>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {testResults.map((t) => (
+                      <li key={t.name} className="flex items-start gap-2 text-[12px]">
+                        {t.passed ? (
+                          <Check className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: "#22C55E" }} strokeWidth={3} />
+                        ) : (
+                          <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: "#EF4444" }} />
+                        )}
+                        <div className="min-w-0">
+                          <span style={{ color: t.passed ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.7)" }}>
+                            {t.name}
+                          </span>
+                          {t.reason && (
+                            <span className="block text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>
+                              {t.reason}
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  {judgeCritique && (
+                    <p
+                      className="mt-3 text-[12px] italic leading-[1.55]"
+                      style={{ color: "rgba(255,255,255,0.7)" }}
+                    >
+                      Judge: {judgeCritique}
+                    </p>
+                  )}
+                  {finalRubricScore !== null && (
+                    <p
+                      className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em]"
+                      style={{ color: "#C6F135" }}
+                    >
+                      Final rubric score: {Math.round(finalRubricScore * 100)} / 100
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div
+              className="px-5 py-4 flex items-center justify-between gap-3"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+            >
+              <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+                Tests run on Antry sandbox · isolated · ≤5s
+              </span>
+              <button
+                type="button"
+                onClick={handleRunTests}
+                disabled={mintingPending || !code.trim()}
+                className="inline-flex items-center gap-1.5 rounded-lg px-4 h-9 text-[12px] font-semibold disabled:opacity-50 transition-all hover:-translate-y-0.5"
+                style={{ background: "#C6F135", color: "#0A0A0A" }}
+              >
+                {mintingPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+                {mintingPending ? "Running" : "Run tests"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* PREVIEW TAB */}
+        {activeTab === "preview" && (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 hide-scrollbar">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+                  Visual evidence · embeds in Receipt
+                </p>
+                <textarea
+                  value={previewHtml}
+                  onChange={(e) => setPreviewHtml(e.target.value)}
+                  spellCheck={false}
+                  className="w-full font-mono text-[12px] leading-[1.55] rounded-[12px] p-4 outline-none resize-none"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    color: "rgba(255,255,255,0.92)",
+                    minHeight: "200px",
+                  }}
+                />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+                  Live render
+                </p>
+                <iframe
+                  title="Solution preview"
+                  srcDoc={previewHtml}
+                  sandbox="allow-scripts"
+                  className="w-full rounded-[12px]"
+                  style={{
+                    background: "#FFFFFF",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    minHeight: "320px",
+                  }}
+                />
+              </div>
+            </div>
+            <div
+              className="px-5 py-4 text-[11px]"
+              style={{
+                borderTop: "1px solid rgba(255,255,255,0.06)",
+                color: "rgba(255,255,255,0.45)",
+              }}
+            >
+              The HTML above is captured into the Receipt artifact when you mint.
+              Companies see the snapshot inline.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Live Fingerprint sidebar */}

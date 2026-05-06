@@ -47,19 +47,19 @@ type Tier = {
 const TIERS: Tier[] = [
   {
     slug: "solo",
-    name: "Solo",
-    blurb: "For solo founders and sub-10-person teams hiring their first AI engineers.",
-    price: "$99",
-    cadence: "/ month",
+    name: "Free",
+    blurb: "Try Antry on a real Brief. No card, no commitment. Upgrade only when you need more seats.",
+    price: "$0",
+    cadence: "forever",
     features: [
       "1 active Brief at a time",
-      "10 candidate Receipt seats / month",
-      "Public Briefs only (visible on /briefs)",
-      "5 outbound intro requests / month",
-      "Receipts retained 90 days",
-      "Email support",
+      "3 candidate Receipt seats / month",
+      "Public Briefs only",
+      "1 outbound intro request / month",
+      "Receipts retained 30 days",
+      "Community support",
     ],
-    cta: { label: "Start with Solo", href: "/c/start?plan=solo" },
+    cta: { label: "Start free", href: "/c/start?plan=solo" },
     tone: "light",
   },
   {
@@ -107,13 +107,14 @@ const COMPARE_ROWS: {
   growth: string | true | false;
   enterprise: string | true | false;
 }[] = [
+  { feature: "Price", solo: "Free", growth: "$499/mo", enterprise: "$2,499/mo" },
   { feature: "Active Briefs", solo: "1", growth: "4", enterprise: "Unlimited" },
-  { feature: "Receipt seats / month", solo: "10", growth: "50", enterprise: "250" },
+  { feature: "Receipt seats / month", solo: "3", growth: "50", enterprise: "250" },
   { feature: "Public Briefs", solo: true, growth: true, enterprise: true },
   { feature: "Private (invite-only) Briefs", solo: false, growth: true, enterprise: true },
   { feature: "Hold-out Briefs", solo: false, growth: false, enterprise: true },
-  { feature: "Intro requests / month", solo: "5", growth: "30", enterprise: "Unlimited" },
-  { feature: "Receipt retention", solo: "90 days", growth: "12 months", enterprise: "Forever" },
+  { feature: "Intro requests / month", solo: "1", growth: "30", enterprise: "Unlimited" },
+  { feature: "Receipt retention", solo: "30 days", growth: "12 months", enterprise: "Forever" },
   { feature: "Read-only Receipts API", solo: false, growth: true, enterprise: true },
   { feature: "Full Receipts API", solo: false, growth: false, enterprise: true },
   { feature: "SSO + DPA", solo: false, growth: false, enterprise: true },
@@ -211,10 +212,11 @@ function Hero() {
           className="mt-7 max-w-[640px] mx-auto text-[16px] sm:text-[17px] leading-[1.6]"
           style={{ color: "rgba(255,255,255,0.66)" }}
         >
-          Builders mint Receipts free, forever. Companies pay only when a Receipt
-          surfaces a hire-worthy human. No posting fees. No per-seat trickery.{" "}
+          Builders mint Receipts free, forever. Companies start with{" "}
+          <span style={{ color: "#FFFFFF" }}>3 free Receipt seats</span> — no
+          card, no commitment. Upgrade only when you need more.{" "}
           <span style={{ color: "#FFFFFF" }}>
-            Solo $99 · Growth $499 · Enterprise $2,499.
+            Free · $499 · $2,499.
           </span>
         </p>
       </div>

@@ -17,10 +17,56 @@ import type { AttemptTelemetry } from "@/lib/receipts/fingerprint";
 import { computeFootprint } from "@/lib/receipts/compute-footprint";
 import { getDemoBrief, demoBriefs } from "@/lib/receipts/demo-data";
 import { createClient } from "@/lib/supabase/server";
+import { runSandbox, type TestCase, type SandboxRunResult } from "@/lib/sandbox/runner";
+import { judgeSolution, composeRubric } from "@/lib/eval/judge";
 
 function getBriefById(briefId: string) {
   return demoBriefs.find((b) => b.id === briefId) ?? null;
 }
+
+// Per-Brief default test suites. In production these come from the Brief's
+// rubric_json.tests array; for now we ship reasonable starters keyed by
+// Brief id so /missions and the Lab demo are usable end-to-end.
+const DEFAULT_TESTS_BY_BRIEF: Record<string, { entry: string; tests: TestCase[] }> = {
+  br_streaming_rag: {
+    entry: "answer",
+    tests: [
+      { name: "returns object with answer + citations", args: ["What is RAG?"], expect: "truthy" },
+      { name: "rejects unanswerable question without fabricating", args: [""], expect: "no-throw" },
+    ],
+  },
+  br_edge_compute: {
+    entry: "classify",
+    tests: [
+      { name: "classifies billing question correctly", args: ["How do I cancel?"], expect: "billing" },
+      { name: "classifies bug report correctly", args: ["The page is blank"], expect: "bug" },
+      { name: "no-throws on empty", args: [""], expect: "no-throw" },
+    ],
+  },
+  br_email_engine: {
+    entry: "route",
+    tests: [
+      { name: "signup event picks welcome template", args: [{ event: "signup" }], expect: "truthy" },
+      { name: "churn event picks retention", args: [{ event: "churn" }], expect: "truthy" },
+    ],
+  },
+  br_realtime_sync: {
+    entry: "resolve",
+    tests: [
+      { name: "later write wins", args: [{ a: 1, ts: 100 }, { a: 2, ts: 200 }], expect: { a: 2, ts: 200 } },
+      { name: "idempotent on re-run", args: [{ a: 1, ts: 100 }, { a: 1, ts: 100 }], expect: { a: 1, ts: 100 } },
+    ],
+  },
+};
+
+// Default fallback for Briefs without a custom suite — single "no-throw"
+// test on the candidate's `solve` entry point.
+const FALLBACK_TESTS = {
+  entry: "solve",
+  tests: [
+    { name: "function exists and runs", args: [], expect: "no-throw" as const },
+  ],
+};
 
 // Open a new Lab session for a builder on a Brief.
 // Requires authentication in production so the gateway can't be used as a
@@ -71,25 +117,35 @@ export type MintResult =
       redirectTo: string;
       fingerprint: ReturnType<typeof computeFingerprint>;
       computeFootprint: ReturnType<typeof computeFootprint>;
+      testResults: SandboxRunResult["results"];
+      judgeCritique: string;
+      finalRubricScore: number;
+      visualEvidenceHtml: string | null;
     }
   | { ok: false; reason: string };
 
-// Mint a Receipt from REAL gateway telemetry.
+// Mint a Receipt from REAL gateway telemetry + sandbox tests + LLM judge.
 //
-// This is the eval pipeline:
-//   1. Pull the actual stored gateway calls for this attempt.
-//   2. Compute the Builder Fingerprint deterministically (no mocking).
-//   3. Compute the compute footprint (energy, CO2, LOC, cost).
-//   4. Run the rubric — currently functional/heuristic, LLM-judge step
-//      lands in a follow-up. We grade `passedHoldOutTest` as a function
-//      of (a) the conversation didn't error, (b) at least one tool was
-//      used, (c) total tokens stayed within the Brief budget.
-//   5. Compose composite score with the min-of-quartile rule.
+// The full eval pipeline:
+//   1. Pull stored gateway calls for this attempt.
+//   2. If candidate submitted code, run it in our sandbox against the
+//      Brief's test suite. Capture pass/fail per test + stdout.
+//   3. Call the LLM judge (claude-haiku-4-5) to score subjective quality.
+//      Returns deterministic mock when ANTHROPIC_API_KEY is unset.
+//   4. Compose final_rubric_score = 0.6 * test_pass_rate + 0.4 * judge_overall.
+//   5. Compute Builder Fingerprint from the real per-turn telemetry.
+//   6. Compute compute footprint (energy, CO2, LOC, cost) from totals.
+//   7. Sign the canonical receipt + return the full envelope.
 //
-// Returns the full Receipt envelope so the client can update its UI in
-// place without a follow-up fetch.
+// The visual_evidence_html parameter lets the client embed a rendered
+// snapshot of the candidate's HTML solution into the Receipt artifact.
 export async function mintReceiptAction(
-  attemptId: string
+  attemptId: string,
+  submission?: {
+    code?: string;
+    visualEvidenceHtml?: string;
+    transcript?: { role: "user" | "assistant"; content: string }[];
+  }
 ): Promise<MintResult> {
   const a = getAttempt(attemptId);
   if (!a) return { ok: false, reason: "attempt_not_found" };
@@ -108,17 +164,42 @@ export async function mintReceiptAction(
   const briefDeterministicSurfaceWeight = 0.65;
   const tokenCap = brief?.token_cap ?? 50_000;
 
-  // Real heuristic rubric: the attempt "passes" if a tool was used and
-  // the spend stayed under the cap. Real Briefs replace this with a
-  // function-test runner + an LLM-judge call (cheap Haiku model).
   const totalTokens =
     a.calls.reduce((s, c) => s + c.inputTokens + c.outputTokens, 0) || 1;
   const usedAnyTool = a.calls.some((c) => c.toolCalls.length > 0);
   const stayedUnderBudget = totalTokens <= tokenCap;
-  const passedHoldOutTest = usedAnyTool && stayedUnderBudget;
-  const finalRubricScore = passedHoldOutTest
+
+  // ── Real eval pipeline ──────────────────────────────────
+  // If the candidate submitted code, run it through our sandbox + judge.
+  // Otherwise fall back to a heuristic that combines tool usage + budget.
+  let passedHoldOutTest = usedAnyTool && stayedUnderBudget;
+  let finalRubricScore = passedHoldOutTest
     ? Math.min(1, 0.6 + (a.calls.length / 8) * 0.4)
     : 0.4;
+  let testResults: SandboxRunResult["results"] = [];
+  let judgeCritique = "Heuristic rubric — no code submission to evaluate.";
+
+  if (submission?.code && submission.code.trim().length > 0) {
+    const suite = DEFAULT_TESTS_BY_BRIEF[a.briefId] ?? FALLBACK_TESTS;
+    const sandboxResult = await runSandbox({
+      code: submission.code,
+      entry: suite.entry,
+      tests: suite.tests,
+    });
+    const judge = await judgeSolution({
+      briefTitle: brief?.title ?? a.briefId,
+      briefPromptMd: brief?.prompt_md ?? "",
+      rubric: brief?.rubric_json ?? {},
+      transcript: submission.transcript ?? [],
+      solutionCode: submission.code,
+      sandboxResult,
+    });
+    const composed = composeRubric(sandboxResult, judge);
+    passedHoldOutTest = composed.passed_hold_out;
+    finalRubricScore = composed.final_rubric_score;
+    testResults = composed.test_results;
+    judgeCritique = judge.critique;
+  }
 
   // Quality delta per turn — the rubric runner would label this for real.
   // Heuristic: turns that contained a tool call or self-check land most
@@ -181,6 +262,10 @@ export async function mintReceiptAction(
     compositeScore: composite,
     fingerprint,
     computeFootprint: footprint,
+    testResults,
+    judgeCritique,
+    finalRubricScore,
+    visualEvidenceHtml: submission?.visualEvidenceHtml ?? null,
     redirectTo: `/lab/result/${attemptId}`,
   };
 }
