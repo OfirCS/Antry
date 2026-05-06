@@ -121,6 +121,10 @@ export type Receipt = {
   // re-signs and self-verifies. May be undefined for demo rows where the
   // signature is computed lazily.
   signature?: string;
+  // Compute footprint — energy, CO2, LOC, water — derived at mint time from
+  // the gateway_calls totals. Companies hire on energy efficiency, not just
+  // output. See src/lib/receipts/compute-footprint.ts.
+  compute_footprint?: import("./compute-footprint").ComputeFootprint;
   content_hash: string;
   signed_at: string;
   tokens_spent: number;

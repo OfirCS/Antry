@@ -7,6 +7,7 @@
 
 import type { Brief, Fingerprint, Receipt } from "./types";
 import { signReceipt, type CanonicalReceipt } from "./sign";
+import { footprintFromReceiptSummary } from "./compute-footprint";
 
 export const demoCompanies = {
   anthropic: {
@@ -449,16 +450,27 @@ export function getDemoBrief(slug: string): Brief | null {
   return demoBriefs.find((b) => b.slug === slug) ?? null;
 }
 
+// Compute a footprint for each demo receipt at module load so the Receipt
+// page renders the energy/CO2/LOC numbers without needing per-call telemetry.
+const RECEIPTS_WITH_FOOTPRINT: Receipt[] = demoReceipts.map((r) => ({
+  ...r,
+  compute_footprint: footprintFromReceiptSummary({
+    tokens_spent: r.tokens_spent,
+    attempt_duration_seconds: r.attempt_duration_seconds,
+    cost_usd_cents: r.cost_usd_cents,
+  }),
+}));
+
 export function getDemoReceiptsForBrief(briefId: string): Receipt[] {
-  return demoReceipts.filter((r) => r.brief_id === briefId);
+  return RECEIPTS_WITH_FOOTPRINT.filter((r) => r.brief_id === briefId);
 }
 
 export function getDemoReceiptsForBuilder(username: string): Receipt[] {
-  return demoReceipts.filter((r) => r.builder.username === username);
+  return RECEIPTS_WITH_FOOTPRINT.filter((r) => r.builder.username === username);
 }
 
 export function getDemoReceipt(id: string): Receipt | null {
-  return demoReceipts.find((r) => r.id === id) ?? null;
+  return RECEIPTS_WITH_FOOTPRINT.find((r) => r.id === id) ?? null;
 }
 
 /**

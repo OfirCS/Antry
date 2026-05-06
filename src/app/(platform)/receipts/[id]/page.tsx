@@ -5,13 +5,26 @@ import {
   ArrowLeft,
   CheckCircle2,
   Clock,
+  Code2,
   Cpu,
+  Droplet,
   ExternalLink,
+  Leaf,
   Share2,
   ShieldCheck,
   Sparkles,
   Twitter,
+  Zap,
 } from "lucide-react";
+import {
+  formatEnergy,
+  formatCo2,
+  formatWater,
+  formatCost,
+  co2EquivalentLine,
+  energyEquivalentLine,
+  type ComputeFootprint,
+} from "@/lib/receipts/compute-footprint";
 import { Nav } from "@/components/Nav";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import {
@@ -232,6 +245,28 @@ export default async function ReceiptPage({
               </div>
             </div>
 
+            {/* Compute footprint block — what the company actually paid in
+                energy, code volume, and CO2 to get this Receipt */}
+            {r.compute_footprint && (
+              <div className="mt-10">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+                  Compute footprint
+                </p>
+                <h2
+                  className="font-display font-bold tracking-[-0.025em] text-black leading-[1.1] mb-2"
+                  style={{ fontSize: "clamp(1.4rem, 3vw, 1.9rem)" }}
+                >
+                  How much energy this trace burned.
+                </h2>
+                <p className="text-[14px] text-gray-600 max-w-[640px] mb-6">
+                  Companies hire on energy efficiency, not just output. Token
+                  economy was the radar dimension; here&apos;s the absolute
+                  number it represents.
+                </p>
+                <ComputeFootprintGrid footprint={r.compute_footprint} />
+              </div>
+            )}
+
             {/* Verification block */}
             <div className="mt-10">
               <div
@@ -446,6 +481,105 @@ function KV({ label, value, mono = false }: { label: string; value: string; mono
         {value}
       </p>
     </div>
+  );
+}
+
+function ComputeFootprintGrid({ footprint }: { footprint: ComputeFootprint }) {
+  const cells = [
+    {
+      icon: <Zap className="w-4 h-4" />,
+      label: "Energy",
+      value: formatEnergy(footprint.energy_kwh),
+      sub: energyEquivalentLine(footprint.energy_kwh),
+      tint: "#C6F135",
+    },
+    {
+      icon: <Leaf className="w-4 h-4" />,
+      label: "CO₂",
+      value: formatCo2(footprint.co2_grams),
+      sub: co2EquivalentLine(footprint.co2_grams),
+      tint: "#22C55E",
+    },
+    {
+      icon: <Droplet className="w-4 h-4" />,
+      label: "Water (cooling)",
+      value: formatWater(footprint.water_litres),
+      sub: "data-centre cooling proxy",
+      tint: "#06B6D4",
+    },
+    {
+      icon: <Code2 className="w-4 h-4" />,
+      label: "Lines of code",
+      value: footprint.lines_of_code.toLocaleString(),
+      sub: `${footprint.constants.tokens_per_loc} tokens/line, est.`,
+      tint: "#A78BFA",
+    },
+    {
+      icon: <Cpu className="w-4 h-4" />,
+      label: "Tokens",
+      value: footprint.total_tokens.toLocaleString(),
+      sub: `${footprint.input_tokens.toLocaleString()} in · ${footprint.output_tokens.toLocaleString()} out`,
+      tint: "#0A0A0A",
+    },
+    {
+      icon: <Clock className="w-4 h-4" />,
+      label: "Wall-clock",
+      value: `${Math.round(footprint.wall_clock_seconds / 60)}m ${footprint.wall_clock_seconds % 60}s`,
+      sub: `peak ~${footprint.peak_memory_mb} MB`,
+      tint: "#F59E0B",
+    },
+    {
+      icon: <Sparkles className="w-4 h-4" />,
+      label: "Total cost",
+      value: formatCost(footprint.cost_usd_cents),
+      sub: "API + Antry overhead",
+      tint: "#EC4899",
+    },
+  ];
+
+  return (
+    <>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {cells.map((c) => (
+          <div
+            key={c.label}
+            className="rounded-[16px] p-4 bg-white"
+            style={{ border: "1px solid #EBEBEB" }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span
+                className="w-7 h-7 rounded-md inline-flex items-center justify-center"
+                style={{
+                  background: c.tint === "#0A0A0A" ? "rgba(10,10,10,0.08)" : `${c.tint}1F`,
+                  color: c.tint === "#0A0A0A" ? "#0A0A0A" : c.tint,
+                }}
+              >
+                {c.icon}
+              </span>
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">
+                {c.label}
+              </p>
+            </div>
+            <p className="text-[20px] font-bold tracking-[-0.015em] text-black tabular-nums leading-none">
+              {c.value}
+            </p>
+            <p className="mt-2 text-[11px] text-gray-500 leading-[1.45]">{c.sub}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 text-[11px] text-gray-400 leading-relaxed max-w-[640px]">
+        Estimates derived from gateway telemetry using the constants in
+        compute-footprint.ts. Energy figure assumes US grid intensity{" "}
+        <span className="font-mono">
+          {footprint.constants.co2_grams_per_kwh}g CO₂/kWh
+        </span>
+        ; LOC estimated from output tokens at{" "}
+        <span className="font-mono">
+          {footprint.constants.tokens_per_loc} tokens/line
+        </span>
+        . The methodology page documents every assumption.
+      </p>
+    </>
   );
 }
 
