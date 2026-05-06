@@ -140,6 +140,96 @@ export default function MethodologyPage() {
               </p>
             </Section>
 
+            <Section title="Provenance: SHA-256, public key, qualified timestamp">
+              <p>
+                Every Receipt is content-addressed. The artifact carries:
+              </p>
+              <ul className="not-prose space-y-2 pl-0">
+                <li className="grid grid-cols-[140px_1fr] gap-3 text-[14px] items-start">
+                  <span className="font-mono text-[12px] text-gray-500 pt-0.5">content_hash</span>
+                  <span className="text-gray-700">SHA-256 over canonical telemetry + Fingerprint JSON.</span>
+                </li>
+                <li className="grid grid-cols-[140px_1fr] gap-3 text-[14px] items-start">
+                  <span className="font-mono text-[12px] text-gray-500 pt-0.5">signature</span>
+                  <span className="text-gray-700">HMAC-SHA256 (Antry master key) chained from per-call gateway signatures.</span>
+                </li>
+                <li className="grid grid-cols-[140px_1fr] gap-3 text-[14px] items-start">
+                  <span className="font-mono text-[12px] text-gray-500 pt-0.5">key_fp</span>
+                  <span className="text-gray-700">Public-key fingerprint published at <code>/api/v1/keys</code>; rotated quarterly with overlap.</span>
+                </li>
+                <li className="grid grid-cols-[140px_1fr] gap-3 text-[14px] items-start">
+                  <span className="font-mono text-[12px] text-gray-500 pt-0.5">signed_at</span>
+                  <span className="text-gray-700">Server-issued ISO-8601 with timezone; aligned with C2PA-style qualified timestamps.</span>
+                </li>
+              </ul>
+              <p className="mt-2">
+                Re-derive any score: pull the trace bundle, re-run the dimension functions, compare. Verifier endpoint at{" "}
+                <code>/api/v1/receipts/[id]/verify</code> returns the canonical hash for client-side comparison.
+              </p>
+            </Section>
+
+            <Section title="How we resist gaming">
+              <p>
+                Every metric has an attacker who&apos;d like to optimise it cheaply. Here&apos;s what we do about each known vector:
+              </p>
+              <div className="not-prose grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                {[
+                  {
+                    attack: "Paste-burst (LLM-on-side)",
+                    defense:
+                      "Input >N tokens in one turn flags `prompt_paste_burst=true`. Prompt Discipline credit suppressed; methodology disclosed, not silent.",
+                  },
+                  {
+                    attack: "External-LLM relay",
+                    defense:
+                      "Receipt signature chains every call through Antry's gateway. Builder can run a second model on the side, but the trace itself is unforgeable.",
+                  },
+                  {
+                    attack: "Tool-spam to inflate Tool-Choice IQ",
+                    defense:
+                      "Tool calls outside the Brief's `allowed_tools` whitelist invalidate the Attempt. Repeated identical tool calls are deduped before scoring.",
+                  },
+                  {
+                    attack: "Stalling to save tokens",
+                    defense:
+                      "Throughput is the antagonist of Token Economy. Wall-clock to first verified-correct output is timestamped at the gateway, not the client.",
+                  },
+                  {
+                    attack: "Hold-out test memorisation",
+                    defense:
+                      "Hold-out test is unseen by the builder, rotated per cohort, and graded after submission against a secondary judge model.",
+                  },
+                  {
+                    attack: "Focus-loss for offline help",
+                    defense:
+                      "Lab tracks blur/focus. >90s flagged for human review; Receipt status `review_pending` until cleared.",
+                  },
+                ].map((row) => (
+                  <div
+                    key={row.attack}
+                    className="rounded-[14px] p-4 bg-[#FAFAF7] border border-gray-100"
+                  >
+                    <p className="text-[12px] font-bold tracking-[-0.005em] text-black">
+                      {row.attack}
+                    </p>
+                    <p className="mt-1.5 text-[13px] leading-[1.55] text-gray-600">
+                      {row.defense}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[13px] text-gray-500">
+                Found a vector we missed?{" "}
+                <a
+                  href="mailto:[email protected]"
+                  className="underline font-semibold text-black"
+                >
+                  [email protected]
+                </a>{" "}
+                — disclosure credits go on this page.
+              </p>
+            </Section>
+
             <Section title="Open rubric format">
               <p>
                 Briefs are versioned YAML+tests. The format is open; the repo lives next to this page so the community can audit and contribute.
@@ -160,6 +250,19 @@ hold_out:
   - query: "How do I rotate API keys?"
     expected_citations: [doc_142, doc_207]`}</pre>
             </Section>
+
+            <p className="text-[12px] text-gray-500 italic pt-4">
+              Maintained by the Antry methodology working group. Last revised{" "}
+              <time dateTime="2026-05-06">May 6, 2026</time>. Want to challenge a
+              formula? File an issue on the open rubric repo or email{" "}
+              <a
+                href="mailto:[email protected]"
+                className="underline text-black not-italic font-semibold"
+              >
+                [email protected]
+              </a>
+              .
+            </p>
 
             <div className="rounded-[24px] p-6 sm:p-8 mt-12 relative overflow-hidden" style={{ background: "#0A0A0A" }}>
               <div

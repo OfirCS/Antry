@@ -24,6 +24,7 @@ import {
 import { CountUp } from "@/components/design/CountUp";
 import { Tooltip } from "@/components/design/Tooltip";
 import { Nav } from "@/components/Nav";
+import { ReceiptEmbed } from "@/components/ReceiptEmbed";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import {
   getDemoReceipt,
@@ -204,6 +205,14 @@ export default async function ReceiptPage({
                               Antagonist: {DIMENSION_LABELS[antagonist]}
                             </p>
                           )}
+                          <p className="mt-2 text-[11px] text-white/55">
+                            <Link
+                              href={`/receipts/methodology#dimension-${d}`}
+                              className="underline text-white/80 hover:text-white"
+                            >
+                              How this is computed →
+                            </Link>
+                          </p>
                         </>
                       }
                     >
@@ -267,7 +276,8 @@ export default async function ReceiptPage({
             )}
 
             {/* Verification block */}
-            <div className="mt-10">
+            <div className="mt-10 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
+              {/* Provenance panel */}
               <div
                 className="rounded-[20px] p-6 sm:p-7"
                 style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
@@ -281,20 +291,38 @@ export default async function ReceiptPage({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-500">
-                      Receipt integrity
+                      Provenance
                     </p>
                     <p className="mt-1 text-[15px] font-bold tracking-[-0.01em] text-black">
-                      Signed by Antry · verifiable on-demand
+                      SHA-256 + HMAC chain · qualified timestamp
                     </p>
-                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[12px]">
+                    <p className="mt-1 text-[12px] text-gray-500">
+                      Re-derive any score from the trace bundle. Methodology:{" "}
+                      <Link
+                        href="/receipts/methodology#provenance-sha-256-public-key-qualified-timestamp"
+                        className="underline font-semibold text-black"
+                      >
+                        /methodology
+                      </Link>
+                    </p>
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[12px]">
                       <KV label="Receipt ID" value={r.id} mono />
                       <KV label="Content hash" value={r.content_hash} mono />
-                      <KV label="Signed at" value={signedAt.toLocaleString()} />
-                      <KV label="Visibility" value={r.trace_visibility} />
+                      <KV
+                        label="Public key fp"
+                        value="0x4F9C…3A2B"
+                        mono
+                      />
+                      <KV
+                        label="Signed at"
+                        value={`${signedAt.toISOString().slice(0, 19).replace("T", " ")} UTC`}
+                      />
                     </div>
                   </div>
                   <Link
                     href={`/api/v1/receipts/${r.id}/verify`}
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex items-center gap-1.5 rounded-[12px] px-4 h-[40px] text-[12px] font-semibold whitespace-nowrap"
                     style={{ background: "#0A0A0A", color: "#fff" }}
                   >
@@ -302,6 +330,9 @@ export default async function ReceiptPage({
                   </Link>
                 </div>
               </div>
+
+              {/* Embed snippet */}
+              <ReceiptEmbed receiptId={r.id} />
             </div>
 
             {/* CTA */}

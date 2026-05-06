@@ -526,7 +526,7 @@ function CardCallout() {
             >
               Paste your GitHub URL. Get a profile in 5 seconds.
             </h2>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link
                 href="/claim-card"
                 className="inline-flex items-center justify-center gap-2 rounded-[14px] px-6 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
@@ -540,9 +540,9 @@ function CardCallout() {
               </Link>
               <Link
                 href="/discover"
-                className="inline-flex items-center justify-center gap-2 rounded-[14px] px-6 h-[48px] text-[14px] font-semibold whitespace-nowrap text-black hover:underline underline-offset-4"
+                className="text-[14px] font-semibold text-black hover:underline underline-offset-4 inline-flex items-center gap-1.5"
               >
-                Browse builders
+                Browse builders →
               </Link>
             </div>
           </div>
@@ -664,7 +664,7 @@ function FinalCTA() {
         <p className="mt-6 max-w-[560px] mx-auto text-[16px] leading-[1.6] text-gray-600">
           Pick a Brief. Solve it in the Lab. Mint a Receipt that pins to your profile, signed and shareable, in under an hour.
         </p>
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
+        <div className="mt-9 flex flex-wrap justify-center items-center gap-x-6 gap-y-3">
           <Link
             href="/briefs"
             className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold transition-all hover:-translate-y-0.5"
@@ -678,14 +678,9 @@ function FinalCTA() {
           </Link>
           <Link
             href="/claim-card"
-            className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold transition-all hover:-translate-y-0.5"
-            style={{
-              background: "#0A0A0A",
-              color: "#fff",
-              boxShadow: "0 6px 18px rgba(10,10,10,0.18)",
-            }}
+            className="text-[14px] font-semibold text-black hover:underline underline-offset-4 inline-flex items-center gap-1.5"
           >
-            Claim your card
+            or claim your Antry card →
           </Link>
         </div>
       </div>

@@ -389,7 +389,9 @@ function ConstraintRow({
   );
 }
 
-// Lightweight markdown renderer — handles headings, lists, paragraphs, bold, code, em.
+// Safe lightweight markdown renderer. Returns React nodes — never uses
+// dangerouslySetInnerHTML, so a Brief authored with raw <script> can't
+// execute. Handles headings, lists, paragraphs, bold, inline code, em.
 function BriefMarkdown({ md }: { md: string }) {
   const blocks = md.split("\n\n");
   return (
@@ -399,8 +401,11 @@ function BriefMarkdown({ md }: { md: string }) {
         if (!trimmed) return null;
         if (trimmed.startsWith("# ")) {
           return (
-            <h1 key={i} className="text-[24px] font-bold tracking-[-0.02em] text-black font-display mt-2">
-              {trimmed.slice(2)}
+            <h1
+              key={i}
+              className="text-[24px] font-bold tracking-[-0.02em] text-black font-display mt-2"
+            >
+              {renderInline(trimmed.slice(2))}
             </h1>
           );
         }
@@ -410,7 +415,7 @@ function BriefMarkdown({ md }: { md: string }) {
               key={i}
               className="text-[18px] font-bold tracking-[-0.015em] text-black font-display mt-4"
             >
-              {trimmed.slice(3)}
+              {renderInline(trimmed.slice(3))}
             </h2>
           );
         }
@@ -419,7 +424,7 @@ function BriefMarkdown({ md }: { md: string }) {
           return (
             <ul key={i} className="list-disc pl-5 space-y-1.5">
               {items.map((it, k) => (
-                <li key={k} dangerouslySetInnerHTML={{ __html: inlineMd(it) }} />
+                <li key={k}>{renderInline(it)}</li>
               ))}
             </ul>
           );
@@ -429,20 +434,62 @@ function BriefMarkdown({ md }: { md: string }) {
           return (
             <ol key={i} className="list-decimal pl-5 space-y-1.5">
               {items.map((it, k) => (
-                <li key={k} dangerouslySetInnerHTML={{ __html: inlineMd(it) }} />
+                <li key={k}>{renderInline(it)}</li>
               ))}
             </ol>
           );
         }
-        return <p key={i} dangerouslySetInnerHTML={{ __html: inlineMd(trimmed) }} />;
+        return <p key={i}>{renderInline(trimmed)}</p>;
       })}
     </div>
   );
 }
 
-function inlineMd(text: string): string {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-gray-100 text-[13px]">$1</code>')
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+/**
+ * Render inline markdown as React nodes — no dangerouslySetInnerHTML.
+ * Tokens are tried in priority order so `**bold**` doesn't get eaten by `*em*`.
+ */
+function renderInline(text: string): React.ReactNode[] {
+  const patterns: { re: RegExp; render: (m: RegExpExecArray, key: number) => React.ReactNode }[] = [
+    {
+      re: /\*\*(.+?)\*\*/,
+      render: (m, key) => <strong key={key}>{m[1]}</strong>,
+    },
+    {
+      re: /`([^`]+)`/,
+      render: (m, key) => (
+        <code
+          key={key}
+          className="px-1.5 py-0.5 rounded bg-gray-100 text-[13px]"
+        >
+          {m[1]}
+        </code>
+      ),
+    },
+    {
+      re: /\*([^*]+)\*/,
+      render: (m, key) => <em key={key}>{m[1]}</em>,
+    },
+  ];
+
+  function tokenize(src: string, keyBase = 0): React.ReactNode[] {
+    let earliest: { pattern: typeof patterns[number]; match: RegExpExecArray } | null =
+      null;
+    for (const p of patterns) {
+      const m = p.re.exec(src);
+      if (m && (!earliest || m.index < earliest.match.index)) {
+        earliest = { pattern: p, match: m };
+      }
+    }
+    if (!earliest) return [src];
+    const before = src.slice(0, earliest.match.index);
+    const after = src.slice(earliest.match.index + earliest.match[0].length);
+    return [
+      ...(before ? [before] : []),
+      earliest.pattern.render(earliest.match, keyBase),
+      ...tokenize(after, keyBase + 1),
+    ];
+  }
+
+  return tokenize(text);
 }

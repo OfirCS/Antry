@@ -3,7 +3,7 @@
 import { Nav } from "@/components/Nav";
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { AntryLogoFull } from "@/components/AntryLogo";
 
@@ -66,11 +66,19 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex min-h-screen flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-lg focus:bg-[#0A0A0A] focus:text-white focus:px-4 focus:py-2 focus:text-[13px] focus:font-semibold"
+      >
+        Skip to main content
+      </a>
       <Nav />
 
       {/* Main content */}
       <main
+        id="main-content"
         className="flex-1 pt-16"
         style={{ background: "#FAFAF7" }}
       >
@@ -202,5 +210,6 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 }

@@ -105,6 +105,48 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ===================================================================
+   FOCUS VISIBILITY
+   2026 baseline: visible 2px lime ring with offset on every interactive
+   element. Mouse users still see the unobtrusive default (no ring on
+   :focus) — the ring only appears for keyboard focus via :focus-visible.
+   =================================================================== */
+
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])) {
+  outline: none;
+}
+
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"]))
+  :focus-visible,
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Lime CTAs: switch ring to ink so it's visible on a lime background. */
+[data-cta="lime"]:focus-visible {
+  outline-color: var(--color-ink);
+}
+
+/* ===================================================================
+   REDUCED MOTION
+   Honour user preference at the global level. Framer Motion is wired via
+   <MotionConfig reducedMotion="user"> in the platform layout; this block
+   covers raw CSS animations that don't go through Framer.
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 
 /* ===================================================================
    TYPOGRAPHY

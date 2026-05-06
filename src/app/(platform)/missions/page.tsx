@@ -279,6 +279,40 @@ function AvailableSection({
         </Link>
       </div>
 
+      {briefs.length === 0 ? (
+        <div
+          className="rounded-[24px] p-10 sm:p-14 text-center"
+          style={{ background: "#FAFAF7", border: "1.5px dashed #D4D4D4" }}
+        >
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5"
+            style={{ background: "#0A0A0A" }}
+          >
+            <Sparkles className="w-5 h-5" style={{ color: "#C6F135" }} />
+          </div>
+          <h3 className="text-[18px] font-bold tracking-[-0.01em] text-black">
+            All Briefs cleared this month.
+          </h3>
+          <p className="mt-2 text-[14px] leading-[1.55] text-gray-600 max-w-[440px] mx-auto">
+            Browse the public Receipt gallery while you wait for the next reset.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-2 flex-wrap">
+            <Link
+              href="/discover"
+              className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+              style={{ background: "#0A0A0A", color: "#fff" }}
+            >
+              See sample Receipts <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/receipts/methodology"
+              className="text-[14px] font-semibold text-black hover:underline underline-offset-4 inline-flex items-center gap-1.5"
+            >
+              Read methodology
+            </Link>
+          </div>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {briefs.map((b) => (
           <div
@@ -354,6 +388,7 @@ function AvailableSection({
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

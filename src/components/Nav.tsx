@@ -8,6 +8,17 @@ import { useAuth } from "@/lib/supabase/auth-context";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
+/**
+ * Match nav links by exact first-segment so deeply-nested routes
+ * (e.g. /briefs/[slug]/lab) don't light up an unrelated tab.
+ */
+function isNavActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  const seg = pathname.split("/").filter(Boolean)[0];
+  const targetSeg = href.split("/").filter(Boolean)[0];
+  return seg === targetSeg;
+}
+
 function checkIsAdmin(userId: string | undefined): boolean {
   if (!userId) return false;
   const ids = process.env.NEXT_PUBLIC_ADMIN_USER_IDS || "";
@@ -80,7 +91,7 @@ export function Nav() {
           {/* Center links - flat */}
           <div className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => {
-              const isActive = pathname.startsWith(link.href);
+              const isActive = isNavActive(pathname, link.href);
               return (
                 <Link
                   key={link.href}
@@ -110,7 +121,7 @@ export function Nav() {
                 href="/admin/discovery"
                 className={cn(
                   "px-3.5 py-2 rounded-lg text-[14px] font-medium transition-colors duration-200",
-                  pathname.startsWith("/admin")
+                  isNavActive(pathname, "/admin")
                     ? "text-[#111111]"
                     : "text-[#737373] hover:text-[#111111]"
                 )}
@@ -225,7 +236,7 @@ export function Nav() {
               <div className="flex-1 overflow-y-auto px-4 py-4">
                 <div className="flex flex-col gap-1">
                   {navLinks.map((link, i) => {
-                    const isActive = pathname.startsWith(link.href);
+                    const isActive = isNavActive(pathname, link.href);
                     return (
                       <motion.div
                         key={link.href}
@@ -258,7 +269,7 @@ export function Nav() {
                       onClick={() => setMobileOpen(false)}
                       className={cn(
                         "flex items-center px-4 py-3.5 rounded-xl text-[16px] font-medium transition-colors min-h-[44px]",
-                        pathname.startsWith("/admin")
+                        isNavActive(pathname, "/admin")
                           ? "text-[#111111] bg-gray-50"
                           : "text-[#525252] hover:text-[#111111] hover:bg-gray-50"
                       )}

@@ -55,10 +55,14 @@ export async function generateMetadata({
 
 export default async function CompanyPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ welcome?: string }>;
 }) {
   const { slug } = await params;
+  const sp = await searchParams;
+  const isWelcome = sp.welcome === "1";
   const company = Object.values(demoCompanies).find((c) => c.slug === slug);
   if (!company) notFound();
   const briefs = demoBriefs.filter((b) => b.company.slug === slug);
@@ -162,13 +166,52 @@ export default async function CompanyPage({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {briefs.map((b, i) => (
-                <BriefCard key={b.id} brief={b} index={i} />
-              ))}
-            </div>
+            {isWelcome && (
+              <div
+                className="mb-8 rounded-[20px] p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] gap-4 items-center"
+                style={{
+                  background: "rgba(198,241,53,0.08)",
+                  border: "1px solid rgba(198,241,53,0.45)",
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: "#0A0A0A" }}
+                >
+                  <Sparkles className="w-4 h-4" style={{ color: "#C6F135" }} />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold tracking-[-0.01em] text-black">
+                    Welcome to {company.name}.
+                  </h3>
+                  <p className="mt-0.5 text-[13px] text-gray-600">
+                    Workspace is reserved. Post your first Brief to go live.
+                  </p>
+                </div>
+                <Link
+                  href={`/c/${slug}/briefs/new`}
+                  className="inline-flex items-center gap-1.5 rounded-[12px] px-4 h-[40px] text-[13px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+                  style={{ background: "#C6F135", color: "#0A0A0A" }}
+                >
+                  Post first Brief <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            )}
 
-            <div className="mt-16 rounded-[24px] p-6 sm:p-8 relative overflow-hidden" style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}>
+            {briefs.length === 0 ? (
+              <EmptyBriefs slug={slug} companyName={company.name} />
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {briefs.map((b, i) => (
+                  <BriefCard key={b.id} brief={b} index={i} />
+                ))}
+              </div>
+            )}
+
+            <div
+              className="mt-16 rounded-[24px] p-6 sm:p-8 relative overflow-hidden"
+              style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
+            >
               <div className="flex items-start gap-4 flex-wrap">
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
@@ -178,23 +221,18 @@ export default async function CompanyPage({
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-[16px] sm:text-[17px] font-bold tracking-[-0.01em] text-black">
-                    Want to author a Brief?
+                    Author a new Brief.
                   </h3>
                   <p className="mt-1.5 text-[14px] leading-[1.55] text-gray-700 max-w-[640px]">
-                    Companies subscribe to post Briefs (public for marketing, private for confidential
-                    evals) and get API access to the Receipts corpus. Email{" "}
-                    <a className="underline font-semibold" href="mailto:[email protected]">
-                      [email protected]
-                    </a>{" "}
-                    to start.
+                    Pick a template or start from scratch. Public for marketing, private for confidential evals — your choice per Brief.
                   </p>
                 </div>
                 <Link
-                  href="/pricing"
+                  href={`/c/${slug}/briefs/new`}
                   className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
                   style={{ background: "#0A0A0A", color: "#fff" }}
                 >
-                  See pricing <ArrowRight className="w-4 h-4" />
+                  New Brief <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -202,6 +240,50 @@ export default async function CompanyPage({
         </section>
       </main>
     </>
+  );
+}
+
+function EmptyBriefs({ slug, companyName }: { slug: string; companyName: string }) {
+  return (
+    <div
+      className="rounded-[24px] p-10 sm:p-14 text-center"
+      style={{
+        background: "#FAFAF7",
+        border: "1.5px dashed #D4D4D4",
+      }}
+    >
+      <div
+        className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5"
+        style={{ background: "#0A0A0A" }}
+      >
+        <Sparkles className="w-5 h-5" style={{ color: "#C6F135" }} />
+      </div>
+      <h3 className="text-[18px] font-bold tracking-[-0.01em] text-black">
+        No Briefs yet at {companyName}.
+      </h3>
+      <p className="mt-2 text-[14px] leading-[1.55] text-gray-600 max-w-[440px] mx-auto">
+        Pick a template or start from scratch. Goes live in 60 seconds.
+      </p>
+      <div className="mt-6 flex items-center justify-center gap-2 flex-wrap">
+        <Link
+          href={`/c/${slug}/briefs/new`}
+          className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+          style={{
+            background: "#C6F135",
+            color: "#0A0A0A",
+            boxShadow: "0 8px 24px rgba(198,241,53,0.30)",
+          }}
+        >
+          New Brief <ArrowRight className="w-4 h-4" />
+        </Link>
+        <Link
+          href="/briefs"
+          className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold text-black hover:bg-gray-100 transition-colors"
+        >
+          Browse examples
+        </Link>
+      </div>
+    </div>
   );
 }
 
