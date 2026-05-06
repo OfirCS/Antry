@@ -148,6 +148,13 @@ export async function buildBuilderCard(rawUsername: string): Promise<
     return { ok: false, error: "That doesn't look like a valid GitHub username." };
   }
 
+  // Demo fixture path for offline previews and presentations.
+  // Activated only when the username is exactly "demo" AND the
+  // ANTRY_DEMO_FIXTURE env flag is set — never in production by default.
+  if (username === "demo" && process.env.ANTRY_DEMO_FIXTURE === "1") {
+    return { ok: true, card: demoFixtureCard() };
+  }
+
   const user = await ghFetch<GitHubUser>(`${GITHUB_API}/users/${encodeURIComponent(username)}`);
   if (!user) {
     return { ok: false, error: "Couldn't find that GitHub user. Double-check the spelling." };
@@ -227,4 +234,87 @@ export async function buildBuilderCard(rawUsername: string): Promise<
   };
 
   return { ok: true, card };
+}
+
+function demoFixtureCard(): BuilderCardPreview {
+  const projects = [
+    {
+      name: "scout-engine",
+      full_name: "demo/scout-engine",
+      title: "Scout Engine",
+      tagline: "Open-source NLU agent for finding builders by what they ship — not by keywords on a profile.",
+      description: "TypeScript NLU agent. 1.9k LOC, 95%+ test coverage. Used in Antry's discovery pipeline.",
+      demo_url: "https://demo.example.com/scout",
+      repo_url: "https://github.com/demo/scout-engine",
+      tech_stack: ["TypeScript", "Bun", "Zod"],
+      primary_language: "TypeScript",
+      stars: 1280,
+      category: "ai-agents",
+      score: 92,
+      pushed_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+    },
+    {
+      name: "rag-streaming",
+      full_name: "demo/rag-streaming",
+      title: "Rag Streaming",
+      tagline: "Streaming RAG pipeline that handles 10k tokens/s with token-by-token UI updates.",
+      description: "FastAPI + LangChain + Server-Sent Events. Production-tested at scale.",
+      demo_url: "https://demo.example.com/rag",
+      repo_url: "https://github.com/demo/rag-streaming",
+      tech_stack: ["Python", "FastAPI", "LangChain", "Postgres"],
+      primary_language: "Python",
+      stars: 540,
+      category: "ai-agents",
+      score: 88,
+      pushed_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+    },
+    {
+      name: "antathon-kit",
+      full_name: "demo/antathon-kit",
+      title: "Antathon Kit",
+      tagline: "Templates and CI for shipping a 48-hour hackathon project that doesn't fall over.",
+      description: "Next.js + Supabase + Vercel + Resend starter. Includes auth, billing, OG images, mobile-first UI.",
+      demo_url: "https://antathon-kit.vercel.app",
+      repo_url: "https://github.com/demo/antathon-kit",
+      tech_stack: ["TypeScript", "Next.js", "Supabase", "Tailwind"],
+      primary_language: "TypeScript",
+      stars: 320,
+      category: "tools",
+      score: 81,
+      pushed_at: new Date(Date.now() - 86400000 * 21).toISOString(),
+    },
+    {
+      name: "demo-builder-blog",
+      full_name: "demo/demo-builder-blog",
+      title: "Demo Builder Blog",
+      tagline: "Build-in-public blog template with MDX, RSS, and built-in changelog.",
+      description: "Notes from shipping. Statically rendered, deploys in minutes.",
+      demo_url: null,
+      repo_url: "https://github.com/demo/demo-builder-blog",
+      tech_stack: ["TypeScript", "MDX", "Tailwind"],
+      primary_language: "TypeScript",
+      stars: 90,
+      category: "web-apps",
+      score: 64,
+      pushed_at: new Date(Date.now() - 86400000 * 45).toISOString(),
+    },
+  ];
+
+  return {
+    username: "demo",
+    name: "Demo Builder",
+    avatar_url: null,
+    bio: "Solo founder shipping AI tooling. Currently building Antry.",
+    blog: "https://demo.example.com",
+    twitter_handle: "demobuilder",
+    location: "Toronto, ON",
+    followers: 1240,
+    public_repos: 47,
+    joined_github: "2018-04-12T00:00:00Z",
+    projects,
+    inferred_skills: ["TypeScript", "Python", "Next.js", "FastAPI", "LangChain", "Supabase"],
+    scout_summary:
+      "Demo Builder ships AI agents in TypeScript + Python; consistent monthly cadence, with two top-shipped projects in production.",
+    truncated: false,
+  };
 }

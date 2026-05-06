@@ -57,7 +57,10 @@ export default function PricingPage() {
             <p className="text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: "#C6F135" }}>
               Pricing
             </p>
-            <h1 className="mt-3 font-display text-[clamp(2.2rem,5vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white">
+            <h1
+              className="mt-3 font-display text-[clamp(2.2rem,5vw,3.4rem)] font-bold leading-[1.05] tracking-[-0.03em]"
+              style={{ color: "#FFFFFF" }}
+            >
               Free for builders.
               <br />
               <span style={{ color: "#C6F135" }}>Always will be.</span>

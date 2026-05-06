@@ -18,7 +18,7 @@ import type { BuilderCardPreview } from "@/lib/discovery/profile-card";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-const SAMPLES = ["vercel", "shadcn", "supabase", "anthropics"];
+const SAMPLES = ["demo", "vercel", "shadcn", "supabase"];
 
 export function ClaimCardClient() {
   const { user } = useAuth();

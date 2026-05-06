@@ -48,7 +48,10 @@ export default function ClaimCardPage() {
                 Antry Card · Beta
               </span>
             </div>
-            <h1 className="font-display text-[clamp(2.2rem,5vw,3.6rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white">
+            <h1
+              className="font-display text-[clamp(2.2rem,5vw,3.6rem)] font-bold leading-[1.05] tracking-[-0.03em]"
+              style={{ color: "#FFFFFF" }}
+            >
               Paste a GitHub URL.
               <br />
               <span style={{ color: "#C6F135" }}>Get a builder profile in 5 seconds.</span>
