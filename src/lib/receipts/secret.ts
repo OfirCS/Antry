@@ -31,3 +31,6 @@ export function getReceiptSecret(): string {
 
   return fromEnv || DEV_FALLBACK;
 }
+
+/** Alias used by src/lib/mcp — kept thin so existing call sites don't move. */
+export const receiptHmacSecret = getReceiptSecret;

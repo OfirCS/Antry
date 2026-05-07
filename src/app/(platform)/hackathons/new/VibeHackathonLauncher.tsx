@@ -130,6 +130,9 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
   );
   const [prize, setPrize] = useState("$1,000 + Antry Pro for 12 months");
   const [showShare, setShowShare] = useState(false);
+  const [minting, setMinting] = useState(false);
+  const [mintedUrl, setMintedUrl] = useState<string | null>(null);
+  const [mintError, setMintError] = useState<string | null>(null);
 
   const briefsBySlug = useMemo(() => {
     const m = new Map<string, BriefCard>();
@@ -161,7 +164,13 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
     [name]
   );
 
-  const shareUrl = `https://antry.com/h/${slug}`;
+  const previewSlug = mintedUrl
+    ? mintedUrl.replace(/^.*\/h\//, "")
+    : slug;
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/h/${previewSlug}`
+      : `/h/${previewSlug}`;
   const totalSeconds = selectedBriefs.size
     ? Array.from(selectedBriefs).reduce(
         (sum, s) => sum + (briefsBySlug.get(s)?.time_cap_seconds ?? 0),
@@ -452,24 +461,62 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
             <div className="pt-4">
               <motion.button
                 type="button"
-                disabled={!canMint}
-                onClick={() => setShowShare(true)}
-                whileHover={canMint ? { y: -2 } : {}}
-                whileTap={canMint ? { scale: 0.98 } : {}}
+                disabled={!canMint || minting}
+                onClick={async () => {
+                  if (!canMint || minting) return;
+                  setMinting(true);
+                  setMintError(null);
+                  try {
+                    const res = await fetch("/api/hackathons", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        name,
+                        vibe: vibe.id,
+                        durationHours: vibe.durationHours,
+                        prize,
+                        briefSlugs: Array.from(selectedBriefs),
+                      }),
+                    });
+                    const j = (await res.json()) as
+                      | { url: string; slug: string }
+                      | { error: string };
+                    if ("error" in j) {
+                      setMintError(j.error);
+                    } else {
+                      setMintedUrl(j.url);
+                      setShowShare(true);
+                    }
+                  } catch (e) {
+                    setMintError(
+                      e instanceof Error ? e.message : "Network error"
+                    );
+                  } finally {
+                    setMinting(false);
+                  }
+                }}
+                whileHover={canMint && !minting ? { y: -2 } : {}}
+                whileTap={canMint && !minting ? { scale: 0.98 } : {}}
                 transition={{ duration: 0.2 }}
                 className="inline-flex items-center justify-center gap-2 rounded-[16px] px-8 h-[60px] text-[15px] font-bold whitespace-nowrap transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background: vibe.accent,
                   color: "#0A0A0A",
-                  boxShadow: canMint
-                    ? `0 16px 36px ${vibe.accent}55`
-                    : "none",
+                  boxShadow:
+                    canMint && !minting
+                      ? `0 16px 36px ${vibe.accent}55`
+                      : "none",
                 }}
                 data-cta="lime"
               >
-                Mint hackathon
+                {minting ? "Minting…" : "Mint hackathon"}
                 <ChevronRight className="w-4 h-4" />
               </motion.button>
+              {mintError && (
+                <p className="mt-3 text-[12px] text-red-400 font-semibold">
+                  {mintError}
+                </p>
+              )}
               {!canMint && (
                 <p
                   className="mt-3 text-[12px]"

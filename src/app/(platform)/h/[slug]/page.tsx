@@ -5,23 +5,17 @@ import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { FingerprintGlyph } from "@/components/BuilderFingerprint";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
+import { getHackathonBySlug } from "@/lib/hackathons/store";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 /**
  * Vibe Hackathon landing + live leaderboard.
  *
- * v0: persistence isn't wired yet, so any /h/<slug> renders a synthesized
- * hackathon — it bundles the first 3 demo Briefs, marks the event "Live,"
- * and pulls the union of public Receipts from those Briefs into a single
- * leaderboard. The /hackathons/new launcher mints share URLs that land
- * here; once `POST /api/hackathons` is wired, the synthesis code path
- * gets replaced by a DB lookup and the renderer is reusable.
- *
- * Why ship the synthesized version: hosts need a real-looking landing
- * page to share before they have actual data. The real Receipts displayed
- * are still real Receipts — we don't synthesize the leaderboard data,
- * only the hackathon container around it.
+ * Looks up the hackathon by slug from the store (DB-backed when SUPABASE
+ * is configured, in-memory otherwise — see src/lib/hackathons/store.ts).
+ * If no record exists, falls back to a synthesized hackathon over the
+ * first 3 demo Briefs so the page never 404s on a stale share URL.
  */
 
 function prettify(slug: string): string {
@@ -58,9 +52,15 @@ export async function generateMetadata({
 export default async function VibeHackathonPage({ params }: PageProps) {
   const { slug } = await params;
 
-  // Synthesized hackathon: first 3 Briefs in the catalog as the bundle.
-  const briefs = demoBriefs.slice(0, 3);
+  // Look up real hackathon record (DB or in-memory). Fall back to a
+  // synthesized bundle if the URL was minted before persistence existed
+  // or if a stale share link is shared after the record was deleted.
+  const record = await getHackathonBySlug(slug);
+  const briefs = record
+    ? demoBriefs.filter((b) => record.brief_ids.includes(b.id))
+    : demoBriefs.slice(0, 3);
   const briefIds = new Set(briefs.map((b) => b.id));
+  const headerName = record?.name ?? prettify(slug);
 
   // Pull public Receipts across the bundled Briefs, ranked by composite.
   const receipts = demoReceipts
@@ -106,8 +106,17 @@ export default async function VibeHackathonPage({ params }: PageProps) {
             className="font-display font-bold leading-[0.96] tracking-[-0.04em] text-white"
             style={{ fontSize: "clamp(2.4rem, 5.5vw, 4rem)" }}
           >
-            {prettify(slug)}
+            {headerName}
           </h1>
+          {record?.prize && (
+            <p
+              className="mt-3 text-[14px] inline-flex items-center gap-2"
+              style={{ color: "rgba(198,241,53,0.85)" }}
+            >
+              <Trophy className="w-3.5 h-3.5" />
+              {record.prize}
+            </p>
+          )}
           <p
             className="mt-6 max-w-[640px] text-[15px] sm:text-[17px] leading-[1.6]"
             style={{ color: "rgba(255,255,255,0.65)" }}

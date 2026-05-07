@@ -15,6 +15,16 @@ import {
   DIMENSION_BLURB,
   type FingerprintDimension,
 } from "@/lib/receipts/types";
+import { resolveBearer } from "@/lib/mcp/auth";
+import {
+  startAttempt,
+  logEvent,
+  getAttempt,
+  recordSubmission,
+} from "@/lib/mcp/store";
+import { gradeAttempt as runGrader } from "@/lib/mcp/grader";
+import { receiptHmacSecret } from "@/lib/receipts/secret";
+import { createHash, createHmac } from "crypto";
 
 /**
  * Antry MCP server — the Cursor + Antry workflow surface.
@@ -43,69 +53,37 @@ import {
 
 export const runtime = "nodejs";
 
-// ── In-memory attempt store ─────────────────────────────
-type AttemptEvent = {
-  seq: number;
-  type: string;
-  payload: Record<string, unknown>;
-  at: string;
-};
-
-type Attempt = {
-  id: string;
-  brief_slug: string;
-  builder_token: string;
-  started_at: string;
-  status: "active" | "submitted" | "graded";
-  events: AttemptEvent[];
-  submitted_at?: string;
-  graded_at?: string;
-  receipt_id?: string;
-  composite_score?: number;
-};
-
-const attempts = new Map<string, Attempt>();
-
-function newAttemptId(): string {
-  return `att_${Math.random().toString(36).slice(2, 8)}${Date.now().toString(36)}`;
-}
+// ── Attempt store now lives in src/lib/mcp/store.ts ───
+// (DB-first when SUPABASE configured, in-memory fallback otherwise).
+// Grader: src/lib/mcp/grader.ts (Claude Opus 4.7 if ANTHROPIC_API_KEY,
+// heuristic otherwise). Auth: src/lib/mcp/auth.ts (HMAC-validated
+// against api_keys when SUPABASE configured, permissive in dev).
 
 function newReceiptId(briefSlug: string): string {
   const tag = briefSlug.replace(/[^a-z0-9]+/g, "").slice(0, 8);
   return `rc_live_${tag}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/** Mocked grader. Real version: Claude-as-judge reads the trace bundle and
- *  computes Fingerprint scores from event statistics + heuristics. */
-function gradeAttempt(att: Attempt) {
-  const eventCount = att.events.length;
-  const toolCalls = att.events.filter((e) => e.type === "tool_call").length;
-  const prompts = att.events.filter((e) => e.type === "prompt").length;
-  // Toy heuristics — replace with real Fingerprint compute later.
-  const base = Math.min(95, 50 + Math.floor(eventCount * 1.5));
-  const composite = Math.min(95, base + (toolCalls > prompts * 0.4 ? 5 : -3));
-  return {
-    composite_score: composite,
-    fingerprint: {
-      tokenEconomy: clamp(base + (prompts < 8 ? 8 : -4)),
-      throughput: clamp(base - 4),
-      toolChoiceIQ: clamp(base + Math.min(15, toolCalls * 2)),
-      recoveryIndex: clamp(base + 2),
-      promptDiscipline: clamp(base + (prompts < 12 ? 6 : -6)),
-      verificationRigor: clamp(base + (toolCalls >= 3 ? 5 : -4)),
-      spendVsJudgment: clamp(base + 1),
-    },
-  };
-}
-
-function clamp(n: number) {
-  return Math.max(0, Math.min(100, Math.round(n)));
-}
-
-function requireBuilderToken(req: NextRequest): string | null {
-  const auth = req.headers.get("authorization") ?? "";
-  const m = /^Bearer\s+(ant_[A-Za-z0-9_-]{8,})$/.exec(auth);
-  return m ? m[1] : null;
+function computeReceiptHashAndSig(input: {
+  receiptId: string;
+  attemptId: string;
+  builderId: string;
+  composite: number;
+  signedAt: string;
+}): { content_hash: string; signature: string } {
+  // Same shape as the demo signer: hash the receipt content, then HMAC.
+  const canonical = JSON.stringify({
+    id: input.receiptId,
+    attempt_id: input.attemptId,
+    builder_id: input.builderId,
+    composite_score: input.composite,
+    signed_at: input.signedAt,
+  });
+  const hash = createHash("sha256").update(canonical).digest("hex");
+  const sig = createHmac("sha256", receiptHmacSecret())
+    .update(hash)
+    .digest("hex");
+  return { content_hash: hash, signature: sig };
 }
 
 const SERVER_INFO = {
@@ -330,7 +308,7 @@ function fail(
 async function callTool(
   name: string,
   args: Record<string, unknown>,
-  builderToken: string | null
+  builderId: string | null
 ): Promise<unknown> {
   switch (name) {
     case "search_briefs": {
@@ -484,19 +462,15 @@ async function callTool(
 
     // ── Lifecycle tools (auth required) ────────────────
     case "start_attempt": {
-      if (!builderToken) throw new Error("Authorization required");
+      if (!builderId) throw new Error("Authorization required");
       const briefSlug = String(args.brief_slug ?? "");
       const b = getDemoBrief(briefSlug);
       if (!b) throw new Error(`No Brief with slug "${briefSlug}"`);
-      const attempt: Attempt = {
-        id: newAttemptId(),
-        brief_slug: briefSlug,
-        builder_token: builderToken,
-        started_at: new Date().toISOString(),
-        status: "active",
-        events: [],
-      };
-      attempts.set(attempt.id, attempt);
+      const attempt = await startAttempt({
+        briefSlug,
+        briefId: b.id,
+        builderId,
+      });
       return {
         attempt_id: attempt.id,
         brief_slug: briefSlug,
@@ -511,58 +485,69 @@ async function callTool(
     }
 
     case "log_event": {
-      if (!builderToken) throw new Error("Authorization required");
+      if (!builderId) throw new Error("Authorization required");
       const id = String(args.attempt_id ?? "");
-      const att = attempts.get(id);
-      if (!att) throw new Error(`No attempt with id "${id}"`);
-      if (att.builder_token !== builderToken)
-        throw new Error("Token does not match attempt owner");
-      if (att.status !== "active")
-        throw new Error(`Attempt status is ${att.status}, cannot log new events`);
-      const ev: AttemptEvent = {
-        seq: att.events.length + 1,
-        type: String(args.type ?? "note"),
+      const result = await logEvent({
+        attemptId: id,
+        builderId,
+        type: String(args.type ?? "note") as
+          | "prompt"
+          | "tool_call"
+          | "file_edit"
+          | "pivot"
+          | "note",
         payload: (args.payload ?? {}) as Record<string, unknown>,
-        at: new Date().toISOString(),
-      };
-      att.events.push(ev);
-      return { attempt_id: id, seq: ev.seq, total_events: att.events.length };
+      });
+      return { attempt_id: id, seq: result.seq, total_events: result.total };
     }
 
     case "submit_attempt": {
-      if (!builderToken) throw new Error("Authorization required");
+      if (!builderId) throw new Error("Authorization required");
       const id = String(args.attempt_id ?? "");
-      const att = attempts.get(id);
+      const att = await getAttempt({ attemptId: id, builderId });
       if (!att) throw new Error(`No attempt with id "${id}"`);
-      if (att.builder_token !== builderToken)
-        throw new Error("Token does not match attempt owner");
       if (att.status !== "active")
         throw new Error(`Attempt already ${att.status}`);
-      att.status = "submitted";
-      att.submitted_at = new Date().toISOString();
-      const grade = gradeAttempt(att);
-      att.status = "graded";
-      att.graded_at = new Date().toISOString();
-      att.composite_score = grade.composite_score;
-      att.receipt_id = newReceiptId(att.brief_slug);
-      return {
-        attempt_id: id,
-        receipt_id: att.receipt_id,
+      const brief = getDemoBrief(att.brief_slug);
+      if (!brief) throw new Error(`Brief vanished: ${att.brief_slug}`);
+
+      const grade = await runGrader({ brief, attempt: att });
+      const receiptId = newReceiptId(att.brief_slug);
+      const signedAt = new Date().toISOString();
+      const { content_hash, signature } = computeReceiptHashAndSig({
+        receiptId,
+        attemptId: id,
+        builderId,
+        composite: grade.composite_score,
+        signedAt,
+      });
+      await recordSubmission({
+        attemptId: id,
+        builderId,
         composite_score: grade.composite_score,
         fingerprint: grade.fingerprint,
-        signed_at: att.graded_at,
-        receipt_url: `https://antry.com/receipts/${att.receipt_id}`,
+        receiptId,
+        contentHash: content_hash,
+        signature,
+      });
+      return {
+        attempt_id: id,
+        receipt_id: receiptId,
+        composite_score: grade.composite_score,
+        fingerprint: grade.fingerprint,
+        rationale: grade.rationale,
+        graded_by: grade.graded_by,
+        signed_at: signedAt,
+        receipt_url: `https://antry.com/receipts/${receiptId}`,
         message: `Receipt minted. Composite score ${grade.composite_score}/100. Share at the URL above.`,
       };
     }
 
     case "get_attempt_status": {
-      if (!builderToken) throw new Error("Authorization required");
+      if (!builderId) throw new Error("Authorization required");
       const id = String(args.attempt_id ?? "");
-      const att = attempts.get(id);
+      const att = await getAttempt({ attemptId: id, builderId });
       if (!att) throw new Error(`No attempt with id "${id}"`);
-      if (att.builder_token !== builderToken)
-        throw new Error("Token does not match attempt owner");
       return {
         attempt_id: id,
         status: att.status,
@@ -641,8 +626,8 @@ export async function POST(req: NextRequest) {
       const params = body.params ?? {};
       const name = String(params.name ?? "");
       const args = (params.arguments ?? {}) as Record<string, unknown>;
-      const builderToken = requireBuilderToken(req);
-      if (AUTH_REQUIRED_TOOLS.has(name) && !builderToken) {
+      const resolved = await resolveBearer(req.headers.get("authorization"));
+      if (AUTH_REQUIRED_TOOLS.has(name) && !resolved) {
         return NextResponse.json(
           ok(id, {
             content: [
@@ -656,7 +641,7 @@ export async function POST(req: NextRequest) {
         );
       }
       try {
-        const result = await callTool(name, args, builderToken);
+        const result = await callTool(name, args, resolved?.builderId ?? null);
         return NextResponse.json(
           ok(id, {
             content: [
