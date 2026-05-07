@@ -258,6 +258,351 @@ for write conflicts during region failover.
     allowed_tools: ["code_run", "file_search"],
     rubric_json: {},
   },
+
+  // ── Six additional Briefs (the 10-Brief catalog) ──────────────
+  // Designed to span intro→staff difficulty across categories that
+  // matter for hiring evaluation. Each one has a tight rubric that
+  // can be auto-graded by the Agent-as-Judge against the candidate's
+  // signed trace.
+
+  {
+    id: "br_idempotent_webhook",
+    slug: "idempotent-webhook-processor",
+    title: "Idempotent webhook processor",
+    tagline:
+      "Process Stripe-style webhooks with retry-safe writes. No duplicates, no lost events, even under network partitions.",
+    prompt_md: `# Idempotent Webhook Processor
+
+You receive webhooks from a payments provider. The provider retries
+on any non-2xx response (and sometimes on 2xx too — networks lie).
+Your handler **must be idempotent**: replaying the same event must
+not double-charge, double-refund, or duplicate a row.
+
+**Provided**
+- A mock provider that fires 300 events with ~12% retry duplicates.
+- A Postgres connection (\`pg\` is in scope).
+- A failing test suite that asserts: (a) every event processed exactly
+  once, (b) handler returns 200 within 500ms p95, (c) DB has no
+  duplicate rows.
+
+**Success rubric**
+1. All tests pass.
+2. Handler uses the event \`id\` as the idempotency key — not a hash
+   of the payload (payloads can change on retry).
+3. Race-condition safe: 50 concurrent retries of the same event
+   land exactly one row.
+
+**Allowed tools** code_run, file_search.`,
+    difficulty: "mid",
+    category: "tools",
+    token_cap: 18000,
+    time_cap_seconds: 3000,
+    status: "live",
+    mode: "public",
+    sponsor_label: "ANTRY OPEN BRIEF · 001",
+    attempts_count: 47,
+    receipts_count: 22,
+    median_score: 68,
+    created_at: "2026-05-05T10:00:00Z",
+    closed_at: null,
+    company: demoCompanies.anthropic,
+    ideal_fingerprint: fp({
+      tokenEconomy: 85,
+      throughput: 78,
+      toolChoiceIQ: 88,
+      recoveryIndex: 80,
+      promptDiscipline: 82,
+      verificationRigor: 92,
+      spendVsJudgment: 78,
+    }),
+    allowed_tools: ["code_run", "file_search"],
+    rubric_json: {
+      tests_pass: { weight: 0.5 },
+      uses_event_id_key: { weight: 0.25 },
+      race_safe: { weight: 0.25 },
+    },
+  },
+  {
+    id: "br_token_compressor",
+    slug: "prompt-compressor-budget",
+    title: "Token-budget-aware prompt compressor",
+    tagline:
+      "Given a 40K-token context, hit a 6K target without losing the load-bearing facts. Hold-out judge tests recall.",
+    prompt_md: `# Prompt Compressor under Budget
+
+You're given a 40K-token research context and a 6K output budget.
+Compress the context so a downstream agent can answer 25 hidden
+questions about it correctly.
+
+**Constraints**
+- Output ≤ 6,000 tokens.
+- No external lookups — work from the provided context only.
+- Recall is what matters; conciseness is the constraint, not the goal.
+
+**Success rubric**
+1. Output under budget (hard fail otherwise).
+2. Hold-out: 25 questions, judge model must score ≥20 correct from
+   compressed context alone.
+3. The compression strategy is visible in the trace (we read the
+   prompts, not just the output).
+
+**Allowed tools** file_search, judge.`,
+    difficulty: "senior",
+    category: "ai-agents",
+    token_cap: 16000,
+    time_cap_seconds: 3600,
+    status: "live",
+    mode: "public",
+    sponsor_label: "ANTRY OPEN BRIEF · 002",
+    attempts_count: 22,
+    receipts_count: 9,
+    median_score: 71,
+    created_at: "2026-05-04T15:00:00Z",
+    closed_at: null,
+    company: demoCompanies.anthropic,
+    ideal_fingerprint: fp({
+      tokenEconomy: 95,
+      throughput: 70,
+      toolChoiceIQ: 82,
+      recoveryIndex: 75,
+      promptDiscipline: 92,
+      verificationRigor: 78,
+      spendVsJudgment: 88,
+    }),
+    allowed_tools: ["file_search", "judge"],
+    rubric_json: {
+      under_budget: { weight: 0.3 },
+      recall_score: { weight: 0.6 },
+      strategy_visible: { weight: 0.1 },
+    },
+  },
+  {
+    id: "br_typed_extractor",
+    slug: "typed-extractor-validation",
+    title: "Typed extractor with strict validation",
+    tagline:
+      "Extract structured data from messy resumes. Reject invalid records, never hallucinate fields. Schema-strict output.",
+    prompt_md: `# Typed Resume Extractor
+
+Extract candidate records from 200 raw resume PDFs. Output must
+conform to the provided JSON schema. Invalid records should be
+**rejected**, not coerced.
+
+**Schema (excerpt)**
+\`\`\`
+{
+  full_name: string,
+  primary_email: string (valid email),
+  total_experience_years: number (>= 0),
+  past_employers: [{ name: string, title: string, years: number }],
+  is_authorized_to_work_us: boolean | null
+}
+\`\`\`
+
+**Constraints**
+- 200 PDFs in \`/inputs\`.
+- Output: one JSON line per valid record.
+- A separate \`rejects.jsonl\` with reason per rejected resume.
+
+**Success rubric**
+1. Zero hallucinated fields (judge audits 25 random records).
+2. Invalid PDFs (corrupt, unreadable) all in \`rejects.jsonl\`.
+3. Schema-validates 100% of accepted records.
+
+**Allowed tools** code_run, file_search.`,
+    difficulty: "mid",
+    category: "data-ml",
+    token_cap: 35000,
+    time_cap_seconds: 4200,
+    status: "live",
+    mode: "public",
+    sponsor_label: "ANTRY OPEN BRIEF · 003",
+    attempts_count: 38,
+    receipts_count: 15,
+    median_score: 66,
+    created_at: "2026-05-03T12:00:00Z",
+    closed_at: null,
+    company: demoCompanies.anthropic,
+    ideal_fingerprint: fp({
+      tokenEconomy: 80,
+      throughput: 72,
+      toolChoiceIQ: 90,
+      recoveryIndex: 70,
+      promptDiscipline: 85,
+      verificationRigor: 95,
+      spendVsJudgment: 78,
+    }),
+    allowed_tools: ["code_run", "file_search", "judge"],
+    rubric_json: {
+      zero_hallucination: { weight: 0.5 },
+      reject_handling: { weight: 0.25 },
+      schema_validation: { weight: 0.25 },
+    },
+  },
+  {
+    id: "br_bug_repro_fix",
+    slug: "bug-fix-from-failing-test",
+    title: "Bug fix from minimal repro",
+    tagline:
+      "Failing test + buggy code. Find the bug, fix it, all tests green. Don't add features. Don't refactor for fun.",
+    prompt_md: `# Bug Fix from Repro
+
+A user reported a bug. We've reduced it to one failing test.
+The repo has 120 tests; 119 pass, 1 fails. **Fix only the bug.**
+
+**Constraints**
+- Don't add new abstractions or refactor unrelated code.
+- All 120 tests must pass after your fix.
+- Add at least one regression test that would have caught this bug.
+
+**What we measure**
+- **Diff size**: minimal change wins. Senior engineers fix bugs;
+  juniors rewrite the function.
+- **Tool-Choice IQ**: how much grep/read vs how much LLM-write.
+  Reading the code first is rewarded.
+- **Recovery Index**: did you back out a wrong hypothesis cleanly,
+  or did you pile on?
+
+**Allowed tools** code_run, file_search.`,
+    difficulty: "intro",
+    category: "tools",
+    token_cap: 12000,
+    time_cap_seconds: 2400,
+    status: "live",
+    mode: "public",
+    sponsor_label: "ANTRY OPEN BRIEF · 004",
+    attempts_count: 73,
+    receipts_count: 41,
+    median_score: 62,
+    created_at: "2026-05-02T08:00:00Z",
+    closed_at: null,
+    company: demoCompanies.anthropic,
+    ideal_fingerprint: fp({
+      tokenEconomy: 88,
+      throughput: 80,
+      toolChoiceIQ: 92,
+      recoveryIndex: 88,
+      promptDiscipline: 78,
+      verificationRigor: 85,
+      spendVsJudgment: 82,
+    }),
+    allowed_tools: ["code_run", "file_search"],
+    rubric_json: {
+      tests_pass: { weight: 0.4 },
+      diff_minimality: { weight: 0.3 },
+      regression_test_added: { weight: 0.3 },
+    },
+  },
+  {
+    id: "br_sql_optimizer",
+    slug: "sql-query-optimizer",
+    title: "SQL query optimizer",
+    tagline:
+      "Slow query, real schema, real EXPLAIN. Get the plan from sequential-scan to index-scan without breaking semantics.",
+    prompt_md: `# SQL Query Optimizer
+
+Production query taking 8.2s p95. Schema and ten million rows of
+data are provided. Your job: get it under 200ms p95 without
+changing the result set.
+
+**Provided**
+- A 12-table schema (orders, line_items, refunds, customers, …).
+- 10M-row dataset.
+- The slow query.
+- A correctness oracle that runs your query and the original side
+  by side.
+
+**Success rubric**
+1. Result set identical to the original (oracle passes).
+2. p95 under 200ms across 50 trial runs.
+3. Your trace shows you read the EXPLAIN before changing the query.
+   We're not just looking for the right index — we want to see the
+   diagnosis.
+
+**Allowed tools** code_run, file_search.`,
+    difficulty: "senior",
+    category: "data-ml",
+    token_cap: 18000,
+    time_cap_seconds: 3000,
+    status: "live",
+    mode: "public",
+    sponsor_label: "SUPABASE BRIEF · 002",
+    attempts_count: 14,
+    receipts_count: 6,
+    median_score: 74,
+    created_at: "2026-05-04T16:00:00Z",
+    closed_at: null,
+    company: demoCompanies.supabase,
+    ideal_fingerprint: fp({
+      tokenEconomy: 90,
+      throughput: 80,
+      toolChoiceIQ: 95,
+      recoveryIndex: 78,
+      promptDiscipline: 88,
+      verificationRigor: 90,
+      spendVsJudgment: 85,
+    }),
+    allowed_tools: ["code_run", "file_search"],
+    rubric_json: {
+      correctness: { weight: 0.4 },
+      latency_target: { weight: 0.4 },
+      diagnosis_visible: { weight: 0.2 },
+    },
+  },
+  {
+    id: "br_multistep_agent",
+    slug: "multistep-tool-agent-budget",
+    title: "Multi-step tool agent under token budget",
+    tagline:
+      "Given search/fetch/summarize tools, answer 20 research questions under a 4K-token budget per question. Mature spend curve required.",
+    prompt_md: `# Multi-step Tool Agent
+
+You're handed three tools — \`search(q)\`, \`fetch(url)\`,
+\`summarize(text)\` — and 20 research questions. Each question must
+be answered using only these tools and a 4,000-token output budget.
+
+**The catch**
+We score not just whether you got the right answer, but **how
+your spend curve looks**:
+- Spend hard early (broad search), taper to verification → high
+  Spend-vs-Judgment score.
+- Uniform spend until budget runs out → low score.
+
+**Success rubric**
+1. ≥17 of 20 answers correct (judge-graded).
+2. Mean output tokens per question ≤ 4,000.
+3. Spend-vs-Judgment dimension ≥ 80 in the Fingerprint.
+
+**Allowed tools** search, fetch, summarize.`,
+    difficulty: "senior",
+    category: "ai-agents",
+    token_cap: 90000,
+    time_cap_seconds: 5400,
+    status: "live",
+    mode: "public",
+    sponsor_label: "ANTHROPIC BRIEF · 002",
+    attempts_count: 28,
+    receipts_count: 11,
+    median_score: 69,
+    created_at: "2026-05-01T13:00:00Z",
+    closed_at: null,
+    company: demoCompanies.anthropic,
+    ideal_fingerprint: fp({
+      tokenEconomy: 92,
+      throughput: 75,
+      toolChoiceIQ: 88,
+      recoveryIndex: 72,
+      promptDiscipline: 90,
+      verificationRigor: 85,
+      spendVsJudgment: 95,
+    }),
+    allowed_tools: ["search", "fetch", "summarize", "judge"],
+    rubric_json: {
+      accuracy: { weight: 0.5 },
+      under_budget: { weight: 0.25 },
+      spend_curve: { weight: 0.25 },
+    },
+  },
 ];
 
 const builderProfiles = {
