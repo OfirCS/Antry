@@ -1,3 +1,18 @@
+/**
+ * @deprecated This module references a stale schema (profiles/projects/
+ * hackathons/blog_posts) from a previous incarnation of the app. The
+ * canonical schema is the Antry domain (briefs/receipts/builders);
+ * use `src/lib/supabase/antry.ts` for new code.
+ *
+ * Kept temporarily so 10 unmigrated pages keep compiling. When all of
+ *   /companies, /projects/[id], /builders, /builders/[username],
+ *   /blog, /discover, /hackathons, /hackathons/[id], /sitemap
+ * are migrated to the new query module, delete this file.
+ *
+ * Returns empty arrays in production — the underlying tables no longer
+ * exist after migrations 004-007.
+ */
+
 import { createClient } from "./server";
 
 // ── Types ──────────────────────────────────────────────
