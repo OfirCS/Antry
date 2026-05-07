@@ -12,11 +12,17 @@ type PageProps = { params: Promise<{ slug: string }> };
 /**
  * Vibe Hackathon landing + live leaderboard.
  *
- * Looks up the hackathon by slug from the store (DB-backed when SUPABASE
- * is configured, in-memory otherwise — see src/lib/hackathons/store.ts).
- * If no record exists, falls back to a synthesized hackathon over the
- * first 3 demo Briefs so the page never 404s on a stale share URL.
+ * Light editorial — matches the feed/profile aesthetic. The hackathon's
+ * vibe color is the single accent (left stripe + leaderboard top-card
+ * border). No dark hero, no decorative gradients.
  */
+
+const VIBE_ACCENT: Record<string, string> = {
+  speedrun: "#FF6B35",
+  "build-night": "#C6F135",
+  "weekend-mode": "#7C3AED",
+  "agent-cup": "#3B82F6",
+};
 
 function prettify(slug: string): string {
   return slug
@@ -52,25 +58,21 @@ export async function generateMetadata({
 export default async function VibeHackathonPage({ params }: PageProps) {
   const { slug } = await params;
 
-  // Look up real hackathon record (DB or in-memory). Fall back to a
-  // synthesized bundle if the URL was minted before persistence existed
-  // or if a stale share link is shared after the record was deleted.
   const record = await getHackathonBySlug(slug);
   const briefs = record
     ? demoBriefs.filter((b) => record.brief_ids.includes(b.id))
     : demoBriefs.slice(0, 3);
   const briefIds = new Set(briefs.map((b) => b.id));
   const headerName = record?.name ?? prettify(slug);
+  const accent = record ? VIBE_ACCENT[record.vibe] ?? "#0A0A0A" : "#0A0A0A";
 
   // Pull public Receipts across the bundled Briefs, ranked by composite.
   const receipts = demoReceipts
     .filter(
-      (r) =>
-        briefIds.has(r.brief_id) && r.display_visibility === "public"
+      (r) => briefIds.has(r.brief_id) && r.display_visibility === "public"
     )
     .sort((a, b) => b.composite_score - a.composite_score);
 
-  // De-dupe on builder username — show their best Receipt.
   const seen = new Set<string>();
   const board = receipts.filter((r) => {
     if (seen.has(r.builder.username)) return false;
@@ -83,82 +85,83 @@ export default async function VibeHackathonPage({ params }: PageProps) {
   );
 
   return (
-    <main style={{ background: "#0A0A0A" }} className="min-h-screen">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
+    <div style={{ background: "#FAFAF7" }} className="min-h-screen">
+      {/* Header band */}
+      <section
+        className="relative"
+        style={{ background: "#FFFFFF", borderBottom: "1px solid #EBEBEB" }}
+      >
+        <span
           aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(198,241,53,0.16) 0%, transparent 60%)",
-          }}
+          className="absolute inset-x-0 top-0 h-[3px]"
+          style={{ background: accent }}
         />
-        <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-16 pb-12">
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6 pt-10 pb-8">
           <p
-            className="text-[11px] font-bold uppercase tracking-[0.28em] mb-5 inline-flex items-center gap-2"
-            style={{ color: "rgba(255,255,255,0.55)" }}
+            className="text-[10px] font-bold uppercase tracking-[0.22em] mb-3 inline-flex items-center gap-2"
+            style={{ color: accent }}
           >
-            <Sparkles className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
+            <Sparkles className="w-3 h-3" />
             Vibe Hackathon · Live
           </p>
           <h1
-            className="font-display font-bold leading-[0.96] tracking-[-0.04em] text-white"
-            style={{ fontSize: "clamp(2.4rem, 5.5vw, 4rem)" }}
+            className="font-display font-bold tracking-[-0.025em] text-black leading-[1.05]"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
           >
             {headerName}
           </h1>
-          {record?.prize && (
-            <p
-              className="mt-3 text-[14px] inline-flex items-center gap-2"
-              style={{ color: "rgba(198,241,53,0.85)" }}
-            >
-              <Trophy className="w-3.5 h-3.5" />
-              {record.prize}
-            </p>
-          )}
-          <p
-            className="mt-6 max-w-[640px] text-[15px] sm:text-[17px] leading-[1.6]"
-            style={{ color: "rgba(255,255,255,0.65)" }}
-          >
-            {briefs.length} Briefs · {totalMinutes} minutes total time cap.
-            Builders enter via Cursor + Antry MCP. Every submission is a
-            signed Receipt and lands on the leaderboard below in real time.
-          </p>
-          <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+
+          <div className="mt-3 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-[13px] text-gray-600">
+            <span className="inline-flex items-center gap-1.5">
+              <Code2 className="w-3.5 h-3.5" />
+              {briefs.length} Brief{briefs.length === 1 ? "" : "s"}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" />
+              {totalMinutes}m total
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5" />
+              Gateway-signed
+            </span>
+            {record?.prize && (
+              <span
+                className="inline-flex items-center gap-1.5 font-semibold"
+                style={{ color: "#0A0A0A" }}
+              >
+                <Trophy className="w-3.5 h-3.5" />
+                {record.prize}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-6 flex items-center gap-3 flex-wrap">
             <Link
               href="/agents"
-              className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
-              style={{
-                background: "#C6F135",
-                color: "#0A0A0A",
-                boxShadow: "0 12px 30px rgba(198,241,53,0.32)",
-              }}
-              data-cta="lime"
+              className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-4 h-10 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+              style={{ background: "#0A0A0A", color: "#FFFFFF" }}
             >
-              Install Antry MCP <ArrowRight className="w-4 h-4" />
+              Install MCP <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-            <span
-              className="text-[13px] inline-flex items-center gap-1.5"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+            <Link
+              href={briefs[0] ? `/briefs/${briefs[0].slug}` : "/briefs"}
+              className="inline-flex items-center justify-center rounded-[10px] px-4 h-10 text-[13px] font-bold transition-colors"
+              style={{
+                background: "#FFFFFF",
+                color: "#0A0A0A",
+                border: "1px solid #EBEBEB",
+              }}
             >
-              <Shield className="w-3.5 h-3.5" />
-              All entries protocol-signed at the gateway
-            </span>
+              See Briefs
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Briefs in this hack */}
-      <section
-        className="py-12 sm:py-16"
-        style={{ background: "rgba(255,255,255,0.02)" }}
-      >
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
-          <h2
-            className="text-[11px] font-bold uppercase tracking-[0.22em] mb-5"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-          >
+      <section className="py-10 sm:py-12">
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
             Briefs in this hack
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -166,38 +169,25 @@ export default async function VibeHackathonPage({ params }: PageProps) {
               <Link
                 key={b.id}
                 href={`/briefs/${b.slug}`}
-                className="rounded-[16px] p-5 transition-all hover:-translate-y-1"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
+                className="group rounded-[14px] p-4 transition-colors hover:bg-[#FAFAF7]"
+                style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Code2
-                    className="w-3.5 h-3.5"
-                    style={{ color: "#C6F135" }}
-                  />
                   <span
-                    className="text-[10px] font-bold uppercase tracking-[0.18em]"
-                    style={{ color: "rgba(255,255,255,0.55)" }}
+                    className="text-[10px] font-bold uppercase tracking-[0.16em]"
+                    style={{ color: accent }}
                   >
                     {b.difficulty}
                   </span>
-                  <span
-                    className="ml-auto text-[10px] inline-flex items-center gap-1"
-                    style={{ color: "rgba(255,255,255,0.45)" }}
-                  >
+                  <span className="ml-auto text-[10px] inline-flex items-center gap-1 text-gray-500">
                     <Clock className="w-2.5 h-2.5" />
                     {Math.round(b.time_cap_seconds / 60)}m
                   </span>
                 </div>
-                <h3 className="text-[14px] font-bold tracking-[-0.005em] text-white leading-[1.3]">
+                <h3 className="text-[14px] font-bold tracking-[-0.005em] text-black leading-[1.3]">
                   {b.title}
                 </h3>
-                <p
-                  className="mt-1.5 text-[12px] leading-[1.55] line-clamp-2"
-                  style={{ color: "rgba(255,255,255,0.55)" }}
-                >
+                <p className="mt-1.5 text-[12px] leading-[1.5] text-gray-500 line-clamp-2">
                   {b.tagline}
                 </p>
               </Link>
@@ -208,34 +198,24 @@ export default async function VibeHackathonPage({ params }: PageProps) {
 
       {/* Live leaderboard */}
       <section
-        className="py-16 sm:py-20"
-        style={{
-          background: "linear-gradient(180deg, #0A0A0A 0%, #050505 100%)",
-        }}
+        className="py-10 sm:py-12"
+        style={{ background: "#FFFFFF", borderTop: "1px solid #EBEBEB" }}
       >
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
-          <div className="flex items-baseline justify-between mb-7 flex-wrap gap-2">
-            <div>
-              <p
-                className="text-[11px] font-bold uppercase tracking-[0.22em] mb-1.5"
-                style={{ color: "rgba(255,255,255,0.55)" }}
-              >
-                Live leaderboard
-              </p>
-              <h2
-                className="font-display font-bold tracking-[-0.03em] text-white"
-                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.2rem)" }}
-              >
-                Top builders · ranked by composite Fingerprint
-              </h2>
-            </div>
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
+          <div className="flex items-baseline justify-between mb-5 flex-wrap gap-2">
+            <h2
+              className="font-display font-bold tracking-[-0.02em] text-black"
+              style={{ fontSize: "clamp(1.4rem, 3vw, 1.8rem)" }}
+            >
+              Top builders
+            </h2>
             <span
-              className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em]"
-              style={{ color: "rgba(198,241,53,0.85)" }}
+              className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+              style={{ color: accent }}
             >
               <span
-                className="w-2 h-2 rounded-full animate-pulse"
-                style={{ background: "#C6F135" }}
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ background: accent }}
               />
               Live
             </span>
@@ -243,88 +223,75 @@ export default async function VibeHackathonPage({ params }: PageProps) {
 
           {board.length === 0 ? (
             <div
-              className="rounded-[20px] p-10 text-center"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
+              className="rounded-[14px] px-6 py-10 text-center"
+              style={{ background: "#FAFAF7", border: "1px dashed #EBEBEB" }}
             >
               <Trophy
-                className="w-8 h-8 mx-auto mb-3"
-                style={{ color: "rgba(198,241,53,0.55)" }}
+                className="w-6 h-6 mx-auto mb-3"
+                style={{ color: accent }}
               />
-              <p className="text-[15px]" style={{ color: "rgba(255,255,255,0.7)" }}>
-                Nobody on the board yet. First Receipt wins eyeballs.
+              <p className="text-[14px] text-gray-600">
+                No Receipts on the board yet. First mint wins eyeballs.
               </p>
             </div>
           ) : (
-            <ol className="space-y-2.5">
+            <ol className="space-y-2">
               {board.map((r, idx) => (
                 <li
                   key={r.id}
-                  className="rounded-[18px] p-5 transition-colors hover:bg-white/[0.04]"
+                  className="rounded-[14px] transition-colors hover:bg-[#FAFAF7]"
                   style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: `1px solid ${idx === 0 ? "rgba(198,241,53,0.4)" : "rgba(255,255,255,0.08)"}`,
+                    background: "#FFFFFF",
+                    border: `1px solid ${idx === 0 ? accent : "#EBEBEB"}`,
                   }}
                 >
                   <Link
                     href={`/receipts/${r.id}`}
-                    className="grid grid-cols-[40px_1fr_auto] sm:grid-cols-[48px_1fr_auto_auto] items-center gap-4"
+                    className="grid grid-cols-[36px_1fr_auto] sm:grid-cols-[40px_1fr_auto_auto] items-center gap-3 p-4"
                   >
                     <div
-                      className="font-display font-bold text-[20px] sm:text-[24px]"
+                      className="font-display font-bold text-[18px] sm:text-[20px] tabular-nums"
                       style={{
                         color:
                           idx === 0
-                            ? "#C6F135"
+                            ? accent
                             : idx < 3
-                              ? "rgba(255,255,255,0.85)"
-                              : "rgba(255,255,255,0.4)",
+                              ? "#0A0A0A"
+                              : "#A3A3A3",
                       }}
                     >
                       {idx + 1}
                     </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
-                          style={{ background: r.builder.gradient }}
-                        >
-                          {r.builder.name.charAt(0)}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-[14px] font-bold tracking-[-0.005em] text-white truncate">
-                            {r.builder.name}
-                          </div>
-                          <div
-                            className="text-[11px] truncate"
-                            style={{ color: "rgba(255,255,255,0.45)" }}
-                          >
-                            {r.brief_title}
-                          </div>
-                        </div>
+                    <div className="min-w-0 flex items-center gap-2.5">
+                      <div
+                        className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white"
+                        style={{ background: r.builder.gradient }}
+                      >
+                        {r.builder.name.charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[14px] font-bold tracking-[-0.005em] text-black truncate">
+                          {r.builder.name}
+                        </p>
+                        <p className="text-[11px] text-gray-500 truncate">
+                          {r.brief_title}
+                        </p>
                       </div>
                     </div>
                     <div className="hidden sm:block">
-                      <FingerprintGlyph fingerprint={r.fingerprint} size={36} />
+                      <FingerprintGlyph fingerprint={r.fingerprint} size={32} />
                     </div>
                     <div className="text-right">
                       <div
-                        className="font-display font-bold text-[24px] leading-none"
+                        className="font-display font-bold text-[20px] leading-none tabular-nums"
                         style={{
                           color:
-                            r.composite_score >= 80
-                              ? "#C6F135"
-                              : "rgba(255,255,255,0.9)",
+                            r.composite_score >= 80 ? accent : "#0A0A0A",
                         }}
                       >
                         {r.composite_score}
                       </div>
-                      <div
-                        className="text-[10px] font-bold uppercase tracking-[0.18em] mt-0.5"
-                        style={{ color: "rgba(255,255,255,0.45)" }}
-                      >
+                      <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-gray-500 mt-0.5">
                         {fingerprintTier(r.composite_score).label}
                       </div>
                     </div>
@@ -335,6 +302,6 @@ export default async function VibeHackathonPage({ params }: PageProps) {
           )}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

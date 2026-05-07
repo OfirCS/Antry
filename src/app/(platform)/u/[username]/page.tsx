@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, MapPin } from "lucide-react";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { demoReceipts } from "@/lib/receipts/demo-data";
-import { FeedCard, type Post } from "@/components/feed/FeedCard";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
 import { ProfileTabs } from "./ProfileTabs";
+import type { Post } from "@/components/feed/FeedCard";
 
 type PageProps = { params: Promise<{ username: string }> };
 
@@ -52,7 +50,7 @@ export default async function ProfilePage({ params }: PageProps) {
   const median = sorted[Math.floor(sorted.length / 2)].composite_score;
   const tier = fingerprintTier(median);
 
-  // Synthesize the user's feed: their public Receipts + (later) their posts
+  // Synthesize the user's feed: their public Receipts as posts.
   const feed: Post[] = sorted.map((r) => ({
     id: `feed_p_${r.id}`,
     kind: r.composite_score >= 80 ? "hack-win" : "receipt",
@@ -71,78 +69,89 @@ export default async function ProfilePage({ params }: PageProps) {
     href: `/receipts/${r.id}`,
     at: r.signed_at,
     metric: { label: "Score", value: String(r.composite_score) },
-    reactions: { likes: 12 + (r.composite_score % 30), comments: r.composite_score % 7 },
+    reactions: {
+      likes: 12 + (r.composite_score % 30),
+      comments: r.composite_score % 7,
+    },
   }));
 
   return (
     <div style={{ background: "#FAFAF7" }} className="min-h-screen">
-      {/* Banner */}
+      {/* Single-layer gradient banner. No decorative noise — the gradient
+          comes from the builder's avatar so each profile has unique color. */}
       <div
-        style={{
-          background: builder.gradient,
-          height: 120,
-        }}
+        style={{ background: builder.gradient, height: 140 }}
+        aria-hidden
       />
-      <div className="mx-auto max-w-[920px] px-4 sm:px-6">
-        {/* Identity */}
-        <div className="-mt-12 mb-6">
-          <div
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 flex items-center justify-center text-[28px] font-bold text-white shadow-lg"
-            style={{
-              background: builder.gradient,
-              borderColor: "#FAFAF7",
-            }}
-          >
-            {builder.name.charAt(0)}
-          </div>
 
-          <div className="mt-4 flex items-start justify-between gap-4 flex-wrap">
-            <div className="min-w-0">
-              <h1 className="text-[22px] sm:text-[26px] font-bold tracking-[-0.02em] text-black leading-[1.1]">
-                {builder.name}
-              </h1>
-              <p className="text-[13px] text-gray-500 mt-0.5">@{builder.username}</p>
+      <div className="mx-auto max-w-[920px] px-4 sm:px-6">
+        <section className="-mt-12 sm:-mt-14 mb-6">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <div
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 flex items-center justify-center text-[32px] font-bold text-white"
+              style={{
+                background: builder.gradient,
+                borderColor: "#FAFAF7",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.10)",
+              }}
+            >
+              {builder.name.charAt(0)}
             </div>
 
-            <Link
-              href="/login?redirect=/dashboard"
-              className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
-              style={{ background: "#0A0A0A", color: "#FFFFFF" }}
-            >
-              Follow
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-[10px] px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                style={{
+                  background: "#FFFFFF",
+                  color: "#0A0A0A",
+                  border: "1px solid #EBEBEB",
+                }}
+              >
+                Share
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-[10px] px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                style={{ background: "#0A0A0A", color: "#FFFFFF" }}
+              >
+                Follow
+              </button>
+            </div>
           </div>
 
-          {/* Stats line */}
-          <div className="mt-4 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-[13px]">
+          <h1 className="mt-4 text-[24px] sm:text-[28px] font-bold tracking-[-0.02em] text-black leading-[1.1]">
+            {builder.name}
+          </h1>
+          <p className="text-[14px] text-gray-500 mt-0.5">@{builder.username}</p>
+
+          {/* Bio — synthesized from Receipt activity (factual, terse).
+              Real version pulls from profiles.bio. */}
+          <p className="mt-3 max-w-[560px] text-[14px] leading-[1.55] text-gray-700">
+            {receipts.length} signed Receipt{receipts.length === 1 ? "" : "s"} on
+            Antry. Median composite{" "}
+            <span className="font-bold text-black tabular-nums">{median}</span>.
+            {sorted[0].composite_score >= 85
+              ? ` Topped the leaderboard on ${sorted[0].brief_title}.`
+              : ""}
+          </p>
+
+          {/* Stat row */}
+          <div className="mt-5 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-[13px]">
             <Stat label="Receipts" value={receipts.length} />
             <Stat label="Median" value={median} />
+            <Stat label="Best" value={sorted[0].composite_score} />
             <span
-              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-[0.16em]"
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-[0.16em]"
               style={{ background: tier.bg, color: tier.color }}
             >
               {tier.label}
             </span>
           </div>
-        </div>
+        </section>
 
-        <ProfileTabs
-          tabs={[
-            { key: "feed", label: "Feed", count: feed.length },
-            { key: "receipts", label: "Receipts", count: receipts.length },
-            { key: "hackathons", label: "Hackathons", count: 0 },
-          ]}
-        />
-
-        {/* Feed */}
-        <div
-          className="rounded-[14px] overflow-hidden mt-4"
-          style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
-        >
-          {feed.map((p) => (
-            <FeedCard key={p.id} post={p} />
-          ))}
-        </div>
+        {/* Tabs (functional — actually filter the feed) */}
+        <ProfileTabs feed={feed} totalReceipts={receipts.length} />
       </div>
     </div>
   );
@@ -151,7 +160,7 @@ export default async function ProfilePage({ params }: PageProps) {
 function Stat({ label, value }: { label: string; value: number | string }) {
   return (
     <span className="inline-flex items-baseline gap-1">
-      <span className="font-display font-bold text-[16px] text-black">
+      <span className="font-display font-bold text-[16px] text-black tabular-nums">
         {value}
       </span>
       <span className="text-[12px] text-gray-500">{label}</span>
