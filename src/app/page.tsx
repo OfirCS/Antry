@@ -277,7 +277,7 @@ function ForCompanies() {
 
         <div className="mt-14 flex items-center gap-x-6 gap-y-3 flex-wrap">
           <Link
-            href="/c/start"
+            href="/hackathons/new"
             className="inline-flex items-center justify-center gap-2 rounded-[14px] px-6 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
             style={{
               background: "#0A0A0A",
@@ -285,7 +285,7 @@ function ForCompanies() {
               boxShadow: "0 8px 24px rgba(10,10,10,0.16)",
             }}
           >
-            Start a workspace <ArrowRight className="w-4 h-4" />
+            Run a Vibe Hackathon <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/pricing"

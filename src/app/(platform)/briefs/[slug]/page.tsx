@@ -126,30 +126,24 @@ export default async function BriefDetailPage({
                   {brief.tagline}
                 </p>
 
-                <div className="mt-8 flex flex-wrap items-center gap-3">
+                <div className="mt-8 max-w-[560px]">
+                  <CursorStartPanel briefSlug={brief.slug} />
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
                   <Link
-                    href={`/briefs/${brief.slug}/lab`}
-                    className="inline-flex items-center justify-center gap-2 rounded-[14px] px-5 h-[52px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
-                    style={{
-                      background: "#C6F135",
-                      color: "#0A0A0A",
-                      boxShadow: "0 8px 24px rgba(198,241,53,0.35)",
-                    }}
-                    data-cta="lime"
+                    href={`/briefs/${brief.slug}/leaderboard`}
+                    className="font-semibold hover:underline underline-offset-4 transition-colors"
+                    style={{ color: "rgba(255,255,255,0.85)" }}
                   >
-                    Enter the Lab <ArrowRight className="w-4 h-4" />
+                    See leaderboard →
                   </Link>
                   <span
-                    className="text-[13px] inline-flex items-center gap-1.5"
+                    className="inline-flex items-center gap-1.5"
                     style={{ color: "rgba(255,255,255,0.5)" }}
                   >
                     <Shield className="w-3.5 h-3.5" />
-                    Instrumented · signed at the gateway
+                    Every step signed at the Antry gateway
                   </span>
-                </div>
-
-                <div className="mt-5 max-w-[520px]">
-                  <CursorStartPanel briefSlug={brief.slug} />
                 </div>
               </div>
 
