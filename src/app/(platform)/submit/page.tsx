@@ -14,7 +14,7 @@ import {
   Link2,
   Pencil,
   Rocket,
-  Sparkles,
+  Search,
   Bot,
   Smartphone,
   Palette,
@@ -32,7 +32,7 @@ import { createProject, type FormState } from "../actions";
 const STORAGE_KEY = "antry-submit-draft";
 
 const categories = [
-  { value: "ai-agents", label: "AI Agents", icon: Bot, description: "Autonomous AI systems" },
+  { value: "ai-agents", label: "Agents", icon: Bot, description: "Agent workflows" },
   { value: "web-apps", label: "Web Apps", icon: Globe, description: "Full-stack web & SaaS" },
   { value: "tools", label: "Tools", icon: Wrench, description: "Dev tools & CLIs" },
   { value: "design", label: "Design", icon: Palette, description: "Creative tech & UI" },
@@ -80,16 +80,20 @@ function useDraft() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as Partial<DraftState>;
-        setDraftState((prev) => ({ ...prev, ...parsed }));
+    const timer = window.setTimeout(() => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved) as Partial<DraftState>;
+          setDraftState((prev) => ({ ...prev, ...parsed }));
+        }
+      } catch {
+        // ignore parse errors
       }
-    } catch {
-      // ignore parse errors
-    }
-    setLoaded(true);
+      setLoaded(true);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Auto-save to localStorage
@@ -136,21 +140,15 @@ function PreviewCard({
   return (
     <motion.div
       layout
-      className="rounded-[20px] border border-[#EBEBEB] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] overflow-hidden"
+      className="rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] overflow-hidden"
     >
-      {/* Mini gradient banner */}
+      {/* Mini banner */}
       <div
         className="h-20 -mx-6 -mt-6 mb-5 relative"
         style={{
-          background: "linear-gradient(135deg, #262626 0%, #171717 100%)",
+          background: "#111111",
         }}
       >
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[60%]"
-          style={{
-            background: "linear-gradient(to top, rgba(198,241,53,0.06) 0%, transparent 100%)",
-          }}
-        />
         {title && (
           <span className="absolute bottom-2 right-4 text-white/[0.06] text-[48px] font-display font-bold select-none leading-none tracking-tighter">
             {title.slice(0, 2)}
@@ -163,39 +161,39 @@ function PreviewCard({
           <h3 className="text-[17px] font-semibold text-[#111111] mb-1 truncate tracking-tight">
             {title || "Project name"}
           </h3>
-          <p className="text-[13px] text-[#525252] line-clamp-2 leading-relaxed">
+          <p className="text-[13px] text-[#4B5563] line-clamp-2 leading-relaxed">
             {tagline || "Your project tagline will appear here"}
           </p>
         </div>
-        <div className="h-8 w-8 rounded-xl bg-[#F5F5F5] flex items-center justify-center shrink-0">
-          <ArrowUpRight className="h-4 w-4 text-[#737373]" />
+        <div className="h-8 w-8 rounded-md bg-[#F3F4F6] flex items-center justify-center shrink-0">
+          <ArrowUpRight className="h-4 w-4 text-[#6B7280]" />
         </div>
       </div>
 
       <div className="flex items-center gap-3 mb-5">
-        <div className="h-6 w-6 rounded-full bg-[#F5F5F5] flex items-center justify-center text-[11px] font-semibold text-[#525252]">
+        <div className="h-6 w-6 rounded-full bg-[#F3F4F6] flex items-center justify-center text-[11px] font-semibold text-[#4B5563]">
           {(title || "P").slice(0, 1).toUpperCase()}
         </div>
         <span className="text-[13px] font-medium text-[#111111]">You</span>
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-[#EBEBEB]">
+      <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB]">
         <div className="flex gap-2 flex-wrap">
           {techStack.length > 0 ? (
             techStack.slice(0, 3).map((tech) => (
               <span
                 key={tech}
-                className="inline-flex items-center rounded-full bg-[#F5F5F5] px-2.5 py-0.5 text-[11px] font-medium text-[#525252]"
+                className="inline-flex items-center rounded-full bg-[#F3F4F6] px-2.5 py-0.5 text-[11px] font-medium text-[#4B5563]"
               >
                 {tech}
               </span>
             ))
           ) : (
-            <span className="text-[11px] text-[#A3A3A3]">Tech stack</span>
+            <span className="text-[11px] text-[#9CA3AF]">Tech stack</span>
           )}
         </div>
         {categoryObj && (
-          <span className="text-[11px] font-medium text-[#A3A3A3]">
+          <span className="text-[11px] font-medium text-[#9CA3AF]">
             {categoryObj.label}
           </span>
         )}
@@ -219,7 +217,7 @@ function DotStepper({ current, total }: { current: number; total: number }) {
             <motion.div
               animate={{
                 width: isActive ? 28 : 10,
-                background: isActive ? "#111111" : isCompleted ? "#C6F135" : "#EBEBEB",
+                background: isActive || isCompleted ? "#111111" : "#E5E7EB",
               }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="h-[10px] rounded-full"
@@ -292,14 +290,14 @@ function TechPillGrid({
 
       {/* Search */}
       <div className="relative">
-        <Sparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A3A3A3]" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search or type to add..."
-          className="w-full pl-10 pr-4 py-3 bg-[#FAFAFA] border border-[#EBEBEB] rounded-xl text-[14px] font-medium text-[#111111] placeholder:text-[#A3A3A3] outline-none transition-all duration-200 focus:border-[#111111] focus:bg-white focus:shadow-[0_0_0_3px_rgba(17,17,17,0.04)]"
+          className="w-full pl-10 pr-4 py-3 bg-[#FAFAFA] border border-[#E5E7EB] rounded-md text-[14px] font-medium text-[#111111] placeholder:text-[#9CA3AF] outline-none transition-all duration-200 focus:border-[#111111] focus:bg-white focus:shadow-[0_0_0_3px_rgba(17,17,17,0.04)]"
         />
       </div>
 
@@ -319,10 +317,10 @@ function TechPillGrid({
                 exit={{ opacity: 0, scale: 0.9 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[13px] font-medium transition-all duration-200 cursor-pointer border",
+                  "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-200 cursor-pointer border",
                   isSelected
-                    ? "bg-[#111111] text-[#C6F135] border-[#111111] shadow-[0_2px_8px_rgba(17,17,17,0.15)]"
-                    : "bg-white text-[#525252] border-[#EBEBEB] hover:border-[#D4D4D4] hover:text-[#111111] hover:bg-[#FAFAFA]"
+                    ? "bg-[#111111] text-white border-[#111111] shadow-[0_2px_8px_rgba(17,17,17,0.12)]"
+                    : "bg-white text-[#4B5563] border-[#E5E7EB] hover:border-[#D1D5DB] hover:text-[#111111] hover:bg-[#FAFAFA]"
                 )}
               >
                 {isSelected && <Check className="w-3 h-3" />}
@@ -339,9 +337,9 @@ function TechPillGrid({
             onClick={() => addCustom(search)}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[13px] font-medium cursor-pointer border border-dashed border-[#C6F135] text-[#111111] bg-[#C6F135]/5 hover:bg-[#C6F135]/10 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md text-[13px] font-medium cursor-pointer border border-dashed border-[#D1D5DB] text-[#111111] bg-white hover:border-[#111111] hover:bg-[#FAFAFA] transition-colors"
           >
-            <span className="text-[#C6F135] font-bold">+</span> Add &ldquo;{search.trim()}&rdquo;
+            <span className="text-[#111111] font-bold">+</span> Add &ldquo;{search.trim()}&rdquo;
           </motion.button>
         )}
       </div>
@@ -352,7 +350,7 @@ function TechPillGrid({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="flex items-center gap-1.5 text-[12px] font-medium"
-          style={{ color: "#C6F135" }}
+          style={{ color: "#4B5563" }}
         >
           <CheckCircle2 className="w-3.5 h-3.5" /> {selected.length} selected
         </motion.p>
@@ -384,16 +382,16 @@ function DemoUrlPreview({ url }: { url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-3 p-3 rounded-[12px] bg-[#F5F5F5] border border-[#EBEBEB] hover:border-[#D4D4D4] transition-colors group"
+        className="flex items-center gap-3 p-3 rounded-[12px] bg-[#F3F4F6] border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors group"
       >
-        <div className="w-8 h-8 rounded-lg bg-white border border-[#EBEBEB] flex items-center justify-center">
-          <ExternalLink className="w-3.5 h-3.5 text-[#A3A3A3]" />
+        <div className="w-8 h-8 rounded-lg bg-white border border-[#E5E7EB] flex items-center justify-center">
+          <ExternalLink className="w-3.5 h-3.5 text-[#9CA3AF]" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-medium text-[#111111] truncate">{hostname}</p>
-          <p className="text-[11px] text-[#A3A3A3] truncate">{url}</p>
+          <p className="text-[11px] text-[#9CA3AF] truncate">{url}</p>
         </div>
-        <ArrowUpRight className="w-4 h-4 text-[#A3A3A3] group-hover:text-[#111111] transition-colors shrink-0" />
+        <ArrowUpRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#111111] transition-colors shrink-0" />
       </a>
     </motion.div>
   );
@@ -442,10 +440,10 @@ export default function SubmitPage() {
 
   const inputCls = (field: string) =>
     cn(
-      "w-full px-5 py-3.5 bg-white border rounded-xl text-[14px] font-medium outline-none transition-all duration-200",
+      "w-full px-5 py-3.5 bg-white border rounded-md text-[14px] font-medium outline-none transition-all duration-200",
       hasFieldError(field)
         ? "border-red-400 focus:ring-2 focus:ring-red-400/20"
-        : "border-[#EBEBEB] focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.04)] text-[#111111] placeholder:text-[#A3A3A3]"
+        : "border-[#E5E7EB] focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.04)] text-[#111111] placeholder:text-[#9CA3AF]"
     );
 
   // Clear draft on successful submit
@@ -479,7 +477,7 @@ export default function SubmitPage() {
       >
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-[13px] font-medium text-[#A3A3A3] hover:text-[#111111] transition-colors mb-8 group"
+          className="inline-flex items-center gap-2 text-[13px] font-medium text-[#9CA3AF] hover:text-[#111111] transition-colors mb-8 group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> Back to Dashboard
         </Link>
@@ -496,7 +494,7 @@ export default function SubmitPage() {
           <h1 className="font-display text-[clamp(1.75rem,4vw,2.25rem)] text-[#111111] mb-2 tracking-[-0.03em] font-bold leading-[1.05]">
             Submit a Project
           </h1>
-          <p className="text-[15px] text-[#525252] leading-relaxed">
+          <p className="text-[15px] text-[#4B5563] leading-relaxed">
             Three steps. Under 60 seconds.
           </p>
         </div>
@@ -508,7 +506,7 @@ export default function SubmitPage() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-5 bg-red-500/5 border border-red-500/15 rounded-2xl text-[14px] font-medium text-red-500 flex items-center gap-3"
+          className="mb-8 p-5 bg-red-500/5 border border-red-500/15 rounded-lg text-[14px] font-medium text-red-500 flex items-center gap-3"
         >
           <AlertCircle className="w-5 h-5 shrink-0" />
           {state.error}
@@ -538,21 +536,21 @@ export default function SubmitPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.25, ease }}
-                className="rounded-2xl bg-white border border-[#EBEBEB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+                className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-[#111111] flex items-center justify-center">
-                    <Pencil className="w-5 h-5 text-[#C6F135]" />
+                  <div className="w-10 h-10 rounded-md bg-[#111111] flex items-center justify-center">
+                    <Pencil className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h2 className="text-[18px] font-semibold text-[#111111] tracking-tight">The basics</h2>
-                    <p className="text-[13px] text-[#737373]">Name and describe your project</p>
+                    <p className="text-[13px] text-[#6B7280]">Name and describe your project</p>
                   </div>
                 </div>
 
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#737373] uppercase tracking-[0.1em] mb-2 pl-0.5">
+                    <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-2 pl-0.5">
                       Project name *
                     </label>
                     <input
@@ -575,7 +573,7 @@ export default function SubmitPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#737373] uppercase tracking-[0.1em] mb-2 pl-0.5">
+                    <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-2 pl-0.5">
                       Tagline *
                     </label>
                     <input
@@ -597,13 +595,13 @@ export default function SubmitPage() {
                       ) : (
                         <span />
                       )}
-                      <span className="text-[11px] text-[#A3A3A3] font-medium">{tagline.length}/200</span>
+                      <span className="text-[11px] text-[#9CA3AF] font-medium">{tagline.length}/200</span>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#737373] uppercase tracking-[0.1em] mb-2 pl-0.5">
-                      Description <span className="normal-case font-medium text-[#A3A3A3] tracking-normal">(optional)</span>
+                    <label className="block text-[11px] font-bold text-[#6B7280] uppercase tracking-[0.1em] mb-2 pl-0.5">
+                      Description <span className="normal-case font-medium text-[#9CA3AF] tracking-normal">(optional)</span>
                     </label>
                     <textarea
                       value={description}
@@ -628,14 +626,14 @@ export default function SubmitPage() {
                 className="space-y-6"
               >
                 {/* Category cards */}
-                <div className="rounded-2xl bg-white border border-[#EBEBEB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-[#111111] flex items-center justify-center">
-                      <Layers className="w-5 h-5 text-[#C6F135]" />
+                    <div className="w-10 h-10 rounded-md bg-[#111111] flex items-center justify-center">
+                      <Layers className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h2 className="text-[18px] font-semibold text-[#111111] tracking-tight">Category *</h2>
-                      <p className="text-[13px] text-[#737373]">Pick the best fit</p>
+                      <p className="text-[13px] text-[#6B7280]">Pick the best fit</p>
                     </div>
                   </div>
 
@@ -651,26 +649,26 @@ export default function SubmitPage() {
                           onClick={() => setDraft({ category: cat.value })}
                           whileTap={{ scale: 0.97 }}
                           className={cn(
-                            "flex flex-col items-center gap-2.5 p-4 sm:p-5 rounded-2xl border-2 text-center transition-all duration-200 cursor-pointer",
+                            "flex flex-col items-center gap-2.5 p-4 sm:p-5 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer",
                             isSelected
-                              ? "border-[#C6F135] bg-[#C6F135]/5 shadow-[0_0_0_1px_rgba(198,241,53,0.3)]"
-                              : "border-[#EBEBEB] bg-white hover:border-[#D4D4D4] hover:bg-[#FAFAFA]"
+                              ? "border-[#111111] bg-[#F3F4F6] shadow-[0_0_0_1px_rgba(17,17,17,0.12)]"
+                              : "border-[#E5E7EB] bg-white hover:border-[#D1D5DB] hover:bg-[#FAFAFA]"
                           )}
                         >
                           <div
-                            className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200"
+                            className="w-11 h-11 rounded-md flex items-center justify-center transition-all duration-200"
                             style={{
-                              background: isSelected ? "#111111" : "#F5F5F5",
+                              background: isSelected ? "#111111" : "#F3F4F6",
                             }}
                           >
                             <CatIcon
                               className="w-5 h-5 transition-colors duration-200"
-                              style={{ color: isSelected ? "#C6F135" : "#737373" }}
+                              style={{ color: isSelected ? "#111111" : "#6B7280" }}
                             />
                           </div>
                           <div>
                             <p className="text-[13px] font-semibold text-[#111111] mb-0.5">{cat.label}</p>
-                            <p className="text-[11px] text-[#A3A3A3] leading-snug">{cat.description}</p>
+                            <p className="text-[11px] text-[#9CA3AF] leading-snug">{cat.description}</p>
                           </div>
                           {isSelected && (
                             <motion.div
@@ -678,8 +676,8 @@ export default function SubmitPage() {
                               animate={{ scale: 1 }}
                               className="absolute -top-1 -right-1"
                             >
-                              <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "#C6F135" }}>
-                                <Check className="w-3 h-3 text-[#111111]" />
+                              <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "#111111" }}>
+                                <Check className="w-3 h-3 text-white" />
                               </div>
                             </motion.div>
                           )}
@@ -699,14 +697,14 @@ export default function SubmitPage() {
                 </div>
 
                 {/* Tech stack pills */}
-                <div className="rounded-2xl bg-white border border-[#EBEBEB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-[#111111] flex items-center justify-center">
-                      <Code2 className="w-5 h-5 text-[#C6F135]" />
+                    <div className="w-10 h-10 rounded-md bg-[#111111] flex items-center justify-center">
+                      <Code2 className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h2 className="text-[18px] font-semibold text-[#111111] tracking-tight">Tech stack</h2>
-                      <p className="text-[13px] text-[#737373]">Tap to select technologies</p>
+                      <p className="text-[13px] text-[#6B7280]">Tap to select technologies</p>
                     </div>
                   </div>
 
@@ -714,14 +712,14 @@ export default function SubmitPage() {
                 </div>
 
                 {/* Demo URL */}
-                <div className="rounded-2xl bg-white border border-[#EBEBEB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+                <div className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-[#111111] flex items-center justify-center">
-                      <Link2 className="w-5 h-5 text-[#C6F135]" />
+                    <div className="w-10 h-10 rounded-md bg-[#111111] flex items-center justify-center">
+                      <Link2 className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h2 className="text-[18px] font-semibold text-[#111111] tracking-tight">Demo link</h2>
-                      <p className="text-[13px] text-[#737373]">Where can people try it?</p>
+                      <p className="text-[13px] text-[#6B7280]">Where can people try it?</p>
                     </div>
                   </div>
 
@@ -752,15 +750,15 @@ export default function SubmitPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.25, ease }}
-                className="rounded-2xl bg-white border border-[#EBEBEB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+                className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-[#111111] flex items-center justify-center">
-                    <Rocket className="w-5 h-5 text-[#C6F135]" />
+                  <div className="w-10 h-10 rounded-md bg-[#111111] flex items-center justify-center">
+                    <Rocket className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h2 className="text-[18px] font-semibold text-[#111111] tracking-tight">Looking good!</h2>
-                    <p className="text-[13px] text-[#737373]">Review and submit your project</p>
+                    <p className="text-[13px] text-[#6B7280]">Review and submit your project</p>
                   </div>
                 </div>
 
@@ -775,7 +773,7 @@ export default function SubmitPage() {
                 </div>
 
                 {/* Editable summary */}
-                <div className="space-y-1 rounded-xl bg-[#FAFAFA] border border-[#EBEBEB] divide-y divide-[#EBEBEB] overflow-hidden">
+                <div className="space-y-1 rounded-md bg-[#FAFAFA] border border-[#E5E7EB] divide-y divide-[#E5E7EB] overflow-hidden">
                   {[
                     { label: "Name", value: title || "Not set", editStep: 1 },
                     { label: "Tagline", value: tagline || "Not set", editStep: 1 },
@@ -801,7 +799,7 @@ export default function SubmitPage() {
                       className="flex items-center justify-between gap-4 px-4 py-3"
                     >
                       <div className="min-w-0 flex-1">
-                        <span className="text-[11px] font-bold text-[#A3A3A3] uppercase tracking-[0.06em]">
+                        <span className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-[0.06em]">
                           {item.label}
                         </span>
                         <p className="text-[13px] text-[#111111] font-medium truncate mt-0.5">
@@ -811,7 +809,7 @@ export default function SubmitPage() {
                       <button
                         type="button"
                         onClick={() => setStep(item.editStep)}
-                        className="shrink-0 text-[12px] font-medium text-[#A3A3A3] hover:text-[#111111] transition-colors px-2 py-1 rounded-lg hover:bg-white"
+                        className="shrink-0 text-[12px] font-medium text-[#9CA3AF] hover:text-[#111111] transition-colors px-2 py-1 rounded-lg hover:bg-white"
                       >
                         Edit
                       </button>
@@ -835,7 +833,7 @@ export default function SubmitPage() {
                   type="button"
                   onClick={prevStep}
                   whileHover={{ x: -2 }}
-                  className="flex items-center gap-2 px-5 py-3 rounded-full border border-[#EBEBEB] bg-white text-[14px] font-semibold text-[#525252] hover:border-[#D4D4D4] hover:text-[#111111] transition-all duration-200"
+                  className="flex items-center gap-2 px-5 py-3 rounded-md border border-[#E5E7EB] bg-white text-[14px] font-semibold text-[#4B5563] hover:border-[#D1D5DB] hover:text-[#111111] transition-all duration-200"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </motion.button>
@@ -849,10 +847,10 @@ export default function SubmitPage() {
                   onClick={nextStep}
                   whileHover={{ x: 2 }}
                   disabled={!canProceed()}
-                  className="flex items-center gap-2 px-6 py-3 rounded-full text-[14px] font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 rounded-md text-[14px] font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
                     background: canProceed() ? "#111111" : "#E5E5E5",
-                    color: canProceed() ? "#C6F135" : "#A3A3A3",
+                    color: canProceed() ? "#ffffff" : "#9CA3AF",
                   }}
                 >
                   Next <ArrowRight className="w-4 h-4" />
@@ -863,15 +861,15 @@ export default function SubmitPage() {
                   disabled={pending}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-2 px-8 py-3 rounded-full text-[14px] font-bold transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_rgba(198,241,53,0.25)]"
-                  style={{ background: "#C6F135", color: "#111111" }}
+                  className="flex items-center gap-2 px-8 py-3 rounded-md text-[14px] font-bold transition-all duration-200 disabled:opacity-50"
+                  style={{ background: "#111111", color: "#ffffff" }}
                 >
                   {pending ? (
                     <>
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="w-4 h-4 border-2 border-[#111111] border-t-transparent rounded-full"
+                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                       />
                       Submitting...
                     </>
@@ -894,7 +892,7 @@ export default function SubmitPage() {
             transition={{ delay: 0.3, duration: 0.5, ease }}
             className="sticky top-24"
           >
-            <p className="text-[11px] font-bold text-[#A3A3A3] uppercase tracking-[0.1em] mb-3 pl-1">
+            <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-3 pl-1">
               Live preview
             </p>
             <PreviewCard
@@ -905,19 +903,19 @@ export default function SubmitPage() {
             />
 
             {/* Completion checklist */}
-            <div className="mt-4 p-4 rounded-2xl bg-[#FAFAFA] border border-[#EBEBEB]">
+            <div className="mt-4 p-4 rounded-lg bg-[#FAFAFA] border border-[#E5E7EB]">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[12px] font-semibold text-[#525252]">Completion</p>
+                <p className="text-[12px] font-semibold text-[#4B5563]">Completion</p>
                 <p className="text-[12px] font-bold text-[#111111]">
                   {Math.round(
                     ([title, tagline, category, techStack.length > 0, demoUrl].filter(Boolean).length / 5) * 100
                   )}%
                 </p>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-[#EBEBEB] overflow-hidden mb-3">
+              <div className="w-full h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden mb-3">
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ background: "#C6F135" }}
+                  style={{ background: "#111111" }}
                   animate={{
                     width: `${([title, tagline, category, techStack.length > 0, demoUrl].filter(Boolean).length / 5) * 100}%`,
                   }}
@@ -936,14 +934,14 @@ export default function SubmitPage() {
                     <div
                       className="w-4 h-4 rounded-full flex items-center justify-center transition-colors"
                       style={{
-                        background: item.done ? "#C6F135" : "#EBEBEB",
+                        background: item.done ? "#111111" : "#E5E7EB",
                       }}
                     >
-                      {item.done && <Check className="w-2.5 h-2.5 text-[#111111]" />}
+                      {item.done && <Check className="w-2.5 h-2.5 text-white" />}
                     </div>
                     <span
                       className="text-[12px] font-medium"
-                      style={{ color: item.done ? "#111111" : "#A3A3A3" }}
+                      style={{ color: item.done ? "#111111" : "#9CA3AF" }}
                     >
                       {item.label}
                     </span>
@@ -953,7 +951,7 @@ export default function SubmitPage() {
             </div>
 
             {/* Auto-save indicator */}
-            <p className="text-[11px] text-[#A3A3A3] mt-3 pl-1 flex items-center gap-1.5">
+            <p className="text-[11px] text-[#9CA3AF] mt-3 pl-1 flex items-center gap-1.5">
               <CheckCircle2 className="w-3 h-3" /> Draft auto-saved
             </p>
           </motion.div>

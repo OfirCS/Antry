@@ -30,6 +30,12 @@ import type { DiscoveredProject, ScanResult } from "@/lib/discovery/types";
 
 type Tab = "pending" | "approved" | "rejected" | "all";
 
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+
 export function DiscoveryQueueClient({
   projects: initialProjects,
 }: {
@@ -118,13 +124,7 @@ export function DiscoveryQueueClient({
 
   function formatDate(dateStr: string | null) {
     if (!dateStr) return "";
-    const d = new Date(dateStr);
-    const now = Date.now();
-    const days = Math.floor((now - d.getTime()) / (1000 * 60 * 60 * 24));
-    if (days === 0) return "today";
-    if (days === 1) return "1 day ago";
-    if (days < 30) return `${days} days ago`;
-    return d.toLocaleDateString();
+    return dateFormatter.format(new Date(dateStr));
   }
 
   return (
@@ -156,7 +156,7 @@ export function DiscoveryQueueClient({
 
       {/* Stats Bar */}
       <div className="grid grid-cols-3 gap-3 mb-8">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-center gap-2 mb-1">
             <Hourglass className="w-4 h-4 text-amber-600" />
             <span className="text-[12px] font-semibold uppercase tracking-wide text-amber-700">
@@ -168,7 +168,7 @@ export function DiscoveryQueueClient({
           </p>
           <p className="text-[12px] text-amber-600 mt-0.5">Awaiting review</p>
         </div>
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+        <div className="rounded-md border border-green-200 bg-green-50 p-4">
           <div className="flex items-center gap-2 mb-1">
             <ShieldCheck className="w-4 h-4 text-green-600" />
             <span className="text-[12px] font-semibold uppercase tracking-wide text-green-700">
@@ -180,7 +180,7 @@ export function DiscoveryQueueClient({
           </p>
           <p className="text-[12px] text-green-600 mt-0.5">Live on platform</p>
         </div>
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
           <div className="flex items-center gap-2 mb-1">
             <ShieldX className="w-4 h-4 text-red-500" />
             <span className="text-[12px] font-semibold uppercase tracking-wide text-red-600">
@@ -196,7 +196,7 @@ export function DiscoveryQueueClient({
 
       {/* Scan result */}
       {scanResult && (
-        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 text-[13px] text-green-800">
+        <div className="mb-6 rounded-md border border-green-200 bg-green-50 p-4 text-[13px] text-green-800">
           Scan complete: {scanResult.discovered} new,{" "}
           {scanResult.skipped} skipped
           {scanResult.errors.length > 0 && (
@@ -208,7 +208,7 @@ export function DiscoveryQueueClient({
       )}
 
       {/* Import from URL */}
-      <div className="mb-8 rounded-xl border border-border-primary bg-surface p-5">
+      <div className="mb-8 rounded-md border border-border-primary bg-surface p-5">
         <h3 className="text-[14px] font-semibold text-text-primary mb-3 flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Import from URL
@@ -240,7 +240,7 @@ export function DiscoveryQueueClient({
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-4 p-1 rounded-xl" style={{ background: "#F5F5F5" }}>
+      <div className="flex items-center gap-1 mb-4 p-1 rounded-md" style={{ background: "#F3F4F6" }}>
         {tabs.map((t) => (
           <button
             key={t.value}
@@ -302,7 +302,7 @@ export function DiscoveryQueueClient({
 
       {/* Project list */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border-primary bg-background-secondary/30 py-16 text-center">
+        <div className="rounded-md border border-dashed border-border-primary bg-background-secondary/30 py-16 text-center">
           <Search className="w-10 h-10 text-text-tertiary mx-auto mb-4 opacity-30" />
           <p className="text-[15px] font-medium text-text-secondary mb-1">
             No projects
@@ -318,7 +318,7 @@ export function DiscoveryQueueClient({
           {filtered.map((project) => (
             <div
               key={project.id}
-              className="rounded-xl border border-border-primary bg-surface p-5 transition-all hover:border-text-tertiary/30"
+              className="rounded-md border border-border-primary bg-surface p-5 transition-all hover:border-text-tertiary/30"
             >
               {/* Top row: score + title */}
               <div className="flex items-start gap-4 mb-3">

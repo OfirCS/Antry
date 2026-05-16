@@ -47,10 +47,10 @@ function getPasswordStrength(password: string): StrengthLevel {
 }
 
 const strengthConfig: Record<StrengthLevel, { label: string; color: string; bgColor: string }> = {
-  0: { label: "", color: "#EBEBEB", bgColor: "#EBEBEB" },
+  0: { label: "", color: "#E5E7EB", bgColor: "#E5E7EB" },
   1: { label: "Weak", color: "#EF4444", bgColor: "rgba(239, 68, 68, 0.15)" },
   2: { label: "Fair", color: "#F59E0B", bgColor: "rgba(245, 158, 11, 0.15)" },
-  3: { label: "Good", color: "#C6F135", bgColor: "rgba(198, 241, 53, 0.2)" },
+  3: { label: "Good", color: "#20F5A0", bgColor: "rgba(32, 245, 160, 0.2)" },
   4: { label: "Strong", color: "#22C55E", bgColor: "rgba(34, 197, 94, 0.15)" },
 };
 
@@ -77,7 +77,7 @@ function PasswordStrengthBar({ password }: { password: string }) {
                 initial={{ scaleX: 0 }}
                 animate={{
                   scaleX: 1,
-                  backgroundColor: segment <= strength ? config.color : "#EBEBEB",
+                  backgroundColor: segment <= strength ? config.color : "#E5E7EB",
                 }}
                 transition={{
                   scaleX: { duration: 0.3, delay: segment * 0.05 },
@@ -142,7 +142,7 @@ export default function SignupPage() {
     (state?.fieldErrors?.[field]?.length ?? 0) > 0;
 
   const baseInputStyles =
-    "w-full px-4 h-[48px] bg-white border rounded-xl text-[15px] outline-none placeholder:text-gray-400";
+    "w-full px-4 h-[48px] bg-white border rounded-md text-[15px] outline-none placeholder:text-gray-400";
 
   const inputCls = (field: string) =>
     hasFieldError(field)
@@ -159,7 +159,7 @@ export default function SignupPage() {
       e.currentTarget.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.1)";
     } else {
       e.currentTarget.style.borderColor = "#111111";
-      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(198, 241, 53, 0.2)";
+      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(17, 24, 39, 0.06)";
     }
   };
 
@@ -167,7 +167,7 @@ export default function SignupPage() {
     if (isError) {
       e.currentTarget.style.boxShadow = "none";
     } else {
-      e.currentTarget.style.borderColor = "#EBEBEB";
+      e.currentTarget.style.borderColor = "#E5E7EB";
       e.currentTarget.style.boxShadow = "none";
     }
   };
@@ -194,10 +194,10 @@ export default function SignupPage() {
         <form action={signInWithGoogle}>
           <motion.button
             type="submit"
-            whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
+            whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
             whileTap={{ scale: 0.985 }}
             transition={{ duration: 0.2 }}
-            className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 h-[48px] text-[14px] font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:border-gray-300"
+            className="w-full flex items-center justify-center gap-3 rounded-md border border-gray-200 bg-white px-4 h-[48px] text-[14px] font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:border-gray-300"
             style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
           >
             <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">
@@ -213,10 +213,10 @@ export default function SignupPage() {
         <form action={signInWithGithub}>
           <motion.button
             type="submit"
-            whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
+            whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
             whileTap={{ scale: 0.985 }}
             transition={{ duration: 0.2 }}
-            className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 h-[48px] text-[14px] font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:border-gray-300"
+            className="w-full flex items-center justify-center gap-3 rounded-md border border-gray-200 bg-white px-4 h-[48px] text-[14px] font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:border-gray-300"
             style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
           >
             <Github className="w-[18px] h-[18px]" />
@@ -304,7 +304,7 @@ export default function SignupPage() {
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3"
+            className="flex items-center gap-3 rounded-md bg-red-50 border border-red-200 px-4 py-3"
           >
             <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
@@ -333,7 +333,7 @@ export default function SignupPage() {
           whileHover={pending ? {} : { scale: 1.005, boxShadow: "0 4px 16px rgba(0,0,0,0.15)" }}
           whileTap={pending ? {} : { scale: 0.98 }}
           transition={{ duration: 0.2 }}
-          className="w-full h-[52px] rounded-xl bg-black text-white text-[15px] font-medium transition-colors duration-200 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed mt-1 flex items-center justify-center"
+          className="w-full h-[52px] rounded-md bg-black text-white text-[15px] font-medium transition-colors duration-200 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed mt-1 flex items-center justify-center"
           style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.12)" }}
         >
           {pending && <LoadingSpinner />}

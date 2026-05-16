@@ -10,7 +10,7 @@
 // minting, `verified` is false and a 422 is returned.
 
 import { NextResponse } from "next/server";
-import { verifyReceipt, contentHash } from "@/lib/receipts/sign";
+import { verifyReceipt, contentHash, signReceipt } from "@/lib/receipts/sign";
 import { getDemoReceipt, getStoredReceiptSignature } from "@/lib/receipts/demo-data";
 
 export const runtime = "nodejs";
@@ -50,9 +50,10 @@ export async function GET(
     signed_at: r.signed_at,
   };
 
-  // Stored signature: r.signature on real prod rows, else the signature minted
-  // at module load for demo rows. NEVER recompute and self-compare.
-  const storedSignature = r.signature ?? getStoredReceiptSignature(r.id);
+  // Stored signature: r.signature on real prod rows. Demo rows are static
+  // fixtures, so mint their deterministic dev signature here on the Node route
+  // instead of making the shared demo-data module import node:crypto.
+  const storedSignature = r.signature ?? getStoredReceiptSignature(r.id) ?? signReceipt(canonical);
   if (!storedSignature) {
     return NextResponse.json(
       { ok: false, verified: false, error: "no_signature_on_record" },

@@ -8,13 +8,13 @@
 // Tokens (single source of truth):
 //   ink           = #0A0A0A   (the deepest black; preferred over #111)
 //   ink-soft      = #1A1A1A
-//   bg-warm       = #FAFAF7   (off-white)
+//   bg-warm       = #F7F8FA   (off-white)
 //   bg            = #FFFFFF
-//   border        = #EBEBEB
-//   border-soft   = #F5F5F5
-//   lime          = #C6F135   (the accent)
-//   text-muted    = rgba(255,255,255,0.55) on dark / #525252 on light
-//   text-faint    = rgba(255,255,255,0.40) on dark / #737373 on light
+//   border        = #E5E7EB
+//   border-soft   = #F3F4F6
+//   lime          = #20F5A0   (the accent)
+//   text-muted    = rgba(255,255,255,0.55) on dark / #4B5563 on light
+//   text-faint    = rgba(255,255,255,0.40) on dark / #6B7280 on light
 //
 // Typography hierarchy:
 //   editorial-h1  = clamp(2.6rem, 6vw, 4.6rem),  font-display, weight 700, tracking -0.04em, leading 0.98
@@ -47,12 +47,12 @@ export function Eyebrow({
   const baseColor =
     color ??
     (tone === "lime"
-      ? "#C6F135"
+      ? "#20F5A0"
       : tone === "ink"
         ? "#0A0A0A"
         : tone === "muted"
           ? "rgba(255,255,255,0.55)"
-          : "#737373");
+          : "#6B7280");
   return (
     <p
       className={`text-[11px] font-bold uppercase tracking-[0.22em] ${className}`}
@@ -149,7 +149,7 @@ export function EditorialH3({
 // ─────────────────────────────────────────────────────
 export function DarkHero({
   children,
-  sponsorColor = "#C6F135",
+  sponsorColor = "#20F5A0",
   showGrid = true,
   className = "",
 }: {
@@ -168,7 +168,7 @@ export function DarkHero({
         className="pointer-events-none absolute inset-0"
         style={{
           background: `radial-gradient(ellipse 70% 50% at 50% -10%, ${
-            sponsorColor === "#C6F135" ? "rgba(198,241,53,0.16)" : `${sponsorColor}26`
+            sponsorColor === "#20F5A0" ? "rgba(32,245,160,0.16)" : `${sponsorColor}26`
           } 0%, transparent 55%)`,
         }}
       />
@@ -203,7 +203,7 @@ export function Section({
   className = "",
 }: {
   children: ReactNode;
-  background?: "#FFFFFF" | "#FAFAF7";
+  background?: "#FFFFFF" | "#F7F8FA";
   border?: boolean;
   /** Apply standard vertical padding (py-24 sm:py-28) */
   padded?: boolean;
@@ -247,18 +247,18 @@ export function Card({
 }) {
   const base: CSSProperties = {
     background:
-      tone === "warm" ? "#FAFAF7" : tone === "dark" ? "#0A0A0A" : "#FFFFFF",
+      tone === "warm" ? "#F7F8FA" : tone === "dark" ? "#0A0A0A" : "#FFFFFF",
     border:
       tone === "dark"
         ? "1px solid rgba(255,255,255,0.08)"
-        : "1px solid #EBEBEB",
+        : "1px solid #E5E7EB",
     boxShadow:
       tone === "dark" ? "none" : "0 1px 0 rgba(0,0,0,0.03)",
     color: tone === "dark" ? "#FFFFFF" : "#0A0A0A",
   };
   return (
     <div
-      className={`rounded-[20px] ${
+      className={`rounded-lg ${
         hoverable ? "transition-all duration-300 hover:-translate-y-1" : ""
       } ${className}`}
       style={{ ...base, ...style }}
@@ -300,7 +300,7 @@ export function SectionHeader({
         {subtitle && (
           <p
             className="mt-4 text-[15px] sm:text-[16px] leading-[1.6] max-w-[560px]"
-            style={{ color: invert ? "rgba(255,255,255,0.65)" : "#525252" }}
+            style={{ color: invert ? "rgba(255,255,255,0.65)" : "#4B5563" }}
           >
             {subtitle}
           </p>

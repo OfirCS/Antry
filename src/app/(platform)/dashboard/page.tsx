@@ -126,7 +126,7 @@ function ProgressRing({
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="#F5F5F5"
+        stroke="#F3F4F6"
         strokeWidth={strokeWidth}
       />
       <circle
@@ -134,7 +134,7 @@ function ProgressRing({
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke={percent === 100 ? "#22C55E" : "#C6F135"}
+        stroke={percent === 100 ? "#22C55E" : "#20F5A0"}
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
         strokeDashoffset={offset}
@@ -257,17 +257,17 @@ export default function DashboardPage() {
     return (
       <div className="max-w-[720px] mx-auto px-6 py-16">
         <div className="animate-pulse space-y-5">
-          <div className="h-8 bg-[#F5F5F5] rounded-lg w-48" />
-          <div className="h-4 bg-[#F5F5F5] rounded-lg w-32" />
+          <div className="h-8 bg-[#F3F4F6] rounded-lg w-48" />
+          <div className="h-4 bg-[#F3F4F6] rounded-lg w-32" />
           <div className="flex gap-3 mt-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 bg-[#F5F5F5] rounded-xl flex-1" />
+              <div key={i} className="h-20 bg-[#F3F4F6] rounded-md flex-1" />
             ))}
           </div>
-          <div className="h-px bg-[#F5F5F5] mt-6" />
+          <div className="h-px bg-[#F3F4F6] mt-6" />
           <div className="space-y-3 mt-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-14 bg-[#F5F5F5] rounded-xl" />
+              <div key={i} className="h-14 bg-[#F3F4F6] rounded-md" />
             ))}
           </div>
         </div>
@@ -283,7 +283,7 @@ export default function DashboardPage() {
           {completeness < 100 ? (
             <Link href="/settings" className="relative group" title={`Profile ${completeness}% complete`}>
               <ProgressRing percent={completeness} size={40} strokeWidth={3} />
-              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-[#737373] group-hover:text-[#111111] transition-colors">
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-[#6B7280] group-hover:text-[#111111] transition-colors">
                 {completeness}
               </span>
             </Link>
@@ -300,7 +300,7 @@ export default function DashboardPage() {
               Hey, {name.split(" ")[0]}
             </h1>
             {completeness < 100 && (
-              <p className="text-[13px] text-[#A3A3A3]">
+              <p className="text-[13px] text-[#9CA3AF]">
                 Profile {completeness}% complete &middot;{" "}
                 <Link href="/settings" className="text-[#111111] hover:underline">
                   finish it
@@ -319,31 +319,31 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" }}
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-10 rounded-2xl bg-white overflow-hidden relative"
+            className="mb-10 rounded-lg bg-white overflow-hidden relative"
             style={{
-              border: "1px solid #EBEBEB",
+              border: "1px solid #E5E7EB",
               boxShadow: "0 1px 0 rgba(0,0,0,0.03), 0 12px 32px -16px rgba(0,0,0,0.08)",
             }}
           >
             <div
               className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
               style={{
-                background: "radial-gradient(circle, rgba(198,241,53,0.12) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(32,245,160,0.12) 0%, transparent 70%)",
               }}
             />
-            <div className="relative px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
+            <div className="relative px-5 py-4 flex items-center justify-between border-b border-[#F3F4F6]">
               <div className="flex items-center gap-2.5">
                 <motion.div
                   animate={{ rotate: [0, 8, -6, 0] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                   className="h-8 w-8 rounded-lg flex items-center justify-center"
-                  style={{ background: "rgba(198,241,53,0.18)" }}
+                  style={{ background: "rgba(32,245,160,0.18)" }}
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#0A0A0A]" />
                 </motion.div>
                 <div>
                   <p className="text-[13px] font-bold text-[#111111] tracking-tight">Get set up</p>
-                  <p className="text-[11px] text-[#A3A3A3] tabular-nums">
+                  <p className="text-[11px] text-[#9CA3AF] tabular-nums">
                     {completedSteps}/{onboardingSteps.length} complete
                   </p>
                 </div>
@@ -354,7 +354,7 @@ export default function DashboardPage() {
                     key={s.key}
                     initial={false}
                     animate={{
-                      backgroundColor: s.done ? "#C6F135" : "#EBEBEB",
+                      backgroundColor: s.done ? "#20F5A0" : "#E5E7EB",
                       width: s.done ? 28 : 24,
                     }}
                     transition={{ duration: 0.3, delay: i * 0.05 }}
@@ -363,7 +363,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            <ul className="divide-y divide-[#F5F5F5]">
+            <ul className="divide-y divide-[#F3F4F6]">
               {onboardingSteps.map((s, i) => (
                 <motion.li
                   key={s.key}
@@ -377,7 +377,7 @@ export default function DashboardPage() {
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.background = s.done
                         ? "transparent"
-                        : "rgba(198,241,53,0.05)";
+                        : "rgba(32,245,160,0.05)";
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLElement).style.background = "transparent";
@@ -385,13 +385,13 @@ export default function DashboardPage() {
                   >
                     <motion.span
                       animate={{
-                        background: s.done ? "#C6F135" : "transparent",
-                        borderColor: s.done ? "#C6F135" : "#D4D4D4",
+                        background: s.done ? "#20F5A0" : "transparent",
+                        borderColor: s.done ? "#20F5A0" : "#D1D5DB",
                         scale: s.done ? [1, 1.15, 1] : 1,
                       }}
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                       className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 border"
-                      style={{ color: s.done ? "#0A0A0A" : "#737373" }}
+                      style={{ color: s.done ? "#0A0A0A" : "#6B7280" }}
                     >
                       <AnimatePresence mode="wait" initial={false}>
                         {s.done ? (
@@ -422,15 +422,15 @@ export default function DashboardPage() {
                         className="text-[14px] font-semibold transition-all"
                         style={{
                           textDecoration: s.done ? "line-through" : "none",
-                          color: s.done ? "#A3A3A3" : "#111111",
+                          color: s.done ? "#9CA3AF" : "#111111",
                         }}
                       >
                         {s.title}
                       </p>
-                      <p className="text-[12px] text-[#737373]">{s.desc}</p>
+                      <p className="text-[12px] text-[#6B7280]">{s.desc}</p>
                     </div>
                     {!s.done && (
-                      <ArrowRight className="w-4 h-4 text-[#D4D4D4] group-hover:text-[#0A0A0A] group-hover:translate-x-0.5 transition-all shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-[#D1D5DB] group-hover:text-[#0A0A0A] group-hover:translate-x-0.5 transition-all shrink-0" />
                     )}
                   </Link>
                 </motion.li>
@@ -447,7 +447,7 @@ export default function DashboardPage() {
             label: "Submit project",
             href: "/submit",
             icon: <Plus className="w-[18px] h-[18px]" />,
-            iconBg: "bg-[#C6F135]",
+            iconBg: "bg-[#20F5A0]",
             iconColor: "text-[#111111]",
           },
           {
@@ -461,21 +461,21 @@ export default function DashboardPage() {
             label: "Edit profile",
             href: "/settings",
             icon: <UserCircle className="w-[18px] h-[18px]" />,
-            iconBg: "bg-[#F5F5F5]",
-            iconColor: "text-[#525252]",
+            iconBg: "bg-[#F3F4F6]",
+            iconColor: "text-[#4B5563]",
           },
         ].map((action) => (
           <Link
             key={action.label}
             href={action.href}
-            className="group flex flex-col items-center gap-2.5 rounded-xl border border-[#EBEBEB] bg-white p-4 hover:border-[#D4D4D4] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200"
+            className="group flex flex-col items-center gap-2.5 rounded-md border border-[#E5E7EB] bg-white p-4 hover:border-[#D1D5DB] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200"
           >
             <div
               className={`h-9 w-9 rounded-lg flex items-center justify-center ${action.iconBg} ${action.iconColor} group-hover:scale-105 transition-transform duration-200`}
             >
               {action.icon}
             </div>
-            <span className="text-[13px] font-medium text-[#525252] group-hover:text-[#111111] transition-colors">
+            <span className="text-[13px] font-medium text-[#4B5563] group-hover:text-[#111111] transition-colors">
               {action.label}
             </span>
           </Link>
@@ -486,27 +486,27 @@ export default function DashboardPage() {
       <div className="mb-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[15px] font-semibold text-[#111111]">Your projects</h2>
-          <span className="text-[12px] text-[#A3A3A3] tabular-nums">{projects.length}</span>
+          <span className="text-[12px] text-[#9CA3AF] tabular-nums">{projects.length}</span>
         </div>
 
         {projects.length === 0 ? (
           <Link
             href="/submit"
-            className="group flex items-center gap-4 rounded-xl border border-dashed border-[#D4D4D4] bg-[#FAFAFA] p-5 hover:border-[#C6F135] hover:bg-[#C6F135]/5 transition-all duration-200"
+            className="group flex items-center gap-4 rounded-md border border-dashed border-[#D1D5DB] bg-[#FAFAFA] p-5 hover:border-[#20F5A0] hover:bg-[#20F5A0]/5 transition-all duration-200"
           >
-            <div className="h-10 w-10 rounded-lg bg-[#C6F135]/15 flex items-center justify-center shrink-0 group-hover:bg-[#C6F135]/25 transition-colors">
+            <div className="h-10 w-10 rounded-lg bg-[#20F5A0]/15 flex items-center justify-center shrink-0 group-hover:bg-[#20F5A0]/25 transition-colors">
               <Rocket className="w-[18px] h-[18px] text-[#111111]" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[14px] font-medium text-[#111111]">Ship your first project</p>
-              <p className="text-[13px] text-[#A3A3A3]">
+              <p className="text-[13px] text-[#9CA3AF]">
                 Showcase your work and get discovered by the community.
               </p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#D4D4D4] group-hover:text-[#111111] transition-colors shrink-0" />
+            <ArrowRight className="w-4 h-4 text-[#D1D5DB] group-hover:text-[#111111] transition-colors shrink-0" />
           </Link>
         ) : (
-          <div className="rounded-xl border border-[#EBEBEB] bg-white divide-y divide-[#F5F5F5] overflow-hidden">
+          <div className="rounded-md border border-[#E5E7EB] bg-white divide-y divide-[#F3F4F6] overflow-hidden">
             {projects.map((project) => (
               <div
                 key={project.id}
@@ -528,7 +528,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Likes */}
-                <div className="flex items-center gap-1 text-[12px] text-[#737373] tabular-nums shrink-0">
+                <div className="flex items-center gap-1 text-[12px] text-[#6B7280] tabular-nums shrink-0">
                   <Heart className="w-3 h-3" />
                   {project.likes_count}
                 </div>
@@ -536,7 +536,7 @@ export default function DashboardPage() {
                 {/* Edit */}
                 <Link
                   href={`/projects/${project.id}/edit`}
-                  className="h-7 w-7 flex items-center justify-center rounded-md text-[#A3A3A3] hover:text-[#111111] hover:bg-[#F5F5F5] transition-all duration-150 shrink-0 opacity-0 group-hover:opacity-100"
+                  className="h-7 w-7 flex items-center justify-center rounded-md text-[#9CA3AF] hover:text-[#111111] hover:bg-[#F3F4F6] transition-all duration-150 shrink-0 opacity-0 group-hover:opacity-100"
                   title="Edit"
                 >
                   <Pencil className="w-3 h-3" />
@@ -548,7 +548,7 @@ export default function DashboardPage() {
                     href={project.demo_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="h-7 w-7 flex items-center justify-center rounded-md text-[#A3A3A3] hover:text-[#111111] hover:bg-[#F5F5F5] transition-all duration-150 shrink-0 opacity-0 group-hover:opacity-100"
+                    className="h-7 w-7 flex items-center justify-center rounded-md text-[#9CA3AF] hover:text-[#111111] hover:bg-[#F3F4F6] transition-all duration-150 shrink-0 opacity-0 group-hover:opacity-100"
                     title="Live demo"
                   >
                     <ArrowUpRight className="w-3 h-3" />
@@ -560,7 +560,7 @@ export default function DashboardPage() {
                   <input type="hidden" name="project_id" value={project.id} />
                   <button
                     type="submit"
-                    className="h-7 w-7 flex items-center justify-center rounded-md text-[#A3A3A3] hover:text-[#EF4444] hover:bg-red-50 transition-all duration-150"
+                    className="h-7 w-7 flex items-center justify-center rounded-md text-[#9CA3AF] hover:text-[#EF4444] hover:bg-red-50 transition-all duration-150"
                     title="Delete"
                     onClick={(e) => {
                       if (!confirm("Delete this project?")) {
@@ -583,30 +583,30 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10 rounded-2xl bg-white overflow-hidden relative"
+          className="mb-10 rounded-lg bg-white overflow-hidden relative"
           style={{
-            border: "1px solid #EBEBEB",
+            border: "1px solid #E5E7EB",
             boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
           }}
         >
-          <div className="px-5 py-4 flex items-center justify-between border-b border-[#F5F5F5]">
+          <div className="px-5 py-4 flex items-center justify-between border-b border-[#F3F4F6]">
             <div>
               <p className="text-[13px] font-bold text-[#111111] tracking-tight">Invite a builder</p>
-              <p className="text-[12px] text-[#A3A3A3] mt-0.5">
+              <p className="text-[12px] text-[#9CA3AF] mt-0.5">
                 Friends who use this link skip the waitlist.
               </p>
             </div>
             <span
               className="text-[10px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded-md"
-              style={{ background: "rgba(198,241,53,0.20)", color: "#0A0A0A" }}
+              style={{ background: "rgba(32,245,160,0.20)", color: "#0A0A0A" }}
             >
               Beta perk
             </span>
           </div>
           <div className="px-5 py-4 flex items-center gap-3">
             <div
-              className="flex-1 min-w-0 text-[13px] font-mono text-[#525252] truncate px-3 py-2 rounded-lg"
-              style={{ background: "#FAFAF7", border: "1px solid #F5F5F5" }}
+              className="flex-1 min-w-0 text-[13px] font-mono text-[#4B5563] truncate px-3 py-2 rounded-lg"
+              style={{ background: "#F7F8FA", border: "1px solid #F3F4F6" }}
             >
               {inviteUrl || `Code: ${profileData.invite_code}`}
             </div>
@@ -619,7 +619,7 @@ export default function DashboardPage() {
               transition={{ duration: 0.15 }}
               className="inline-flex items-center gap-1.5 rounded-lg px-4 h-9 text-[12px] font-semibold transition-all shrink-0 disabled:opacity-50"
               style={{
-                background: inviteCopied ? "#C6F135" : "#0A0A0A",
+                background: inviteCopied ? "#20F5A0" : "#0A0A0A",
                 color: inviteCopied ? "#0A0A0A" : "#fff",
               }}
             >
@@ -657,7 +657,7 @@ export default function DashboardPage() {
       <div>
         <h2 className="text-[15px] font-semibold text-[#111111] mb-4">Activity</h2>
         {activities.length === 0 ? (
-          <p className="text-[13px] text-[#A3A3A3]">No activity yet.</p>
+          <p className="text-[13px] text-[#9CA3AF]">No activity yet.</p>
         ) : (
           <div className="space-y-0">
             {activities.map((activity) => (
@@ -665,8 +665,8 @@ export default function DashboardPage() {
                 key={activity.id}
                 className="flex items-baseline justify-between py-2 text-[13px]"
               >
-                <span className="text-[#525252] truncate mr-4">{activity.text}</span>
-                <span className="text-[#A3A3A3] text-[12px] tabular-nums shrink-0">{activity.time}</span>
+                <span className="text-[#4B5563] truncate mr-4">{activity.text}</span>
+                <span className="text-[#9CA3AF] text-[12px] tabular-nums shrink-0">{activity.time}</span>
               </div>
             ))}
           </div>

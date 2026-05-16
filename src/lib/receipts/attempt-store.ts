@@ -46,7 +46,6 @@ export type StoredAttempt = {
 // boundaries in dev. In production with Supabase, this becomes a thin
 // pass-through and persistence happens server-side.
 declare global {
-  // eslint-disable-next-line no-var
   var __antryAttemptStore: Map<string, StoredAttempt> | undefined;
 }
 const attempts: Map<string, StoredAttempt> =

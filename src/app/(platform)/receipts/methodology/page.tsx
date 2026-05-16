@@ -41,13 +41,13 @@ export default function MethodologyPage() {
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(198,241,53,0.14) 0%, transparent 55%)",
+                "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(32,245,160,0.14) 0%, transparent 55%)",
             }}
           />
           <div className="relative mx-auto max-w-[920px] px-6 pt-24 pb-32 sm:px-10 sm:pt-28 sm:pb-36 text-center">
             <p
               className="text-[11px] font-bold uppercase tracking-[0.22em]"
-              style={{ color: "#C6F135" }}
+              style={{ color: "#20F5A0" }}
             >
               Methodology
             </p>
@@ -82,11 +82,11 @@ export default function MethodologyPage() {
                 {ALL_DIMENSIONS.map((d, i) => (
                   <div
                     key={d}
-                    className="rounded-[16px] p-5 bg-[#FAFAF7] border border-gray-100 flex items-start gap-4"
+                    className="rounded-lg p-5 bg-[#F7F8FA] border border-gray-100 flex items-start gap-4"
                   >
                     <div
                       className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 font-display font-bold"
-                      style={{ background: "#0A0A0A", color: "#C6F135" }}
+                      style={{ background: "#0A0A0A", color: "#20F5A0" }}
                     >
                       {String(i + 1).padStart(2, "0")}
                     </div>
@@ -207,7 +207,7 @@ export default function MethodologyPage() {
                 ].map((row) => (
                   <div
                     key={row.attack}
-                    className="rounded-[14px] p-4 bg-[#FAFAF7] border border-gray-100"
+                    className="rounded-lg p-4 bg-[#F7F8FA] border border-gray-100"
                   >
                     <p className="text-[12px] font-bold tracking-[-0.005em] text-black">
                       {row.attack}
@@ -269,14 +269,14 @@ hold_out:
                 className="absolute -top-12 -right-12 w-56 h-56 rounded-full pointer-events-none"
                 style={{
                   background:
-                    "radial-gradient(circle, rgba(198,241,53,0.18) 0%, transparent 65%)",
+                    "radial-gradient(circle, rgba(32,245,160,0.18) 0%, transparent 65%)",
                 }}
               />
               <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                 <div>
                   <p
                     className="text-[11px] font-bold uppercase tracking-[0.22em] inline-flex items-center gap-1.5"
-                    style={{ color: "#C6F135" }}
+                    style={{ color: "#20F5A0" }}
                   >
                     <Sparkles className="w-3 h-3" />
                     Try it
@@ -296,11 +296,11 @@ hold_out:
                 </div>
                 <Link
                   href="/briefs"
-                  className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-1.5 rounded-lg px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
                   style={{
-                    background: "#C6F135",
+                    background: "#20F5A0",
                     color: "#0A0A0A",
-                    boxShadow: "0 8px 24px rgba(198,241,53,0.35)",
+                    boxShadow: "0 8px 24px rgba(32,245,160,0.35)",
                   }}
                 >
                   Browse Briefs <ArrowRight className="w-4 h-4" />

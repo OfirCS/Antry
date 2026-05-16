@@ -30,7 +30,7 @@ export function ReceiptReveal({ fingerprint }: { fingerprint: Fingerprint }) {
           className="absolute inset-0 -z-0 rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(45% 45% at 50% 50%, rgba(198,241,53,0.18) 0%, transparent 70%)",
+              "radial-gradient(45% 45% at 50% 50%, rgba(32,245,160,0.18) 0%, transparent 70%)",
             filter: "blur(20px)",
           }}
         />
@@ -38,7 +38,7 @@ export function ReceiptReveal({ fingerprint }: { fingerprint: Fingerprint }) {
           <BuilderFingerprint
             fingerprint={fingerprint}
             size={360}
-            primaryColor="#C6F135"
+            primaryColor="#20F5A0"
           />
         </div>
       </motion.div>

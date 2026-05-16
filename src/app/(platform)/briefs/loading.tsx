@@ -1,55 +1,68 @@
-import { Nav } from "@/components/Nav";
 import { Skeleton } from "@/components/design/Skeleton";
 
 export default function BriefsLoading() {
   return (
-    <>
-      <Nav />
-      <main>
-        <section className="relative overflow-hidden" style={{ background: "#0A0A0A" }}>
-          <div className="relative mx-auto max-w-[1080px] px-6 pt-20 pb-32 sm:px-10 sm:pt-24 sm:pb-36">
-            <Skeleton className="h-3 w-40 bg-white/10 mb-6" />
-            <Skeleton className="h-12 sm:h-16 max-w-[680px] bg-white/10 mb-4" rounded="rounded-lg" />
-            <Skeleton className="h-12 sm:h-16 max-w-[520px] bg-white/10 mb-7" rounded="rounded-lg" />
-            <Skeleton className="h-5 max-w-[480px] bg-white/8" />
-          </div>
-        </section>
+    <section className="min-h-screen bg-[#F7F8FA]">
+      <div className="mx-auto max-w-[1240px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="border-b border-gray-200 pb-6">
+          <Skeleton className="mb-3 h-6 w-40 rounded-md" />
+          <Skeleton className="h-10 w-full max-w-[360px] rounded-md" />
+          <Skeleton className="mt-3 h-4 w-full max-w-[620px] rounded-md" />
+        </div>
 
-        <section className="bg-white">
-          <div className="mx-auto max-w-[1080px] px-6 sm:px-10 -mt-20 sm:-mt-24 pb-24 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <BriefCardSkeleton key={i} />
+        <div className="grid gap-3 py-5 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <Skeleton className="h-3 w-28 rounded-md" />
+                <Skeleton className="h-8 w-8 rounded-md" />
+              </div>
+              <Skeleton className="h-8 w-16 rounded-md" />
+              <Skeleton className="mt-2 h-3 w-32 rounded-md" />
+            </div>
+          ))}
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
+          <aside className="space-y-4">
+            <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+              <Skeleton className="mb-3 h-4 w-32 rounded-md" />
+              <Skeleton className="h-10 w-full rounded-md" />
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="mb-2 h-9 w-full rounded-md last:mb-0" />
               ))}
             </div>
-          </div>
-        </section>
-      </main>
-    </>
-  );
-}
+          </aside>
 
-function BriefCardSkeleton() {
-  return (
-    <div
-      className="rounded-[20px] bg-white overflow-hidden"
-      style={{ border: "1px solid #EBEBEB", boxShadow: "0 1px 0 rgba(0,0,0,0.03)" }}
-    >
-      <Skeleton className="h-1.5 w-full" rounded="rounded-none" />
-      <div className="p-6 grid grid-cols-[1fr_auto] gap-4 items-start">
-        <div className="space-y-3 w-full">
-          <Skeleton className="h-3 w-32" />
-          <Skeleton className="h-5 w-full max-w-[280px]" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-3/4" />
-          <div className="flex gap-2 pt-2">
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-3 w-14" />
+          <div className="space-y-4">
+            <div className="grid gap-3 xl:grid-cols-5">
+              {Array.from({ length: 5 }).map((_, column) => (
+                <div key={column} className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <div className="border-b border-gray-100 px-3 py-2.5">
+                    <Skeleton className="h-4 w-24 rounded-md" />
+                  </div>
+                  <div className="space-y-2 p-2">
+                    {Array.from({ length: 2 }).map((_, item) => (
+                      <Skeleton key={item} className="h-28 w-full rounded-md" />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+              <Skeleton className="h-5 w-36 rounded-md" />
+              <div className="mt-4 space-y-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <Skeleton key={index} className="h-14 w-full rounded-md" />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        <Skeleton className="w-[88px] h-[88px]" rounded="rounded-2xl" />
       </div>
-    </div>
+    </section>
   );
 }

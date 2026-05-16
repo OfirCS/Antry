@@ -13,44 +13,62 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, floatingLabel, prefix, suffix, id, ...props }, ref) => {
+  (
+    {
+      className,
+      type,
+      floatingLabel,
+      prefix,
+      suffix,
+      id,
+      onFocus,
+      onBlur,
+      onChange,
+      value,
+      defaultValue,
+      placeholder,
+      ...props
+    },
+    ref
+  ) => {
     const [focused, setFocused] = React.useState(false);
     const [hasValue, setHasValue] = React.useState(false);
-    const inputId = id || React.useId();
+    const generatedId = React.useId();
+    const inputId = id || generatedId;
 
     const handleFocus = React.useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
         setFocused(true);
-        props.onFocus?.(e);
+        onFocus?.(e);
       },
-      [props.onFocus]
+      [onFocus]
     );
 
     const handleBlur = React.useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
         setFocused(false);
         setHasValue(e.target.value.length > 0);
-        props.onBlur?.(e);
+        onBlur?.(e);
       },
-      [props.onBlur]
+      [onBlur]
     );
 
     const handleChange = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         setHasValue(e.target.value.length > 0);
-        props.onChange?.(e);
+        onChange?.(e);
       },
-      [props.onChange]
+      [onChange]
     );
 
     // Floating label variant
     if (floatingLabel) {
-      const isLifted = focused || hasValue || !!props.value || !!props.defaultValue || !!props.placeholder;
+      const isLifted = focused || hasValue || !!value || !!defaultValue || !!placeholder;
 
       return (
         <div className={cn("relative w-full", prefix || suffix ? "flex items-center" : "")}>
           {prefix && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A3A3A3] transition-colors duration-200 z-10 pointer-events-none peer-focus:text-[#111111]">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 z-10 pointer-events-none peer-focus:text-[#111111]">
               {prefix}
             </div>
           )}
@@ -58,9 +76,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "peer flex h-14 w-full rounded-xl border bg-white px-4 pt-5 pb-1.5 text-[14px] font-medium text-[#111111] placeholder:text-transparent outline-none",
+              "peer flex h-14 w-full rounded-md border bg-white px-4 pt-5 pb-1.5 text-[14px] font-medium text-[#111111] placeholder:text-transparent outline-none",
               "transition-[border-color,box-shadow] duration-250 ease-out",
-              "border-[#EBEBEB]",
+              "border-[#E5E7EB]",
               "focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
               "disabled:cursor-not-allowed disabled:opacity-50",
               prefix ? "pl-10" : "",
@@ -71,7 +89,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChange={handleChange}
-            placeholder={floatingLabel}
+            value={value}
+            defaultValue={defaultValue}
+            placeholder={placeholder || floatingLabel}
             {...props}
           />
           <label
@@ -80,14 +100,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "absolute pointer-events-none transition-all duration-200 ease-out origin-left",
               prefix ? "left-10" : "left-4",
               isLifted
-                ? "top-2 text-[11px] font-semibold tracking-wide text-[#737373]"
-                : "top-1/2 -translate-y-1/2 text-[14px] text-[#A3A3A3]"
+                ? "top-2 text-[11px] font-semibold tracking-wide text-[#6B7280]"
+                : "top-1/2 -translate-y-1/2 text-[14px] text-[#9CA3AF]"
             )}
           >
             {floatingLabel}
           </label>
           {suffix && (
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#A3A3A3] transition-colors duration-200 pointer-events-none">
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 pointer-events-none">
               {suffix}
             </div>
           )}
@@ -100,7 +120,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       return (
         <div className="relative w-full flex items-center">
           {prefix && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A3A3A3] transition-colors duration-200 pointer-events-none z-10">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 pointer-events-none z-10">
               {prefix}
             </div>
           )}
@@ -108,9 +128,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "flex h-12 w-full rounded-xl border bg-white py-3 text-[14px] font-medium text-[#111111] placeholder:text-[#A3A3A3] outline-none",
+              "flex h-12 w-full rounded-md border bg-white py-3 text-[14px] font-medium text-[#111111] placeholder:text-[#9CA3AF] outline-none",
               "transition-[border-color,box-shadow] duration-250 ease-out",
-              "border-[#EBEBEB]",
+              "border-[#E5E7EB]",
               "focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
               "disabled:cursor-not-allowed disabled:opacity-50",
               prefix ? "pl-10" : "px-4",
@@ -121,10 +141,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            onChange={handleChange}
+            value={value}
+            defaultValue={defaultValue}
+            placeholder={placeholder}
             {...props}
           />
           {suffix && (
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#A3A3A3] transition-colors duration-200 pointer-events-none">
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 pointer-events-none">
               {suffix}
             </div>
           )}
@@ -138,9 +162,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         id={inputId}
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-xl border bg-white px-4 py-3 text-[14px] font-medium text-[#111111] placeholder:text-[#A3A3A3] outline-none",
+          "flex h-12 w-full rounded-md border bg-white px-4 py-3 text-[14px] font-medium text-[#111111] placeholder:text-[#9CA3AF] outline-none",
           "transition-[border-color,box-shadow] duration-250 ease-out",
-          "border-[#EBEBEB]",
+          "border-[#E5E7EB]",
           "focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
           "disabled:cursor-not-allowed disabled:opacity-50",
           className
@@ -148,6 +172,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onChange={handleChange}
+        value={value}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
         {...props}
       />
     );

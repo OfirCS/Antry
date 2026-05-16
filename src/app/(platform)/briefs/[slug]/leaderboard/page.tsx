@@ -52,7 +52,7 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(198,241,53,0.10) 0%, transparent 60%)",
+              "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(32,245,160,0.10) 0%, transparent 60%)",
           }}
         />
         <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-14 pb-10">
@@ -69,12 +69,12 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
             className="text-[11px] font-bold uppercase tracking-[0.28em] mb-5 inline-flex items-center gap-2"
             style={{ color: "rgba(255,255,255,0.55)" }}
           >
-            <Trophy className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
+            <Trophy className="w-3.5 h-3.5" style={{ color: "#20F5A0" }} />
             Live leaderboard
           </p>
           <h1
             className="font-display font-bold leading-[0.96] tracking-[-0.04em] text-white"
-            style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)" }}
+            style={{ color: "#FFFFFF", fontSize: "clamp(2.2rem, 5vw, 3.6rem)" }}
           >
             {brief.title}
           </h1>
@@ -117,7 +117,7 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
         <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
           {receipts.length === 0 ? (
             <div
-              className="rounded-[20px] p-10 text-center"
+              className="rounded-lg p-10 text-center"
               style={{
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid rgba(255,255,255,0.08)",
@@ -128,8 +128,8 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
               </p>
               <Link
                 href={`/briefs/${slug}`}
-                className="mt-6 inline-flex items-center gap-2 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold transition-all hover:-translate-y-0.5"
-                style={{ background: "#C6F135", color: "#0A0A0A" }}
+                className="mt-6 inline-flex items-center gap-2 rounded-lg px-5 h-[48px] text-[14px] font-semibold transition-all hover:-translate-y-0.5"
+                style={{ background: "#20F5A0", color: "#0A0A0A" }}
                 data-cta="lime"
               >
                 Start in Cursor
@@ -143,7 +143,7 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
                   className="rounded-[18px] p-5 transition-colors hover:bg-white/[0.04]"
                   style={{
                     background: "rgba(255,255,255,0.02)",
-                    border: `1px solid ${idx === 0 ? "rgba(198,241,53,0.4)" : "rgba(255,255,255,0.08)"}`,
+                    border: `1px solid ${idx === 0 ? "rgba(32,245,160,0.4)" : "rgba(255,255,255,0.08)"}`,
                   }}
                 >
                   <Link
@@ -155,7 +155,7 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
                       style={{
                         color:
                           idx === 0
-                            ? "#C6F135"
+                            ? "#20F5A0"
                             : idx < 3
                               ? "rgba(255,255,255,0.85)"
                               : "rgba(255,255,255,0.4)",
@@ -200,7 +200,7 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
                         style={{
                           color:
                             r.composite_score >= 80
-                              ? "#C6F135"
+                              ? "#20F5A0"
                               : r.composite_score >= 60
                                 ? "rgba(255,255,255,0.9)"
                                 : "rgba(255,255,255,0.55)",
@@ -222,20 +222,23 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
           )}
 
           <div
-            className="mt-12 rounded-[20px] p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-5"
+            className="mt-12 rounded-lg p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-5"
             style={{
-              background: "rgba(198,241,53,0.06)",
-              border: "1px solid rgba(198,241,53,0.3)",
+              background: "rgba(32,245,160,0.06)",
+              border: "1px solid rgba(32,245,160,0.3)",
             }}
           >
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+              className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
               style={{ background: "#0A0A0A" }}
             >
-              <Zap className="w-5 h-5" style={{ color: "#C6F135" }} />
+              <Zap className="w-5 h-5" style={{ color: "#20F5A0" }} />
             </div>
             <div>
-              <h3 className="text-[16px] font-bold tracking-[-0.01em] text-white">
+              <h3
+                className="text-[16px] font-bold tracking-[-0.01em] text-white"
+                style={{ color: "#FFFFFF" }}
+              >
                 Compete on this Brief
               </h3>
               <p
@@ -252,8 +255,8 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
             </div>
             <Link
               href={`/briefs/${slug}`}
-              className="inline-flex items-center gap-2 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 self-start sm:self-center"
-              style={{ background: "#C6F135", color: "#0A0A0A" }}
+              className="inline-flex items-center gap-2 rounded-lg px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 self-start sm:self-center"
+              style={{ background: "#20F5A0", color: "#0A0A0A" }}
               data-cta="lime"
             >
               Start in Cursor

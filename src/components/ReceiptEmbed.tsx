@@ -43,15 +43,15 @@ export function ReceiptEmbed({ receiptId }: Props) {
 
   return (
     <div
-      className="rounded-[20px] p-6 sm:p-7 flex flex-col"
-      style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
+      className="rounded-lg p-6 sm:p-7 flex flex-col"
+      style={{ background: "#F7F8FA", border: "1px solid #E5E7EB" }}
     >
       <div className="flex items-start gap-3">
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
           style={{ background: "#0A0A0A" }}
         >
-          <Code2 className="w-4 h-4" style={{ color: "#C6F135" }} />
+          <Code2 className="w-4 h-4" style={{ color: "#20F5A0" }} />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-500">
@@ -68,7 +68,7 @@ export function ReceiptEmbed({ receiptId }: Props) {
 
       <div
         className="mt-4 inline-flex rounded-[10px] p-0.5 self-start"
-        style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+        style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
         role="tablist"
       >
         {TABS.map((t) => {
@@ -83,7 +83,7 @@ export function ReceiptEmbed({ receiptId }: Props) {
               className="px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-[0.14em] inline-flex items-center gap-1.5 transition-colors"
               style={{
                 background: active ? "#0A0A0A" : "transparent",
-                color: active ? "#FFFFFF" : "#525252",
+                color: active ? "#FFFFFF" : "#4B5563",
               }}
             >
               {t.icon}
@@ -95,7 +95,7 @@ export function ReceiptEmbed({ receiptId }: Props) {
 
       <div
         className="mt-3 flex-1 rounded-[12px] p-3 font-mono text-[11px] leading-[1.5] text-gray-700 break-all overflow-x-auto"
-        style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+        style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
       >
         {snippets[tab]}
       </div>

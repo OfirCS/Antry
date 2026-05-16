@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { AntryLogoFull } from "@/components/AntryLogo";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
@@ -29,7 +30,7 @@ function checkIsAdmin(userId: string | undefined): boolean {
 }
 
 const navLinks = [
-  { href: "/discover", label: "Discover" },
+  { href: "/discover", label: "Community" },
   { href: "/builders", label: "Builders" },
   { href: "/briefs", label: "Briefs" },
   { href: "/hackathons", label: "Hackathons" },
@@ -42,6 +43,7 @@ export function Nav() {
   const showAdmin = checkIsAdmin(user?.id);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -63,70 +65,62 @@ export function Nav() {
   }, [mobileOpen]);
 
   const toggleMobile = useCallback(() => setMobileOpen((v) => !v), []);
+  const markNavigation = useCallback((href: string) => {
+    if (href !== pathname) setPendingHref(href);
+  }, [pathname]);
+  const activePendingHref = pendingHref === pathname ? null : pendingHref;
 
   return (
     <>
       <nav
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]",
+          "fixed inset-x-0 top-0 z-50 transition-all duration-300",
           scrolled
-            ? "bg-white/80 backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
-            : "bg-white/100 backdrop-blur-none shadow-none"
+            ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
+            : "bg-white border-b border-transparent"
         )}
-        style={{
-          borderBottom: scrolled
-            ? "1px solid rgba(0,0,0,0.08)"
-            : "1px solid rgba(0,0,0,0.04)",
-        }}
       >
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-6 sm:px-10 h-14">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between px-6 sm:px-10 h-[68px]">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-            <span className="text-[20px] font-bold tracking-tight" style={{ color: "#111111", fontFamily: "var(--font-display)" }}>
-              antry
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C6F135" }} />
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" aria-label="Antry home">
+            <AntryLogoFull size={32} tone="dark" />
           </Link>
 
           {/* Center links - flat */}
           <div className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => {
-              const isActive = isNavActive(pathname, link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "relative px-3.5 py-2 rounded-lg text-[14px] font-medium transition-colors duration-200",
-                    isActive
-                      ? "text-[#111111]"
-                      : "text-[#737373] hover:text-[#111111]"
-                  )}
-                >
-                  {link.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full"
-                      style={{ background: "#C6F135" }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              );
+               const isActive = isNavActive(pathname, link.href);
+               return (
+                 <Link
+                   key={link.href}
+                   href={link.href}
+                   onClick={() => markNavigation(link.href)}
+                   className={cn(
+                     "relative px-4 py-2 rounded-md text-[14px] font-semibold transition-colors duration-200",
+                     isActive
+                       ? "text-black bg-gray-50"
+                       : "text-gray-500 hover:text-black hover:bg-gray-50"
+                   )}
+                 >
+                   {link.label}
+                   <LinkPendingIndicator pending={activePendingHref === link.href} />
+                 </Link>
+               );
             })}
 
             {showAdmin && (
               <Link
                 href="/admin/discovery"
+                onClick={() => markNavigation("/admin/discovery")}
                 className={cn(
-                  "px-3.5 py-2 rounded-lg text-[14px] font-medium transition-colors duration-200",
+                  "px-4 py-2 rounded-md text-[14px] font-semibold transition-colors duration-200",
                   isNavActive(pathname, "/admin")
-                    ? "text-[#111111]"
-                    : "text-[#737373] hover:text-[#111111]"
+                    ? "text-black bg-gray-50"
+                    : "text-gray-500 hover:text-black hover:bg-gray-50"
                 )}
               >
                 Admin
+                <LinkPendingIndicator pending={activePendingHref === "/admin/discovery"} />
               </Link>
             )}
           </div>
@@ -134,45 +128,57 @@ export function Nav() {
           {/* Right actions */}
           <div className="flex items-center gap-3">
             {loading ? (
-              <div className="h-9 w-20 animate-pulse rounded-lg bg-gray-100" />
+              <div className="h-9 w-20 animate-pulse rounded-md bg-gray-100" />
             ) : user ? (
               <div className="hidden items-center gap-3 sm:flex">
                 <Link
                   href="/dashboard"
-                  className="text-[14px] font-medium text-[#737373] transition-colors hover:text-[#111111]"
+                  onClick={() => markNavigation("/dashboard")}
+                  className={cn(
+                    "relative text-[14px] font-semibold transition-colors",
+                    "text-gray-500 hover:text-black"
+                  )}
                 >
                   Dashboard
+                  <LinkPendingIndicator pending={activePendingHref === "/dashboard"} />
                 </Link>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-[14px] font-semibold transition-all duration-200 hover:-translate-y-[1px]"
+                  onClick={() => markNavigation("/submit")}
+                  className="relative inline-flex items-center justify-center rounded-md px-4 py-2.5 text-[14px] font-bold transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
                   style={{
-                    background: "#C6F135",
-                    color: "#111111",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+                    background: "#0A0A0A",
+                    color: "#ffffff",
                   }}
                 >
                   Submit project
+                  <LinkPendingIndicator light pending={activePendingHref === "/submit"} />
                 </Link>
               </div>
             ) : (
               <div className="hidden items-center gap-3 sm:flex">
                 <Link
                   href="/login"
-                  className="text-[14px] font-medium text-[#737373] transition-colors hover:text-[#111111]"
+                  onClick={() => markNavigation("/login")}
+                  className={cn(
+                    "relative px-2 text-[14px] font-semibold transition-colors",
+                    "text-gray-500 hover:text-black"
+                  )}
                 >
                   Log in
+                  <LinkPendingIndicator pending={activePendingHref === "/login"} />
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-[14px] font-semibold transition-all duration-200 hover:-translate-y-[1px]"
+                  onClick={() => markNavigation("/signup")}
+                  className="relative inline-flex items-center justify-center rounded-md px-5 py-2.5 text-[14px] font-bold transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
                   style={{
-                    background: "#111111",
+                    background: "#0A0A0A",
                     color: "#ffffff",
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.12)",
                   }}
                 >
                   Get started
+                  <LinkPendingIndicator light pending={activePendingHref === "/signup"} />
                 </Link>
               </div>
             )}
@@ -180,7 +186,10 @@ export function Nav() {
             {/* Mobile hamburger */}
             <button
               onClick={toggleMobile}
-              className="flex h-11 w-11 items-center justify-center rounded-lg text-[#111111] transition-colors hover:bg-gray-100 lg:hidden"
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-md transition-colors lg:hidden",
+                "text-black hover:bg-gray-100"
+              )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -221,9 +230,7 @@ export function Nav() {
               transition={{ type: "spring", stiffness: 350, damping: 35 }}
             >
               <div className="flex items-center justify-between px-6 h-14 border-b border-gray-100">
-                <span className="text-[18px] font-bold tracking-tight" style={{ color: "#111111" }}>
-                  antry<span className="inline-block w-1.5 h-1.5 rounded-full ml-1" style={{ background: "#C6F135" }} />
-                </span>
+                <AntryLogoFull size={28} tone="dark" />
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
@@ -246,18 +253,19 @@ export function Nav() {
                       >
                         <Link
                           href={link.href}
-                          onClick={() => setMobileOpen(false)}
+                          onClick={() => {
+                            markNavigation(link.href);
+                            setMobileOpen(false);
+                          }}
                           className={cn(
-                            "flex items-center px-4 py-3.5 rounded-xl text-[16px] font-medium transition-colors min-h-[44px]",
+                            "flex items-center px-4 py-3.5 rounded-xl text-[16px] font-semibold transition-colors min-h-[44px]",
                             isActive
                               ? "text-[#111111] bg-gray-50"
-                              : "text-[#525252] hover:text-[#111111] hover:bg-gray-50"
+                              : "text-[#4B5563] hover:text-[#111111] hover:bg-gray-50"
                           )}
                         >
                           {link.label}
-                          {isActive && (
-                            <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#C6F135]" />
-                          )}
+                          <LinkPendingIndicator pending={activePendingHref === link.href} />
                         </Link>
                       </motion.div>
                     );
@@ -266,15 +274,19 @@ export function Nav() {
                   {showAdmin && (
                     <Link
                       href="/admin/discovery"
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => {
+                        markNavigation("/admin/discovery");
+                        setMobileOpen(false);
+                      }}
                       className={cn(
-                        "flex items-center px-4 py-3.5 rounded-xl text-[16px] font-medium transition-colors min-h-[44px]",
+                        "flex items-center px-4 py-3.5 rounded-xl text-[16px] font-semibold transition-colors min-h-[44px]",
                         isNavActive(pathname, "/admin")
                           ? "text-[#111111] bg-gray-50"
-                          : "text-[#525252] hover:text-[#111111] hover:bg-gray-50"
+                          : "text-[#4B5563] hover:text-[#111111] hover:bg-gray-50"
                       )}
                     >
                       Admin
+                      <LinkPendingIndicator pending={activePendingHref === "/admin/discovery"} />
                     </Link>
                   )}
                 </div>
@@ -283,41 +295,57 @@ export function Nav() {
 
                 <div className="flex flex-col gap-2">
                   {loading ? (
-                    <div className="h-10 animate-pulse rounded-xl bg-gray-100" />
+                    <div className="h-10 animate-pulse rounded-md bg-gray-100" />
                   ) : user ? (
                     <>
                       <Link
                         href="/dashboard"
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center px-4 py-3.5 rounded-xl text-[16px] font-medium text-[#525252] hover:text-[#111111] hover:bg-gray-50 min-h-[44px]"
+                        onClick={() => {
+                          markNavigation("/dashboard");
+                          setMobileOpen(false);
+                        }}
+                        className="relative flex items-center px-4 py-3.5 rounded-md text-[16px] font-medium text-[#4B5563] hover:text-[#111111] hover:bg-gray-50 min-h-[44px]"
                       >
                         Dashboard
+                        <LinkPendingIndicator pending={activePendingHref === "/dashboard"} />
                       </Link>
                       <Link
                         href="/submit"
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-center px-4 py-3.5 rounded-xl text-[16px] font-semibold min-h-[44px]"
-                        style={{ background: "#C6F135", color: "#111111" }}
+                        onClick={() => {
+                          markNavigation("/submit");
+                          setMobileOpen(false);
+                        }}
+                        className="relative flex items-center justify-center px-4 py-3.5 rounded-md text-[16px] font-semibold min-h-[44px]"
+                        style={{ background: "#0A0A0A", color: "#ffffff" }}
                       >
                         Submit project
+                        <LinkPendingIndicator light pending={activePendingHref === "/submit"} />
                       </Link>
                     </>
                   ) : (
                     <>
                       <Link
                         href="/login"
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-center px-4 py-3.5 rounded-xl text-[16px] font-medium text-[#525252] hover:text-[#111111] hover:bg-gray-50 min-h-[44px]"
+                        onClick={() => {
+                          markNavigation("/login");
+                          setMobileOpen(false);
+                        }}
+                        className="relative flex items-center justify-center px-4 py-3.5 rounded-md text-[16px] font-medium text-[#4B5563] hover:text-[#111111] hover:bg-gray-50 min-h-[44px]"
                       >
                         Log in
+                        <LinkPendingIndicator pending={activePendingHref === "/login"} />
                       </Link>
                       <Link
                         href="/signup"
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-center px-4 py-3.5 rounded-xl text-[16px] font-semibold min-h-[44px]"
+                        onClick={() => {
+                          markNavigation("/signup");
+                          setMobileOpen(false);
+                        }}
+                        className="relative flex items-center justify-center px-4 py-3.5 rounded-md text-[16px] font-semibold min-h-[44px]"
                         style={{ background: "#111111", color: "#ffffff" }}
                       >
                         Get started
+                        <LinkPendingIndicator light pending={activePendingHref === "/signup"} />
                       </Link>
                     </>
                   )}
@@ -328,5 +356,18 @@ export function Nav() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function LinkPendingIndicator({ light = false, pending }: { light?: boolean; pending: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "pointer-events-none absolute inset-x-2 bottom-1 h-0.5 origin-left rounded-full transition-all duration-200",
+        pending ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0",
+        light ? "bg-white/80" : "bg-black"
+      )}
+    />
   );
 }

@@ -28,6 +28,18 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 type TabKey = "profile" | "account" | "notifications" | "integrations";
 
+type ProfileRecord = {
+  full_name?: string | null;
+  username?: string | null;
+  bio?: string | null;
+  skills?: string[] | null;
+  github_url?: string | null;
+  twitter_url?: string | null;
+  website_url?: string | null;
+  avatar_url?: string | null;
+  created_at?: string | null;
+};
+
 const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "profile", label: "Profile", icon: <User className="w-4 h-4" /> },
   { key: "account", label: "Account", icon: <Settings className="w-4 h-4" /> },
@@ -96,14 +108,14 @@ function SuccessToast({
           style={{
             background: "#111111",
             borderRadius: "14px",
-            border: "1px solid rgba(198,241,53,0.2)",
+            border: "1px solid rgba(32,245,160,0.2)",
           }}
         >
           <div
             className="w-6 h-6 flex items-center justify-center"
             style={{
               borderRadius: "9999px",
-              background: "#C6F135",
+              background: "#20F5A0",
             }}
           >
             <Check className="w-3.5 h-3.5" style={{ color: "#111111" }} />
@@ -131,11 +143,11 @@ function SuccessToast({
 
 export default function SettingsPage() {
   const { user, loading: authLoading } = useAuth();
-  const [profile, setProfile] = useState<Record<string, any> | null>(null);
+  const [profile, setProfile] = useState<ProfileRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [showDelete, setShowDelete] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
-  const [showToast, setShowToast] = useState(false);
+  const [toastDismissed, setToastDismissed] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -150,13 +162,6 @@ export default function SettingsPage() {
     updateProfile,
     null
   );
-
-  // Show toast on successful save
-  useEffect(() => {
-    if (state?.success) {
-      setShowToast(true);
-    }
-  }, [state]);
 
   useEffect(() => {
     if (!user) return;
@@ -234,15 +239,15 @@ export default function SettingsPage() {
         <div className="animate-pulse space-y-6">
           <div
             className="h-10 rounded-lg w-48"
-            style={{ background: "#EBEBEB" }}
+            style={{ background: "#E5E7EB" }}
           />
           <div
-            className="h-14 rounded-xl w-full mt-10"
-            style={{ background: "#EBEBEB" }}
+            className="h-14 rounded-md w-full mt-10"
+            style={{ background: "#E5E7EB" }}
           />
           <div
-            className="h-14 rounded-xl w-full"
-            style={{ background: "#EBEBEB" }}
+            className="h-14 rounded-md w-full"
+            style={{ background: "#E5E7EB" }}
           />
         </div>
       </div>
@@ -265,7 +270,7 @@ export default function SettingsPage() {
       "w-full px-5 py-3.5 text-[14px] font-medium outline-none transition-all duration-300",
       getFieldError(field)
         ? "border-red-400 focus:ring-2 focus:ring-red-400/20"
-        : "focus:border-[#C6F135] focus:ring-4 focus:ring-[rgba(198,241,53,0.1)]"
+        : "focus:border-[#20F5A0] focus:ring-4 focus:ring-[rgba(32,245,160,0.1)]"
     );
 
   const githubConnected = !!fieldValues.github_url;
@@ -273,7 +278,10 @@ export default function SettingsPage() {
 
   return (
     <>
-      <SuccessToast show={showToast} onClose={() => setShowToast(false)} />
+      <SuccessToast
+        show={state?.success === true && !toastDismissed}
+        onClose={() => setToastDismissed(true)}
+      />
 
       <div className="max-w-[860px] mx-auto px-6 py-16 md:py-24">
         <motion.div
@@ -284,7 +292,7 @@ export default function SettingsPage() {
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest transition-colors mb-10"
-            style={{ color: "#A3A3A3" }}
+            style={{ color: "#9CA3AF" }}
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
           </Link>
@@ -302,7 +310,7 @@ export default function SettingsPage() {
           >
             Account Settings
           </h1>
-          <p className="text-[16px] leading-relaxed" style={{ color: "#737373" }}>
+          <p className="text-[16px] leading-relaxed" style={{ color: "#6B7280" }}>
             Manage your builder identity, connected networks, and preferences.
           </p>
         </motion.div>
@@ -314,7 +322,7 @@ export default function SettingsPage() {
           transition={{ duration: 0.4, delay: 0.1, ease }}
           className="flex gap-1 mb-8 p-1 overflow-x-auto"
           style={{
-            background: "#F5F5F5",
+            background: "#F3F4F6",
             borderRadius: "14px",
           }}
         >
@@ -328,7 +336,7 @@ export default function SettingsPage() {
                 background:
                   activeTab === tab.key ? "#ffffff" : "transparent",
                 color:
-                  activeTab === tab.key ? "#111111" : "#737373",
+                  activeTab === tab.key ? "#111111" : "#6B7280",
                 boxShadow:
                   activeTab === tab.key
                     ? "0 1px 3px rgba(0,0,0,0.06)"
@@ -345,7 +353,7 @@ export default function SettingsPage() {
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 p-5 rounded-xl text-[14px] font-medium"
+            className="mb-8 p-5 rounded-md text-[14px] font-medium"
             style={{
               background: "rgba(239,68,68,0.08)",
               border: "1px solid rgba(239,68,68,0.15)",
@@ -372,11 +380,12 @@ export default function SettingsPage() {
                 <div className="lg:col-span-2">
                   <form
                     action={formAction}
+                    onSubmit={() => setToastDismissed(false)}
                     className="space-y-10 p-8 sm:p-10"
                     style={{
                       background: "#ffffff",
                       borderRadius: "20px",
-                      border: "1px solid #EBEBEB",
+                      border: "1px solid #E5E7EB",
                     }}
                   >
                     {/* Avatar Upload */}
@@ -391,8 +400,8 @@ export default function SettingsPage() {
                             borderRadius: "9999px",
                             background: avatarPreview
                               ? "transparent"
-                              : "rgba(198,241,53,0.12)",
-                            border: "2px solid #EBEBEB",
+                              : "rgba(32,245,160,0.12)",
+                            border: "2px solid #E5E7EB",
                           }}
                         >
                           {avatarPreview ? (
@@ -404,7 +413,7 @@ export default function SettingsPage() {
                           ) : (
                             <User
                               className="w-8 h-8"
-                              style={{ color: "#C6F135" }}
+                              style={{ color: "#20F5A0" }}
                             />
                           )}
                         </div>
@@ -435,7 +444,7 @@ export default function SettingsPage() {
                         >
                           Profile photo
                         </p>
-                        <p className="text-[13px]" style={{ color: "#A3A3A3" }}>
+                        <p className="text-[13px]" style={{ color: "#9CA3AF" }}>
                           Click to upload. JPG, PNG under 2MB.
                         </p>
                       </div>
@@ -443,14 +452,14 @@ export default function SettingsPage() {
 
                     {/* Builder Profile Section */}
                     <div>
-                      <div className="mb-6 border-b pb-4" style={{ borderColor: "#F5F5F5" }}>
+                      <div className="mb-6 border-b pb-4" style={{ borderColor: "#F3F4F6" }}>
                         <h2
                           className="text-[14px] font-bold mb-1"
                           style={{ color: "#111111" }}
                         >
                           Builder Profile
                         </h2>
-                        <p className="text-[12px]" style={{ color: "#A3A3A3" }}>
+                        <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
                           This information appears on your public builder card and profile page.
                         </p>
                       </div>
@@ -459,7 +468,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             Full name *
                           </label>
@@ -474,10 +483,10 @@ export default function SettingsPage() {
                             placeholder="Your name"
                             className={inputCls("full_name")}
                             style={{
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                               border: getFieldError("full_name")
                                 ? "1px solid #ef4444"
-                                : "1px solid #EBEBEB",
+                                : "1px solid #E5E7EB",
                               borderRadius: "12px",
                               color: "#111111",
                             }}
@@ -501,7 +510,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             Username *
                           </label>
@@ -516,10 +525,10 @@ export default function SettingsPage() {
                             placeholder="your-username"
                             className={inputCls("username")}
                             style={{
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                               border: getFieldError("username")
                                 ? "1px solid #ef4444"
-                                : "1px solid #EBEBEB",
+                                : "1px solid #E5E7EB",
                               borderRadius: "12px",
                               color: "#111111",
                             }}
@@ -539,7 +548,7 @@ export default function SettingsPage() {
                           </AnimatePresence>
                           <p
                             className="text-[12px] mt-2 pl-1 font-mono"
-                            style={{ color: "#A3A3A3" }}
+                            style={{ color: "#9CA3AF" }}
                           >
                             antry.dev/builders/
                             {fieldValues.username || "username"}
@@ -550,7 +559,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             Bio
                           </label>
@@ -564,8 +573,8 @@ export default function SettingsPage() {
                             placeholder="Tell others what you build and care about"
                             className={cn(inputCls("bio"), "resize-none")}
                             style={{
-                              background: "#F5F5F5",
-                              border: "1px solid #EBEBEB",
+                              background: "#F3F4F6",
+                              border: "1px solid #E5E7EB",
                               borderRadius: "12px",
                               color: "#111111",
                             }}
@@ -576,7 +585,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             Skills
                           </label>
@@ -593,7 +602,7 @@ export default function SettingsPage() {
                           />
                           <p
                             className="text-[12px] mt-2 pl-1"
-                            style={{ color: "#A3A3A3" }}
+                            style={{ color: "#9CA3AF" }}
                           >
                             Press Enter or comma to add a skill. Click a tag to remove it.
                           </p>
@@ -603,14 +612,14 @@ export default function SettingsPage() {
 
                     {/* Network Links */}
                     <div>
-                      <div className="mb-6 border-b pb-4" style={{ borderColor: "#F5F5F5" }}>
+                      <div className="mb-6 border-b pb-4" style={{ borderColor: "#F3F4F6" }}>
                         <h2
                           className="text-[14px] font-bold mb-1"
                           style={{ color: "#111111" }}
                         >
                           Network Links
                         </h2>
-                        <p className="text-[12px]" style={{ color: "#A3A3A3" }}>
+                        <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
                           Connect your social profiles so others can find and follow you.
                         </p>
                       </div>
@@ -618,7 +627,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             GitHub
                           </label>
@@ -633,10 +642,10 @@ export default function SettingsPage() {
                             placeholder="https://github.com/..."
                             className={inputCls("github_url")}
                             style={{
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                               border: getFieldError("github_url")
                                 ? "1px solid #ef4444"
-                                : "1px solid #EBEBEB",
+                                : "1px solid #E5E7EB",
                               borderRadius: "12px",
                               color: "#111111",
                             }}
@@ -659,7 +668,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             Twitter / X
                           </label>
@@ -674,10 +683,10 @@ export default function SettingsPage() {
                             placeholder="https://twitter.com/..."
                             className={inputCls("twitter_url")}
                             style={{
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                               border: getFieldError("twitter_url")
                                 ? "1px solid #ef4444"
-                                : "1px solid #EBEBEB",
+                                : "1px solid #E5E7EB",
                               borderRadius: "12px",
                               color: "#111111",
                             }}
@@ -700,7 +709,7 @@ export default function SettingsPage() {
                         <div>
                           <label
                             className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                            style={{ color: "#737373" }}
+                            style={{ color: "#6B7280" }}
                           >
                             Personal Website
                           </label>
@@ -715,10 +724,10 @@ export default function SettingsPage() {
                             placeholder="https://..."
                             className={inputCls("website_url")}
                             style={{
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                               border: getFieldError("website_url")
                                 ? "1px solid #ef4444"
-                                : "1px solid #EBEBEB",
+                                : "1px solid #E5E7EB",
                               borderRadius: "12px",
                               color: "#111111",
                             }}
@@ -741,13 +750,13 @@ export default function SettingsPage() {
                     </div>
 
                     {/* Save Button */}
-                    <div className="pt-6 border-t" style={{ borderColor: "#F5F5F5" }}>
+                    <div className="pt-6 border-t" style={{ borderColor: "#F3F4F6" }}>
                       <button
                         type="submit"
                         disabled={pending}
                         className="w-full sm:w-auto px-8 py-4 text-[14px] font-bold transition-all duration-300 disabled:opacity-50"
                         style={{
-                          background: "#C6F135",
+                          background: "#20F5A0",
                           color: "#111111",
                           borderRadius: "9999px",
                         }}
@@ -762,10 +771,10 @@ export default function SettingsPage() {
                 <div className="lg:col-span-1">
                   <div className="sticky top-28">
                     <div className="flex items-center gap-2 mb-4">
-                      <Eye className="w-4 h-4" style={{ color: "#A3A3A3" }} />
+                      <Eye className="w-4 h-4" style={{ color: "#9CA3AF" }} />
                       <p
                         className="text-[11px] font-bold uppercase tracking-widest"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#9CA3AF" }}
                       >
                         Profile Preview
                       </p>
@@ -776,7 +785,7 @@ export default function SettingsPage() {
                       style={{
                         background: "#ffffff",
                         borderRadius: "20px",
-                        border: "1px solid #EBEBEB",
+                        border: "1px solid #E5E7EB",
                       }}
                     >
                       {/* Avatar */}
@@ -786,8 +795,8 @@ export default function SettingsPage() {
                           borderRadius: "9999px",
                           background: avatarPreview
                             ? "transparent"
-                            : "rgba(198,241,53,0.12)",
-                          border: "2px solid #EBEBEB",
+                            : "rgba(32,245,160,0.12)",
+                          border: "2px solid #E5E7EB",
                         }}
                       >
                         {avatarPreview ? (
@@ -799,7 +808,7 @@ export default function SettingsPage() {
                         ) : (
                           <User
                             className="w-7 h-7"
-                            style={{ color: "#C6F135" }}
+                            style={{ color: "#20F5A0" }}
                           />
                         )}
                       </div>
@@ -813,7 +822,7 @@ export default function SettingsPage() {
                       </p>
                       <p
                         className="text-[13px] font-mono mb-3"
-                        style={{ color: "#A3A3A3" }}
+                        style={{ color: "#9CA3AF" }}
                       >
                         @{fieldValues.username || "username"}
                       </p>
@@ -822,7 +831,7 @@ export default function SettingsPage() {
                       {fieldValues.bio && (
                         <p
                           className="text-[13px] leading-relaxed mb-4"
-                          style={{ color: "#737373" }}
+                          style={{ color: "#6B7280" }}
                         >
                           {fieldValues.bio.length > 100
                             ? fieldValues.bio.slice(0, 100) + "..."
@@ -844,7 +853,7 @@ export default function SettingsPage() {
                                 className="text-[11px] font-semibold px-2.5 py-1"
                                 style={{
                                   background:
-                                    "rgba(198,241,53,0.12)",
+                                    "rgba(32,245,160,0.12)",
                                   color: "#111111",
                                   borderRadius: "9999px",
                                 }}
@@ -856,18 +865,18 @@ export default function SettingsPage() {
                       )}
 
                       {/* Social links */}
-                      <div className="flex items-center justify-center gap-2 pt-3 border-t" style={{ borderColor: "#F5F5F5" }}>
+                      <div className="flex items-center justify-center gap-2 pt-3 border-t" style={{ borderColor: "#F3F4F6" }}>
                         {fieldValues.github_url && (
                           <div
                             className="w-8 h-8 flex items-center justify-center"
                             style={{
                               borderRadius: "8px",
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                             }}
                           >
                             <Github
                               className="w-3.5 h-3.5"
-                              style={{ color: "#737373" }}
+                              style={{ color: "#6B7280" }}
                             />
                           </div>
                         )}
@@ -876,12 +885,12 @@ export default function SettingsPage() {
                             className="w-8 h-8 flex items-center justify-center"
                             style={{
                               borderRadius: "8px",
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                             }}
                           >
                             <Twitter
                               className="w-3.5 h-3.5"
-                              style={{ color: "#737373" }}
+                              style={{ color: "#6B7280" }}
                             />
                           </div>
                         )}
@@ -890,12 +899,12 @@ export default function SettingsPage() {
                             className="w-8 h-8 flex items-center justify-center"
                             style={{
                               borderRadius: "8px",
-                              background: "#F5F5F5",
+                              background: "#F3F4F6",
                             }}
                           >
                             <Globe
                               className="w-3.5 h-3.5"
-                              style={{ color: "#737373" }}
+                              style={{ color: "#6B7280" }}
                             />
                           </div>
                         )}
@@ -921,17 +930,17 @@ export default function SettingsPage() {
                 style={{
                   background: "#ffffff",
                   borderRadius: "20px",
-                  border: "1px solid #EBEBEB",
+                  border: "1px solid #E5E7EB",
                 }}
               >
-                <div className="mb-6 border-b pb-4" style={{ borderColor: "#F5F5F5" }}>
+                <div className="mb-6 border-b pb-4" style={{ borderColor: "#F3F4F6" }}>
                   <h2
                     className="text-[14px] font-bold mb-1"
                     style={{ color: "#111111" }}
                   >
                     Account Information
                   </h2>
-                  <p className="text-[12px]" style={{ color: "#A3A3A3" }}>
+                  <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
                     Your login credentials and membership details.
                   </p>
                 </div>
@@ -940,22 +949,22 @@ export default function SettingsPage() {
                   <div>
                     <label
                       className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                      style={{ color: "#737373" }}
+                      style={{ color: "#6B7280" }}
                     >
                       Email
                     </label>
                     <div
                       className="w-full px-5 py-3.5 text-[14px] font-medium"
                       style={{
-                        background: "#F5F5F5",
-                        border: "1px solid #EBEBEB",
+                        background: "#F3F4F6",
+                        border: "1px solid #E5E7EB",
                         borderRadius: "12px",
                         color: "#111111",
                       }}
                     >
                       {user?.email}
                     </div>
-                    <p className="text-[12px] mt-2 pl-1" style={{ color: "#A3A3A3" }}>
+                    <p className="text-[12px] mt-2 pl-1" style={{ color: "#9CA3AF" }}>
                       Email cannot be changed. Contact support for help.
                     </p>
                   </div>
@@ -963,15 +972,15 @@ export default function SettingsPage() {
                   <div>
                     <label
                       className="block text-[11px] font-bold uppercase tracking-[0.1em] mb-2.5 pl-1"
-                      style={{ color: "#737373" }}
+                      style={{ color: "#6B7280" }}
                     >
                       Member since
                     </label>
                     <div
                       className="w-full px-5 py-3.5 text-[14px] font-medium"
                       style={{
-                        background: "#F5F5F5",
-                        border: "1px solid #EBEBEB",
+                        background: "#F3F4F6",
+                        border: "1px solid #E5E7EB",
                         borderRadius: "12px",
                         color: "#111111",
                       }}
@@ -1013,7 +1022,7 @@ export default function SettingsPage() {
                   >
                     Delete Account
                   </h3>
-                  <p className="text-[14px]" style={{ color: "#737373" }}>
+                  <p className="text-[14px]" style={{ color: "#6B7280" }}>
                     Permanently remove your account and all associated data. This
                     action cannot be undone.
                   </p>
@@ -1068,10 +1077,10 @@ export default function SettingsPage() {
                         onClick={() => setShowDelete(false)}
                         className="px-6 py-3 text-[13px] font-bold transition-colors"
                         style={{
-                          border: "1px solid #EBEBEB",
-                          background: "#F5F5F5",
+                          border: "1px solid #E5E7EB",
+                          background: "#F3F4F6",
                           borderRadius: "9999px",
-                          color: "#737373",
+                          color: "#6B7280",
                         }}
                       >
                         Cancel
@@ -1097,17 +1106,17 @@ export default function SettingsPage() {
                 style={{
                   background: "#ffffff",
                   borderRadius: "20px",
-                  border: "1px solid #EBEBEB",
+                  border: "1px solid #E5E7EB",
                 }}
               >
-                <div className="mb-6 border-b pb-4" style={{ borderColor: "#F5F5F5" }}>
+                <div className="mb-6 border-b pb-4" style={{ borderColor: "#F3F4F6" }}>
                   <h2
                     className="text-[14px] font-bold mb-1"
                     style={{ color: "#111111" }}
                   >
                     Email Notifications
                   </h2>
-                  <p className="text-[12px]" style={{ color: "#A3A3A3" }}>
+                  <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
                     Choose which emails you want to receive. You can change these at any time.
                   </p>
                 </div>
@@ -1171,17 +1180,17 @@ export default function SettingsPage() {
                 style={{
                   background: "#ffffff",
                   borderRadius: "20px",
-                  border: "1px solid #EBEBEB",
+                  border: "1px solid #E5E7EB",
                 }}
               >
-                <div className="mb-6 border-b pb-4" style={{ borderColor: "#F5F5F5" }}>
+                <div className="mb-6 border-b pb-4" style={{ borderColor: "#F3F4F6" }}>
                   <h2
                     className="text-[14px] font-bold mb-1"
                     style={{ color: "#111111" }}
                   >
                     Connected Services
                   </h2>
-                  <p className="text-[12px]" style={{ color: "#A3A3A3" }}>
+                  <p className="text-[12px]" style={{ color: "#9CA3AF" }}>
                     Linked accounts and external integrations.
                   </p>
                 </div>
@@ -1223,13 +1232,13 @@ export default function SettingsPage() {
                         : "Add a personal website or portfolio link"
                     }
                     connected={!!fieldValues.website_url}
-                    accentColor="#C6F135"
+                    accentColor="#20F5A0"
                   />
                 </div>
 
                 <p
                   className="text-[13px] mt-6 pt-4 border-t"
-                  style={{ color: "#A3A3A3", borderColor: "#F5F5F5" }}
+                  style={{ color: "#9CA3AF", borderColor: "#F3F4F6" }}
                 >
                   Manage your network links in the{" "}
                   <button
@@ -1299,8 +1308,8 @@ function SkillsTagInput({
     <div
       className="flex flex-wrap items-center gap-2 min-h-[48px] px-4 py-2.5 cursor-text"
       style={{
-        background: "#F5F5F5",
-        border: "1px solid #EBEBEB",
+        background: "#F3F4F6",
+        border: "1px solid #E5E7EB",
         borderRadius: "12px",
       }}
       onClick={() => inputRef.current?.focus()}
@@ -1320,10 +1329,10 @@ function SkillsTagInput({
             }}
             className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 transition-colors duration-150 hover:opacity-70 group"
             style={{
-              background: "rgba(198,241,53,0.15)",
+              background: "rgba(32,245,160,0.15)",
               color: "#111111",
               borderRadius: "9999px",
-              border: "1px solid rgba(198,241,53,0.3)",
+              border: "1px solid rgba(32,245,160,0.3)",
             }}
           >
             {tag}
@@ -1344,7 +1353,7 @@ function SkillsTagInput({
           if (inputValue.trim()) addTag(inputValue);
         }}
         placeholder={tags.length === 0 ? "Type a skill and press Enter..." : "Add more..."}
-        className="flex-1 min-w-[120px] bg-transparent text-[14px] font-medium outline-none placeholder:text-[#A3A3A3]"
+        className="flex-1 min-w-[120px] bg-transparent text-[14px] font-medium outline-none placeholder:text-[#9CA3AF]"
         style={{ color: "#111111" }}
       />
     </div>
@@ -1370,7 +1379,7 @@ function NotificationToggle({
         <p className="text-[14px] font-semibold" style={{ color: "#111111" }}>
           {label}
         </p>
-        <p className="text-[13px]" style={{ color: "#A3A3A3" }}>
+        <p className="text-[13px]" style={{ color: "#9CA3AF" }}>
           {description}
         </p>
       </div>
@@ -1379,7 +1388,7 @@ function NotificationToggle({
         className="relative shrink-0 w-11 h-6 transition-colors duration-300"
         style={{
           borderRadius: "9999px",
-          background: on ? "#C6F135" : "#EBEBEB",
+          background: on ? "#20F5A0" : "#E5E7EB",
         }}
       >
         <motion.div
@@ -1418,7 +1427,7 @@ function IntegrationCard({
         borderRadius: "16px",
         border: connected
           ? `1px solid ${accentColor}20`
-          : "1px solid #EBEBEB",
+          : "1px solid #E5E7EB",
         background: connected ? `${accentColor}08` : "#FAFAFA",
       }}
     >
@@ -1426,8 +1435,8 @@ function IntegrationCard({
         className="w-10 h-10 flex items-center justify-center shrink-0"
         style={{
           borderRadius: "12px",
-          background: connected ? `${accentColor}15` : "#F5F5F5",
-          color: connected ? accentColor : "#A3A3A3",
+          background: connected ? `${accentColor}15` : "#F3F4F6",
+          color: connected ? accentColor : "#9CA3AF",
         }}
       >
         {icon}
@@ -1445,7 +1454,7 @@ function IntegrationCard({
               className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5"
               style={{
                 borderRadius: "9999px",
-                background: "#C6F135",
+                background: "#20F5A0",
                 color: "#111111",
               }}
             >
@@ -1456,7 +1465,7 @@ function IntegrationCard({
         </div>
         <p
           className="text-[13px] truncate mt-0.5"
-          style={{ color: "#A3A3A3" }}
+          style={{ color: "#9CA3AF" }}
         >
           {description}
         </p>
@@ -1464,7 +1473,7 @@ function IntegrationCard({
       {connected && (
         <ExternalLink
           className="w-4 h-4 shrink-0"
-          style={{ color: "#A3A3A3" }}
+          style={{ color: "#9CA3AF" }}
         />
       )}
     </div>

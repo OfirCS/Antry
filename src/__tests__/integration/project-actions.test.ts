@@ -10,11 +10,12 @@ const mockDeleteChain = vi.fn();
 let mockUser: { id: string } | null = { id: "user-123" };
 let mockInsertError: { message: string } | null = null;
 let mockExistingLike: { user_id: string } | null = null;
+type MockChain = Record<string, ReturnType<typeof vi.fn>>;
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => {
     const fromFn = (table: string) => {
-      const chain: Record<string, any> = {};
+      const chain: MockChain = {};
       chain.eq = vi.fn().mockReturnValue(chain);
       chain.neq = vi.fn().mockReturnValue(chain);
       chain.single = vi.fn().mockResolvedValue({ data: null, error: null });
@@ -25,12 +26,12 @@ vi.mock("@/lib/supabase/server", () => ({
       });
       chain.delete = vi.fn(() => {
         mockDelete();
-        const dc: Record<string, any> = {};
+        const dc: MockChain = {};
         dc.eq = vi.fn().mockReturnValue(dc);
         return dc;
       });
       chain.update = vi.fn(() => {
-        const uc: Record<string, any> = {};
+        const uc: MockChain = {};
         uc.eq = vi.fn().mockReturnValue(uc);
         return uc;
       });
@@ -42,7 +43,7 @@ vi.mock("@/lib/supabase/server", () => ({
         });
         chain.delete = vi.fn(() => {
           mockDelete();
-          const dc: Record<string, any> = {};
+          const dc: MockChain = {};
           dc.eq = vi.fn().mockReturnValue(dc);
           return dc;
         });
@@ -65,7 +66,7 @@ vi.mock("@/lib/supabase/server", () => ({
         });
         chain.delete = vi.fn(() => {
           mockDeleteChain();
-          const dc: Record<string, any> = {};
+          const dc: MockChain = {};
           dc.eq = vi.fn().mockReturnValue(dc);
           return dc;
         });

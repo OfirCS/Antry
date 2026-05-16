@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Clock, Users, Trophy, Zap, Shield, Cpu } from "lucide-react";
-import { Nav } from "@/components/Nav";
+import { Clock, Users, Trophy, Zap, Shield, Cpu } from "lucide-react";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import {
   getDemoBrief,
@@ -75,9 +74,7 @@ export default async function BriefDetailPage({
   );
 
   return (
-    <>
-      <Nav />
-      <main>
+      <main className="bg-white">
         {/* ── Hero ─────────────────────────────── */}
         <section className="relative overflow-hidden" style={{ background: "#0A0A0A" }}>
           <div
@@ -94,7 +91,7 @@ export default async function BriefDetailPage({
               backgroundSize: "48px 48px",
             }}
           />
-          <div className="relative mx-auto max-w-[1080px] px-6 pt-20 pb-32 sm:px-10 sm:pt-24 sm:pb-36">
+          <div className="relative mx-auto max-w-[1080px] px-6 pt-14 pb-28 sm:px-10 sm:pt-18 sm:pb-32">
             <Link
               href="/briefs"
               className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.22em] mb-6 hover:opacity-80 transition-opacity"
@@ -103,8 +100,8 @@ export default async function BriefDetailPage({
               ← All Briefs
             </Link>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20 items-start">
-              <div>
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_360px] gap-10 lg:gap-14 items-start">
+              <div className="min-w-0">
                 {brief.sponsor_label && (
                   <p
                     className="text-[11px] font-bold uppercase tracking-[0.22em] mb-4"
@@ -114,7 +111,7 @@ export default async function BriefDetailPage({
                   </p>
                 )}
                 <h1
-                  className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-bold leading-[1.05] tracking-[-0.03em]"
+                  className="font-display max-w-[760px] text-[clamp(2rem,4.5vw,3.2rem)] font-bold leading-[1.05] tracking-[-0.03em] text-balance"
                   style={{ color: "#FFFFFF" }}
                 >
                   {brief.title}
@@ -126,10 +123,12 @@ export default async function BriefDetailPage({
                   {brief.tagline}
                 </p>
 
-                <div className="mt-8 max-w-[560px]">
-                  <CursorStartPanel briefSlug={brief.slug} />
+                <div className="mt-8 grid max-w-[620px] grid-cols-1 gap-3 border-y border-white/10 py-4 sm:grid-cols-3">
+                  <HeroStep number="1" label="Read constraints" />
+                  <HeroStep number="2" label="Start in IDE" />
+                  <HeroStep number="3" label="Mint Receipt" />
                 </div>
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
+                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
                   <Link
                     href={`/briefs/${brief.slug}/leaderboard`}
                     className="font-semibold hover:underline underline-offset-4 transition-colors"
@@ -148,69 +147,72 @@ export default async function BriefDetailPage({
               </div>
 
               {/* Constraints panel */}
-              <div
-                className="rounded-[20px] p-6"
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
-              >
-                <p
-                  className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4"
-                  style={{ color: "rgba(255,255,255,0.5)" }}
+              <div className="space-y-4">
+                <div
+                  className="rounded-lg p-6"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
                 >
-                  Constraints
-                </p>
-                <dl className="space-y-3.5">
-                  <ConstraintRow
-                    icon={<Clock className="w-3.5 h-3.5" />}
-                    label="Time cap"
-                    value={formatTime(brief.time_cap_seconds)}
-                  />
-                  <ConstraintRow
-                    icon={<Cpu className="w-3.5 h-3.5" />}
-                    label="Token cap"
-                    value={`${formatTokens(brief.token_cap)} tokens`}
-                  />
-                  <ConstraintRow
-                    icon={<Users className="w-3.5 h-3.5" />}
-                    label="Attempts"
-                    value={brief.attempts_count.toString()}
-                  />
-                  <ConstraintRow
-                    icon={<Trophy className="w-3.5 h-3.5" />}
-                    label="Median score"
-                    value={brief.median_score?.toString() ?? "—"}
-                  />
-                  <ConstraintRow
-                    icon={<Zap className="w-3.5 h-3.5" />}
-                    label="Difficulty"
-                    value={brief.difficulty.charAt(0).toUpperCase() + brief.difficulty.slice(1)}
-                  />
-                </dl>
-
-                <div className="mt-5 pt-5 border-t border-white/10">
                   <p
-                    className="text-[10px] font-bold uppercase tracking-[0.18em] mb-3"
+                    className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4"
                     style={{ color: "rgba(255,255,255,0.5)" }}
                   >
-                    Allowed tools
+                    Attempt snapshot
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {brief.allowed_tools.map((t) => (
-                      <span
-                        key={t}
-                        className="text-[11px] font-mono px-2 py-1 rounded-md"
-                        style={{
-                          background: "rgba(255,255,255,0.06)",
-                          color: "rgba(255,255,255,0.85)",
-                        }}
-                      >
-                        {t}
-                      </span>
-                    ))}
+                  <dl className="space-y-3.5">
+                    <ConstraintRow
+                      icon={<Clock className="w-3.5 h-3.5" />}
+                      label="Time cap"
+                      value={formatTime(brief.time_cap_seconds)}
+                    />
+                    <ConstraintRow
+                      icon={<Cpu className="w-3.5 h-3.5" />}
+                      label="Token cap"
+                      value={`${formatTokens(brief.token_cap)} tokens`}
+                    />
+                    <ConstraintRow
+                      icon={<Users className="w-3.5 h-3.5" />}
+                      label="Attempts"
+                      value={brief.attempts_count.toString()}
+                    />
+                    <ConstraintRow
+                      icon={<Trophy className="w-3.5 h-3.5" />}
+                      label="Median score"
+                      value={brief.median_score?.toString() ?? "-"}
+                    />
+                    <ConstraintRow
+                      icon={<Zap className="w-3.5 h-3.5" />}
+                      label="Difficulty"
+                      value={brief.difficulty.charAt(0).toUpperCase() + brief.difficulty.slice(1)}
+                    />
+                  </dl>
+
+                  <div className="mt-5 pt-5 border-t border-white/10">
+                    <p
+                      className="text-[10px] font-bold uppercase tracking-[0.18em] mb-3"
+                      style={{ color: "rgba(255,255,255,0.5)" }}
+                    >
+                      Allowed tools
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {brief.allowed_tools.map((t) => (
+                        <span
+                          key={t}
+                          className="text-[11px] font-mono px-2 py-1 rounded-md"
+                          style={{
+                            background: "rgba(255,255,255,0.06)",
+                            color: "rgba(255,255,255,0.85)",
+                          }}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
+                <CursorStartPanel briefSlug={brief.slug} />
               </div>
             </div>
           </div>
@@ -224,7 +226,7 @@ export default async function BriefDetailPage({
               <article
                 className="rounded-[24px] p-7 sm:p-9 bg-white"
                 style={{
-                  border: "1px solid #EBEBEB",
+                  border: "1px solid #E5E7EB",
                   boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
                 }}
               >
@@ -240,7 +242,7 @@ export default async function BriefDetailPage({
                   <div
                     className="rounded-[24px] p-6 bg-white"
                     style={{
-                      border: "1px solid #EBEBEB",
+                      border: "1px solid #E5E7EB",
                       boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
                     }}
                   >
@@ -265,18 +267,18 @@ export default async function BriefDetailPage({
                 )}
 
                 <div
-                  className="mt-5 rounded-[20px] p-5"
-                  style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
+                  className="mt-5 rounded-lg p-5"
+                  style={{ background: "#F7F8FA", border: "1px solid #E5E7EB" }}
                 >
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-500 mb-1">
                     Sponsor
                   </p>
                   <div className="flex items-center gap-3 mt-2">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-[14px]"
+                      className="w-10 h-10 rounded-md flex items-center justify-center font-bold text-[14px]"
                       style={{
                         background: brief.company.sponsor_color,
-                        color: brief.company.sponsor_color === "#0A0A0A" || brief.company.sponsor_color === "#000000" ? "#C6F135" : "#FFFFFF",
+                        color: brief.company.sponsor_color === "#0A0A0A" || brief.company.sponsor_color === "#000000" ? "#20F5A0" : "#FFFFFF",
                       }}
                     >
                       {brief.company.name.charAt(0)}
@@ -299,7 +301,7 @@ export default async function BriefDetailPage({
 
         {/* ── Leaderboard ─────────────────────── */}
         {receipts.length > 0 && (
-          <section style={{ background: "#FAFAF7" }}>
+          <section style={{ background: "#F7F8FA" }}>
             <div className="mx-auto max-w-[1080px] px-6 sm:px-10 py-20 sm:py-24">
               <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
                 <div>
@@ -320,9 +322,9 @@ export default async function BriefDetailPage({
                     <Link
                       key={r.id}
                       href={`/receipts/${r.id}`}
-                      className="group rounded-[20px] p-5 bg-white transition-all duration-300 hover:-translate-y-1"
+                      className="group rounded-lg p-5 bg-white transition-all duration-300 hover:-translate-y-1"
                       style={{
-                        border: "1px solid #EBEBEB",
+                        border: "1px solid #E5E7EB",
                         boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
                       }}
                     >
@@ -363,7 +365,17 @@ export default async function BriefDetailPage({
           </section>
         )}
       </main>
-    </>
+  );
+}
+
+function HeroStep({ number, label }: { number: string; label: string }) {
+  return (
+    <div className="flex items-center gap-2 text-[12px] font-semibold text-white/68">
+      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/8 text-[11px] text-white">
+        {number}
+      </span>
+      {label}
+    </div>
   );
 }
 
@@ -396,53 +408,111 @@ function BriefMarkdown({ md }: { md: string }) {
   const blocks = md.split("\n\n");
   return (
     <div className="space-y-4 text-[15px] leading-[1.7] text-gray-700">
-      {blocks.map((block, i) => {
+      {blocks.flatMap((block, i) => {
         const trimmed = block.trim();
-        if (!trimmed) return null;
+        if (!trimmed) return [];
         if (trimmed.startsWith("# ")) {
-          return (
+          return [(
             <h1
               key={i}
               className="text-[24px] font-bold tracking-[-0.02em] text-black font-display mt-2"
             >
               {renderInline(trimmed.slice(2))}
             </h1>
-          );
+          )];
         }
         if (trimmed.startsWith("## ")) {
-          return (
+          return [(
             <h2
               key={i}
               className="text-[18px] font-bold tracking-[-0.015em] text-black font-display mt-4"
             >
               {renderInline(trimmed.slice(3))}
             </h2>
-          );
+          )];
+        }
+        if (trimmed.startsWith("```")) {
+          const code = trimmed.replace(/^```[a-zA-Z]*\n?/, "").replace(/```$/, "").trim();
+          return [(
+            <pre
+              key={i}
+              className="overflow-x-auto rounded-md border border-gray-200 bg-gray-50 p-4 text-[12px] leading-[1.55] text-gray-800"
+            >
+              <code>{code}</code>
+            </pre>
+          )];
         }
         if (trimmed.startsWith("- ")) {
           const items = trimmed.split("\n").map((l) => l.replace(/^- /, ""));
-          return (
+          return [(
             <ul key={i} className="list-disc pl-5 space-y-1.5">
               {items.map((it, k) => (
                 <li key={k}>{renderInline(it)}</li>
               ))}
             </ul>
-          );
+          )];
         }
         if (/^\d+\.\s/.test(trimmed)) {
           const items = trimmed.split("\n").map((l) => l.replace(/^\d+\.\s/, ""));
-          return (
+          return [(
             <ol key={i} className="list-decimal pl-5 space-y-1.5">
               {items.map((it, k) => (
                 <li key={k}>{renderInline(it)}</li>
               ))}
             </ol>
-          );
+          )];
         }
-        return <p key={i}>{renderInline(trimmed)}</p>;
+        return renderMixedBlock(trimmed, i);
       })}
     </div>
   );
+}
+
+function renderMixedBlock(block: string, blockIndex: number): React.ReactElement[] {
+  const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+  const nodes: React.ReactElement[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line.startsWith("- ")) {
+      const items: string[] = [];
+      while (i < lines.length && lines[i].startsWith("- ")) {
+        items.push(lines[i].replace(/^- /, ""));
+        i += 1;
+      }
+      nodes.push(
+        <ul key={`${blockIndex}-${i}-ul`} className="list-disc pl-5 space-y-1.5">
+          {items.map((item, itemIndex) => (
+            <li key={itemIndex}>{renderInline(item)}</li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    if (/^\d+\.\s/.test(line)) {
+      const items: string[] = [];
+      while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
+        items.push(lines[i].replace(/^\d+\.\s/, ""));
+        i += 1;
+      }
+      nodes.push(
+        <ol key={`${blockIndex}-${i}-ol`} className="list-decimal pl-5 space-y-1.5">
+          {items.map((item, itemIndex) => (
+            <li key={itemIndex}>{renderInline(item)}</li>
+          ))}
+        </ol>
+      );
+      continue;
+    }
+
+    nodes.push(<p key={`${blockIndex}-${i}`}>{renderInline(line)}</p>);
+    i += 1;
+  }
+
+  return nodes;
 }
 
 /**

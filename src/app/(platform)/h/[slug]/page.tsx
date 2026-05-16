@@ -6,6 +6,7 @@ import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { FingerprintGlyph } from "@/components/BuilderFingerprint";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
 import { getHackathonBySlug } from "@/lib/hackathons/store";
+import { getDemoHackathon } from "@/lib/hackathons/demo";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -52,15 +53,18 @@ export async function generateMetadata({
 export default async function VibeHackathonPage({ params }: PageProps) {
   const { slug } = await params;
 
-  // Look up real hackathon record (DB or in-memory). Fall back to a
-  // synthesized bundle if the URL was minted before persistence existed
-  // or if a stale share link is shared after the record was deleted.
+  // Look up real hackathon record (DB or in-memory). Fall back to the
+  // built-in demo hackathons so /hackathons always links to a working page.
   const record = await getHackathonBySlug(slug);
+  const demoHackathon = record ? null : getDemoHackathon(slug);
   const briefs = record
     ? demoBriefs.filter((b) => record.brief_ids.includes(b.id))
-    : demoBriefs.slice(0, 3);
+    : demoHackathon
+      ? demoBriefs.filter((b) => demoHackathon.briefSlugs.includes(b.slug))
+      : demoBriefs.slice(0, 3);
   const briefIds = new Set(briefs.map((b) => b.id));
-  const headerName = record?.name ?? prettify(slug);
+  const headerName = record?.name ?? demoHackathon?.title ?? prettify(slug);
+  const prize = record?.prize ?? demoHackathon?.prize;
 
   // Pull public Receipts across the bundled Briefs, ranked by composite.
   const receipts = demoReceipts
@@ -91,7 +95,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(198,241,53,0.16) 0%, transparent 60%)",
+              "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(32,245,160,0.16) 0%, transparent 60%)",
           }}
         />
         <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-16 pb-12">
@@ -99,7 +103,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
             className="text-[11px] font-bold uppercase tracking-[0.28em] mb-5 inline-flex items-center gap-2"
             style={{ color: "rgba(255,255,255,0.55)" }}
           >
-            <Sparkles className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
+            <Sparkles className="w-3.5 h-3.5" style={{ color: "#20F5A0" }} />
             Vibe Hackathon · Live
           </p>
           <h1
@@ -108,13 +112,13 @@ export default async function VibeHackathonPage({ params }: PageProps) {
           >
             {headerName}
           </h1>
-          {record?.prize && (
+          {prize && (
             <p
               className="mt-3 text-[14px] inline-flex items-center gap-2"
-              style={{ color: "rgba(198,241,53,0.85)" }}
+              style={{ color: "rgba(32,245,160,0.85)" }}
             >
               <Trophy className="w-3.5 h-3.5" />
-              {record.prize}
+              {prize}
             </p>
           )}
           <p
@@ -128,11 +132,11 @@ export default async function VibeHackathonPage({ params }: PageProps) {
           <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link
               href="/agents"
-              className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 rounded-lg px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
               style={{
-                background: "#C6F135",
+                background: "#20F5A0",
                 color: "#0A0A0A",
-                boxShadow: "0 12px 30px rgba(198,241,53,0.32)",
+                boxShadow: "0 12px 30px rgba(32,245,160,0.32)",
               }}
               data-cta="lime"
             >
@@ -166,7 +170,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
               <Link
                 key={b.id}
                 href={`/briefs/${b.slug}`}
-                className="rounded-[16px] p-5 transition-all hover:-translate-y-1"
+                className="rounded-lg p-5 transition-all hover:-translate-y-1"
                 style={{
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.08)",
@@ -175,7 +179,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
                 <div className="flex items-center gap-2 mb-2">
                   <Code2
                     className="w-3.5 h-3.5"
-                    style={{ color: "#C6F135" }}
+                    style={{ color: "#20F5A0" }}
                   />
                   <span
                     className="text-[10px] font-bold uppercase tracking-[0.18em]"
@@ -231,11 +235,11 @@ export default async function VibeHackathonPage({ params }: PageProps) {
             </div>
             <span
               className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em]"
-              style={{ color: "rgba(198,241,53,0.85)" }}
+              style={{ color: "rgba(32,245,160,0.85)" }}
             >
               <span
                 className="w-2 h-2 rounded-full animate-pulse"
-                style={{ background: "#C6F135" }}
+                style={{ background: "#20F5A0" }}
               />
               Live
             </span>
@@ -243,7 +247,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
 
           {board.length === 0 ? (
             <div
-              className="rounded-[20px] p-10 text-center"
+              className="rounded-lg p-10 text-center"
               style={{
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid rgba(255,255,255,0.08)",
@@ -251,7 +255,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
             >
               <Trophy
                 className="w-8 h-8 mx-auto mb-3"
-                style={{ color: "rgba(198,241,53,0.55)" }}
+                style={{ color: "rgba(32,245,160,0.55)" }}
               />
               <p className="text-[15px]" style={{ color: "rgba(255,255,255,0.7)" }}>
                 Nobody on the board yet. First Receipt wins eyeballs.
@@ -265,7 +269,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
                   className="rounded-[18px] p-5 transition-colors hover:bg-white/[0.04]"
                   style={{
                     background: "rgba(255,255,255,0.02)",
-                    border: `1px solid ${idx === 0 ? "rgba(198,241,53,0.4)" : "rgba(255,255,255,0.08)"}`,
+                    border: `1px solid ${idx === 0 ? "rgba(32,245,160,0.4)" : "rgba(255,255,255,0.08)"}`,
                   }}
                 >
                   <Link
@@ -277,7 +281,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
                       style={{
                         color:
                           idx === 0
-                            ? "#C6F135"
+                            ? "#20F5A0"
                             : idx < 3
                               ? "rgba(255,255,255,0.85)"
                               : "rgba(255,255,255,0.4)",
@@ -315,7 +319,7 @@ export default async function VibeHackathonPage({ params }: PageProps) {
                         style={{
                           color:
                             r.composite_score >= 80
-                              ? "#C6F135"
+                              ? "#20F5A0"
                               : "rgba(255,255,255,0.9)",
                         }}
                       >

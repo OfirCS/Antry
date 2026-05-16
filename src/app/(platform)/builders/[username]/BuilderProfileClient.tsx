@@ -106,18 +106,18 @@ export default function BuilderProfileClient({
     return (
       <div
         className="flex min-h-screen items-center justify-center px-8"
-        style={{ background: "#FAFAF7" }}
+        style={{ background: "#F7F8FA" }}
       >
         <div className="text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#F5F5F5]">
-            <Users className="h-6 w-6 text-[#A3A3A3]" />
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F4F6]">
+            <Users className="h-6 w-6 text-[#9CA3AF]" />
           </div>
-          <p className="mb-4 text-[15px] text-[#737373]">
+          <p className="mb-4 text-[15px] text-[#6B7280]">
             This builder hasn&apos;t joined yet.
           </p>
           <Link
             href="/builders"
-            className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111111] transition-colors hover:text-[#C6F135]"
+            className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111111] transition-colors hover:text-[#20F5A0]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to the directory
@@ -160,14 +160,14 @@ export default function BuilderProfileClient({
   }[];
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-[#111111]">
+    <div className="min-h-screen bg-[#F7F8FA] text-[#111111]">
       {/* Hero */}
       <div className="border-b border-[#E8E4DA]">
         <div className="mx-auto max-w-3xl px-6 pb-10 pt-10 sm:px-8">
           <div className="flex items-center justify-between">
             <Link
               href="/builders"
-              className="inline-flex items-center gap-2 text-[13px] font-medium text-[#737373] transition-colors hover:text-[#111111]"
+              className="inline-flex items-center gap-2 text-[13px] font-medium text-[#6B7280] transition-colors hover:text-[#111111]"
             >
               <ArrowLeft className="h-4 w-4" />
               Builders
@@ -176,7 +176,7 @@ export default function BuilderProfileClient({
             {isOwner ? (
               <Link
                 href="/settings"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#737373] transition-colors hover:text-[#111111]"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] transition-colors hover:text-[#111111]"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Edit
@@ -196,7 +196,7 @@ export default function BuilderProfileClient({
               <h1 className="text-[1.75rem] font-semibold tracking-[-0.03em] text-[#111111]">
                 {builder.name}
               </h1>
-              <p className="mt-1 text-[15px] text-[#737373]">
+              <p className="mt-1 text-[15px] text-[#6B7280]">
                 {builder.tagline}
               </p>
             </div>
@@ -250,7 +250,7 @@ export default function BuilderProfileClient({
             {builder.projects.map((project) => (
               <div
                 key={project.id}
-                className="group rounded-2xl border border-[#E8E4DA] bg-white p-5 transition-colors hover:border-[#D2CBB9]"
+                className="group rounded-lg border border-[#E8E4DA] bg-white p-5 transition-colors hover:border-[#D2CBB9]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
@@ -297,7 +297,7 @@ export default function BuilderProfileClient({
                       href={project.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#737373] transition-colors hover:text-[#111111]"
+                      className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] transition-colors hover:text-[#111111]"
                     >
                       <Code2 className="h-3.5 w-3.5" />
                       Source
@@ -309,7 +309,7 @@ export default function BuilderProfileClient({
             ))}
           </div>
         ) : (
-          <p className="mt-5 text-[14px] text-[#737373]">No projects yet.</p>
+          <p className="mt-5 text-[14px] text-[#6B7280]">No projects yet.</p>
         )}
       </div>
 
@@ -331,24 +331,24 @@ function BuilderReceipts({ username }: { username: string }) {
       <div className="flex items-end justify-between mb-5 flex-wrap gap-2">
         <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#8E8A7E]">
           Receipts
-          <span className="ml-2 text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded" style={{ background: "rgba(198,241,53,0.30)", color: "#0A0A0A" }}>
+          <span className="ml-2 text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded" style={{ background: "rgba(32,245,160,0.30)", color: "#0A0A0A" }}>
             New
           </span>
         </h2>
-        <a
+        <Link
           href="/briefs"
           className="text-[12px] font-semibold text-[#111111] hover:underline underline-offset-2"
         >
           Earn one →
-        </a>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {receipts.map((r) => (
-          <a
+          <Link
             key={r.id}
             href={`/receipts/${r.id}`}
-            className="group rounded-2xl border border-[#E8E4DA] bg-white p-4 transition-colors hover:border-[#D2CBB9]"
+            className="group rounded-lg border border-[#E8E4DA] bg-white p-4 transition-colors hover:border-[#D2CBB9]"
           >
             <div className="flex items-center gap-2 mb-2">
               <span
@@ -368,7 +368,7 @@ function BuilderReceipts({ username }: { username: string }) {
               <span>{r.tokens_spent.toLocaleString()} tokens</span>
               <span>{Math.round(r.attempt_duration_seconds / 60)}m</span>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </div>

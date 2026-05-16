@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, ArrowUpRight, Zap } from "lucide-react";
+import { ArrowUpRight, MessageSquare, Search } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { getInitials } from "@/lib/mock-data";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 const segments = [
   { key: "all", label: "All" },
-  { key: "ai", label: "AI & ML", match: ["python", "langchain", "rag", "ai", "ml", "pytorch", "agents", "multi-agent"] },
+  { key: "ai", label: "AI", match: ["python", "langchain", "rag", "ai", "ml", "pytorch", "agents"] },
   { key: "frontend", label: "Frontend", match: ["react", "next.js", "figma", "framer", "three.js", "css"] },
   { key: "backend", label: "Backend", match: ["go", "rust", "node.js", "postgres", "kubernetes", "terraform", "cli"] },
   { key: "design", label: "Design", match: ["figma", "design", "ui", "ux", "framer"] },
@@ -36,15 +36,19 @@ function daysSince(date?: string) {
 
 function matchesSegment(skills: string[], segment: SegmentKey) {
   if (segment === "all") return true;
-  const config = segments.find((e) => e.key === segment);
+  const config = segments.find((entry) => entry.key === segment);
   if (!config || !("match" in config)) return true;
-  const norm = skills.map((s) => s.toLowerCase());
-  const matchList = "match" in config ? (config as unknown as { match: readonly string[] }).match : [];
-  return norm.some((s) => matchList.some((m) => s.includes(m)));
+  const norm = skills.map((skill) => skill.toLowerCase());
+  return norm.some((skill) => config.match.some((match) => skill.includes(match)));
 }
 
-function builderSignal(b: BuilderItem) {
-  return b.totalLikes * 2 + b.projectCount * 18 + b.skills.length * 6 + Math.max(0, 45 - daysSince(b.joinedAt));
+function builderSignal(builder: BuilderItem) {
+  return (
+    builder.totalLikes * 2 +
+    builder.projectCount * 18 +
+    builder.skills.length * 6 +
+    Math.max(0, 45 - daysSince(builder.joinedAt))
+  );
 }
 
 function BuilderRow({ builder, index }: { builder: BuilderItem; index: number }) {
@@ -52,51 +56,53 @@ function BuilderRow({ builder, index }: { builder: BuilderItem; index: number })
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.03, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.25, delay: index * 0.025, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
         href={`/builders/${builder.username}`}
-        className="group flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-4 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-sm min-h-[64px]"
+        className="group grid gap-3 px-4 py-4 transition-colors hover:bg-gray-50 lg:grid-cols-[1fr_0.55fr_0.32fr_0.32fr_0.18fr] lg:items-center"
       >
-        {/* Avatar */}
-        <div
-          className="w-11 h-11 rounded-full flex items-center justify-center text-white text-[13px] font-bold shrink-0 shadow-sm"
-          style={{ background: builder.gradient }}
-        >
-          {getInitials(builder.name)}
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-[14px] font-semibold text-[#111] truncate">{builder.name}</h3>
-            {isNew && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "#C6F135", color: "#111" }}>NEW</span>}
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-black/10 bg-white text-[12px] font-bold text-black">
+            {getInitials(builder.name)}
           </div>
-          <p className="text-[12px] text-gray-400 truncate mt-0.5">{builder.tagline || "Builder on Antry"}</p>
-          {/* Mobile-only: show stats inline */}
-          <div className="flex items-center gap-3 mt-1 sm:hidden text-[11px] text-gray-400">
-            <span><span className="font-semibold text-[#111]">{builder.projectCount}</span> shipped</span>
-            <span><span className="font-semibold text-[#111]">{builder.totalLikes}</span> signal</span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="truncate text-[14px] font-semibold text-black">{builder.name}</h2>
+              {isNew && (
+                <span className="rounded border border-black/10 bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase text-gray-500">
+                  New
+                </span>
+              )}
+            </div>
+            <p className="truncate text-[12px] text-gray-500">@{builder.username}</p>
           </div>
         </div>
 
-        {/* Skills */}
-        <div className="hidden md:flex gap-1 shrink-0 max-w-[200px]">
-          {builder.skills.slice(0, 3).map((s) => (
-            <span key={s} className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-50 text-gray-500 truncate">{s}</span>
+        <div className="flex min-w-0 flex-wrap gap-1">
+          {builder.skills.slice(0, 4).map((skill) => (
+            <span
+              key={skill}
+              className="rounded border border-black/10 bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-500"
+            >
+              {skill}
+            </span>
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="hidden sm:flex items-center gap-4 shrink-0 text-[12px] text-gray-400">
-          <span><span className="font-semibold text-[#111]">{builder.projectCount}</span> shipped</span>
-          <span><span className="font-semibold text-[#111]">{builder.totalLikes}</span> signal</span>
+        <div className="text-[13px] text-gray-500">
+          <span className="font-semibold text-black">{builder.projectCount}</span> shipped
         </div>
 
-        {/* Arrow */}
-        <ArrowUpRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#111] transition-colors shrink-0 hidden sm:block" />
+        <div className="text-[13px] text-gray-500">
+          <span className="font-semibold text-black">{builder.totalLikes}</span> signal
+        </div>
+
+        <div className="flex justify-end">
+          <ArrowUpRight className="h-4 w-4 text-gray-300 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-black" />
+        </div>
       </Link>
     </motion.div>
   );
@@ -109,78 +115,124 @@ export default function BuildersClient({ builders }: { builders: BuilderItem[] }
   const filteredBuilders = useMemo(() => {
     const q = query.trim().toLowerCase();
     return builders
-      .filter((b) => {
-        const matchesQuery = !q || b.name.toLowerCase().includes(q) || b.username.toLowerCase().includes(q) || b.tagline.toLowerCase().includes(q) || b.skills.some((s) => s.toLowerCase().includes(q));
-        return matchesQuery && matchesSegment(b.skills, activeSegment);
+      .filter((builder) => {
+        const matchesQuery =
+          !q ||
+          builder.name.toLowerCase().includes(q) ||
+          builder.username.toLowerCase().includes(q) ||
+          builder.tagline.toLowerCase().includes(q) ||
+          builder.skills.some((skill) => skill.toLowerCase().includes(q));
+
+        return matchesQuery && matchesSegment(builder.skills, activeSegment);
       })
       .sort((a, b) => builderSignal(b) - builderSignal(a));
   }, [activeSegment, builders, query]);
 
   return (
-    <div className="min-h-screen" style={{ background: "#FAFAF7" }}>
-      <div className="mx-auto max-w-[960px] px-4 sm:px-10 pb-20 pt-8 sm:pt-10">
-        {/* Header */}
-        <div className="flex items-end justify-between gap-4 mb-8">
-          <div>
-            <h1 className="font-display text-[24px] sm:text-[28px] font-bold tracking-tight text-[#111]">Builders</h1>
-            <p className="text-[13px] sm:text-[14px] text-gray-400 mt-1">{builders.length} people building with AI</p>
-          </div>
-          <Link href="/signup" className="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2.5 text-[13px] font-semibold bg-[#111] text-white transition-all hover:scale-[1.02] min-h-[44px] shrink-0">
-            Join<span className="hidden sm:inline">&nbsp;the network</span>
-          </Link>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-          <div className="relative flex-1 sm:max-w-[360px]">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name or skill..."
-              className="w-full rounded-lg border border-gray-200 bg-white py-3 sm:py-2.5 pl-10 pr-3 text-[14px] sm:text-[13px] text-[#111] outline-none placeholder:text-gray-400 focus:border-[#C6F135] focus:ring-1 focus:ring-[#C6F135]/20"
-            />
-          </div>
-          <div className="flex gap-1 overflow-x-auto scrollbar-none -mx-1 px-1">
-            {segments.map((s) => (
-              <button
-                key={s.key}
-                onClick={() => setActiveSegment(s.key)}
-                className={cn(
-                  "rounded-lg px-3 py-2.5 sm:px-2.5 sm:py-1.5 text-[13px] sm:text-[12px] font-medium transition-all whitespace-nowrap min-h-[44px] sm:min-h-0",
-                  activeSegment === s.key ? "bg-[#111] text-white" : "text-gray-500 hover:text-[#111] hover:bg-gray-100"
-                )}
+    <main className="min-h-screen bg-[#F7F8FA] text-black">
+      <section className="mx-auto max-w-[1100px] px-4 py-6 sm:px-6 lg:px-8">
+        <header className="border-b border-black/10 pb-5">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500">
+                Builders
+              </p>
+              <h1 className="mt-2 text-[34px] font-bold leading-none tracking-[-0.045em] sm:text-[52px]">
+                Directory
+              </h1>
+              <Link
+                href="/discover"
+                className="mt-4 inline-flex h-9 items-center gap-2 rounded-md border border-black/10 bg-white px-3 text-[12px] font-bold text-black transition-colors hover:border-black/20 hover:bg-gray-50"
               >
-                {s.label}
-              </button>
+                <MessageSquare className="h-3.5 w-3.5" />
+                Open community feed
+              </Link>
+            </div>
+            <div className="flex items-end gap-8 sm:text-right">
+              <Stat label="Builders" value={builders.length.toString()} />
+              <Stat
+                label="Projects"
+                value={builders.reduce((sum, builder) => sum + builder.projectCount, 0).toString()}
+              />
+              <Stat
+                label="Signal"
+                value={builders.reduce((sum, builder) => sum + builder.totalLikes, 0).toString()}
+              />
+            </div>
+          </div>
+        </header>
+
+        <section className="sticky top-[56px] z-30 -mx-4 border-b border-black/10 bg-[#F7F8FA]/92 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div className="mx-auto flex max-w-[1100px] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative w-full lg:max-w-[340px]">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search builders"
+                className="h-10 w-full rounded-md border border-black/10 bg-white pl-9 pr-3 text-[13px] outline-none transition-colors placeholder:text-gray-400 focus:border-black/30"
+              />
+            </div>
+            <div className="flex gap-1 overflow-x-auto">
+              {segments.map((segment) => (
+                <button
+                  key={segment.key}
+                  onClick={() => setActiveSegment(segment.key)}
+                  className={cn(
+                    "h-9 shrink-0 rounded-md px-3 text-[12px] font-semibold transition-colors",
+                    activeSegment === segment.key
+                      ? "bg-black text-white"
+                      : "text-gray-500 hover:bg-white hover:text-black"
+                  )}
+                >
+                  {segment.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-5 overflow-hidden rounded-md border border-black/10 bg-white">
+          <div className="hidden grid-cols-[1fr_0.55fr_0.32fr_0.32fr_0.18fr] border-b border-black/10 bg-gray-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-gray-500 lg:grid">
+            <span>Builder</span>
+            <span>Skills</span>
+            <span>Output</span>
+            <span>Signal</span>
+            <span />
+          </div>
+
+          <div className="divide-y divide-black/10">
+            {filteredBuilders.map((builder, index) => (
+              <BuilderRow key={builder.id} builder={builder} index={index} />
             ))}
           </div>
-        </div>
 
-        {/* Column headers -- hidden on mobile for clean list */}
-        <div className="hidden sm:flex items-center gap-4 px-4 py-2 text-[10px] font-semibold uppercase tracking-wider text-gray-300 border-b border-gray-100">
-          <span className="w-11" />
-          <span className="flex-1">Builder</span>
-          <span className="hidden md:block w-[200px]">Skills</span>
-          <span className="hidden sm:block w-[160px]">Output</span>
-          <span className="w-3.5" />
-        </div>
-
-        {/* List */}
-        <div className="divide-y divide-gray-50">
-          {filteredBuilders.length === 0 ? (
-            <div className="text-center py-16">
-              <Search className="w-5 h-5 text-gray-300 mx-auto mb-3" />
-              <p className="text-[14px] text-gray-400">No builders match your search</p>
+          {filteredBuilders.length === 0 && (
+            <div className="px-4 py-16 text-center">
+              <p className="text-[14px] font-semibold text-black">No builders found</p>
+              <button
+                onClick={() => {
+                  setQuery("");
+                  setActiveSegment("all");
+                }}
+                className="mt-2 text-[13px] font-semibold text-gray-500 hover:text-black"
+              >
+                Reset filters
+              </button>
             </div>
-          ) : (
-            filteredBuilders.map((b, i) => (
-              <BuilderRow key={b.id} builder={b} index={i} />
-            ))
           )}
-        </div>
-      </div>
+        </section>
+      </section>
+    </main>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="text-[28px] font-bold leading-none tracking-[-0.04em] text-black">{value}</div>
+      <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-gray-400">{label}</div>
     </div>
   );
 }

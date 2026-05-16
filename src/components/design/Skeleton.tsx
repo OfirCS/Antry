@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Subtle shimmer skeleton block — matches Linear/Vercel pattern: a soft
- * #FAFAF7 rectangle that pulses at 1.5s. Use as a placeholder for content
+ * #F7F8FA rectangle that pulses at 1.5s. Use as a placeholder for content
  * shape, never for stand-alone "loading…" text.
  */
 export function Skeleton({

@@ -46,7 +46,7 @@ export default function ClaimPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-border-primary bg-surface p-10"
+          className="rounded-md border border-border-primary bg-surface p-10"
         >
           <AlertCircle className="w-10 h-10 text-text-tertiary mx-auto mb-4" />
           <h1 className="text-[20px] font-semibold text-text-primary mb-2">
@@ -75,7 +75,7 @@ export default function ClaimPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="rounded-xl border border-green-200 bg-green-50 p-10"
+          className="rounded-md border border-green-200 bg-green-50 p-10"
         >
           <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
             <Check className="w-6 h-6 text-green-600" />
@@ -106,7 +106,7 @@ export default function ClaimPage() {
           ownership to add it to your profile.
         </p>
 
-        <div className="rounded-xl border border-border-primary bg-surface p-6 mb-6">
+        <div className="rounded-md border border-border-primary bg-surface p-6 mb-6">
           <p className="text-[13px] text-text-tertiary mb-4">
             Click the button below to claim this project. It will be added to
             your Antry profile and visible in the project directory.

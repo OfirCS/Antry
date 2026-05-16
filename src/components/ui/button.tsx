@@ -11,26 +11,26 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[#111111] text-white rounded-xl shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-sm",
+          "bg-[#111111] text-white rounded-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-sm",
         lime:
-          "bg-[#C6F135] text-[#111111] rounded-xl font-semibold hover:bg-[#D4F85A] hover:shadow-[0_8px_24px_rgba(198,241,53,0.3)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-none",
+          "bg-[#20F5A0] text-[#111111] rounded-md font-semibold hover:bg-[#67E8F9] hover:shadow-[0_8px_24px_rgba(32,245,160,0.3)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-none",
         outline:
-          "border border-[#D4D4D4] bg-transparent text-[#111111] rounded-xl hover:bg-[#F5F5F5] hover:border-[#111111] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:shadow-none",
+          "border border-[#D1D5DB] bg-transparent text-[#111111] rounded-md hover:bg-[#F3F4F6] hover:border-[#111111] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:shadow-none",
         "outline-light":
-          "border border-white/25 bg-transparent text-white rounded-xl hover:border-white/60 hover:bg-white/5 hover:shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
+          "border border-white/25 bg-transparent text-white rounded-md hover:border-white/60 hover:bg-white/5 hover:shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
         ghost:
-          "text-[#525252] hover:bg-[#F5F5F5] hover:text-[#111111] rounded-xl",
+          "text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#111111] rounded-md",
         link: "text-[#111111] underline-offset-4 hover:underline",
         secondary:
-          "bg-[#F5F5F5] text-[#111111] rounded-xl hover:bg-[#EBEBEB] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+          "bg-[#F3F4F6] text-[#111111] rounded-md hover:bg-[#E5E7EB] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
       },
       size: {
         sm: "h-9 px-4 text-[13px]",
         default: "h-11 px-6 text-[14px]",
         lg: "h-[52px] px-8 text-[15px]",
-        icon: "h-10 w-10 rounded-xl",
+        icon: "h-10 w-10 rounded-md",
         "icon-sm": "h-8 w-8 rounded-lg text-[13px]",
-        "icon-lg": "h-12 w-12 rounded-xl text-[16px]",
+        "icon-lg": "h-12 w-12 rounded-md text-[16px]",
       },
     },
     defaultVariants: {

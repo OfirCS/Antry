@@ -27,7 +27,7 @@ export function BuilderFingerprint({
   ideal,
   size = 320,
   showLabels = true,
-  primaryColor = "#C6F135",
+  primaryColor = "#20F5A0",
   idealColor = "#0A0A0A",
   variant = "light",
 }: Props) {
@@ -41,7 +41,7 @@ export function BuilderFingerprint({
   const isDark = variant === "dark";
   const gridColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(10,10,10,0.06)";
   const gridStrong = isDark ? "rgba(255,255,255,0.16)" : "rgba(10,10,10,0.12)";
-  const labelColor = isDark ? "rgba(255,255,255,0.55)" : "#525252";
+  const labelColor = isDark ? "rgba(255,255,255,0.55)" : "#4B5563";
   const valueColor = isDark ? "#FFFFFF" : "#0A0A0A";
 
   const polygonPoints = (fp: Fingerprint, scale = 1) =>
@@ -237,7 +237,7 @@ export function BuilderFingerprint({
 export function FingerprintGlyph({
   fingerprint,
   size = 120,
-  primaryColor = "#C6F135",
+  primaryColor = "#20F5A0",
 }: {
   fingerprint: Fingerprint;
   size?: number;

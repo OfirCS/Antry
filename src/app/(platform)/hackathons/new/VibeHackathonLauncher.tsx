@@ -82,7 +82,7 @@ const VIBES: Vibe[] = [
       "idempotent-webhook-processor",
       "typed-extractor-validation",
     ],
-    accent: "#C6F135",
+    accent: "#20F5A0",
     icon: <Sparkles className="w-4 h-4" />,
   },
   {
@@ -237,7 +237,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Anthropic Agent Cup · May 2026"
                 maxLength={60}
-                className="w-full px-5 h-[58px] rounded-[16px] text-[16px] outline-none transition-colors"
+                className="w-full px-5 h-[58px] rounded-lg text-[16px] outline-none transition-colors"
                 style={{
                   background: "rgba(255,255,255,0.04)",
                   border: "1.5px solid rgba(255,255,255,0.10)",
@@ -354,7 +354,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
                       key={b.id}
                       type="button"
                       onClick={() => toggleBrief(b.slug)}
-                      className="text-left rounded-[14px] p-4 transition-colors"
+                      className="text-left rounded-lg p-4 transition-colors"
                       style={{
                         background: active
                           ? `${vibe.accent}14`
@@ -434,7 +434,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
                 onChange={(e) => setPrize(e.target.value)}
                 placeholder="$1,000 + interview fast-pass"
                 maxLength={120}
-                className="w-full px-5 h-[58px] rounded-[16px] text-[16px] outline-none transition-colors"
+                className="w-full px-5 h-[58px] rounded-lg text-[16px] outline-none transition-colors"
                 style={{
                   background: "rgba(255,255,255,0.04)",
                   border: "1.5px solid rgba(255,255,255,0.10)",
@@ -498,7 +498,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
                 whileHover={canMint && !minting ? { y: -2 } : {}}
                 whileTap={canMint && !minting ? { scale: 0.98 } : {}}
                 transition={{ duration: 0.2 }}
-                className="inline-flex items-center justify-center gap-2 rounded-[16px] px-8 h-[60px] text-[15px] font-bold whitespace-nowrap transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-8 h-[60px] text-[15px] font-bold whitespace-nowrap transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background: vibe.accent,
                   color: "#0A0A0A",
@@ -673,7 +673,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
               }}
             >
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+                className="w-12 h-12 rounded-lg flex items-center justify-center mb-5"
                 style={{ background: `${vibe.accent}22`, color: vibe.accent }}
               >
                 <Check className="w-5 h-5" strokeWidth={3} />
@@ -720,7 +720,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
               <button
                 type="button"
                 onClick={() => setShowShare(false)}
-                className="mt-6 w-full inline-flex items-center justify-center rounded-[14px] h-[48px] text-[14px] font-semibold transition-colors"
+                className="mt-6 w-full inline-flex items-center justify-center rounded-lg h-[48px] text-[14px] font-semibold transition-colors"
                 style={{
                   background: "rgba(255,255,255,0.06)",
                   color: "rgba(255,255,255,0.85)",
@@ -749,7 +749,7 @@ function Step({
     <div>
       <div className="flex items-center gap-3 mb-4">
         <span
-          className="inline-flex items-center justify-center w-7 h-7 rounded-xl text-[12px] font-bold font-display"
+          className="inline-flex items-center justify-center w-7 h-7 rounded-md text-[12px] font-bold font-display"
           style={{
             background: "rgba(255,255,255,0.08)",
             color: "rgba(255,255,255,0.85)",

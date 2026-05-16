@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type Tone = "cream" | "white" | "ink" | "sand";
 
 const TONE_BG: Record<Tone, string> = {
-  cream: "#FAFAF7",
+  cream: "#F7F8FA",
   white: "#FFFFFF",
   ink: "#0A0A0A",
   sand: "#F4F1EA",
@@ -59,7 +59,7 @@ export function Eyebrow({
         "text-[11px] font-bold uppercase tracking-[0.22em]",
         className
       )}
-      style={{ color: color ?? "#737373" }}
+      style={{ color: color ?? "#6B7280" }}
     >
       {children}
     </p>

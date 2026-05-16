@@ -60,7 +60,7 @@ export function Testimonials() {
                       <span
                         title="Verified Antry builder"
                         className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full"
-                        style={{ background: "#C6F135", color: "#0A0A0A" }}
+                        style={{ background: "#20F5A0", color: "#0A0A0A" }}
                       >
                         <Check className="w-2.5 h-2.5" strokeWidth={3} />
                       </span>

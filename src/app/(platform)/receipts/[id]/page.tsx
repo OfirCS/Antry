@@ -108,13 +108,13 @@ export default async function ReceiptPage({
             <div
               className="rounded-[28px] bg-white overflow-hidden"
               style={{
-                border: "1px solid #EBEBEB",
+                border: "1px solid #E5E7EB",
                 boxShadow: "0 1px 0 rgba(0,0,0,0.03), 0 32px 64px -32px rgba(0,0,0,0.12)",
               }}
             >
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr]">
                 {/* Fingerprint */}
-                <div className="p-6 sm:p-8 flex flex-col items-center justify-center" style={{ background: "#FAFAF7", borderRight: "1px solid #EBEBEB" }}>
+                <div className="p-6 sm:p-8 flex flex-col items-center justify-center" style={{ background: "#F7F8FA", borderRight: "1px solid #E5E7EB" }}>
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-1">
                     Builder Fingerprint
                   </p>
@@ -217,9 +217,9 @@ export default async function ReceiptPage({
                       }
                     >
                       <div
-                        className="rounded-[16px] p-4 bg-white w-full transition-transform duration-200 hover:-translate-y-0.5"
+                        className="rounded-lg p-4 bg-white w-full transition-transform duration-200 hover:-translate-y-0.5"
                         style={{
-                          border: "1px solid #EBEBEB",
+                          border: "1px solid #E5E7EB",
                           boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
                         }}
                       >
@@ -239,7 +239,7 @@ export default async function ReceiptPage({
                         </div>
                         <div
                           className="h-1 rounded-full overflow-hidden mb-2"
-                          style={{ background: "#F5F5F5" }}
+                          style={{ background: "#F3F4F6" }}
                         >
                           <div
                             className="h-full rounded-full"
@@ -279,15 +279,15 @@ export default async function ReceiptPage({
             <div className="mt-10 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
               {/* Provenance panel */}
               <div
-                className="rounded-[20px] p-6 sm:p-7"
-                style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
+                className="rounded-lg p-6 sm:p-7"
+                style={{ background: "#F7F8FA", border: "1px solid #E5E7EB" }}
               >
                 <div className="flex items-start gap-4 flex-wrap">
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
                     style={{ background: "#0A0A0A" }}
                   >
-                    <ShieldCheck className="w-4 h-4" style={{ color: "#C6F135" }} />
+                    <ShieldCheck className="w-4 h-4" style={{ color: "#20F5A0" }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-500">
@@ -406,7 +406,7 @@ function ReceiptHero({
 
         <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-6 lg:gap-10 items-center">
           <div
-            className="w-[88px] h-[88px] rounded-2xl flex items-center justify-center text-[28px] font-bold font-display"
+            className="w-[88px] h-[88px] rounded-lg flex items-center justify-center text-[28px] font-bold font-display"
             style={{
               background: builder.gradient,
               color: "#FFFFFF",
@@ -438,7 +438,7 @@ function ReceiptHero({
               >
                 {builder.name}
               </Link>{" "}
-              shipped <span style={{ color: "#C6F135" }}>{briefTitle}</span>
+              shipped <span style={{ color: "#20F5A0" }}>{briefTitle}</span>
             </h1>
             <p
               className="mt-3 text-[14px]"
@@ -490,7 +490,7 @@ function Stat({
   value: string;
 }) {
   return (
-    <div className="rounded-xl p-3 bg-[#FAFAF7] border border-gray-100">
+    <div className="rounded-md p-3 bg-[#F7F8FA] border border-gray-100">
       <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400 inline-flex items-center gap-1.5">
         {icon}
         {label}
@@ -542,7 +542,7 @@ function ComputeFootprintGrid({ footprint }: { footprint: ComputeFootprint }) {
         </>
       ),
       sub: energyEquivalentLine(footprint.energy_kwh),
-      tint: "#C6F135",
+      tint: "#20F5A0",
     },
     {
       icon: <Leaf className="w-4 h-4" />,
@@ -631,8 +631,8 @@ function ComputeFootprintGrid({ footprint }: { footprint: ComputeFootprint }) {
         {cells.map((c) => (
           <div
             key={c.label}
-            className="rounded-[16px] p-4 bg-white"
-            style={{ border: "1px solid #EBEBEB" }}
+            className="rounded-lg p-4 bg-white"
+            style={{ border: "1px solid #E5E7EB" }}
           >
             <div className="flex items-center gap-2 mb-3">
               <span
@@ -732,8 +732,8 @@ function CTACard({
       href={href}
       className="group relative rounded-[24px] p-6 sm:p-7 transition-all duration-300 hover:-translate-y-0.5"
       style={{
-        background: isDark ? "#0A0A0A" : "#FAFAF7",
-        border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid #EBEBEB",
+        background: isDark ? "#0A0A0A" : "#F7F8FA",
+        border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid #E5E7EB",
         color: isDark ? "#fff" : "#111",
       }}
     >
@@ -742,13 +742,13 @@ function CTACard({
           className="pointer-events-none absolute inset-0 rounded-[24px] overflow-hidden"
           style={{
             background:
-              "radial-gradient(ellipse 70% 60% at 100% 0%, rgba(198,241,53,0.12) 0%, transparent 60%)",
+              "radial-gradient(ellipse 70% 60% at 100% 0%, rgba(32,245,160,0.12) 0%, transparent 60%)",
           }}
         />
       )}
       <p
         className="relative text-[10px] font-bold uppercase tracking-[0.18em] mb-2"
-        style={{ color: isDark ? "#C6F135" : "rgba(0,0,0,0.55)" }}
+        style={{ color: isDark ? "#20F5A0" : "rgba(0,0,0,0.55)" }}
       >
         {eyebrow}
       </p>
@@ -761,7 +761,7 @@ function CTACard({
       </p>
       <p
         className="relative mt-4 text-[13px] font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all"
-        style={{ color: isDark ? "#C6F135" : "#0A0A0A" }}
+        style={{ color: isDark ? "#20F5A0" : "#0A0A0A" }}
       >
         {cta} →
       </p>

@@ -25,7 +25,7 @@ export function LandingHeroAside({ receipt }: { receipt: Receipt }) {
         className="absolute -inset-6 rounded-[28px] pointer-events-none"
         style={{
           background:
-            "radial-gradient(60% 50% at 60% 40%, rgba(198,241,53,0.16) 0%, transparent 70%)",
+            "radial-gradient(60% 50% at 60% 40%, rgba(32,245,160,0.16) 0%, transparent 70%)",
           filter: "blur(20px)",
         }}
       />
@@ -52,7 +52,7 @@ export function LandingHeroAside({ receipt }: { receipt: Receipt }) {
               {receipt.company.name} Brief · 001
             </p>
             <h3 className="text-[16px] font-bold tracking-[-0.01em] text-black leading-[1.35]">
-              {receipt.brief_title}
+              <span style={{ color: "#0A0A0A" }}>{receipt.brief_title}</span>
             </h3>
             <p className="mt-1.5 text-[12px] text-gray-500">
               by{" "}
@@ -94,7 +94,7 @@ export function LandingHeroAside({ receipt }: { receipt: Receipt }) {
         {/* Stat bar */}
         <div
           className="grid grid-cols-3 text-center"
-          style={{ borderTop: "1px solid #EBEBEB" }}
+          style={{ borderTop: "1px solid #E5E7EB" }}
         >
           <Stat
             icon={<Cpu className="w-3 h-3" />}
@@ -163,8 +163,8 @@ function Stat({
     <div
       className="px-3 py-3.5"
       style={{
-        borderLeft: border ? "1px solid #EBEBEB" : undefined,
-        borderRight: border ? "1px solid #EBEBEB" : undefined,
+        borderLeft: border ? "1px solid #E5E7EB" : undefined,
+        borderRight: border ? "1px solid #E5E7EB" : undefined,
       }}
     >
       <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400 inline-flex items-center gap-1 justify-center w-full">
@@ -235,9 +235,9 @@ function ReceiptCompareCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.55, ease, delay: isHigh ? 0 : 0.08 }}
-      className="rounded-[20px] bg-white overflow-hidden"
+      className="rounded-lg bg-white overflow-hidden"
       style={{
-        border: "1px solid #EBEBEB",
+        border: "1px solid #E5E7EB",
         boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
       }}
     >

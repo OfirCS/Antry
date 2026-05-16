@@ -95,7 +95,7 @@ async function fetchLanguages(fullName: string): Promise<string[]> {
  * Infer a category from repo topics, language, and description.
  */
 function inferCategory(repo: GitHubRepo, languages: string[]): string {
-  const text = `${repo.description || ""} ${(repo.topics || []).join(" ")}`.toLowerCase();
+  const text = `${repo.description || ""} ${(repo.topics || []).join(" ")} ${languages.join(" ")}`.toLowerCase();
 
   if (text.includes("ai") || text.includes("ml") || text.includes("machine-learning") || text.includes("llm"))
     return "ai-agents";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect, useRef } from "react";
+import { useActionState, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ function CelebrationBurst() {
             ["--delay" as string]: `${i * 0.04}s`,
             ["--distance" as string]: `${50 + (i % 3) * 20}px`,
             ["--size" as string]: `${3 + (i % 3) * 2}px`,
-            ["--color" as string]: i % 3 === 0 ? "#C6F135" : i % 3 === 1 ? "#111111" : "#D4F85A",
+            ["--color" as string]: i % 3 === 0 ? "#20F5A0" : i % 3 === 1 ? "#111111" : "#67E8F9",
           }}
         />
       ))}
@@ -44,21 +44,9 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
   const [state, formAction, isPending] = useActionState<FormState, FormData>(joinWaitlist, null);
   const [localError, setLocalError] = useState(false);
   const [hoveredAvatar, setHoveredAvatar] = useState<number | null>(null);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const prevSuccessRef = useRef(false);
 
   const submitted = state?.success === true;
   const count = submitted ? initialCount + 1 : initialCount;
-
-  /* Trigger celebration on first success */
-  useEffect(() => {
-    if (submitted && !prevSuccessRef.current) {
-      setShowCelebration(true);
-      prevSuccessRef.current = true;
-      const timer = setTimeout(() => setShowCelebration(false), 1800);
-      return () => clearTimeout(timer);
-    }
-  }, [submitted]);
 
   return (
     <div className={cn("flex flex-col items-center w-full", className)}>
@@ -71,7 +59,7 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98 }}
               action={formAction}
-              className="relative flex w-full items-center gap-2 rounded-2xl border border-[#EBEBEB] bg-[#FFFFFF] p-1.5 shadow-sm transition-all duration-200 focus-within:border-[#111111] focus-within:shadow-md"
+              className="relative flex w-full items-center gap-2 rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-1.5 shadow-sm transition-all duration-200 focus-within:border-[#111111] focus-within:shadow-md"
             >
               {/* Input with shine effect */}
               <div className="relative flex-1 overflow-hidden">
@@ -82,7 +70,7 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
                   onChange={() => { if (localError) setLocalError(false); }}
                   placeholder="Enter your email"
                   className={cn(
-                    "w-full bg-transparent px-4 py-2.5 text-[14px] font-medium outline-none text-[#111111] placeholder:text-[#A3A3A3] relative z-[1]",
+                    "w-full bg-transparent px-4 py-2.5 text-[14px] font-medium outline-none text-[#111111] placeholder:text-[#9CA3AF] relative z-[1]",
                     (localError || state?.error) && "placeholder:text-[#EF4444]"
                   )}
                 />
@@ -94,7 +82,7 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
               <motion.button
                 type="submit"
                 disabled={isPending}
-                className="waitlist-btn-pulse shrink-0 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#C6F135] px-5 py-2.5 text-[13px] font-semibold text-[#111111] transition-all duration-200 hover:bg-[#D4F85A] hover:shadow-[0_8px_24px_rgba(198,241,53,0.3)] hover:-translate-y-[1px] disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                className="waitlist-btn-pulse shrink-0 inline-flex items-center justify-center gap-1.5 rounded-md bg-[#20F5A0] px-5 py-2.5 text-[13px] font-semibold text-[#111111] transition-all duration-200 hover:bg-[#67E8F9] hover:shadow-[0_8px_24px_rgba(32,245,160,0.3)] hover:-translate-y-[1px] disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
                 whileTap={{ scale: 0.97 }}
               >
                 {isPending ? "Joining..." : "Join waitlist"}
@@ -107,9 +95,9 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="relative flex w-full items-center justify-center gap-2.5 rounded-2xl bg-[#C6F135] px-6 py-4 text-[14px] font-semibold text-[#111111] overflow-hidden"
+              className="relative flex w-full items-center justify-center gap-2.5 rounded-lg bg-[#20F5A0] px-6 py-4 text-[14px] font-semibold text-[#111111] overflow-hidden"
             >
-              {showCelebration && <CelebrationBurst />}
+              <CelebrationBurst />
               <motion.div
                 initial={{ scale: 0, rotate: -90 }}
                 animate={{ scale: 1, rotate: 0 }}
@@ -186,7 +174,7 @@ export function WaitlistForm({ initialCount = 247, className }: WaitlistFormProp
             </motion.div>
           ))}
         </div>
-        <p className="text-[13px] text-[#737373]">
+        <p className="text-[13px] text-[#6B7280]">
           <span className="text-[#111111] font-medium">{count.toLocaleString()}</span> builders ahead of you
         </p>
       </div>

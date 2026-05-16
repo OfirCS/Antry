@@ -9,28 +9,25 @@ import { AntryLogoFull } from "@/components/AntryLogo";
 
 const footerLinks = {
   Product: [
+    { label: "Discover", href: "/discover" },
     { label: "Builders", href: "/builders" },
-    { label: "Showcase", href: "/showcase" },
+    { label: "Briefs", href: "/briefs" },
     { label: "Hackathons", href: "/hackathons" },
+    { label: "Showcase", href: "/showcase" },
     { label: "Recruiters", href: "/companies" },
-    { label: "Submit Project", href: "/submit" },
   ],
   Company: [
     { label: "About", href: "/about" },
-    { label: "Blog", href: "/blog" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
+    { label: "Pricing", href: "/pricing" },
   ],
   Resources: [
-    { label: "Documentation", href: "/docs" },
-    { label: "API", href: "/api" },
-    { label: "Community", href: "/community" },
-    { label: "Support", href: "/support" },
+    { label: "Submit project", href: "/submit" },
+    { label: "Claim card", href: "/claim-card" },
+    { label: "Methodology", href: "/receipts/methodology" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
   ],
 };
 
@@ -79,13 +76,12 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
       {/* Main content */}
       <main
         id="main-content"
-        className="flex-1 pt-16"
-        style={{ background: "#FAFAF7" }}
+        className="flex-1 bg-[#F7F8FA] pt-16"
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={pathname}
-            initial={{ opacity: 0, y: 8 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -96,24 +92,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
       </main>
 
       {/* Footer */}
-      <footer className="relative border-t border-[#EBEBEB] bg-[#ffffff]">
-        {/* Subtle gradient accent at the top of the footer */}
-        <div
-          className="absolute inset-x-0 top-0 h-[1px]"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent 0%, #C6F135 30%, #C6F135 70%, transparent 100%)",
-            opacity: 0.5,
-          }}
-        />
-        <div
-          className="absolute inset-x-0 top-0 h-px"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(198,241,53,0.15) 20%, rgba(198,241,53,0.25) 50%, rgba(198,241,53,0.15) 80%, transparent)",
-          }}
-        />
-
+      <footer className="relative border-t border-[#E5E7EB] bg-white text-[#0A0A0A]">
         <div className="mx-auto max-w-[1240px] px-6 sm:px-10">
           {/* Top section: logo + link columns */}
           <div className="grid grid-cols-2 gap-8 py-12 sm:py-16 md:grid-cols-6 lg:grid-cols-12">
@@ -125,9 +104,9 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
               >
                 <AntryLogoFull size={28} />
               </Link>
-              <p className="mt-3 text-[14px] leading-relaxed text-[#737373] max-w-[260px]">
-                The builder network for the AI era. Ship projects, join
-                hackathons, and connect with top recruiters.
+              <p className="mt-3 text-[14px] leading-relaxed text-[#4B5563] max-w-[260px]">
+                Proof of work for builders. Ship projects, join hackathons,
+                and make your work easy to review.
               </p>
 
               {/* Social icons */}
@@ -155,7 +134,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg text-[#A3A3A3] transition-all duration-200 hover:text-[#111111] hover:bg-[#F5F5F5]"
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-[#E5E7EB] text-[#6B7280] transition-colors duration-200 hover:border-[#D1D5DB] hover:bg-[#F7F8FA] hover:text-[#0A0A0A]"
                   >
                     {social.icon}
                   </a>
@@ -169,7 +148,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
                 key={category}
                 className="col-span-1 md:col-span-3 lg:col-span-2"
               >
-                <h4 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#A3A3A3] mb-4">
+                <h4 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#9CA3AF] mb-4">
                   {category}
                 </h4>
                 <ul className="flex flex-col gap-2.5">
@@ -177,7 +156,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-[14px] text-[#525252] transition-colors duration-200 hover:text-[#111111]"
+                        className="text-[14px] text-[#4B5563] transition-colors duration-200 hover:text-[#0A0A0A]"
                       >
                         {link.label}
                       </Link>
@@ -189,20 +168,20 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
           </div>
 
           {/* Bottom bar */}
-          <div className="flex flex-col gap-4 border-t border-[#EBEBEB] py-6 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-[12px] font-medium text-[#A3A3A3] uppercase tracking-wider">
+          <div className="flex flex-col gap-4 border-t border-[#E5E7EB] py-6 sm:flex-row sm:items-center sm:justify-between">
+            <span className="text-[12px] font-medium text-[#6B7280] uppercase tracking-wider">
               &copy; {new Date().getFullYear()} Antry. All rights reserved.
             </span>
 
             {/* Back to top button */}
             <motion.button
               onClick={scrollToTop}
-              className="group inline-flex items-center gap-2 text-[13px] font-medium text-[#A3A3A3] transition-colors duration-200 hover:text-[#111111]"
+              className="group inline-flex items-center gap-2 text-[13px] font-medium text-[#6B7280] transition-colors duration-200 hover:text-[#0A0A0A]"
               whileHover={{ y: -1 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               Back to top
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#EBEBEB] bg-[#FAFAFA] transition-all duration-200 group-hover:border-[#D4D4D4] group-hover:bg-[#F5F5F5]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[#E5E7EB] bg-white transition-colors duration-200 group-hover:border-[#D1D5DB] group-hover:bg-[#F7F8FA]">
                 <ArrowUp size={14} strokeWidth={2} />
               </span>
             </motion.button>

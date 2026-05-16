@@ -29,15 +29,15 @@ export default function ResetPasswordPage() {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(resetPassword, null);
 
   const baseInputStyles =
-    "w-full px-4 h-[48px] bg-white border rounded-xl text-[15px] outline-none placeholder:text-gray-400";
+    "w-full px-4 h-[48px] bg-white border rounded-md text-[15px] outline-none placeholder:text-gray-400";
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.currentTarget.style.borderColor = "#0A0A0A";
-    e.currentTarget.style.boxShadow = "0 0 0 4px rgba(198, 241, 53, 0.25)";
+    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(17, 24, 39, 0.06)";
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.currentTarget.style.borderColor = "#EBEBEB";
+    e.currentTarget.style.borderColor = "#E5E7EB";
     e.currentTarget.style.boxShadow = "none";
   };
 
@@ -45,10 +45,10 @@ export default function ResetPasswordPage() {
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="w-full max-w-[420px] mx-auto">
       <motion.div variants={itemVariants} className="mb-8">
         <div
-          className="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-5"
+          className="inline-flex items-center justify-center w-12 h-12 rounded-lg mb-5"
           style={{
-            background: "rgba(198, 241, 53, 0.16)",
-            border: "1px solid rgba(198, 241, 53, 0.3)",
+            background: "#F7F8FA",
+            border: "1px solid #E5E7EB",
           }}
         >
           <Mail className="w-5 h-5" style={{ color: "#0A0A0A" }} />
@@ -69,14 +69,12 @@ export default function ResetPasswordPage() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-2xl px-5 py-6 relative overflow-hidden"
+            className="rounded-md px-5 py-6 relative overflow-hidden"
             style={{
-              background: "rgba(198, 241, 53, 0.12)",
-              border: "1px solid rgba(198, 241, 53, 0.4)",
+              background: "rgba(32, 245, 160, 0.12)",
+              border: "1px solid rgba(32, 245, 160, 0.24)",
             }}
           >
-            <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full pointer-events-none"
-                 style={{ background: "radial-gradient(circle, rgba(198,241,53,0.3) 0%, transparent 70%)" }} />
             <div className="relative flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0" style={{ color: "#0A0A0A" }} />
               <div>
@@ -113,7 +111,7 @@ export default function ResetPasswordPage() {
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3"
+                className="flex items-center gap-3 rounded-md bg-red-50 border border-red-200 px-4 py-3"
               >
                 <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
@@ -137,11 +135,11 @@ export default function ResetPasswordPage() {
               whileHover={pending ? {} : { scale: 1.005 }}
               whileTap={pending ? {} : { scale: 0.985 }}
               transition={{ duration: 0.15 }}
-              className="w-full h-[52px] rounded-xl text-[15px] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full h-[52px] rounded-md text-[15px] font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{
                 background: "#0A0A0A",
                 color: "#fff",
-                boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
+                boxShadow: "none",
               }}
             >
               {pending ? (
