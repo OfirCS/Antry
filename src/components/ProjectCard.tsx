@@ -22,21 +22,16 @@ export function ProjectCard({ project, index = 0, className }: ProjectCardProps)
     >
       <Link
         href={`/projects/${project.id}`}
-        className="relative flex flex-col h-full rounded-2xl border border-gray-200/80 bg-white overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/[0.04] hover:-translate-y-1 hover:border-[#C6F135]/30"
+        className="relative flex h-full flex-col overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-sm"
       >
-        {/* Gradient header */}
-        <div
-          className="h-24 relative"
-          style={{ background: project.gradient || "linear-gradient(135deg, #667eea, #764ba2)" }}
-        >
-          {/* Category badge */}
+        <div className="relative h-24 border-b border-gray-100 bg-[#F7F8FA]">
           {project.category && (
-            <span className="absolute top-3 left-3 inline-flex items-center rounded-md bg-white/90 backdrop-blur-sm px-2 py-0.5 text-[11px] font-medium text-gray-700">
+            <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white px-2 py-0.5 text-[11px] font-semibold text-gray-600 shadow-sm ring-1 ring-gray-200">
               {project.category}
             </span>
           )}
-          <div className="absolute top-3 right-3 h-7 w-7 rounded-lg bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <ArrowUpRight className="h-3.5 w-3.5 text-gray-600" />
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded border border-gray-200 bg-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <ArrowUpRight className="h-3.5 w-3.5 text-[#020617]" />
           </div>
         </div>
 
@@ -64,7 +59,7 @@ export function ProjectCard({ project, index = 0, className }: ProjectCardProps)
               {project.techStack.slice(0, 2).map((tech) => (
                 <span
                   key={tech}
-                  className="inline-flex items-center rounded-md bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-500"
+                  className="inline-flex items-center rounded bg-gray-50 px-2 py-0.5 text-[11px] font-semibold text-gray-500"
                 >
                   {tech}
                 </span>

@@ -40,13 +40,13 @@ export function LegalLayout({
             </motion.h1>
             <p className="mt-4 max-w-[640px] text-[15px] sm:text-[16px] leading-[1.65] text-gray-700">{intro}</p>
             <div className="mt-6 flex flex-wrap gap-3 text-[12px] text-gray-500">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAFAF7] border border-gray-200">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C6F135" }} />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F7F8FA] border border-gray-200">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#20F5A0" }} />
                 Last updated: {updated}
               </span>
               <a
                 href="mailto:[email protected]"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAFAF7] border border-gray-200 hover:border-black hover:text-black transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F7F8FA] border border-gray-200 hover:border-black hover:text-black transition-colors"
               >
                 Questions? [email protected]
               </a>

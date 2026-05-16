@@ -2,26 +2,34 @@
 
 import { useState } from "react";
 import { Code2, Copy, Check, Terminal } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CLIENT_TABS = [
   { key: "cursor", label: "Cursor", path: "~/.cursor/mcp.json" },
+  { key: "codex", label: "Codex", path: "~/.codex/config.toml" },
   { key: "claude", label: "Claude Code", path: "~/.claude.json" },
 ] as const;
 
 type ClientKey = (typeof CLIENT_TABS)[number]["key"];
 
 function buildSnippet(client: ClientKey, briefSlug: string): string {
-  const baseConfig =
-    client === "cursor"
-      ? `{
+  const baseConfig = (() => {
+    if (client === "cursor") {
+      return `{
   "mcpServers": {
     "antry": {
       "url": "https://antry.com/api/mcp",
       "headers": { "Authorization": "Bearer ant_YOUR_TOKEN" }
     }
   }
-}`
-      : `{
+}`;
+    }
+    if (client === "codex") {
+      return `[mcp_servers.antry]
+url = "https://antry.com/api/mcp"
+headers = { Authorization = "Bearer ant_YOUR_TOKEN" }`;
+    }
+    return `{
   "mcpServers": {
     "antry": {
       "type": "http",
@@ -30,7 +38,11 @@ function buildSnippet(client: ClientKey, briefSlug: string): string {
     }
   }
 }`;
-  return `# 1) Add to ${client === "cursor" ? "~/.cursor/mcp.json" : "~/.claude.json"}
+  })();
+
+  const targetPath = CLIENT_TABS.find((item) => item.key === client)?.path ?? "~/.cursor/mcp.json";
+
+  return `# 1) Add to ${targetPath}
 ${baseConfig}
 
 # 2) Restart your client. Then in chat:
@@ -38,11 +50,9 @@ ${baseConfig}
 }
 
 /**
- * Editorial-light Cursor MCP entry panel for the Brief page.
- *
- * Single primary action — open it once, copy snippet, paste into Cursor.
- * Tabs for the two MCP-client variants. Plays nicely on a cream
- * `#FAFAF7` page background and a white card surface.
+ * Inline panel on the Brief page that shows candidates how to start the
+ * attempt from inside Cursor, Codex, or Claude Code via the Antry MCP. The Brief's
+ * own Lab CTA stays as the simpler/web path; this is the IDE-native path.
  */
 export function CursorStartPanel({ briefSlug }: { briefSlug: string }) {
   const [open, setOpen] = useState(false);
@@ -63,112 +73,132 @@ export function CursorStartPanel({ briefSlug }: { briefSlug: string }) {
 
   return (
     <div
-      className="rounded-[14px] overflow-hidden"
+      className="rounded-lg overflow-hidden"
       style={{
         background: "#0A0A0A",
-        boxShadow: "0 12px 28px rgba(10,10,10,0.18)",
+        border: "1px solid rgba(32,245,160,0.25)",
       }}
     >
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full p-4 flex items-center gap-3 text-left transition-colors hover:bg-white/[0.04]"
+        className="w-full p-5 flex items-center gap-4 text-left transition-colors hover:bg-white/[0.02]"
         aria-expanded={open}
       >
         <div
-          className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-          style={{ background: "#C6F135" }}
+          className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
+          style={{ background: "rgba(32,245,160,0.14)" }}
         >
-          <Terminal className="w-4 h-4" style={{ color: "#0A0A0A" }} />
+          <Terminal className="w-4 h-4" style={{ color: "#20F5A0" }} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[14px] font-bold tracking-[-0.005em] text-white leading-[1.3]">
-            Start in Cursor
+          <p
+            className="text-[10px] font-bold uppercase tracking-[0.22em] mb-1"
+            style={{ color: "#20F5A0" }}
+          >
+            New: work in your IDE
           </p>
-          <p className="text-[12px] mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>
-            Your IDE → start_attempt → signed Receipt
+          <p className="text-[14px] font-bold tracking-[-0.005em] text-white leading-[1.3]">
+            Start in Cursor, Codex, or Claude Code
+          </p>
+          <p
+            className="mt-0.5 text-[12px] leading-[1.5]"
+            style={{ color: "rgba(255,255,255,0.55)" }}
+          >
+            Real IDE, signed at the gateway. No browser sandbox.
           </p>
         </div>
         <span
-          className="text-[11px] font-bold uppercase tracking-[0.16em] px-2 py-1 rounded-md"
-          style={{
-            background: "rgba(255,255,255,0.08)",
-            color: "rgba(255,255,255,0.85)",
-          }}
+          className="text-[11px] font-bold uppercase tracking-[0.18em]"
+          style={{ color: "rgba(255,255,255,0.5)" }}
         >
-          {open ? "Hide" : "Setup"}
+          {open ? "Hide" : "Show config"}
         </span>
       </button>
 
-      {open && (
-        <div className="px-4 pb-4 pt-0">
-          <div
-            className="inline-flex rounded-[10px] p-0.5 mt-1"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-            }}
-            role="tablist"
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
           >
-            {CLIENT_TABS.map((c) => {
-              const active = tab === c.key;
-              return (
+            <div className="px-5 pb-5">
+              <div
+                className="inline-flex rounded-[10px] p-0.5"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+                role="tablist"
+              >
+                {CLIENT_TABS.map((c) => {
+                  const active = tab === c.key;
+                  return (
+                    <button
+                      key={c.key}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setTab(c.key)}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors"
+                      style={{
+                        background: active ? "#20F5A0" : "transparent",
+                        color: active ? "#0A0A0A" : "rgba(255,255,255,0.65)",
+                      }}
+                    >
+                      {c.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <pre
+                className="mt-3 rounded-[12px] p-4 text-[11px] leading-[1.55] font-mono overflow-x-auto whitespace-pre"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  color: "rgba(255,255,255,0.85)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                {snippet}
+              </pre>
+
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
                 <button
-                  key={c.key}
                   type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setTab(c.key)}
-                  className="px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors"
-                  style={{
-                    background: active ? "#C6F135" : "transparent",
-                    color: active ? "#0A0A0A" : "rgba(255,255,255,0.7)",
-                  }}
+                  onClick={onCopy}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-[34px] text-[12px] font-semibold transition-all hover:-translate-y-0.5"
+                  style={{ background: "#20F5A0", color: "#0A0A0A" }}
+                  data-cta="lime"
                 >
-                  {c.label}
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      Copy snippet
+                    </>
+                  )}
                 </button>
-              );
-            })}
-          </div>
-
-          <pre
-            className="mt-3 rounded-[10px] p-3 text-[11px] leading-[1.55] font-mono overflow-x-auto whitespace-pre"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              color: "rgba(255,255,255,0.88)",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
-            {snippet}
-          </pre>
-
-          <div className="mt-3 flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={onCopy}
-              className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-8 text-[12px] font-bold transition-all hover:-translate-y-0.5"
-              style={{ background: "#C6F135", color: "#0A0A0A" }}
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3 h-3" /> Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3 h-3" /> Copy
-                </>
-              )}
-            </button>
-            <a
-              href="/agents"
-              className="text-[11px] font-semibold inline-flex items-center gap-1"
-              style={{ color: "rgba(255,255,255,0.65)" }}
-            >
-              <Code2 className="w-3 h-3" />
-              Docs →
-            </a>
-          </div>
-        </div>
-      )}
+                <a
+                  href="/agents"
+                  className="text-[12px] font-semibold inline-flex items-center gap-1"
+                  style={{ color: "rgba(255,255,255,0.7)" }}
+                >
+                  <Code2 className="w-3 h-3" />
+                  Full docs →
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

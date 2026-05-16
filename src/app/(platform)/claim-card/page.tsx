@@ -55,21 +55,21 @@ function ClaimCardHero() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(198,241,53,0.18) 0%, transparent 55%)",
+            "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(32,245,160,0.18) 0%, transparent 55%)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 35% 40% at 12% 90%, rgba(198,241,53,0.10) 0%, transparent 60%)",
+            "radial-gradient(ellipse 35% 40% at 12% 90%, rgba(32,245,160,0.10) 0%, transparent 60%)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 25% 30% at 88% 80%, rgba(198,241,53,0.08) 0%, transparent 60%)",
+            "radial-gradient(ellipse 25% 30% at 88% 80%, rgba(32,245,160,0.08) 0%, transparent 60%)",
         }}
       />
 
@@ -89,8 +89,8 @@ function ClaimCardHero() {
         <div
           className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 mb-7 backdrop-blur-sm"
           style={{
-            background: "rgba(198,241,53,0.12)",
-            border: "1px solid rgba(198,241,53,0.28)",
+            background: "rgba(32,245,160,0.12)",
+            border: "1px solid rgba(32,245,160,0.28)",
           }}
         >
           <span
@@ -99,13 +99,13 @@ function ClaimCardHero() {
           >
             <span
               className="absolute inset-0 rounded-full animate-ping"
-              style={{ background: "#C6F135", opacity: 0.7 }}
+              style={{ background: "#20F5A0", opacity: 0.7 }}
             />
-            <span className="relative w-1.5 h-1.5 rounded-full" style={{ background: "#C6F135" }} />
+            <span className="relative w-1.5 h-1.5 rounded-full" style={{ background: "#20F5A0" }} />
           </span>
           <span
             className="text-[11px] font-bold tracking-[0.18em] uppercase"
-            style={{ color: "#C6F135" }}
+            style={{ color: "#20F5A0" }}
           >
             Antry Card · Beta
           </span>
@@ -117,7 +117,7 @@ function ClaimCardHero() {
         >
           Paste a GitHub URL.
           <br />
-          <span style={{ color: "#C6F135" }}>Get a builder profile in 5 seconds.</span>
+          <span style={{ color: "#20F5A0" }}>Get a builder profile in 5 seconds.</span>
         </h1>
 
         <p
@@ -157,14 +157,14 @@ function ClaimCardHero() {
 
 function DecorDots() {
   const dots = [
-    { x: "8%", y: "22%", size: 5, color: "rgba(198,241,53,0.5)" },
-    { x: "92%", y: "18%", size: 4, color: "rgba(198,241,53,0.4)" },
-    { x: "15%", y: "70%", size: 6, color: "rgba(198,241,53,0.35)" },
-    { x: "85%", y: "65%", size: 5, color: "rgba(198,241,53,0.45)" },
+    { x: "8%", y: "22%", size: 5, color: "rgba(32,245,160,0.5)" },
+    { x: "92%", y: "18%", size: 4, color: "rgba(32,245,160,0.4)" },
+    { x: "15%", y: "70%", size: 6, color: "rgba(32,245,160,0.35)" },
+    { x: "85%", y: "65%", size: 5, color: "rgba(32,245,160,0.45)" },
     { x: "6%", y: "45%", size: 3, color: "rgba(255,255,255,0.18)" },
     { x: "94%", y: "40%", size: 3, color: "rgba(255,255,255,0.15)" },
-    { x: "22%", y: "85%", size: 4, color: "rgba(198,241,53,0.25)" },
-    { x: "78%", y: "82%", size: 4, color: "rgba(198,241,53,0.3)" },
+    { x: "22%", y: "85%", size: 4, color: "rgba(32,245,160,0.25)" },
+    { x: "78%", y: "82%", size: 4, color: "rgba(32,245,160,0.3)" },
   ];
 
   return (
@@ -212,7 +212,7 @@ function HowItWorks() {
   ];
 
   return (
-    <section style={{ background: "#FAFAF7" }}>
+    <section style={{ background: "#F7F8FA" }}>
       <div className="mx-auto max-w-[1080px] px-6 sm:px-10 py-24 sm:py-28">
         <div className="text-center mb-14 sm:mb-16">
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
@@ -231,7 +231,7 @@ function HowItWorks() {
           {steps.map((s) => (
             <article
               key={s.num}
-              className={`${s.bg} rounded-[20px] p-7 sm:p-8 transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_36px_rgba(0,0,0,0.08)]`}
+              className={`${s.bg} rounded-lg p-7 sm:p-8 transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_36px_rgba(0,0,0,0.08)]`}
             >
               <span
                 className="text-[52px] font-bold tracking-tighter leading-none font-display"
@@ -246,7 +246,7 @@ function HowItWorks() {
               <div
                 className="mt-5 h-[2px] rounded-full origin-left"
                 style={{
-                  background: "linear-gradient(90deg, #C6F135 0%, transparent 100%)",
+                  background: "linear-gradient(90deg, #20F5A0 0%, transparent 100%)",
                   width: "32px",
                 }}
               />

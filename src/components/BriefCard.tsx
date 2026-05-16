@@ -14,8 +14,8 @@ const DIFFICULTY_BADGE: Record<
 > = {
   intro: { label: "Intro", bg: "rgba(99,102,241,0.16)", color: "#3730A3" },
   mid: { label: "Mid", bg: "rgba(14,165,233,0.16)", color: "#075985" },
-  senior: { label: "Senior", bg: "rgba(198,241,53,0.30)", color: "#0A0A0A" },
-  staff: { label: "Staff", bg: "#0A0A0A", color: "#C6F135" },
+  senior: { label: "Senior", bg: "rgba(32,245,160,0.30)", color: "#0A0A0A" },
+  staff: { label: "Staff", bg: "#0A0A0A", color: "#20F5A0" },
 };
 
 function formatTime(seconds: number): string {
@@ -36,23 +36,22 @@ export function BriefCard({ brief, index }: { brief: Brief; index: number }) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.05 + index * 0.06, duration: 0.45, ease }}
-      whileHover={{ y: -3 }}
-      className="group relative rounded-[24px] bg-white overflow-hidden transition-all duration-300"
+      whileHover={{ y: -2 }}
+      className="group relative overflow-hidden rounded-md bg-white transition-all duration-200"
       style={{
-        border: "1px solid #EBEBEB",
+        border: "1px solid #E5E7EB",
         boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 18px 40px -16px rgba(0,0,0,0.14)";
-        e.currentTarget.style.borderColor = "#D4D4D4";
+        e.currentTarget.style.boxShadow = "0 8px 24px -18px rgba(0,0,0,0.18)";
+        e.currentTarget.style.borderColor = "#D1D5DB";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.boxShadow = "0 1px 0 rgba(0,0,0,0.03)";
-        e.currentTarget.style.borderColor = "#EBEBEB";
+        e.currentTarget.style.borderColor = "#E5E7EB";
       }}
     >
-      {/* Sponsor strip */}
-      <div className="h-1.5" style={{ background: brief.company.sponsor_color }} />
+      <div className="h-px bg-[#E5E7EB]" />
 
       <div className="p-6 sm:p-7">
         <div className="flex items-start justify-between gap-4 mb-5">

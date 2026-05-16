@@ -8,17 +8,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[#C6F135]/12 text-[#111111] hover:bg-[#C6F135]/20",
+          "bg-[#20F5A0]/12 text-[#111111] hover:bg-[#20F5A0]/20",
         secondary:
-          "bg-[#F5F5F5] text-[#525252] hover:bg-[#EBEBEB] hover:text-[#111111]",
+          "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB] hover:text-[#111111]",
         success:
           "bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
         outline:
-          "border border-[#EBEBEB] bg-transparent text-[#737373] hover:border-[#111111] hover:text-[#111111]",
+          "border border-[#E5E7EB] bg-transparent text-[#6B7280] hover:border-[#111111] hover:text-[#111111]",
         "outline-lime":
-          "border border-[#C6F135]/40 bg-transparent text-[#111111] hover:border-[#C6F135] hover:bg-[#C6F135]/8",
+          "border border-[#20F5A0]/40 bg-transparent text-[#111111] hover:border-[#20F5A0] hover:bg-[#20F5A0]/8",
         dot:
-          "bg-[#F5F5F5] text-[#525252] hover:bg-[#EBEBEB] hover:text-[#111111] pl-2.5",
+          "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB] hover:text-[#111111] pl-2.5",
         "dot-success":
           "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 pl-2.5",
         "dot-warning":
@@ -26,9 +26,9 @@ const badgeVariants = cva(
         "dot-error":
           "bg-red-50 text-red-700 hover:bg-red-100 pl-2.5",
         "dot-lime":
-          "bg-[#C6F135]/12 text-[#111111] hover:bg-[#C6F135]/20 pl-2.5",
+          "bg-[#20F5A0]/12 text-[#111111] hover:bg-[#20F5A0]/20 pl-2.5",
         pulse:
-          "bg-[#C6F135]/12 text-[#111111] hover:bg-[#C6F135]/20",
+          "bg-[#20F5A0]/12 text-[#111111] hover:bg-[#20F5A0]/20",
         "pulse-error":
           "bg-red-50 text-red-700 hover:bg-red-100",
       },
@@ -41,16 +41,16 @@ const badgeVariants = cva(
 
 /** Map dot-* variants to their dot color */
 const dotColorMap: Record<string, string> = {
-  dot: "#737373",
+  dot: "#6B7280",
   "dot-success": "#059669",
   "dot-warning": "#D97706",
   "dot-error": "#DC2626",
-  "dot-lime": "#C6F135",
+  "dot-lime": "#20F5A0",
 };
 
 /** Map pulse-* variants to their pulse color */
 const pulseColorMap: Record<string, string> = {
-  pulse: "#C6F135",
+  pulse: "#20F5A0",
   "pulse-error": "#DC2626",
 };
 
@@ -62,8 +62,8 @@ function Badge({ className, variant, children, ...props }: BadgeProps) {
   const variantStr = variant ?? "default";
   const isDot = typeof variantStr === "string" && variantStr.startsWith("dot");
   const isPulse = typeof variantStr === "string" && variantStr.startsWith("pulse");
-  const dotColor = isDot ? dotColorMap[variantStr] ?? "#737373" : undefined;
-  const pulseColor = isPulse ? pulseColorMap[variantStr] ?? "#C6F135" : undefined;
+  const dotColor = isDot ? dotColorMap[variantStr] ?? "#6B7280" : undefined;
+  const pulseColor = isPulse ? pulseColorMap[variantStr] ?? "#20F5A0" : undefined;
 
   return (
     <div className={cn(badgeVariants({ variant }), className)} {...props}>

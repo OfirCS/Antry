@@ -174,7 +174,7 @@ export async function runSandbox(input: SandboxRunInput): Promise<SandboxRunResu
     const tStart = Date.now();
     try {
       const promise = Promise.resolve(
-        (entry as (...args: unknown[]) => unknown).apply(null, t.args)
+        (entry as (...args: unknown[]) => unknown)(...t.args)
       );
       const value = await Promise.race([
         promise,

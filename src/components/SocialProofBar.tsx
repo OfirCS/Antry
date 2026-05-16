@@ -43,7 +43,7 @@ export function SocialProofBar() {
   return (
     <section
       ref={sectionRef}
-      className="border-b border-[#EBEBEB] bg-[#FAFAF7]"
+      className="border-b border-[#E5E7EB] bg-[#F7F8FA]"
     >
       <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-12 sm:py-16">
         <motion.div
@@ -57,7 +57,7 @@ export function SocialProofBar() {
             initial={{ opacity: 0, x: -10 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
             transition={{ duration: 0.6, delay: 0.15, ease }}
-            className="text-[14px] font-medium text-[#737373] shrink-0 tracking-[-0.01em]"
+            className="text-[14px] font-medium text-[#6B7280] shrink-0 tracking-[-0.01em]"
           >
             Trusted by{" "}
             <span className="text-[#111111] font-semibold">
@@ -89,7 +89,7 @@ export function SocialProofBar() {
               {[...sponsors, ...sponsors].map((name, i) => (
                 <motion.span
                   key={`${name}-${i}`}
-                  className="shrink-0 px-7 text-[15px] font-semibold tracking-[-0.02em] text-[#A3A3A3] cursor-default select-none"
+                  className="shrink-0 px-7 text-[15px] font-semibold tracking-[-0.02em] text-[#9CA3AF] cursor-default select-none"
                   aria-hidden={i >= sponsors.length}
                   whileHover={{
                     scale: 1.08,

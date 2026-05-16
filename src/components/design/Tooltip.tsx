@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useId, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 export function Tooltip({ children, content, side = "top", className }: Props) {
   const [open, setOpen] = useState(false);
-  const idRef = useRef(`tt-${Math.random().toString(36).slice(2, 9)}`);
+  const tooltipId = useId();
 
   const offsetClass =
     side === "top"
@@ -28,13 +28,13 @@ export function Tooltip({ children, content, side = "top", className }: Props) {
       onMouseLeave={() => setOpen(false)}
       onFocus={() => setOpen(true)}
       onBlur={() => setOpen(false)}
-      aria-describedby={open ? idRef.current : undefined}
+      aria-describedby={open ? tooltipId : undefined}
     >
       {children}
       <AnimatePresence>
         {open && (
           <motion.span
-            id={idRef.current}
+            id={tooltipId}
             role="tooltip"
             initial={{ opacity: 0, y: initialY }}
             animate={{ opacity: 1, y: 0 }}

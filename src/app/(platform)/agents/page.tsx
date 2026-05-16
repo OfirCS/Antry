@@ -115,7 +115,7 @@ export default function AgentsPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 50% 40% at 0% 0%, rgba(198,241,53,0.10) 0%, transparent 55%)",
+              "radial-gradient(ellipse 50% 40% at 0% 0%, rgba(32,245,160,0.10) 0%, transparent 55%)",
           }}
         />
         <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-24 pb-20 sm:pt-32 sm:pb-24">
@@ -123,14 +123,14 @@ export default function AgentsPage() {
             className="text-[11px] font-bold uppercase tracking-[0.28em] mb-7 inline-flex items-center gap-2"
             style={{ color: "rgba(255,255,255,0.55)" }}
           >
-            <Bot className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
+            <Bot className="w-3.5 h-3.5" style={{ color: "#20F5A0" }} />
             Cursor + Antry MCP
           </p>
           <h1
             className="font-display font-bold leading-[0.96] tracking-[-0.04em]"
             style={{ color: "#FFFFFF", fontSize: "clamp(2.4rem, 6vw, 4.4rem)" }}
           >
-            Work in your <span style={{ color: "#C6F135" }}>real IDE</span>.
+            Work in your <span style={{ color: "#20F5A0" }}>real IDE</span>.
             <br />
             Mint a signed Receipt.
           </h1>
@@ -148,11 +148,11 @@ export default function AgentsPage() {
           <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link
               href="#install"
-              className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 rounded-lg px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
               style={{
-                background: "#C6F135",
+                background: "#20F5A0",
                 color: "#0A0A0A",
-                boxShadow: "0 12px 30px rgba(198,241,53,0.32)",
+                boxShadow: "0 12px 30px rgba(32,245,160,0.32)",
               }}
               data-cta="lime"
             >
@@ -170,7 +170,7 @@ export default function AgentsPage() {
       </section>
 
       {/* ── Why — the wedge ────────────────── */}
-      <section style={{ background: "#FAFAF7" }} className="py-24 sm:py-28">
+      <section style={{ background: "#F7F8FA" }} className="py-24 sm:py-28">
         <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
           <div className="max-w-[640px]">
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
@@ -231,12 +231,12 @@ export default function AgentsPage() {
             {STEPS.map((s) => (
               <li
                 key={s.n}
-                className="rounded-[20px] p-5 sm:p-6 bg-white relative"
-                style={{ border: "1.5px solid #EBEBEB" }}
+                className="rounded-lg p-5 sm:p-6 bg-white relative"
+                style={{ border: "1.5px solid #E5E7EB" }}
               >
                 <span
-                  className="inline-flex items-center justify-center w-8 h-8 rounded-xl text-[14px] font-bold font-display mb-3"
-                  style={{ background: "#C6F135", color: "#0A0A0A" }}
+                  className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[14px] font-bold font-display mb-3"
+                  style={{ background: "#20F5A0", color: "#0A0A0A" }}
                 >
                   {s.n}
                 </span>
@@ -253,7 +253,7 @@ export default function AgentsPage() {
       </section>
 
       {/* ── Tools ───────────────────────────── */}
-      <section style={{ background: "#FAFAF7" }} className="py-24 sm:py-28">
+      <section style={{ background: "#F7F8FA" }} className="py-24 sm:py-28">
         <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
             Tools
@@ -378,17 +378,17 @@ export default function AgentsPage() {
           </div>
 
           <div
-            className="mt-12 rounded-[20px] p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] gap-5 items-center"
+            className="mt-12 rounded-lg p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] gap-5 items-center"
             style={{
-              background: "rgba(198,241,53,0.06)",
-              border: "1px solid rgba(198,241,53,0.4)",
+              background: "rgba(32,245,160,0.06)",
+              border: "1px solid rgba(32,245,160,0.4)",
             }}
           >
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
+              className="w-12 h-12 rounded-lg flex items-center justify-center"
               style={{ background: "#0A0A0A" }}
             >
-              <Check className="w-5 h-5" style={{ color: "#C6F135" }} />
+              <Check className="w-5 h-5" style={{ color: "#20F5A0" }} />
             </div>
             <div>
               <h3 className="text-[16px] font-bold tracking-[-0.01em] text-black">
@@ -408,7 +408,7 @@ export default function AgentsPage() {
             </div>
             <Link
               href="/receipts/methodology"
-              className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 self-start sm:self-center"
+              className="inline-flex items-center gap-1.5 rounded-lg px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 self-start sm:self-center"
               style={{ background: "#0A0A0A", color: "#fff" }}
             >
               Methodology
@@ -431,12 +431,12 @@ function BenefitCard({
 }) {
   return (
     <div
-      className="rounded-[20px] p-6 bg-white"
-      style={{ border: "1px solid #EBEBEB" }}
+      className="rounded-lg p-6 bg-white"
+      style={{ border: "1px solid #E5E7EB" }}
     >
       <span
-        className="inline-flex items-center justify-center w-8 h-8 rounded-xl mb-4"
-        style={{ background: "rgba(198,241,53,0.18)" }}
+        className="inline-flex items-center justify-center w-8 h-8 rounded-md mb-4"
+        style={{ background: "rgba(32,245,160,0.18)" }}
       >
         {icon}
       </span>
@@ -459,13 +459,13 @@ function ToolCard({
 }) {
   return (
     <div
-      className="rounded-[16px] p-5 sm:p-6 bg-white"
-      style={{ border: "1px solid #EBEBEB" }}
+      className="rounded-lg p-5 sm:p-6 bg-white"
+      style={{ border: "1px solid #E5E7EB" }}
     >
       <div className="flex items-center gap-2 mb-2">
         <span
           className="inline-flex items-center justify-center w-7 h-7 rounded-lg"
-          style={{ background: "rgba(198,241,53,0.18)" }}
+          style={{ background: "rgba(32,245,160,0.18)" }}
         >
           <Code2 className="w-3.5 h-3.5 text-black" />
         </span>
@@ -477,7 +477,7 @@ function ToolCard({
             className="ml-auto inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.14em] px-1.5 py-0.5 rounded"
             style={{
               background: "#0A0A0A",
-              color: "#C6F135",
+              color: "#20F5A0",
             }}
           >
             <Lock className="w-2.5 h-2.5" />
@@ -501,8 +501,8 @@ function ClientCard({
 }) {
   return (
     <div
-      className="rounded-[20px] p-5 sm:p-6 flex flex-col"
-      style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
+      className="rounded-lg p-5 sm:p-6 flex flex-col"
+      style={{ background: "#F7F8FA", border: "1px solid #E5E7EB" }}
     >
       <div className="flex items-baseline justify-between gap-3 mb-3">
         <h3 className="text-[15px] font-bold tracking-[-0.01em] text-black">
@@ -514,7 +514,7 @@ function ClientCard({
       </div>
       <pre
         className="rounded-[12px] p-4 text-[12px] leading-[1.55] font-mono text-gray-800 overflow-x-auto whitespace-pre"
-        style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+        style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
       >
         {snippet}
       </pre>

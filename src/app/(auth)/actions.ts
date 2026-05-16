@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema, signupSchema, resetPasswordSchema } from "@/lib/schemas";
 
@@ -9,6 +10,21 @@ export type AuthState = {
   success?: string;
   fieldErrors?: Record<string, string[]>;
 } | null;
+
+async function getRequestOrigin() {
+  const headerStore = await headers();
+  const forwardedHost = headerStore.get("x-forwarded-host");
+  const host = forwardedHost || headerStore.get("host");
+
+  if (host) {
+    const forwardedProto = headerStore.get("x-forwarded-proto");
+    const protocol =
+      forwardedProto || (host.startsWith("localhost") ? "http" : "https");
+    return `${protocol}://${host}`;
+  }
+
+  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+}
 
 export async function login(
   _prevState: AuthState,
@@ -76,11 +92,12 @@ export async function signup(
 
 export async function signInWithGithub() {
   const supabase = await createClient();
+  const origin = await getRequestOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 
@@ -95,11 +112,12 @@ export async function signInWithGithub() {
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
+  const origin = await getRequestOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 
@@ -133,10 +151,11 @@ export async function resetPassword(
   }
 
   const supabase = await createClient();
+  const origin = await getRequestOrigin();
   const { error } = await supabase.auth.resetPasswordForEmail(
     parsed.data.email,
     {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/settings`,
+      redirectTo: `${origin}/auth/callback?next=/settings`,
     }
   );
 

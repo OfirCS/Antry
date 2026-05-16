@@ -34,7 +34,7 @@ export function LayerCards({ className }: { className?: string }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5, delay: i * 0.1, ease }}
-          className="group p-10 bg-surface rounded-2xl border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-12px_rgba(255,255,255,0.05)] transition-all duration-500 ease-out flex flex-col items-start text-left"
+          className="group p-10 bg-surface rounded-lg border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_30px_-12px_rgba(255,255,255,0.05)] transition-all duration-500 ease-out flex flex-col items-start text-left"
         >
           <h3 className="text-[20px] font-semibold text-text-primary mb-4 tracking-[-0.01em]">
             {layer.title}

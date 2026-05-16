@@ -19,7 +19,6 @@ export type HackathonRecord = {
 };
 
 declare global {
-  // eslint-disable-next-line no-var
   var __antryHackathons: Map<string, HackathonRecord> | undefined;
 }
 const memStore: Map<string, HackathonRecord> =

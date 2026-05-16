@@ -46,9 +46,9 @@ function variantClasses(variant: Variant): {
         dataCta: "lime",
         className: "transition-all hover:-translate-y-0.5",
         style: {
-          background: "#C6F135",
+          background: "#20F5A0",
           color: "#0A0A0A",
-          boxShadow: "0 8px 24px rgba(198,241,53,0.32)",
+          boxShadow: "none",
         },
       };
     case "ink":
@@ -57,7 +57,7 @@ function variantClasses(variant: Variant): {
         style: {
           background: "#0A0A0A",
           color: "#FFFFFF",
-          boxShadow: "0 6px 18px rgba(10,10,10,0.18)",
+          boxShadow: "none",
         },
       };
     case "outline":
@@ -78,7 +78,7 @@ function variantClasses(variant: Variant): {
 }
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-[14px] font-semibold whitespace-nowrap disabled:opacity-70 disabled:translate-y-0 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap disabled:opacity-70 disabled:translate-y-0 disabled:cursor-not-allowed";
 
 export function Button(props: Props) {
   const { variant = "ink", size = "md", className, children, fullWidth } = props;

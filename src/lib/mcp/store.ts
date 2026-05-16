@@ -37,7 +37,6 @@ export type Attempt = {
 
 // ── In-memory fallback (pinned to globalThis to survive HMR) ──
 declare global {
-  // eslint-disable-next-line no-var
   var __antryMcpAttempts: Map<string, Attempt> | undefined;
 }
 const memStore: Map<string, Attempt> =

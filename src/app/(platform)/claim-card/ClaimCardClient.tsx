@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search,
   Loader2,
   Github,
   ExternalLink,
@@ -24,7 +23,7 @@ const ease = [0.16, 1, 0.3, 1] as const;
 const SAMPLES = ["demo", "vercel", "shadcn", "supabase"];
 
 const PROJECT_GRADIENTS = [
-  "linear-gradient(135deg, #C6F135 0%, #A8D82E 100%)",
+  "linear-gradient(135deg, #20F5A0 0%, #14B8A6 100%)",
   "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
   "linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)",
   "linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)",
@@ -97,22 +96,22 @@ export function ClaimCardClient() {
           style={{
             boxShadow:
               "0 1px 0 rgba(0,0,0,0.04), 0 24px 60px -28px rgba(0,0,0,0.35), 0 12px 24px -12px rgba(0,0,0,0.08)",
-            border: "1px solid #EBEBEB",
+            border: "1px solid #E5E7EB",
           }}
         >
           <div
-            className="flex-1 flex items-center gap-3 px-4 h-[58px] rounded-[16px] transition-all duration-200"
+            className="flex-1 flex items-center gap-3 px-4 h-[58px] rounded-lg transition-all duration-200"
             style={{
-              background: "#FAFAF7",
+              background: "#F7F8FA",
               border: "1px solid transparent",
             }}
             onFocus={(e) => {
               (e.currentTarget as HTMLElement).style.background = "#FFFFFF";
               (e.currentTarget as HTMLElement).style.borderColor = "#0A0A0A";
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 4px rgba(198,241,53,0.25)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 4px rgba(32,245,160,0.25)";
             }}
             onBlur={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "#FAFAF7";
+              (e.currentTarget as HTMLElement).style.background = "#F7F8FA";
               (e.currentTarget as HTMLElement).style.borderColor = "transparent";
               (e.currentTarget as HTMLElement).style.boxShadow = "none";
             }}
@@ -134,11 +133,11 @@ export function ClaimCardClient() {
             whileHover={isPreviewing || input.trim().length === 0 ? {} : { scale: 1.02 }}
             whileTap={isPreviewing || input.trim().length === 0 ? {} : { scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="relative inline-flex items-center justify-center gap-2 rounded-[16px] px-6 h-[58px] text-[15px] font-semibold whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed transition-all overflow-hidden"
+            className="relative inline-flex items-center justify-center gap-2 rounded-lg px-6 h-[58px] text-[15px] font-semibold whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed transition-all overflow-hidden"
             style={{
-              background: "#C6F135",
+              background: "#20F5A0",
               color: "#0A0A0A",
-              boxShadow: "0 6px 18px rgba(198,241,53,0.35), inset 0 1px 0 rgba(255,255,255,0.4)",
+              boxShadow: "0 6px 18px rgba(32,245,160,0.35), inset 0 1px 0 rgba(255,255,255,0.4)",
             }}
           >
             <AnimatePresence mode="wait">
@@ -201,7 +200,7 @@ export function ClaimCardClient() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-3 rounded-2xl bg-red-50 border border-red-200 px-5 py-4"
+            className="flex items-center gap-3 rounded-lg bg-red-50 border border-red-200 px-5 py-4"
           >
             <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
             <p className="text-[14px] text-red-700 font-medium">{error}</p>
@@ -244,7 +243,7 @@ function ProfileHeader({ preview }: { preview: BuilderCardPreview }) {
       transition={{ duration: 0.5 }}
       className="rounded-[28px] bg-white overflow-hidden"
       style={{
-        border: "1px solid #EBEBEB",
+        border: "1px solid #E5E7EB",
         boxShadow: "0 1px 0 rgba(0,0,0,0.03), 0 32px 64px -32px rgba(0,0,0,0.12)",
       }}
     >
@@ -253,7 +252,7 @@ function ProfileHeader({ preview }: { preview: BuilderCardPreview }) {
         className="relative h-32 sm:h-36"
         style={{
           background:
-            "linear-gradient(135deg, #C6F135 0%, #A8D82E 50%, #8BC34A 100%)",
+            "linear-gradient(135deg, #20F5A0 0%, #14B8A6 50%, #38BDF8 100%)",
         }}
       >
         <div
@@ -341,21 +340,21 @@ function ProfileHeader({ preview }: { preview: BuilderCardPreview }) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-6 rounded-[16px] p-5 relative overflow-hidden"
+          className="mt-6 rounded-lg p-5 relative overflow-hidden"
           style={{
             background:
-              "linear-gradient(135deg, rgba(198,241,53,0.14) 0%, rgba(198,241,53,0.06) 100%)",
-            border: "1px solid rgba(198,241,53,0.32)",
+              "linear-gradient(135deg, rgba(32,245,160,0.14) 0%, rgba(32,245,160,0.06) 100%)",
+            border: "1px solid rgba(32,245,160,0.32)",
           }}
         >
           <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full"
-               style={{ background: "radial-gradient(circle, rgba(198,241,53,0.2) 0%, transparent 70%)" }} />
+               style={{ background: "radial-gradient(circle, rgba(32,245,160,0.2) 0%, transparent 70%)" }} />
           <div className="relative flex items-start gap-3">
             <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+              className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
               style={{ background: "#0A0A0A" }}
             >
-              <Sparkles className="w-4 h-4" style={{ color: "#C6F135" }} />
+              <Sparkles className="w-4 h-4" style={{ color: "#20F5A0" }} />
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-700 mb-1">
@@ -379,7 +378,7 @@ function ProfileHeader({ preview }: { preview: BuilderCardPreview }) {
                 transition={{ delay: 0.4 + i * 0.04, duration: 0.3, ease }}
                 className="text-[12px] font-medium px-3 py-1.5 rounded-full"
                 style={{
-                  background: "#F5F5F5",
+                  background: "#F3F4F6",
                   color: "#404040",
                 }}
               >
@@ -451,18 +450,18 @@ function ProjectCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 + index * 0.06, duration: 0.4, ease }}
       whileHover={{ y: -3 }}
-      className="group rounded-[20px] bg-white overflow-hidden transition-all duration-300"
+      className="group rounded-lg bg-white overflow-hidden transition-all duration-300"
       style={{
-        border: "1px solid #EBEBEB",
+        border: "1px solid #E5E7EB",
         boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = "0 16px 36px -16px rgba(0,0,0,0.15)";
-        e.currentTarget.style.borderColor = "#D4D4D4";
+        e.currentTarget.style.borderColor = "#D1D5DB";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.boxShadow = "0 1px 0 rgba(0,0,0,0.03)";
-        e.currentTarget.style.borderColor = "#EBEBEB";
+        e.currentTarget.style.borderColor = "#E5E7EB";
       }}
     >
       {/* Gradient header strip */}
@@ -490,7 +489,7 @@ function ProjectCard({
             <span
               key={t}
               className="text-[11px] font-medium px-2 py-0.5 rounded-md"
-              style={{ background: "#F5F5F5", color: "#525252" }}
+              style={{ background: "#F3F4F6", color: "#4B5563" }}
             >
               {t}
             </span>
@@ -529,9 +528,9 @@ function ProjectCard({
 
 function ScoreBadge({ score }: { score: number }) {
   const tier =
-    score >= 85 ? { label: "Strong", color: "#0A0A0A", bg: "#C6F135" }
-    : score >= 70 ? { label: "Solid", color: "#0A0A0A", bg: "rgba(198,241,53,0.4)" }
-    : { label: "Fair", color: "#525252", bg: "#F5F5F5" };
+    score >= 85 ? { label: "Strong", color: "#0A0A0A", bg: "#20F5A0" }
+    : score >= 70 ? { label: "Solid", color: "#0A0A0A", bg: "rgba(32,245,160,0.4)" }
+    : { label: "Fair", color: "#4B5563", bg: "#F3F4F6" };
 
   return (
     <div
@@ -567,14 +566,14 @@ function ClaimCTA({
       <div
         className="absolute -top-20 -right-20 w-72 h-72 rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(198,241,53,0.20) 0%, transparent 60%)",
+          background: "radial-gradient(circle, rgba(32,245,160,0.20) 0%, transparent 60%)",
         }}
       />
 
       <div className="relative flex-1 min-w-0">
         <p
           className="text-[11px] font-bold uppercase tracking-[0.22em]"
-          style={{ color: "#C6F135" }}
+          style={{ color: "#20F5A0" }}
         >
           Looks like you?
         </p>
@@ -593,11 +592,11 @@ function ClaimCTA({
       {!user ? (
         <Link
           href={`/signup?redirect=${encodeURIComponent(`/claim-card?u=${preview.username}`)}`}
-          className="relative inline-flex items-center justify-center gap-2 rounded-[14px] px-5 h-[52px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+          className="relative inline-flex items-center justify-center gap-2 rounded-lg px-5 h-[52px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
           style={{
-            background: "#C6F135",
+            background: "#20F5A0",
             color: "#0A0A0A",
-            boxShadow: "0 8px 24px rgba(198,241,53,0.35)",
+            boxShadow: "0 8px 24px rgba(32,245,160,0.35)",
           }}
         >
           <Github className="w-4 h-4" /> Sign up & claim
@@ -607,11 +606,11 @@ function ClaimCTA({
           type="button"
           onClick={onClaim}
           disabled={isClaiming}
-          className="relative inline-flex items-center justify-center gap-2 rounded-[14px] px-5 h-[52px] text-[14px] font-semibold whitespace-nowrap disabled:opacity-50 transition-all hover:-translate-y-0.5"
+          className="relative inline-flex items-center justify-center gap-2 rounded-lg px-5 h-[52px] text-[14px] font-semibold whitespace-nowrap disabled:opacity-50 transition-all hover:-translate-y-0.5"
           style={{
-            background: "#C6F135",
+            background: "#20F5A0",
             color: "#0A0A0A",
-            boxShadow: "0 8px 24px rgba(198,241,53,0.35)",
+            boxShadow: "0 8px 24px rgba(32,245,160,0.35)",
           }}
         >
           {isClaiming ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
@@ -633,10 +632,10 @@ function ClaimResultBanner({
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl px-5 py-4 flex items-start gap-3 text-[14px]"
+      className="rounded-lg px-5 py-4 flex items-start gap-3 text-[14px]"
       style={{
-        background: result.ok ? "rgba(198,241,53,0.16)" : "#FEF2F2",
-        border: result.ok ? "1px solid rgba(198,241,53,0.4)" : "1px solid #FECACA",
+        background: result.ok ? "rgba(32,245,160,0.16)" : "#FEF2F2",
+        border: result.ok ? "1px solid rgba(32,245,160,0.4)" : "1px solid #FECACA",
         color: result.ok ? "#0A0A0A" : "#B91C1C",
       }}
     >
@@ -646,7 +645,7 @@ function ClaimResultBanner({
             className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
             style={{ background: "#0A0A0A" }}
           >
-            <Check className="w-4 h-4" style={{ color: "#C6F135" }} strokeWidth={3} />
+            <Check className="w-4 h-4" style={{ color: "#20F5A0" }} strokeWidth={3} />
           </div>
           <div>
             <p className="font-semibold">
@@ -679,13 +678,13 @@ function PreviewSkeleton() {
     >
       <div
         className="rounded-[28px] bg-white overflow-hidden"
-        style={{ border: "1px solid #EBEBEB" }}
+        style={{ border: "1px solid #E5E7EB" }}
       >
         <div
           className="h-32 sm:h-36"
           style={{
             background:
-              "linear-gradient(135deg, #C6F135 0%, #A8D82E 50%, #8BC34A 100%)",
+              "linear-gradient(135deg, #20F5A0 0%, #14B8A6 50%, #38BDF8 100%)",
             opacity: 0.5,
           }}
         />
@@ -703,15 +702,15 @@ function PreviewSkeleton() {
           <div className="mt-6 h-4 w-full bg-gray-100 rounded-md animate-pulse" />
           <div className="mt-2 h-4 w-3/4 bg-gray-100 rounded-md animate-pulse" />
           <div
-            className="mt-6 rounded-[16px] p-5"
+            className="mt-6 rounded-lg p-5"
             style={{
               background:
-                "linear-gradient(135deg, rgba(198,241,53,0.14) 0%, rgba(198,241,53,0.06) 100%)",
-              border: "1px solid rgba(198,241,53,0.32)",
+                "linear-gradient(135deg, rgba(32,245,160,0.14) 0%, rgba(32,245,160,0.06) 100%)",
+              border: "1px solid rgba(32,245,160,0.32)",
             }}
           >
             <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gray-900 animate-pulse" />
+              <div className="w-9 h-9 rounded-md bg-gray-900 animate-pulse" />
               <div className="flex-1 space-y-2">
                 <div className="h-3 w-24 bg-gray-300 rounded animate-pulse" />
                 <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
@@ -726,8 +725,8 @@ function PreviewSkeleton() {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="rounded-[20px] bg-white overflow-hidden"
-            style={{ border: "1px solid #EBEBEB" }}
+            className="rounded-lg bg-white overflow-hidden"
+            style={{ border: "1px solid #E5E7EB" }}
           >
             <div className="h-1.5 bg-gray-200 animate-pulse" />
             <div className="p-5 space-y-3">

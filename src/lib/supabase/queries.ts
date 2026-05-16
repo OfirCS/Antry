@@ -368,6 +368,10 @@ export async function getBlogPosts(): Promise<BlogPostRow[]> {
     .eq("published", true)
     .order("published_at", { ascending: false });
 
+  if (error?.code === "PGRST205") {
+    return [];
+  }
+
   if (error || !data) {
     console.error("Error fetching blog posts:", error);
     return [];

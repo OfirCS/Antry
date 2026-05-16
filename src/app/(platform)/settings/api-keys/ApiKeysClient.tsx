@@ -86,7 +86,7 @@ export function ApiKeysClient({
   const revoked = keys.filter((k) => k.revoked_at);
 
   return (
-    <main className="min-h-screen" style={{ background: "#FAFAF7" }}>
+    <main className="min-h-screen" style={{ background: "#F7F8FA" }}>
       <div className="mx-auto max-w-[920px] px-6 sm:px-10 py-12 sm:py-16">
         <div className="mb-10">
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-3 inline-flex items-center gap-2">
@@ -109,10 +109,10 @@ export function ApiKeysClient({
         {/* Just-minted reveal */}
         {justMinted && (
           <div
-            className="mb-10 rounded-[20px] p-6"
+            className="mb-10 rounded-lg p-6"
             style={{
-              background: "rgba(198,241,53,0.10)",
-              border: "1.5px solid rgba(198,241,53,0.5)",
+              background: "rgba(32,245,160,0.10)",
+              border: "1.5px solid rgba(32,245,160,0.5)",
             }}
           >
             <div className="flex items-center gap-2 mb-3">
@@ -136,7 +136,7 @@ export function ApiKeysClient({
                 type="button"
                 onClick={copyToken}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-md transition-colors shrink-0"
-                style={{ background: "#C6F135", color: "#0A0A0A" }}
+                style={{ background: "#20F5A0", color: "#0A0A0A" }}
                 aria-label="Copy"
               >
                 {copied ? (
@@ -153,7 +153,7 @@ export function ApiKeysClient({
               </summary>
               <pre
                 className="mt-3 rounded-[12px] p-4 text-[11px] leading-[1.55] font-mono text-gray-800 overflow-x-auto whitespace-pre"
-                style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+                style={{ background: "#FFFFFF", border: "1px solid #E5E7EB" }}
               >
                 {`{
   "mcpServers": {
@@ -172,8 +172,8 @@ export function ApiKeysClient({
 
         {/* Mint form */}
         <div
-          className="rounded-[20px] p-6 sm:p-7 mb-8"
-          style={{ background: "white", border: "1px solid #EBEBEB" }}
+          className="rounded-lg p-6 sm:p-7 mb-8"
+          style={{ background: "white", border: "1px solid #E5E7EB" }}
         >
           <h2 className="text-[14px] font-bold tracking-[-0.005em] text-black mb-4">
             Mint a new token
@@ -186,9 +186,9 @@ export function ApiKeysClient({
               placeholder="Label (e.g. Cursor MCP)"
               maxLength={80}
               className="flex-1 min-w-[200px] px-4 h-[44px] rounded-[12px] text-[14px] outline-none border-2 transition-colors"
-              style={{ borderColor: "#EBEBEB", background: "#FAFAF7" }}
+              style={{ borderColor: "#E5E7EB", background: "#F7F8FA" }}
               onFocus={(e) => (e.currentTarget.style.borderColor = "#0A0A0A")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#EBEBEB")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
             />
             <button
               type="button"
@@ -220,8 +220,8 @@ export function ApiKeysClient({
         </h2>
         {live.length === 0 ? (
           <div
-            className="rounded-[16px] p-6 text-center text-[13px] text-gray-500 mb-10"
-            style={{ background: "white", border: "1px dashed #EBEBEB" }}
+            className="rounded-lg p-6 text-center text-[13px] text-gray-500 mb-10"
+            style={{ background: "white", border: "1px dashed #E5E7EB" }}
           >
             No active tokens. Mint one to start using Antry from Cursor.
           </div>
@@ -262,8 +262,8 @@ function KeyRow({
 }) {
   return (
     <li
-      className="rounded-[14px] p-4 grid grid-cols-[1fr_auto] items-center gap-3"
-      style={{ background: "white", border: "1px solid #EBEBEB" }}
+      className="rounded-lg p-4 grid grid-cols-[1fr_auto] items-center gap-3"
+      style={{ background: "white", border: "1px solid #E5E7EB" }}
     >
       <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1">

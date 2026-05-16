@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "./client";
 import type { User } from "@supabase/supabase-js";
+import { AUTH_BYPASS_USER, isAuthBypassEnabled } from "@/lib/auth-bypass";
 
 type AuthContextType = {
   user: User | null;
@@ -15,11 +16,20 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const bypassAuth = isAuthBypassEnabled();
+  const supabaseConfigured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+  const [user, setUser] = useState<User | null>(
+    bypassAuth ? AUTH_BYPASS_USER : null
+  );
+  const [loading, setLoading] = useState(!bypassAuth && supabaseConfigured);
+  const supabase = bypassAuth || !supabaseConfigured ? null : createClient();
 
   useEffect(() => {
+    if (bypassAuth || !supabase) return;
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -28,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, [bypassAuth, supabase]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

@@ -3,9 +3,9 @@ import type { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
-const LIME = "#C6F135";
+const LIME = "#20F5A0";
 const INK = "#0A0A0A";
-const CREAM = "#F5F0E8";
+const CREAM = "#EEF6FF";
 
 const VARIANT_LABEL: Record<string, string> = {
   default: "Antry",
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
             width: 520,
             height: 520,
             borderRadius: 9999,
-            background: `radial-gradient(circle, rgba(198,241,53,0.30) 0%, rgba(198,241,53,0) 65%)`,
+            background: `radial-gradient(circle, rgba(32,245,160,0.30) 0%, rgba(32,245,160,0) 65%)`,
             display: "flex",
           }}
         />
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
             width: 540,
             height: 540,
             borderRadius: 9999,
-            background: `radial-gradient(circle, rgba(198,241,53,0.10) 0%, rgba(198,241,53,0) 70%)`,
+            background: `radial-gradient(circle, rgba(32,245,160,0.10) 0%, rgba(32,245,160,0) 70%)`,
             display: "flex",
           }}
         />
@@ -100,8 +100,8 @@ export async function GET(req: NextRequest) {
               gap: 10,
               padding: "8px 14px",
               borderRadius: 9999,
-              background: "rgba(198,241,53,0.12)",
-              border: "1px solid rgba(198,241,53,0.25)",
+              background: "rgba(32,245,160,0.12)",
+              border: "1px solid rgba(32,245,160,0.25)",
               color: LIME,
               fontSize: 16,
               fontWeight: 700,

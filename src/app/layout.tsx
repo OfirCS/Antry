@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Sora, DM_Sans } from "next/font/google";
 import { AuthProvider } from "@/lib/supabase/auth-context";
-import { siteUrl, defaultOpenGraph, defaultTwitter } from "@/lib/seo";
+import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const display = Sora({
@@ -17,41 +17,62 @@ const sans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const TITLE = "Antry — Show your receipts.";
+const TITLE = "GTA Fix N Clean | Window & Door Repair in the GTA";
 const DESCRIPTION =
-  "Antry is the proof-of-work network for AI builders. Companies post Briefs. Builders solve them in an instrumented Lab. Antry mints a signed Receipt that captures not just what shipped — but how you got there.";
+  "GTA Fix N Clean repairs, installs, seals, adjusts, and cleans windows, doors, screens, locks, weatherstripping, and related property fixes across the Greater Toronto Area.";
 
 function siteJsonLd(base: string) {
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        "@type": "LocalBusiness",
         "@id": `${base}/#organization`,
-        name: "Antry",
+        name: "GTA Fix N Clean",
         url: base,
-        logo: `${base}/logo.png`,
-        description:
-          "Antry is the proof-of-work network for AI builders. Receipts show how you got there, not just what you shipped.",
-        sameAs: [
-          "https://github.com/OfirCS/Antry",
-          "https://x.com/antrynetwork",
+        logo: `${base}/logo.svg`,
+        image: `${base}/gtafixnclean/white-door-after.jpeg`,
+        description: DESCRIPTION,
+        areaServed: [
+          "Toronto",
+          "Mississauga",
+          "Brampton",
+          "Vaughan",
+          "Markham",
+          "Richmond Hill",
+          "North York",
+          "Etobicoke",
+          "Scarborough",
+          "Greater Toronto Area",
         ],
+        knowsAbout: [
+          "door repair",
+          "window repair",
+          "door installation",
+          "window installation",
+          "screen repair",
+          "weatherstripping",
+          "lock hardware",
+          "caulking",
+          "property cleaning",
+        ],
+        makesOffer: {
+          "@type": "OfferCatalog",
+          name: "Window, door, cleaning, and property repair services",
+          itemListElement: [
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Door repair and installation" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Window repair and sealing" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Screen, lock, and hardware repair" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Clean finishing and small property fixes" } },
+          ],
+        },
       },
       {
         "@type": "WebSite",
         "@id": `${base}/#website`,
-        name: "Antry",
+        name: "GTA Fix N Clean",
         url: base,
         publisher: { "@id": `${base}/#organization` },
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: `${base}/discover?q={search_term_string}`,
-          },
-          "query-input": "required name=search_term_string",
-        },
       },
     ],
   };
@@ -61,26 +82,47 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: {
     default: TITLE,
-    template: "%s · Antry",
+    template: "%s · GTA Fix N Clean",
   },
   description: DESCRIPTION,
-  applicationName: "Antry",
+  applicationName: "GTA Fix N Clean",
   keywords: [
-    "AI builders",
-    "developer community",
-    "shipped projects",
-    "hackathons",
-    "proof of work",
-    "indie hackers",
-    "portfolio",
-    "Dribbble for builders",
+    "GTA Fix N Clean",
+    "GTA window repair",
+    "GTA door repair",
+    "Toronto window repair",
+    "Toronto door repair",
+    "door installation GTA",
+    "window installation GTA",
+    "screen repair GTA",
+    "weatherstripping repair",
+    "property repair GTA",
   ],
-  authors: [{ name: "Antry" }],
-  creator: "Antry",
-  publisher: "Antry",
+  authors: [{ name: "GTA Fix N Clean" }],
+  creator: "GTA Fix N Clean",
+  publisher: "GTA Fix N Clean",
   alternates: { canonical: "/" },
-  openGraph: defaultOpenGraph({ title: TITLE, description: DESCRIPTION, path: "/" }),
-  twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
+  openGraph: {
+    type: "website",
+    siteName: "GTA Fix N Clean",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "/",
+    images: [
+      {
+        url: "/gtafixnclean/white-door-after.jpeg",
+        width: 1536,
+        height: 2048,
+        alt: "GTA Fix N Clean completed exterior door repair.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/gtafixnclean/white-door-after.jpeg"],
+  },
   robots: {
     index: true,
     follow: true,
@@ -93,15 +135,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.png", type: "image/png" },
+      { url: "/logo.svg", type: "image/svg+xml" },
     ],
-    apple: "/favicon.png",
+    apple: "/logo.svg",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#111111",
+  themeColor: "#171614",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -118,10 +159,14 @@ export default function RootLayout({
   const base = siteUrl().replace(/\/$/, "");
 
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${display.variable} ${sans.variable} h-full antialiased`}
+    >
       <body className="min-h-full">
         <Script
-          id="antry-org-jsonld"
+          id="gtafixnclean-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(siteJsonLd(base)),
