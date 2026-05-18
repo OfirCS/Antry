@@ -4,7 +4,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { projectSchema, profileSchema } from "@/lib/schemas";
-import { sendEmail, welcomeEmailHtml, welcomeEmailText } from "@/lib/email/resend";
+import {
+  sendEmail,
+  welcomeEmailHtml,
+  welcomeEmailText,
+  sendAccountWelcomeEmail,
+} from "@/lib/email/resend";
 
 export type FormState = {
   error?: string;
@@ -331,6 +336,46 @@ export async function joinWaitlist(
   }
 
   return { success: true };
+}
+
+// ── New-user welcome email ──────────────────────────────
+
+/**
+ * Send the account-welcome email to the currently logged-in user, exactly
+ * once. Idempotent: it stamps `welcome_email_sent_at` into the auth user's
+ * metadata so repeat calls (e.g. on every dashboard load) are no-ops.
+ *
+ * Wire this from a first-session entry point (the auth callback or the
+ * onboarding flow). Safe to call unconditionally — it self-gates, never
+ * throws, and is inert without RESEND_API_KEY.
+ */
+export async function welcomeNewUser(): Promise<void> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !user.email) return;
+
+    // Already welcomed — nothing to do.
+    if (user.user_metadata?.welcome_email_sent_at) return;
+
+    const name =
+      (user.user_metadata?.full_name as string | undefined) ||
+      user.email.split("@")[0];
+
+    await sendAccountWelcomeEmail(user.email, name);
+
+    // Stamp so we never send twice. Best-effort; if this fails the worst
+    // case is a duplicate email on the next call.
+    const admin = createAdminClient();
+    await admin.auth.admin.updateUserById(user.id, {
+      user_metadata: {
+        ...user.user_metadata,
+        welcome_email_sent_at: new Date().toISOString(),
+      },
+    });
+  } catch {
+    // Best-effort — never block the caller.
+  }
 }
 
 // ── Join hackathon ──────────────────────────────────────

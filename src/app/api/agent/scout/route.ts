@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { createRateLimiter } from "@/lib/agent/rate-limit";
 import {
   demoBriefs,
   demoReceipts,
@@ -33,7 +34,31 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const MODEL = process.env.ANTRY_SCOUT_MODEL || "claude-opus-4-7";
-const MAX_TOOL_ITERATIONS = 6;
+
+// Hard cap on the tool-use loop. Each iteration is one Claude call, so this
+// also bounds per-request cost/latency. A clean answer almost always lands in
+// 2-4 turns; 28 leaves generous headroom for multi-tool plans while still
+// guaranteeing the loop terminates.
+const MAX_TOOL_ITERATIONS = 28;
+
+// Scout is LLM-backed — every call spends real Anthropic tokens, so it gets a
+// tighter budget than the deterministic /api/agent route (24 / 15 min). The
+// route stays public (it's a user-facing chat) but is abuse-hardened by IP.
+const checkScoutRateLimit = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  maxRequests: 12,
+});
+
+/** Derive a stable per-client key from proxy headers. */
+function getClientKey(req: Request): string {
+  const forwarded = req.headers.get("x-forwarded-for") || "";
+  const ip =
+    forwarded.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+  const ua = (req.headers.get("user-agent") || "na").slice(0, 80);
+  return `scout:${ip}:${ua}`;
+}
 
 // Stable system prompt — sits at the front of the prefix; cache-friendly.
 const SYSTEM_PROMPT = `You are Scout, Antry's discovery agent. Antry is the proof-of-work network for AI builders: companies post Briefs (real engineering missions), builders solve them in an instrumented Lab, and Antry mints a signed Receipt that captures HOW the work got done — not just what shipped. The Receipt's Builder Fingerprint scores 7 dimensions: Token Economy, Throughput, Tool-Choice IQ, Recovery Index, Prompt Discipline, Verification Rigor, Spend vs Judgment.
@@ -279,6 +304,25 @@ export async function POST(req: Request) {
     );
   }
 
+  // Abuse guard — strong per-IP rate limit. Public route, no auth required.
+  const limit = checkScoutRateLimit(getClientKey(req));
+  if (!limit.allowed) {
+    return NextResponse.json(
+      {
+        error: "Scout is rate-limited.",
+        message: `Too many requests. Wait ${limit.retryAfterSeconds}s before trying again.`,
+        retryAfterSeconds: limit.retryAfterSeconds,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(limit.retryAfterSeconds),
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    );
+  }
+
   let body: { message: string; history?: ChatTurn[] };
   try {
     body = await req.json();
@@ -309,6 +353,9 @@ export async function POST(req: Request) {
 
   const steps: { tool: string; result: string }[] = [];
   let finalText = "";
+  // Tracks whether the loop ended via a real stop_reason (true) or simply
+  // ran out of iterations (false). The latter is an error condition.
+  let loopCompleted = false;
 
   try {
     for (let i = 0; i < MAX_TOOL_ITERATIONS; i++) {
@@ -338,6 +385,7 @@ export async function POST(req: Request) {
           .map((b) => b.text)
           .join("\n")
           .trim();
+        loopCompleted = true;
         break;
       }
 
@@ -376,7 +424,23 @@ export async function POST(req: Request) {
           .join("\n")
           .trim() ||
         "I hit a snag and couldn't finish that lookup. Try rephrasing?";
+      loopCompleted = true;
       break;
+    }
+
+    // Loop exhausted MAX_TOOL_ITERATIONS without a terminal stop_reason —
+    // the model is stuck in a tool-call cycle. Fail cleanly rather than
+    // returning a half-finished answer.
+    if (!loopCompleted) {
+      return NextResponse.json(
+        {
+          error: "tool_iteration_limit",
+          message:
+            "Scout exceeded its tool-call budget without reaching an answer. Try a more specific question.",
+          steps,
+        },
+        { status: 503, headers: { "X-RateLimit-Remaining": String(limit.remaining) } }
+      );
     }
 
     if (!finalText) {
@@ -384,20 +448,23 @@ export async function POST(req: Request) {
         "I couldn't synthesize an answer in the tool-call budget. Try a more specific question (e.g. 'find senior RAG Briefs' or 'top builders by Recovery Index').";
     }
 
-    return NextResponse.json({
-      intent: "scout_llm",
-      confidence: 1,
-      response: finalText,
-      steps,
-      cards: [],
-      suggestions: [
-        { label: "Top builders", prompt: "Who are the top 5 builders by composite score?" },
-        { label: "Senior Briefs", prompt: "List the senior-difficulty Briefs" },
-        { label: "Verify a Receipt", prompt: "Verify rc_mara_anthropic_001" },
-      ],
-      model: "claude-scout-v1",
-      source: "live",
-    });
+    return NextResponse.json(
+      {
+        intent: "scout_llm",
+        confidence: 1,
+        response: finalText,
+        steps,
+        cards: [],
+        suggestions: [
+          { label: "Top builders", prompt: "Who are the top 5 builders by composite score?" },
+          { label: "Senior Briefs", prompt: "List the senior-difficulty Briefs" },
+          { label: "Verify a Receipt", prompt: "Verify rc_mara_anthropic_001" },
+        ],
+        model: "claude-scout-v1",
+        source: "live",
+      },
+      { headers: { "X-RateLimit-Remaining": String(limit.remaining) } }
+    );
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) {
       return NextResponse.json(

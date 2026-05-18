@@ -16,6 +16,8 @@ import {
   type FingerprintDimension,
 } from "@/lib/receipts/types";
 import { publicCors, resolveApiKey } from "@/lib/api-keys";
+import { candidateSearchSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -65,28 +67,14 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: { q?: string; limit?: number };
-  try {
-    body = (await req.json()) as { q?: string; limit?: number };
-  } catch {
-    return NextResponse.json(
-      { error: "invalid_json" },
-      { status: 400, headers: publicCors() }
-    );
-  }
-  const q = (body.q ?? "").trim();
-  if (!q) {
-    return NextResponse.json(
-      { error: "query_required" },
-      { status: 400, headers: publicCors() }
-    );
-  }
-  const limit = Math.min(50, Math.max(1, Number(body.limit ?? 10)));
+  const parsed = await parseJsonBody(req, candidateSearchSchema, publicCors());
+  if (!parsed.ok) return parsed.response;
+  const { q, limit, offset } = parsed.data;
 
   const dimensions = inferDimensions(q);
 
   // Score each public Receipt by averaging the matched dimensions.
-  const candidates = demoReceipts
+  const ranked = demoReceipts
     .filter((r) => r.display_visibility === "public")
     .map((r) => {
       const matched = dimensions.map((d) => r.fingerprint[d]);
@@ -101,13 +89,19 @@ export async function POST(req: Request) {
       (a, b) =>
         b.match_score - a.match_score ||
         b.receipt.composite_score - a.receipt.composite_score
-    )
-    .slice(0, limit);
+    );
+
+  const total = ranked.length;
+  const candidates = ranked.slice(offset, offset + limit);
 
   return NextResponse.json(
     {
       query: q,
       inferred_dimensions: dimensions.map((d) => DIMENSION_LABELS[d]),
+      total,
+      limit,
+      offset,
+      has_more: offset + candidates.length < total,
       results: candidates.map(({ receipt: r, match_score }) => ({
         match_score,
         builder: { username: r.builder.username, name: r.builder.name },

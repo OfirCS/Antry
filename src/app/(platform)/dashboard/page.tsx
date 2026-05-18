@@ -13,15 +13,20 @@ import {
   Heart,
   Rocket,
   Trash2,
-  Github,
   Check,
   Copy,
-  Sparkles,
+  Activity as ActivityIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { createClient } from "@/lib/supabase/client";
-import { deleteProject } from "../actions";
+import { deleteProject, welcomeNewUser } from "../actions";
+import { OnboardingWizard } from "@/components/Onboarding/OnboardingWizard";
+import {
+  fetchRecommendedBuilders,
+  type RecommendedBuilder,
+} from "./actions";
 
 type Project = {
   id: string;
@@ -164,6 +169,7 @@ export default function DashboardPage() {
   }>({});
   const [hasJoinedHackathon, setHasJoinedHackathon] = useState(false);
   const [inviteCopied, setInviteCopied] = useState(false);
+  const [recommended, setRecommended] = useState<RecommendedBuilder[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -205,40 +211,51 @@ export default function DashboardPage() {
     fetchData();
   }, [user]);
 
+  // First-session welcome email. The dashboard is the first authenticated
+  // surface a new builder lands on, so it doubles as the welcome trigger.
+  // `welcomeNewUser` self-gates on user metadata — calling it on every
+  // dashboard load is idempotent and never throws.
+  useEffect(() => {
+    if (!user) return;
+    void welcomeNewUser().catch(() => {
+      // Best-effort — a failed welcome email never affects the dashboard.
+    });
+  }, [user]);
+
+  // Recommended builders — wired to the Wave-1 recommendations engine
+  // (`getRecommendedBuilders`) via the dashboard server action. Resolves
+  // to [] on any failure, so the section simply hides itself.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    fetchRecommendedBuilders(3)
+      .then((builders) => {
+        if (!cancelled) setRecommended(builders);
+      })
+      .catch(() => {
+        if (!cancelled) setRecommended([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
   const name =
     user?.user_metadata?.full_name || profileData.full_name || user?.email?.split("@")[0] || "Builder";
   const completeness = calculateCompleteness(profileData);
   const activities = useMemo(() => generateActivity(projects), [projects]);
 
-  const onboardingSteps = [
-    {
-      key: "profile",
-      title: "Finish your profile",
-      desc: "Add a bio, skills, and links so Scout can index you.",
-      done: completeness >= 80,
-      href: "/settings",
-      icon: <UserCircle className="w-4 h-4" />,
-    },
-    {
-      key: "import",
-      title: "Import a project from GitHub",
-      desc: "Paste a username on Antry Card to auto-import your top shipped repos.",
-      done: projects.length > 0,
-      href: "/claim-card",
-      icon: <Github className="w-4 h-4" />,
-    },
-    {
-      key: "hackathon",
-      title: "Join the next Antathon",
-      desc: "Ship something real in 48 hours alongside other builders.",
-      done: hasJoinedHackathon,
-      href: "/hackathons",
-      icon: <Trophy className="w-4 h-4" />,
-    },
-  ];
-
-  const completedSteps = onboardingSteps.filter((s) => s.done).length;
-  const showOnboarding = completedSteps < onboardingSteps.length;
+  // Onboarding completion is derived from real data; the wizard itself
+  // handles sequencing, persistence, and dismissal.
+  const onboardingSteps = useMemo(
+    () =>
+      [
+        { key: "profile" as const, done: completeness >= 80 },
+        { key: "project" as const, done: projects.length > 0 },
+        { key: "hackathon" as const, done: hasJoinedHackathon },
+      ],
+    [completeness, projects.length, hasJoinedHackathon]
+  );
 
   const inviteUrl =
     profileData.invite_code && typeof window !== "undefined"
@@ -311,134 +328,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Onboarding checklist (until all steps done) ──── */}
-      <AnimatePresence>
-        {showOnboarding && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-10 rounded-lg bg-white overflow-hidden relative"
-            style={{
-              border: "1px solid #E5E7EB",
-              boxShadow: "0 1px 0 rgba(0,0,0,0.03), 0 12px 32px -16px rgba(0,0,0,0.08)",
-            }}
-          >
-            <div
-              className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
-              style={{
-                background: "radial-gradient(circle, rgba(32,245,160,0.12) 0%, transparent 70%)",
-              }}
-            />
-            <div className="relative px-5 py-4 flex items-center justify-between border-b border-[#F3F4F6]">
-              <div className="flex items-center gap-2.5">
-                <motion.div
-                  animate={{ rotate: [0, 8, -6, 0] }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="h-8 w-8 rounded-lg flex items-center justify-center"
-                  style={{ background: "rgba(32,245,160,0.18)" }}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#0A0A0A]" />
-                </motion.div>
-                <div>
-                  <p className="text-[13px] font-bold text-[#111111] tracking-tight">Get set up</p>
-                  <p className="text-[11px] text-[#9CA3AF] tabular-nums">
-                    {completedSteps}/{onboardingSteps.length} complete
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                {onboardingSteps.map((s, i) => (
-                  <motion.span
-                    key={s.key}
-                    initial={false}
-                    animate={{
-                      backgroundColor: s.done ? "#20F5A0" : "#E5E7EB",
-                      width: s.done ? 28 : 24,
-                    }}
-                    transition={{ duration: 0.3, delay: i * 0.05 }}
-                    className="h-1.5 rounded-full"
-                  />
-                ))}
-              </div>
-            </div>
-            <ul className="divide-y divide-[#F3F4F6]">
-              {onboardingSteps.map((s, i) => (
-                <motion.li
-                  key={s.key}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.06, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <Link
-                    href={s.href}
-                    className="flex items-center gap-3.5 px-5 py-4 group transition-colors"
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = s.done
-                        ? "transparent"
-                        : "rgba(32,245,160,0.05)";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = "transparent";
-                    }}
-                  >
-                    <motion.span
-                      animate={{
-                        background: s.done ? "#20F5A0" : "transparent",
-                        borderColor: s.done ? "#20F5A0" : "#D1D5DB",
-                        scale: s.done ? [1, 1.15, 1] : 1,
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 border"
-                      style={{ color: s.done ? "#0A0A0A" : "#6B7280" }}
-                    >
-                      <AnimatePresence mode="wait" initial={false}>
-                        {s.done ? (
-                          <motion.span
-                            key="check"
-                            initial={{ scale: 0, rotate: -90 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            exit={{ scale: 0 }}
-                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                          >
-                            <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                          </motion.span>
-                        ) : (
-                          <motion.span
-                            key="icon"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            {s.icon}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                    </motion.span>
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className="text-[14px] font-semibold transition-all"
-                        style={{
-                          textDecoration: s.done ? "line-through" : "none",
-                          color: s.done ? "#9CA3AF" : "#111111",
-                        }}
-                      >
-                        {s.title}
-                      </p>
-                      <p className="text-[12px] text-[#6B7280]">{s.desc}</p>
-                    </div>
-                    {!s.done && (
-                      <ArrowRight className="w-4 h-4 text-[#D1D5DB] group-hover:text-[#0A0A0A] group-hover:translate-x-0.5 transition-all shrink-0" />
-                    )}
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Guided onboarding wizard ─────────────────────── */}
+      <OnboardingWizard steps={onboardingSteps} />
 
       {/* ── Quick actions ────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3 mb-10">
@@ -577,6 +468,67 @@ export default function DashboardPage() {
         )}
       </div>
 
+      {/* ── Recommended builders ─────────────────────────── */}
+      {recommended.length > 0 && (
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[15px] font-semibold text-[#111111]">
+              Builders to follow
+            </h2>
+            <Link
+              href="/builders"
+              className="text-[12px] font-medium text-[#9CA3AF] hover:text-[#111111] transition-colors"
+            >
+              See all
+            </Link>
+          </div>
+          <div className="rounded-md border border-[#E5E7EB] bg-white divide-y divide-[#F3F4F6] overflow-hidden">
+            {recommended.map((builder) => (
+              <Link
+                key={builder.id}
+                href={`/builders/${builder.username}`}
+                className="flex items-center gap-3 px-4 py-3 group hover:bg-[#FAFAFA] transition-colors duration-150"
+              >
+                <div
+                  className="h-9 w-9 rounded-full shrink-0 flex items-center justify-center text-[13px] font-bold text-white overflow-hidden"
+                  style={{ background: builder.gradient }}
+                >
+                  {builder.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={builder.avatarUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    builder.name.slice(0, 1).toUpperCase()
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[14px] font-semibold text-[#111111] truncate group-hover:underline">
+                      {builder.name}
+                    </p>
+                    {builder.skills.length > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="shrink-0 text-[10px] px-2 py-0.5"
+                      >
+                        {builder.skills[0]}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-[12px] text-[#9CA3AF] truncate">
+                    {builder.reason}
+                  </p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[#D1D5DB] group-hover:text-[#111111] transition-colors shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── Invite codes ─────────────────────────────────── */}
       {profileData.invite_code && (
         <motion.div
@@ -656,8 +608,14 @@ export default function DashboardPage() {
       {/* ── Activity ─────────────────────────────────────── */}
       <div>
         <h2 className="text-[15px] font-semibold text-[#111111] mb-4">Activity</h2>
-        {activities.length === 0 ? (
-          <p className="text-[13px] text-[#9CA3AF]">No activity yet.</p>
+        {projects.length === 0 ? (
+          // New builders have no real activity yet — only the join event.
+          // Show a proper empty state instead of a lone, hollow line.
+          <EmptyState
+            icon={<ActivityIcon className="h-6 w-6" />}
+            title="No activity yet"
+            description="Ship a project or join a hackathon — your shipping history shows up here."
+          />
         ) : (
           <div className="space-y-0">
             {activities.map((activity) => (

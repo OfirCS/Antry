@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/auth-context";
 import { AntryLogoFull } from "@/components/AntryLogo";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
+import { CommandPalette, CommandPaletteTrigger } from "@/components/CommandPalette";
 
 /**
  * Match nav links by exact first-segment so deeply-nested routes
@@ -43,6 +44,7 @@ export function Nav() {
   const showAdmin = checkIsAdmin(user?.id);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,6 +59,19 @@ export function Nav() {
     }
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
+  }, []);
+
+  // Global Cmd/Ctrl+K opens the command palette from anywhere.
+  useEffect(() => {
+    function handleShortcut(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setMobileOpen(false);
+        setSearchOpen((v) => !v);
+      }
+    }
+    document.addEventListener("keydown", handleShortcut);
+    return () => document.removeEventListener("keydown", handleShortcut);
   }, []);
 
   useEffect(() => {
@@ -127,6 +142,22 @@ export function Nav() {
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
+            {/* Global search — desktop trigger */}
+            <CommandPaletteTrigger
+              onOpen={() => setSearchOpen(true)}
+              className="hidden lg:flex"
+            />
+
+            {/* Global search — compact icon for tablet/mobile */}
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search Antry"
+              className="flex h-11 w-11 items-center justify-center rounded-md text-black transition-colors hover:bg-gray-100 lg:hidden"
+            >
+              <Search size={20} strokeWidth={2} />
+            </button>
+
             {loading ? (
               <div className="h-9 w-20 animate-pulse rounded-md bg-gray-100" />
             ) : user ? (
@@ -241,6 +272,19 @@ export function Nav() {
               </div>
 
               <div className="flex-1 overflow-y-auto px-4 py-4">
+                {/* Search entry — opens the command palette */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setSearchOpen(true);
+                  }}
+                  className="mb-2 flex w-full items-center gap-3 rounded-xl border border-[#E5E7EB] bg-[#FAFAFA] px-4 py-3.5 text-[15px] font-medium text-[#6B7280] transition-colors hover:border-[#D1D5DB] hover:text-[#111111] min-h-[44px]"
+                >
+                  <Search size={18} strokeWidth={2} />
+                  Search Antry
+                </button>
+
                 <div className="flex flex-col gap-1">
                   {navLinks.map((link, i) => {
                     const isActive = isNavActive(pathname, link.href);
@@ -355,6 +399,9 @@ export function Nav() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Global command palette */}
+      <CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

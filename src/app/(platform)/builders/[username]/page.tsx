@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getBuilder as getBuilderFromDb } from "@/lib/supabase/queries";
 import {
   getBuilder as getMockBuilder,
@@ -148,7 +149,8 @@ export default async function BuilderProfilePage({
   const mockBuilder = getMockBuilder(username);
 
   if (!mockBuilder) {
-    return <BuilderProfileClient builder={null} />;
+    // No DB profile and no mock builder for this username — render 404.
+    notFound();
   }
 
   const mockProjects = getMockBuilderProjects(username);

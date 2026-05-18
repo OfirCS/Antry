@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { buildBuilderCard, type BuilderCardPreview } from "@/lib/discovery/profile-card";
+import { sendAccountWelcomeEmail } from "@/lib/email/resend";
 
 export type PreviewResult =
   | { ok: true; card: BuilderCardPreview }
@@ -89,6 +90,12 @@ export async function claimBuilderCard(
     });
     if (insertProfileError) {
       return { ok: false, reason: "claim_failed", error: insertProfileError.message };
+    }
+
+    // First time this user gets an Antry profile — send the account
+    // welcome. Fire-and-forget; inert without RESEND_API_KEY.
+    if (user.email) {
+      void sendAccountWelcomeEmail(user.email, card.name);
     }
   }
 

@@ -26,6 +26,28 @@ export function emailEnabled(): boolean {
   return Boolean(process.env.RESEND_API_KEY);
 }
 
+/**
+ * Send the new-account welcome email. Fire-and-forget: inert without
+ * RESEND_API_KEY, swallows transient failures, never throws. Safe to
+ * `void`-call from any signup / first-onboarding code path.
+ */
+export async function sendAccountWelcomeEmail(
+  to: string,
+  name?: string
+): Promise<void> {
+  try {
+    await sendEmail({
+      to,
+      subject: "Your Antry account is live — let's ship",
+      html: accountWelcomeEmailHtml(name),
+      text: accountWelcomeEmailText(name),
+      tags: [{ name: "category", value: "account_welcome" }],
+    });
+  } catch {
+    // Best-effort — account creation already succeeded.
+  }
+}
+
 export async function sendEmail(opts: SendOptions): Promise<EmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { ok: false, reason: "no_api_key" };
@@ -159,6 +181,62 @@ export function welcomeEmailText(): string {
     "",
     "1. Reply to this email with one sentence: what are you building right now? I read every reply and feature standout builders early.",
     "2. Browse what others have shipped: " + url + "/discover",
+    "",
+    "— Ofir, Founder of Antry",
+  ].join("\n");
+}
+
+// ── New-account welcome ─────────────────────────────────
+//
+// Sent once when a builder actually creates an account (distinct from
+// the waitlist welcome above — that audience hasn't signed up yet).
+
+export function accountWelcomeEmailHtml(name?: string): string {
+  const url = siteUrl().replace(/\/$/, "");
+  const greeting = name && name.trim() ? `Welcome aboard, ${name.trim()}.` : "Welcome aboard.";
+  const inner = `
+    <h1 style="font-size:24px;line-height:1.3;margin:0 0 16px;color:${INK};font-weight:800;letter-spacing:-0.5px;">
+      ${greeting}
+    </h1>
+    <p style="font-size:15px;line-height:1.65;color:${DIM};margin:0 0 16px;">
+      Your Antry account is live. Antry is a proof-of-work network for AI builders — your profile is the work you've shipped, not a list of job titles.
+    </p>
+    <p style="font-size:15px;line-height:1.65;color:${DIM};margin:0 0 12px;">
+      Three things worth doing in the first five minutes:
+    </p>
+    <ol style="font-size:15px;line-height:1.65;color:${DIM};margin:0 0 24px;padding-left:20px;">
+      <li style="margin-bottom:8px;"><strong style="color:${INK};">Claim your Antry Card</strong> — paste a GitHub username and we'll draft a profile from your top shipped repos.</li>
+      <li style="margin-bottom:8px;"><strong style="color:${INK};">Submit a project</strong> with a live demo so other builders can see what you can do.</li>
+      <li><strong style="color:${INK};">Join the next Antathon</strong> and ship something real in 48 hours.</li>
+    </ol>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 8px;">
+      <tr>
+        <td>
+          <a href="${url}/claim-card" style="display:inline-block;background:${INK};color:#ffffff;text-decoration:none;padding:14px 22px;border-radius:12px;font-weight:600;font-size:15px;">Claim your card →</a>
+        </td>
+      </tr>
+    </table>
+    <p style="font-size:14px;line-height:1.6;color:${DIM};margin:24px 0 0;">
+      — Ofir<br/>
+      <span style="font-size:13px;color:#A3A3A3;">Founder, Antry</span>
+    </p>
+  `;
+  return shell(inner, "Your Antry account is live — here's how to get started.");
+}
+
+export function accountWelcomeEmailText(name?: string): string {
+  const url = siteUrl().replace(/\/$/, "");
+  const greeting = name && name.trim() ? `Welcome aboard, ${name.trim()}.` : "Welcome aboard.";
+  return [
+    greeting,
+    "",
+    "Your Antry account is live. Antry is a proof-of-work network for AI builders — your profile is the work you've shipped, not a list of job titles.",
+    "",
+    "Three things worth doing in the first five minutes:",
+    "",
+    "1. Claim your Antry Card — paste a GitHub username and we'll draft a profile from your top shipped repos: " + url + "/claim-card",
+    "2. Submit a project with a live demo so other builders can see what you can do: " + url + "/submit",
+    "3. Join the next Antathon and ship something real in 48 hours: " + url + "/hackathons",
     "",
     "— Ofir, Founder of Antry",
   ].join("\n");

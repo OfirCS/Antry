@@ -8,17 +8,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[#20F5A0]/12 text-[#111111] hover:bg-[#20F5A0]/20",
+          "bg-[#20F5A0]/12 text-black hover:bg-[#20F5A0]/20",
         secondary:
-          "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB] hover:text-[#111111]",
+          "bg-gray-100 text-text-secondary hover:bg-gray-200 hover:text-black",
         success:
           "bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
         outline:
-          "border border-[#E5E7EB] bg-transparent text-[#6B7280] hover:border-[#111111] hover:text-[#111111]",
+          "border border-border bg-transparent text-text-tertiary hover:border-black hover:text-black",
         "outline-lime":
-          "border border-[#20F5A0]/40 bg-transparent text-[#111111] hover:border-[#20F5A0] hover:bg-[#20F5A0]/8",
+          "border border-[#20F5A0]/40 bg-transparent text-black hover:border-[#20F5A0] hover:bg-[#20F5A0]/8",
         dot:
-          "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E5E7EB] hover:text-[#111111] pl-2.5",
+          "bg-gray-100 text-text-secondary hover:bg-gray-200 hover:text-black pl-2.5",
         "dot-success":
           "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 pl-2.5",
         "dot-warning":
@@ -26,9 +26,9 @@ const badgeVariants = cva(
         "dot-error":
           "bg-red-50 text-red-700 hover:bg-red-100 pl-2.5",
         "dot-lime":
-          "bg-[#20F5A0]/12 text-[#111111] hover:bg-[#20F5A0]/20 pl-2.5",
+          "bg-[#20F5A0]/12 text-black hover:bg-[#20F5A0]/20 pl-2.5",
         pulse:
-          "bg-[#20F5A0]/12 text-[#111111] hover:bg-[#20F5A0]/20",
+          "bg-[#20F5A0]/12 text-black hover:bg-[#20F5A0]/20",
         "pulse-error":
           "bg-red-50 text-red-700 hover:bg-red-100",
       },

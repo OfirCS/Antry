@@ -15,6 +15,9 @@ import {
   Star,
 } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { previewBuilderCard, claimBuilderCard } from "./actions";
 import type { BuilderCardPreview } from "@/lib/discovery/profile-card";
 
@@ -200,10 +203,13 @@ export function ClaimCardClient() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-3 rounded-lg bg-red-50 border border-red-200 px-5 py-4"
           >
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-            <p className="text-[14px] text-red-700 font-medium">{error}</p>
+            <ErrorState
+              title="Couldn't generate that card"
+              description={error}
+              showRetry={Boolean(input.trim())}
+              reset={input.trim() ? () => runPreview(input) : undefined}
+            />
           </motion.div>
         )}
 
@@ -408,6 +414,21 @@ function ProfileHeader({ preview }: { preview: BuilderCardPreview }) {
 }
 
 function ProjectGrid({ projects }: { projects: BuilderCardPreview["projects"] }) {
+  if (projects.length === 0) {
+    return (
+      <EmptyState
+        icon={<Github className="h-6 w-6" />}
+        title="No shipped projects detected yet"
+        description="We couldn't find public repos with shipping signals — a live demo, a real README, or recent commits. Push something this weekend and regenerate."
+        action={
+          <Button href="https://github.com/new" external variant="secondary" size="sm">
+            Start a repo
+          </Button>
+        }
+      />
+    );
+  }
+
   return (
     <div>
       <div className="flex items-end justify-between mb-4 gap-3">
@@ -422,11 +443,6 @@ function ProjectGrid({ projects }: { projects: BuilderCardPreview["projects"] })
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {projects.length === 0 && (
-          <p className="col-span-full text-[14px] text-gray-500">
-            No public shipped projects detected yet. Push something this weekend.
-          </p>
-        )}
         {projects.map((p, i) => (
           <ProjectCard key={p.full_name} project={p} index={i} />
         ))}

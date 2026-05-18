@@ -14,10 +14,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createHackathon } from "@/lib/hackathons/store";
 import { demoBriefs } from "@/lib/receipts/demo-data";
+import { hackathonMintSchema } from "@/lib/schemas";
+import { parseJsonBody } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
-
-const VALID_VIBES = ["speedrun", "build-night", "weekend-mode", "agent-cup"];
 
 function slugify(s: string): string {
   return (
@@ -43,38 +43,9 @@ export async function POST(req: NextRequest) {
     hostUserId = null;
   }
 
-  type Body = {
-    name?: string;
-    vibe?: string;
-    durationHours?: number;
-    prize?: string;
-    briefSlugs?: string[];
-  };
-  let body: Body;
-  try {
-    body = (await req.json()) as Body;
-  } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
-  }
-
-  const name = (body.name ?? "").trim();
-  if (name.length < 3 || name.length > 80) {
-    return NextResponse.json({ error: "invalid_name" }, { status: 400 });
-  }
-  const vibe = body.vibe ?? "build-night";
-  if (!VALID_VIBES.includes(vibe)) {
-    return NextResponse.json({ error: "invalid_vibe" }, { status: 400 });
-  }
-  const durationHours = Math.max(
-    1,
-    Math.min(168, Number(body.durationHours ?? 8))
-  );
-  const briefSlugs = Array.isArray(body.briefSlugs)
-    ? body.briefSlugs.filter((s) => typeof s === "string")
-    : [];
-  if (briefSlugs.length < 1 || briefSlugs.length > 10) {
-    return NextResponse.json({ error: "invalid_briefs" }, { status: 400 });
-  }
+  const parsed = await parseJsonBody(req, hackathonMintSchema);
+  if (!parsed.ok) return parsed.response;
+  const { name, vibe, durationHours, prize, briefSlugs } = parsed.data;
 
   // Resolve brief slugs to brief IDs (using the demo catalog as source of
   // truth for now; real DB-backed lookup drops in via getBriefs() once
@@ -97,7 +68,7 @@ export async function POST(req: NextRequest) {
     name,
     vibe: vibe as "speedrun" | "build-night" | "weekend-mode" | "agent-cup",
     duration_hours: durationHours,
-    prize: (body.prize ?? "").slice(0, 200),
+    prize: prize.slice(0, 200),
     brief_ids: briefIds,
     host_user_id: hostUserId,
   });

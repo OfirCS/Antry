@@ -129,14 +129,56 @@ create policy "Waitlist is not publicly readable" on public.waitlist for select 
 -- Function: auto-create profile on signup
 create or replace function public.handle_new_user()
 returns trigger as $$
+declare
+  base_slug text;
+  candidate text;
+  suffix int := 0;
 begin
-  insert into public.profiles (id, username, full_name, invite_code)
-  values (
-    new.id,
-    lower(replace(coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)), ' ', '-')) || '-' || substr(new.id::text, 1, 4),
-    coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
-    new.raw_user_meta_data->>'invite_code'
-  );
+  -- Build a sanitized base slug from the display name (or the email local
+  -- part as a fallback). Strip anything that isn't [a-z0-9-], collapse runs
+  -- of hyphens, trim leading/trailing hyphens, and cap the length so there
+  -- is room for a numeric disambiguation suffix.
+  base_slug := lower(coalesce(
+    nullif(trim(new.raw_user_meta_data->>'full_name'), ''),
+    split_part(new.email, '@', 1)
+  ));
+  base_slug := regexp_replace(base_slug, '[^a-z0-9]+', '-', 'g');
+  base_slug := regexp_replace(base_slug, '(^-+|-+$)', '', 'g');
+  base_slug := left(base_slug, 24);
+  if base_slug = '' then
+    base_slug := 'builder';
+  end if;
+
+  -- Find the first non-colliding username. Try the bare slug, then
+  -- slug-1, slug-2, ... This is collision-safe because the unique
+  -- constraint on profiles.username is the source of truth: any race
+  -- that slips past the existence check still fails the insert, and the
+  -- loop simply advances to the next suffix.
+  candidate := base_slug;
+  loop
+    begin
+      insert into public.profiles (id, username, full_name, invite_code)
+      values (
+        new.id,
+        candidate,
+        coalesce(
+          nullif(trim(new.raw_user_meta_data->>'full_name'), ''),
+          split_part(new.email, '@', 1)
+        ),
+        new.raw_user_meta_data->>'invite_code'
+      );
+      exit; -- insert succeeded
+    exception when unique_violation then
+      -- A row for new.id already exists → nothing to do (idempotent).
+      if exists (select 1 from public.profiles where id = new.id) then
+        exit;
+      end if;
+      -- Otherwise the username collided; advance the suffix and retry.
+      suffix := suffix + 1;
+      candidate := base_slug || '-' || suffix::text;
+    end;
+  end loop;
+
   return new;
 end;
 $$ language plpgsql security definer;

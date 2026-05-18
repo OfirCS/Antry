@@ -18,6 +18,15 @@ import {
 import { getInitials, type Antathon, type Category } from "@/lib/mock-data";
 import type { Brief } from "@/lib/receipts/types";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
+
+/**
+ * Cap on how many feed items receive a per-item stagger delay. Items beyond
+ * this index animate in with no incremental delay, so long feeds don't accrue
+ * a multi-second total animation. Reduced-motion users are already handled
+ * globally by <MotionConfig reducedMotion="user"> in the platform layout.
+ */
+const STAGGER_LIMIT = 8;
 
 interface ProjectItem {
   id: string;
@@ -257,7 +266,7 @@ function FeedCard({ item, index }: { item: FeedItem; index: number }) {
     <motion.article
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, delay: index * 0.018, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.22, delay: Math.min(index, STAGGER_LIMIT) * 0.018, ease: [0.16, 1, 0.3, 1] }}
       className="group border-b border-black/10 px-0 py-5 last:border-b-0 sm:px-1"
     >
       <div className="grid grid-cols-[40px_minmax(0,1fr)] gap-3">
@@ -416,6 +425,7 @@ export default function DiscoverClient({
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search the feed"
+                aria-label="Search the feed"
                 className="h-10 w-full rounded-md border border-black/10 bg-white pl-9 pr-3 text-[13px] outline-none placeholder:text-gray-400 focus:border-black/30"
               />
             </div>
@@ -429,6 +439,7 @@ export default function DiscoverClient({
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
+                aria-pressed={activeTab === tab.key}
                 className={cn(
                   "h-9 shrink-0 rounded-md px-3 text-[12px] font-bold transition-colors",
                   activeTab === tab.key ? "bg-black text-white" : "text-gray-500 hover:bg-white hover:text-black"
@@ -443,7 +454,10 @@ export default function DiscoverClient({
         <section className="grid gap-8 py-6 lg:grid-cols-[minmax(0,1fr)_290px]">
           <div className="min-w-0">
             <div className="border-y border-black/10 bg-white/60 px-4 py-3 sm:px-5">
-              <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-gray-400">
+              <p
+                aria-live="polite"
+                className="text-[12px] font-bold uppercase tracking-[0.16em] text-gray-400"
+              >
                 {filteredFeed.length} posts / {activeTab === "all" ? "everything" : feedTabs.find((tab) => tab.key === activeTab)?.label}
               </p>
             </div>
@@ -451,20 +465,28 @@ export default function DiscoverClient({
             {filteredFeed.length > 0 ? (
               filteredFeed.map((item, index) => <FeedCard key={item.id} item={item} index={index} />)
             ) : (
-              <div className="border-b border-black/10 px-4 py-16 text-center">
-                <Search className="mx-auto mb-3 h-5 w-5 text-gray-300" />
-                <p className="text-[14px] font-bold text-black">No posts found</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setQuery("");
-                    setActiveTab("all");
-                  }}
-                  className="mt-2 text-[13px] font-bold text-gray-500 hover:text-black"
-                >
-                  Reset feed
-                </button>
-              </div>
+              <EmptyState
+                className="rounded-none border-x-0 border-b border-t-0"
+                icon={<Search className="h-6 w-6" />}
+                title={query ? "No posts match your search" : "Nothing here yet"}
+                description={
+                  query
+                    ? "Try a different search term, or reset the feed to see everything."
+                    : "There are no posts in this filter yet. Switch tabs or check back soon."
+                }
+                action={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("");
+                      setActiveTab("all");
+                    }}
+                    className="inline-flex h-9 items-center rounded-md bg-black px-4 text-[13px] font-bold text-white transition-colors hover:bg-gray-800"
+                  >
+                    Reset feed
+                  </button>
+                }
+              />
             )}
           </div>
 

@@ -18,6 +18,7 @@ import {
 import { getInitials, formatDate } from "@/lib/mock-data";
 import type { Project } from "@/lib/mock-data";
 import { ProjectCard } from "@/components/ProjectCard";
+import { EmptyState } from "@/components/ui/empty-state";
 import { toggleLike } from "../../actions";
 
 /* ── Types ─────────────────────────────────────────── */
@@ -136,6 +137,12 @@ function LikeButton({
           background: optimisticLiked ? "rgba(239,68,68,0.04)" : "#ffffff",
         }}
         title={optimisticLiked ? "Unlike" : "Like"}
+        aria-label={
+          optimisticLiked
+            ? `Unlike this project (${optimisticCount} likes)`
+            : `Like this project (${optimisticCount} likes)`
+        }
+        aria-pressed={optimisticLiked}
       >
         <motion.div
           animate={
@@ -268,7 +275,7 @@ function TechPill({ tech, index }: { tech: string; index: number }) {
     <motion.span
       initial={{ opacity: 0, scale: 0.8, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.05, ease }}
+      transition={{ duration: 0.35, delay: Math.min(index, 8) * 0.05, ease }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium cursor-default transition-all duration-300"
@@ -338,20 +345,21 @@ export default function ProjectDetailClient({
 
   if (!project) {
     return (
-      <div className="max-w-[800px] mx-auto px-8 py-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg bg-white border border-[#E5E7EB] p-12 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
-        >
-          <p className="text-[#6B7280] text-[16px] mb-4">Project not found.</p>
-          <Link
-            href="/builders"
-            className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#111111] hover:text-[#20F5A0] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to discover
-          </Link>
-        </motion.div>
+      <div className="max-w-[640px] mx-auto px-6 py-20">
+        <EmptyState
+          icon={<Sparkles className="h-6 w-6" />}
+          title="Project not found"
+          description="This project doesn't exist, or it may have been removed by its builder."
+          action={
+            <Link
+              href="/discover"
+              className="inline-flex h-9 items-center gap-2 rounded-md bg-[#111111] px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#2A2A2A]"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Explore the feed
+            </Link>
+          }
+        />
       </div>
     );
   }

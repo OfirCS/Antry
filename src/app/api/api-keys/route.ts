@@ -13,6 +13,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { mintApiKey } from "@/lib/mcp/auth";
+import { apiKeyCreateSchema } from "@/lib/schemas";
+import { zodErrorResponse } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -25,13 +27,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  let body: { label?: string };
+  // An empty body is allowed — the label defaults. Only a present-but-invalid
+  // body is rejected with a uniform 400.
+  let rawBody: unknown = {};
   try {
-    body = (await req.json()) as { label?: string };
+    const text = await req.text();
+    if (text.trim()) rawBody = JSON.parse(text);
   } catch {
-    body = {};
+    return NextResponse.json(
+      { error: "invalid_json", message: "The request body must be valid JSON." },
+      { status: 400 }
+    );
   }
-  const label = (body.label ?? "Cursor MCP").slice(0, 80);
+  const parsed = apiKeyCreateSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return zodErrorResponse(parsed.error);
+  }
+  const { label } = parsed.data;
 
   try {
     const { token, id } = await mintApiKey({ builderId: user.id, label });

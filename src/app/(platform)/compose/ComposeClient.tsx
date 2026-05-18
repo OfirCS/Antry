@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { POST_COLORS, POST_LABEL, type PostKind } from "@/components/feed/FeedCard";
+import { createPost } from "./actions";
 
 const KIND_OPTIONS: { kind: PostKind; icon: React.ReactNode; placeholder: string }[] = [
   {
@@ -39,16 +40,32 @@ export function ComposeClient() {
   const [kind, setKind] = useState<PostKind>("build");
   const [text, setText] = useState("");
   const [posting, setPosting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const placeholder = KIND_OPTIONS.find((o) => o.kind === kind)?.placeholder ?? "";
 
   const onSubmit = async () => {
     if (text.trim().length < 3) return;
+    setError(null);
     setPosting(true);
-    // v0: persistence not wired; round-trip to home so the user sees
-    // immediate feedback. Real version POSTs /api/posts and revalidates.
-    await new Promise((r) => setTimeout(r, 320));
-    router.push("/");
+    try {
+      const result = await createPost(kind, text);
+      if (!result.ok) {
+        setError(
+          result.reason === "not_authenticated"
+            ? "Sign in to post."
+            : result.error
+        );
+        setPosting(false);
+        return;
+      }
+      // Persisted (or accepted pending the posts-table migration) — the
+      // home feed is the canonical destination either way.
+      router.push("/");
+    } catch {
+      setError("Couldn't post — try again.");
+      setPosting(false);
+    }
   };
 
   return (
@@ -133,9 +150,13 @@ export function ComposeClient() {
           </div>
         </div>
 
+        {error && (
+          <p className="mt-3 text-[12px] font-medium text-red-600">{error}</p>
+        )}
+
         <p className="mt-3 text-[11px] text-gray-500">
-          Persistence isn&apos;t wired yet. Posting redirects you home —
-          real flow lands once /api/posts ships.
+          Posts are saved once the feed&apos;s <code>posts</code> table ships;
+          until then your post is accepted and you&apos;re returned to the feed.
         </p>
       </div>
     </div>

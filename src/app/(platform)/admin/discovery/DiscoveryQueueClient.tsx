@@ -26,6 +26,7 @@ import {
   generateClaimToken,
   importFromUrl,
 } from "./actions";
+import { ScoutBuilderPanel } from "./ScoutBuilderPanel";
 import type { DiscoveredProject, ScanResult } from "@/lib/discovery/types";
 
 type Tab = "pending" | "approved" | "rejected" | "all";
@@ -206,6 +207,9 @@ export function DiscoveryQueueClient({
           )}
         </div>
       )}
+
+      {/* Scout a builder by GitHub username */}
+      <ScoutBuilderPanel />
 
       {/* Import from URL */}
       <div className="mb-8 rounded-md border border-border-primary bg-surface p-5">

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getInitials } from "@/lib/mock-data";
 import { useAuth } from "@/lib/supabase/auth-context";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface ProjectItem {
   id: string;
@@ -105,24 +106,24 @@ export default function BuilderProfileClient({
   if (!builder) {
     return (
       <div
-        className="flex min-h-screen items-center justify-center px-8"
+        className="flex min-h-screen items-center justify-center px-6 py-16"
         style={{ background: "#F7F8FA" }}
       >
-        <div className="text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F4F6]">
-            <Users className="h-6 w-6 text-[#9CA3AF]" />
-          </div>
-          <p className="mb-4 text-[15px] text-[#6B7280]">
-            This builder hasn&apos;t joined yet.
-          </p>
-          <Link
-            href="/builders"
-            className="inline-flex items-center gap-2 text-[14px] font-bold text-[#111111] transition-colors hover:text-[#20F5A0]"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to the directory
-          </Link>
-        </div>
+        <EmptyState
+          className="w-full max-w-[480px]"
+          icon={<Users className="h-6 w-6" />}
+          title="Builder not found"
+          description="This builder hasn't joined Antry yet, or the profile has moved."
+          action={
+            <Link
+              href="/builders"
+              className="inline-flex h-9 items-center gap-2 rounded-md bg-[#111111] px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#2A2A2A]"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to the directory
+            </Link>
+          }
+        />
       </div>
     );
   }
@@ -228,9 +229,10 @@ export default function BuilderProfileClient({
                     target="_blank"
                     rel="noopener noreferrer"
                     title={item.label}
+                    aria-label={`${builder.name} on ${item.label}`}
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E8E4DA] bg-white text-[#57534E] transition-colors hover:border-[#C6C0B3] hover:text-[#111111]"
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4" aria-hidden="true" />
                   </a>
                 );
               })}
@@ -309,7 +311,12 @@ export default function BuilderProfileClient({
             ))}
           </div>
         ) : (
-          <p className="mt-5 text-[14px] text-[#6B7280]">No projects yet.</p>
+          <EmptyState
+            className="mt-5"
+            icon={<Code2 className="h-6 w-6" />}
+            title="No projects yet"
+            description={`${builder.name} hasn't shipped a project on Antry yet.`}
+          />
         )}
       </div>
 

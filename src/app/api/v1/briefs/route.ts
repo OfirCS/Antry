@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import { demoBriefs } from "@/lib/receipts/demo-data";
 import { publicCors } from "@/lib/api-keys";
+import { paginationSchema, zodErrorResponse } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -18,13 +19,23 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const company = url.searchParams.get("company");
   const difficulty = url.searchParams.get("difficulty");
-  const limit = Math.min(100, Number(url.searchParams.get("limit") ?? 50));
+
+  // Pagination — limit clamped 1-100 (default 50), offset >= 0 (default 0).
+  const page = paginationSchema.safeParse({
+    limit: url.searchParams.get("limit") ?? undefined,
+    offset: url.searchParams.get("offset") ?? undefined,
+  });
+  if (!page.success) {
+    return zodErrorResponse(page.error, publicCors());
+  }
+  const { limit, offset } = page.data;
 
   let briefs = demoBriefs.filter((b) => b.mode === "public" && b.status === "live");
   if (company) briefs = briefs.filter((b) => b.company.slug === company);
   if (difficulty) briefs = briefs.filter((b) => b.difficulty === difficulty);
 
-  const data = briefs.slice(0, limit).map((b) => ({
+  const total = briefs.length;
+  const data = briefs.slice(offset, offset + limit).map((b) => ({
     id: b.id,
     slug: b.slug,
     title: b.title,
@@ -50,7 +61,10 @@ export async function GET(req: Request) {
     {
       object: "list",
       data,
-      total: briefs.length,
+      total,
+      limit,
+      offset,
+      has_more: offset + data.length < total,
     },
     {
       headers: {

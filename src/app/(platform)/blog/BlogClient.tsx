@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Clock, User } from "lucide-react";
+import { ArrowUpRight, Clock, Newspaper, User } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useState } from "react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -87,6 +88,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
+              aria-pressed={activeCategory === cat}
               className="relative rounded-md px-4 py-2 text-[13px] font-semibold transition-all duration-300"
               style={{
                 background:
@@ -142,13 +144,23 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           </motion.div>
         </AnimatePresence>
 
-        {filtered.length === 0 && (
-          <div className="py-24 text-center">
-            <p className="text-[15px]" style={{ color: "#6B7280" }}>
-              No posts in this category yet. Check back soon.
-            </p>
-          </div>
-        )}
+        <div aria-live="polite">
+          {filtered.length === 0 && (
+            <EmptyState
+              icon={<Newspaper className="h-6 w-6" />}
+              title="No posts in this category yet"
+              description="There's nothing published under this category. Try another category or check back soon."
+              action={
+                <button
+                  onClick={() => setActiveCategory(ALL_CATEGORY)}
+                  className="inline-flex h-9 items-center rounded-md bg-[#111111] px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#2A2A2A]"
+                >
+                  View all posts
+                </button>
+              }
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -234,12 +246,12 @@ function FeaturedCard({ post }: { post: BlogPost }) {
               {post.authorAvatar ? (
                 <img
                   src={post.authorAvatar}
-                  alt={post.author || "Author"}
+                  alt={`${post.author || "Antry Team"} avatar`}
                   className="w-8 h-8 object-cover"
                   style={{ borderRadius: "9999px" }}
                 />
               ) : (
-                <User className="w-4 h-4" style={{ color: "rgba(255,255,255,0.72)" }} />
+                <User className="w-4 h-4" style={{ color: "rgba(255,255,255,0.72)" }} aria-hidden="true" />
               )}
             </div>
             <span
@@ -337,12 +349,12 @@ function PostCard({ post }: { post: BlogPost }) {
               {post.authorAvatar ? (
                 <img
                   src={post.authorAvatar}
-                  alt={post.author || "Author"}
+                  alt={`${post.author || "Antry Team"} avatar`}
                   className="w-6 h-6 object-cover"
                   style={{ borderRadius: "9999px" }}
                 />
               ) : (
-                <User className="w-3 h-3" style={{ color: "#9CA3AF" }} />
+                <User className="w-3 h-3" style={{ color: "#9CA3AF" }} aria-hidden="true" />
               )}
             </div>
             <span

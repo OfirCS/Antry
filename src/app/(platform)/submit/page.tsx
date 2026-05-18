@@ -417,13 +417,14 @@ export default function SubmitPage() {
 
   const fieldError = (field: string) => state?.fieldErrors?.[field]?.[0];
 
+  // Step 1 now consolidates the former steps 1 + 2 (basics + category +
+  // tech + demo). Step 2 is the final review. Everything needed to submit
+  // must be valid before the user can advance to review.
   const canProceed = useCallback((): boolean => {
     switch (step) {
       case 1:
-        return title.length >= 2 && tagline.length >= 5;
+        return title.length >= 2 && tagline.length >= 5 && category !== "";
       case 2:
-        return category !== "";
-      case 3:
         return true;
       default:
         return true;
@@ -431,7 +432,7 @@ export default function SubmitPage() {
   }, [step, title, tagline, category]);
 
   const nextStep = useCallback(() => {
-    if (canProceed() && step < 3) setStep(step + 1);
+    if (canProceed() && step < 2) setStep(step + 1);
   }, [canProceed, step, setStep]);
 
   const prevStep = useCallback(() => {
@@ -495,10 +496,10 @@ export default function SubmitPage() {
             Submit a Project
           </h1>
           <p className="text-[15px] text-[#4B5563] leading-relaxed">
-            Three steps. Under 60 seconds.
+            One form, then a quick review. Under 60 seconds.
           </p>
         </div>
-        <DotStepper current={step} total={3} />
+        <DotStepper current={step} total={2} />
       </motion.div>
 
       {/* Global error */}
@@ -528,7 +529,7 @@ export default function SubmitPage() {
           <input type="hidden" name="build_time" value="" />
 
           <AnimatePresence mode="wait">
-            {/* ── Step 1: Basics ───────────────────────── */}
+            {/* ── Step 1: Everything (basics + category + tech + demo) ── */}
             {step === 1 && (
               <motion.div
                 key="step-1"
@@ -536,8 +537,9 @@ export default function SubmitPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.25, ease }}
-                className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+                className="space-y-6"
               >
+                <div className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-md bg-[#111111] flex items-center justify-center">
                     <Pencil className="w-5 h-5 text-white" />
@@ -612,19 +614,8 @@ export default function SubmitPage() {
                     />
                   </div>
                 </div>
-              </motion.div>
-            )}
+                </div>
 
-            {/* ── Step 2: Details ──────────────────────── */}
-            {step === 2 && (
-              <motion.div
-                key="step-2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25, ease }}
-                className="space-y-6"
-              >
                 {/* Category cards */}
                 <div className="rounded-lg bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                   <div className="flex items-center gap-3 mb-5">
@@ -742,10 +733,10 @@ export default function SubmitPage() {
               </motion.div>
             )}
 
-            {/* ── Step 3: Review ───────────────────────── */}
-            {step === 3 && (
+            {/* ── Step 2: Review ───────────────────────── */}
+            {step === 2 && (
               <motion.div
-                key="step-3"
+                key="step-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -785,14 +776,14 @@ export default function SubmitPage() {
                     {
                       label: "Category",
                       value: categories.find((c) => c.value === category)?.label || "Not selected",
-                      editStep: 2,
+                      editStep: 1,
                     },
                     {
                       label: "Tech stack",
                       value: techStack.length > 0 ? techStack.join(", ") : "Not provided",
-                      editStep: 2,
+                      editStep: 1,
                     },
-                    { label: "Demo URL", value: demoUrl || "Not provided", editStep: 2 },
+                    { label: "Demo URL", value: demoUrl || "Not provided", editStep: 1 },
                   ].map((item) => (
                     <div
                       key={item.label}
@@ -841,7 +832,7 @@ export default function SubmitPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              {step < 3 ? (
+              {step < 2 ? (
                 <motion.button
                   type="button"
                   onClick={nextStep}

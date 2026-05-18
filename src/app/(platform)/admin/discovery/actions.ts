@@ -7,6 +7,7 @@ import { runGitHubScan } from "@/lib/discovery/github-scanner";
 import { scoreRepo } from "@/lib/discovery/scorer";
 import { parseGitHubUrl, extractGitHubUrls } from "@/lib/discovery/twitter-parser";
 import { importDiscoveredProject } from "@/lib/discovery/importer";
+import { scoutBuilderProfile, type ScoutResult } from "@/lib/discovery/scout-profile";
 import type { DiscoveredProject, ScanResult } from "@/lib/discovery/types";
 
 async function requireAdmin(): Promise<string> {
@@ -25,6 +26,21 @@ async function requireAdmin(): Promise<string> {
 export async function triggerScan(): Promise<ScanResult> {
   await requireAdmin();
   return runGitHubScan();
+}
+
+// ── Scout a builder ──────────────────────────────────────
+
+/**
+ * Trigger Scout on a GitHub username: build an AI-first profile and persist
+ * the builder's AI repos into the discovery queue.
+ */
+export async function scoutBuilder(username: string): Promise<ScoutResult> {
+  await requireAdmin();
+  const result = await scoutBuilderProfile(username);
+  if (result.ok && result.persisted.inserted > 0) {
+    revalidatePath("/admin/discovery");
+  }
+  return result;
 }
 
 // ── Approve project ──────────────────────────────────────

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getProject as getDbProject } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -6,6 +7,7 @@ import {
   projects as mockProjects,
   type Project,
 } from "@/lib/mock-data";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import ProjectDetailClient from "./ProjectDetailClient";
 
 function mapDbProject(project: NonNullable<Awaited<ReturnType<typeof getDbProject>>>) {
@@ -48,10 +50,27 @@ export async function generateMetadata({
     };
   }
 
+  const path = `/projects/${id}`;
+  const title = `${project.title} by ${project.builder.name}`;
+  const description =
+    project.tagline ||
+    `${project.title} — shipped by ${project.builder.name} on Antry.`;
+  const techLine = project.techStack.length
+    ? project.techStack.slice(0, 3).join(" · ")
+    : project.category;
+  const image = ogImageUrl({
+    title: project.title,
+    subtitle: `${project.builder.name}${techLine ? ` · ${techLine}` : ""}`,
+    eyebrow: "Project",
+    variant: "project",
+  });
+
   return {
-    title: `${project.title} by ${project.builder.name}`,
-    description: project.tagline,
-    alternates: { canonical: `/projects/${id}` },
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: defaultOpenGraph({ title, description, path, image }),
+    twitter: defaultTwitter({ title, description, image }),
   };
 }
 
@@ -63,6 +82,11 @@ export default async function ProjectDetailPage({
   const { id } = await params;
   const dbProject = await getDbProject(id).catch(() => null);
   const project = (dbProject ? mapDbProject(dbProject) : getMockProject(id)) ?? null;
+
+  if (!project) {
+    // Unknown project id — render the 404 page.
+    notFound();
+  }
 
   const supabase = await createClient();
   const {

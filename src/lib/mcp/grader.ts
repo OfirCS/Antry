@@ -15,6 +15,59 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { Attempt } from "./store";
 import type { Brief, Fingerprint } from "@/lib/receipts/types";
 
+// ── Retry policy ───────────────────────────────────────
+// The grader is best-effort: a transient Anthropic blip (529 overloaded,
+// 429 rate-limit, 5xx, network error) should not immediately drop the
+// caller to the heuristic fallback. Retry up to 3 times with exponential
+// backoff before giving up.
+const MAX_GRADER_RETRIES = 3;
+const BASE_BACKOFF_MS = 500;
+
+function isRetryableError(err: unknown): boolean {
+  if (err instanceof Anthropic.RateLimitError) return true;
+  if (err instanceof Anthropic.InternalServerError) return true;
+  if (err instanceof Anthropic.APIConnectionError) return true;
+  if (err instanceof Anthropic.APIError) {
+    // 408 Request Timeout, 409 Conflict, 429, 5xx (incl. 529 overloaded).
+    return (
+      err.status === 408 ||
+      err.status === 409 ||
+      err.status === 429 ||
+      err.status >= 500
+    );
+  }
+  return false;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Call an Anthropic operation with exponential backoff on transient errors.
+ * Retries up to {@link MAX_GRADER_RETRIES} times (500ms, 1s, 2s + jitter).
+ */
+async function withRetry<T>(op: () => Promise<T>): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= MAX_GRADER_RETRIES; attempt++) {
+    try {
+      return await op();
+    } catch (err) {
+      lastErr = err;
+      if (attempt === MAX_GRADER_RETRIES || !isRetryableError(err)) {
+        throw err;
+      }
+      const backoff =
+        BASE_BACKOFF_MS * 2 ** attempt + Math.floor(Math.random() * 250);
+      console.warn(
+        `[grader] transient error (attempt ${attempt + 1}/${MAX_GRADER_RETRIES}), retrying in ${backoff}ms`
+      );
+      await sleep(backoff);
+    }
+  }
+  throw lastErr;
+}
+
 export type GradeResult = {
   composite_score: number;
   fingerprint: Fingerprint;
@@ -95,72 +148,74 @@ ${input.attempt.events
   )
   .join("\n\n")}`;
 
-  const response = await client.messages.create({
-    model: "claude-opus-4-7",
-    max_tokens: 16000,
-    thinking: { type: "adaptive" },
-    output_config: {
-      effort: "high",
-      format: {
-        type: "json_schema",
-        schema: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            composite_score: { type: "integer", minimum: 0, maximum: 100 },
-            fingerprint: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                tokenEconomy: { type: "integer", minimum: 0, maximum: 100 },
-                throughput: { type: "integer", minimum: 0, maximum: 100 },
-                toolChoiceIQ: { type: "integer", minimum: 0, maximum: 100 },
-                recoveryIndex: { type: "integer", minimum: 0, maximum: 100 },
-                promptDiscipline: {
-                  type: "integer",
-                  minimum: 0,
-                  maximum: 100,
+  const response = await withRetry(() =>
+    client.messages.create({
+      model: "claude-opus-4-7",
+      max_tokens: 16000,
+      thinking: { type: "adaptive" },
+      output_config: {
+        effort: "high",
+        format: {
+          type: "json_schema",
+          schema: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              composite_score: { type: "integer", minimum: 0, maximum: 100 },
+              fingerprint: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  tokenEconomy: { type: "integer", minimum: 0, maximum: 100 },
+                  throughput: { type: "integer", minimum: 0, maximum: 100 },
+                  toolChoiceIQ: { type: "integer", minimum: 0, maximum: 100 },
+                  recoveryIndex: { type: "integer", minimum: 0, maximum: 100 },
+                  promptDiscipline: {
+                    type: "integer",
+                    minimum: 0,
+                    maximum: 100,
+                  },
+                  verificationRigor: {
+                    type: "integer",
+                    minimum: 0,
+                    maximum: 100,
+                  },
+                  spendVsJudgment: {
+                    type: "integer",
+                    minimum: 0,
+                    maximum: 100,
+                  },
                 },
-                verificationRigor: {
-                  type: "integer",
-                  minimum: 0,
-                  maximum: 100,
-                },
-                spendVsJudgment: {
-                  type: "integer",
-                  minimum: 0,
-                  maximum: 100,
-                },
+                required: [
+                  "tokenEconomy",
+                  "throughput",
+                  "toolChoiceIQ",
+                  "recoveryIndex",
+                  "promptDiscipline",
+                  "verificationRigor",
+                  "spendVsJudgment",
+                ],
               },
-              required: [
-                "tokenEconomy",
-                "throughput",
-                "toolChoiceIQ",
-                "recoveryIndex",
-                "promptDiscipline",
-                "verificationRigor",
-                "spendVsJudgment",
-              ],
+              rationale: { type: "string", maxLength: 2000 },
             },
-            rationale: { type: "string", maxLength: 2000 },
+            required: ["composite_score", "fingerprint", "rationale"],
           },
-          required: ["composite_score", "fingerprint", "rationale"],
         },
       },
-    },
-    system: [
-      {
-        type: "text",
-        text: systemPrompt,
-      },
-      {
-        type: "text",
-        text: briefBlock,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages: [{ role: "user", content: traceBlock }],
-  });
+      system: [
+        {
+          type: "text",
+          text: systemPrompt,
+        },
+        {
+          type: "text",
+          text: briefBlock,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      messages: [{ role: "user", content: traceBlock }],
+    })
+  );
 
   const textBlock = response.content.find(
     (b): b is Anthropic.TextBlock => b.type === "text"

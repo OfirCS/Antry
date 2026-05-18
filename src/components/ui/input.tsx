@@ -68,7 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       return (
         <div className={cn("relative w-full", prefix || suffix ? "flex items-center" : "")}>
           {prefix && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 z-10 pointer-events-none peer-focus:text-[#111111]">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 z-10 pointer-events-none peer-focus:text-black">
               {prefix}
             </div>
           )}
@@ -76,10 +76,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "peer flex h-14 w-full rounded-md border bg-white px-4 pt-5 pb-1.5 text-[14px] font-medium text-[#111111] placeholder:text-transparent outline-none",
+              "peer flex h-14 w-full rounded-md border bg-white px-4 pt-5 pb-1.5 text-[14px] font-medium text-black placeholder:text-transparent outline-none",
               "transition-[border-color,box-shadow] duration-250 ease-out",
-              "border-[#E5E7EB]",
-              "focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
+              "border-border",
+              "focus:border-black focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
               "disabled:cursor-not-allowed disabled:opacity-50",
               prefix ? "pl-10" : "",
               suffix ? "pr-10" : "",
@@ -100,14 +100,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "absolute pointer-events-none transition-all duration-200 ease-out origin-left",
               prefix ? "left-10" : "left-4",
               isLifted
-                ? "top-2 text-[11px] font-semibold tracking-wide text-[#6B7280]"
-                : "top-1/2 -translate-y-1/2 text-[14px] text-[#9CA3AF]"
+                ? "top-2 text-[11px] font-semibold tracking-wide text-text-tertiary"
+                : "top-1/2 -translate-y-1/2 text-[14px] text-gray-400"
             )}
           >
             {floatingLabel}
           </label>
           {suffix && (
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 pointer-events-none">
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 pointer-events-none">
               {suffix}
             </div>
           )}
@@ -120,7 +120,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       return (
         <div className="relative w-full flex items-center">
           {prefix && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 pointer-events-none z-10">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 pointer-events-none z-10">
               {prefix}
             </div>
           )}
@@ -128,10 +128,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "flex h-12 w-full rounded-md border bg-white py-3 text-[14px] font-medium text-[#111111] placeholder:text-[#9CA3AF] outline-none",
+              "flex h-12 w-full rounded-md border bg-white py-3 text-[14px] font-medium text-black placeholder:text-gray-400 outline-none",
               "transition-[border-color,box-shadow] duration-250 ease-out",
-              "border-[#E5E7EB]",
-              "focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
+              "border-border",
+              "focus:border-black focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
               "disabled:cursor-not-allowed disabled:opacity-50",
               prefix ? "pl-10" : "px-4",
               suffix ? "pr-10" : "px-4",
@@ -148,7 +148,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {suffix && (
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition-colors duration-200 pointer-events-none">
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 pointer-events-none">
               {suffix}
             </div>
           )}
@@ -162,10 +162,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         id={inputId}
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-md border bg-white px-4 py-3 text-[14px] font-medium text-[#111111] placeholder:text-[#9CA3AF] outline-none",
+          "flex h-12 w-full rounded-md border bg-white px-4 py-3 text-[14px] font-medium text-black placeholder:text-gray-400 outline-none",
           "transition-[border-color,box-shadow] duration-250 ease-out",
-          "border-[#E5E7EB]",
-          "focus:border-[#111111] focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
+          "border-border",
+          "focus:border-black focus:shadow-[0_0_0_3px_rgba(17,17,17,0.06)]",
           "disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}

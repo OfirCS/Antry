@@ -1,39 +1,25 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 
+// Robots policy. Block admin / dashboard / settings / auth + the *internal*
+// API routes that serve user data. Keep `/api/og` allowed so Twitter/LinkedIn
+// crawlers can fetch dynamic OG images, and keep `/api/v1/receipts/*/verify`
+// allowed because it's a public verifier (CORS-enabled).
 export default function robots(): MetadataRoute.Robots {
   const base = siteUrl();
   return {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/llm.txt", "/llms.txt", "/logo.svg", "/gtafixnclean/"],
+        allow: ["/", "/api/og", "/api/v1/"],
         disallow: [
           "/admin",
-          "/agent",
-          "/agents",
           "/dashboard",
-          "/briefs",
-          "/builders",
-          "/claim",
-          "/claim-card",
-          "/companies",
-          "/discover",
-          "/hackathons",
-          "/pricing",
-          "/projects",
-          "/receipts",
           "/settings",
-          "/showcase",
-          "/submit",
           "/auth",
-          "/login",
-          "/signup",
           "/api/agent",
           "/api/discovery",
           "/api/gateway",
-          "/api/hackathons",
-          "/api/mcp",
         ],
       },
     ],

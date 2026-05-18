@@ -239,12 +239,12 @@ export default function BlogPostClient({ post }: { post: BlogPostData }) {
                     {post.authorAvatar ? (
                       <img
                         src={post.authorAvatar}
-                        alt={post.author || "Author"}
+                        alt={`${post.author || "Antry Team"} avatar`}
                         className="w-9 h-9 object-cover"
                         style={{ borderRadius: "9999px" }}
                       />
                     ) : (
-                      <User className="w-4 h-4" style={{ color: "#6B7280" }} />
+                      <User className="w-4 h-4" style={{ color: "#6B7280" }} aria-hidden="true" />
                     )}
                   </div>
                   <div>
@@ -301,6 +301,7 @@ export default function BlogPostClient({ post }: { post: BlogPostData }) {
                     color: "#6B7280",
                   }}
                   title="Share on Twitter"
+                  aria-label="Share this article on Twitter"
                 >
                   <Twitter className="w-4 h-4" />
                 </a>
@@ -315,10 +316,12 @@ export default function BlogPostClient({ post }: { post: BlogPostData }) {
                     color: "#6B7280",
                   }}
                   title="Share on LinkedIn"
+                  aria-label="Share this article on LinkedIn"
                 >
                   <Linkedin className="w-4 h-4" />
                 </a>
                 <button
+                  type="button"
                   onClick={handleCopyLink}
                   className="flex items-center justify-center w-10 h-10 transition-all duration-200"
                   style={{
@@ -327,6 +330,7 @@ export default function BlogPostClient({ post }: { post: BlogPostData }) {
                     color: copied ? "#ffffff" : "#6B7280",
                   }}
                   title="Copy link"
+                  aria-label={copied ? "Link copied to clipboard" : "Copy link to this article"}
                 >
                   {copied ? (
                     <Check className="w-4 h-4" />

@@ -6,6 +6,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { getInitials } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
+
+/**
+ * Cap on how many builder rows receive a per-item stagger delay. Rows beyond
+ * this index animate in with no incremental delay, keeping long directories
+ * snappy. Reduced-motion is handled globally via <MotionConfig>.
+ */
+const STAGGER_LIMIT = 8;
 
 const segments = [
   { key: "all", label: "All" },
@@ -58,7 +66,7 @@ function BuilderRow({ builder, index }: { builder: BuilderItem; index: number })
     <motion.div
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: index * 0.025, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.25, delay: Math.min(index, STAGGER_LIMIT) * 0.025, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
         href={`/builders/${builder.username}`}
@@ -171,6 +179,7 @@ export default function BuildersClient({ builders }: { builders: BuilderItem[] }
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search builders"
+                aria-label="Search builders by name, handle, or skill"
                 className="h-10 w-full rounded-md border border-black/10 bg-white pl-9 pr-3 text-[13px] outline-none transition-colors placeholder:text-gray-400 focus:border-black/30"
               />
             </div>
@@ -179,6 +188,7 @@ export default function BuildersClient({ builders }: { builders: BuilderItem[] }
                 <button
                   key={segment.key}
                   onClick={() => setActiveSegment(segment.key)}
+                  aria-pressed={activeSegment === segment.key}
                   className={cn(
                     "h-9 shrink-0 rounded-md px-3 text-[12px] font-semibold transition-colors",
                     activeSegment === segment.key
@@ -193,36 +203,52 @@ export default function BuildersClient({ builders }: { builders: BuilderItem[] }
           </div>
         </section>
 
-        <section className="mt-5 overflow-hidden rounded-md border border-black/10 bg-white">
-          <div className="hidden grid-cols-[1fr_0.55fr_0.32fr_0.32fr_0.18fr] border-b border-black/10 bg-gray-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-gray-500 lg:grid">
-            <span>Builder</span>
-            <span>Skills</span>
-            <span>Output</span>
-            <span>Signal</span>
-            <span />
-          </div>
+        <p aria-live="polite" className="mt-4 text-[12px] font-semibold text-gray-500">
+          {filteredBuilders.length} builder{filteredBuilders.length === 1 ? "" : "s"}
+          {activeSegment !== "all"
+            ? ` · ${segments.find((s) => s.key === activeSegment)?.label}`
+            : ""}
+        </p>
 
-          <div className="divide-y divide-black/10">
-            {filteredBuilders.map((builder, index) => (
-              <BuilderRow key={builder.id} builder={builder} index={index} />
-            ))}
-          </div>
+        {filteredBuilders.length > 0 ? (
+          <section className="mt-3 overflow-hidden rounded-md border border-black/10 bg-white">
+            <div className="hidden grid-cols-[1fr_0.55fr_0.32fr_0.32fr_0.18fr] border-b border-black/10 bg-gray-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-gray-500 lg:grid">
+              <span>Builder</span>
+              <span>Skills</span>
+              <span>Output</span>
+              <span>Signal</span>
+              <span />
+            </div>
 
-          {filteredBuilders.length === 0 && (
-            <div className="px-4 py-16 text-center">
-              <p className="text-[14px] font-semibold text-black">No builders found</p>
+            <div className="divide-y divide-black/10">
+              {filteredBuilders.map((builder, index) => (
+                <BuilderRow key={builder.id} builder={builder} index={index} />
+              ))}
+            </div>
+          </section>
+        ) : (
+          <EmptyState
+            className="mt-3"
+            icon={<Search className="h-6 w-6" />}
+            title="No builders found"
+            description={
+              query || activeSegment !== "all"
+                ? "No builders match your filters. Try a broader search or clear the filters."
+                : "No builders are listed yet. Check back soon."
+            }
+            action={
               <button
                 onClick={() => {
                   setQuery("");
                   setActiveSegment("all");
                 }}
-                className="mt-2 text-[13px] font-semibold text-gray-500 hover:text-black"
+                className="inline-flex h-9 items-center rounded-md bg-black px-4 text-[13px] font-bold text-white transition-colors hover:bg-gray-800"
               >
                 Reset filters
               </button>
-            </div>
-          )}
-        </section>
+            }
+          />
+        )}
       </section>
     </main>
   );

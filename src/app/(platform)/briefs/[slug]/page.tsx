@@ -12,6 +12,10 @@ import { BuilderFingerprint, FingerprintGlyph } from "@/components/BuilderFinger
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
 import { CursorStartPanel } from "@/components/CursorStartPanel";
 
+// Briefs are a fixed demo set with no creation UI — any slug outside this
+// list is a real 404 (resolved at the routing layer, before streaming).
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return demoBriefs.map((b) => ({ slug: b.slug }));
 }

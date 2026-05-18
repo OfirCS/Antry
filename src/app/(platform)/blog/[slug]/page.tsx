@@ -1,5 +1,5 @@
+import { notFound } from "next/navigation";
 import { getBlogPost } from "@/lib/supabase/queries";
-import Link from "next/link";
 import BlogPostClient from "./BlogPostClient";
 import { staticPosts, postContent } from "../posts";
 
@@ -50,19 +50,6 @@ export default async function BlogPostPage({
     );
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center px-8" style={{ background: "#F7F8FA" }}>
-      <div className="text-center">
-        <p className="text-[15px] mb-4 font-medium" style={{ color: "#6B7280" }}>
-          This post doesn&apos;t exist or hasn&apos;t been published yet.
-        </p>
-        <Link
-          href="/blog"
-          className="font-semibold text-[#0A0A0A] hover:underline text-[14px]"
-        >
-          Back to blog
-        </Link>
-      </div>
-    </div>
-  );
+  // No DB post and no static post for this slug — render the 404 page.
+  notFound();
 }

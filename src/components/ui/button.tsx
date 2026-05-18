@@ -1,6 +1,19 @@
 "use client";
 
+/**
+ * CANONICAL Button — the single source of truth for buttons across Antry.
+ *
+ * `src/components/design/Button.tsx` is a thin backwards-compatible adapter
+ * that re-exports this component; do not add a third button.
+ *
+ * Renders a <button> by default. To render a link:
+ *   - pass `href` for an internal/external anchor (next/link is used for
+ *     internal routes, a plain <a target="_blank"> for external), or
+ *   - pass `asChild` and provide your own anchor child (shadcn Slot pattern).
+ */
+
 import * as React from "react";
+import Link from "next/link";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -11,18 +24,18 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[#111111] text-white rounded-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-sm",
+          "bg-black text-white rounded-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-sm",
         lime:
-          "bg-[#20F5A0] text-[#111111] rounded-md font-semibold hover:bg-[#67E8F9] hover:shadow-[0_8px_24px_rgba(32,245,160,0.3)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-none",
+          "bg-[#20F5A0] text-black rounded-md font-semibold hover:bg-[#67E8F9] hover:shadow-[0_8px_24px_rgba(32,245,160,0.3)] hover:-translate-y-[1px] active:translate-y-0 active:shadow-none",
         outline:
-          "border border-[#D1D5DB] bg-transparent text-[#111111] rounded-md hover:bg-[#F3F4F6] hover:border-[#111111] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:shadow-none",
+          "border border-border-strong bg-transparent text-black rounded-md hover:bg-gray-100 hover:border-black hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:shadow-none",
         "outline-light":
           "border border-white/25 bg-transparent text-white rounded-md hover:border-white/60 hover:bg-white/5 hover:shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
         ghost:
-          "text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#111111] rounded-md",
-        link: "text-[#111111] underline-offset-4 hover:underline",
+          "text-text-secondary hover:bg-gray-100 hover:text-black rounded-md",
+        link: "text-black underline-offset-4 hover:underline",
         secondary:
-          "bg-[#F3F4F6] text-[#111111] rounded-md hover:bg-[#E5E7EB] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+          "bg-gray-100 text-black rounded-md hover:bg-gray-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
       },
       size: {
         sm: "h-9 px-4 text-[13px]",
@@ -45,12 +58,42 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  /** Render the button as a link. Internal routes use next/link. */
+  href?: string;
+  /** When `href` is set, open in a new tab via a plain <a> element. */
+  external?: boolean;
+  /** Stretch the button to fill its container's width. */
+  fullWidth?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading = false, disabled, children, onClick, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      disabled,
+      children,
+      onClick,
+      href,
+      external,
+      fullWidth,
+      type,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
+    const classes = cn(
+      buttonVariants({ variant, size }),
+      fullWidth && "w-full",
+      className
+    );
 
+    // Declared before any conditional return so the hook order stays stable
+    // across renders (rules-of-hooks) — used only by the <button> branch.
     const handleClick = React.useCallback(
       (e: React.MouseEvent<HTMLButtonElement>) => {
         // Ripple effect
@@ -84,22 +127,47 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       [onClick]
     );
 
+    // Link rendering — the unique capability merged in from the former
+    // design/Button.tsx. `href` takes precedence over a plain <button>.
+    if (href !== undefined && !asChild) {
+      if (external) {
+        return (
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className={classes}
+            {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+          >
+            {children}
+          </a>
+        );
+      }
+      return (
+        <Link
+          href={href}
+          className={classes}
+          {...(props as Omit<
+            React.ComponentProps<typeof Link>,
+            "href" | "className"
+          >)}
+        >
+          {children}
+        </Link>
+      );
+    }
+
     const isDisabled = disabled || loading;
 
     if (asChild) {
-      return (
-        <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          {...props}
-        />
-      );
+      return <Comp className={classes} ref={ref} {...props} />;
     }
 
     return (
       <button
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={classes}
         ref={ref}
+        type={type ?? "button"}
         disabled={isDisabled}
         onClick={handleClick}
         {...props}

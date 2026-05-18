@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Users, ArrowRight, Trophy, Flame } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const filters = ["all", "active", "upcoming", "completed"] as const;
 type Filter = (typeof filters)[number];
@@ -180,6 +181,7 @@ export default function HackathonsClient({
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search hackathons..."
+              aria-label="Search hackathons by title or theme"
               className="w-full pl-10 pr-4 py-3 sm:py-2.5 bg-white border border-[#111]/[0.08] rounded-md text-[14px] text-[#111] placeholder:text-[#111]/30 outline-none focus:border-[#111]/20 focus:shadow-[0_0_0_3px_rgba(17,17,17,0.04)] transition-all"
             />
           </div>
@@ -188,6 +190,7 @@ export default function HackathonsClient({
           <div className="relative flex items-center gap-0.5 p-1 rounded-md bg-[#111]/[0.04] overflow-x-auto scrollbar-none">
             <div
               ref={indicatorRef}
+              aria-hidden="true"
               className="absolute top-1 h-[calc(100%-8px)] rounded-lg bg-[#111] shadow-sm transition-all duration-300 ease-out"
             />
             {filters.map((f) => (
@@ -197,6 +200,7 @@ export default function HackathonsClient({
                   if (el) tabRefs.current.set(f, el);
                 }}
                 onClick={() => setFilter(f)}
+                aria-pressed={filter === f}
                 className={cn(
                   "relative z-10 px-3.5 py-2.5 sm:py-1.5 text-[12px] font-semibold capitalize rounded-lg transition-colors duration-200 whitespace-nowrap min-h-[44px] sm:min-h-0",
                   filter === f ? "text-white" : "text-[#111]/40 hover:text-[#111]/60"
@@ -211,7 +215,7 @@ export default function HackathonsClient({
 
       {/* -- Hackathon list --------------------------------------- */}
       <div className="max-w-[960px] mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-8">
-        <p className="text-[13px] font-medium text-[#111]/40 mb-5">
+        <p aria-live="polite" className="text-[13px] font-medium text-[#111]/40 mb-5">
           {filtered.length} hackathon{filtered.length !== 1 ? "s" : ""}
           {filter !== "all" ? ` \u00b7 ${filter}` : ""}
         </p>
@@ -226,27 +230,26 @@ export default function HackathonsClient({
 
         {/* Empty state */}
         {filtered.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20"
-          >
-            <div className="w-12 h-12 rounded-md bg-[#111]/[0.04] flex items-center justify-center mx-auto mb-3">
-              <Search className="w-5 h-5 text-[#111]/20" />
-            </div>
-            <p className="text-[15px] font-medium text-[#111]/40">
-              No hackathons match your search.
-            </p>
-            <button
-              onClick={() => {
-                setQ("");
-                setFilter("all");
-              }}
-              className="mt-3 text-[13px] font-semibold text-[#111111] hover:underline"
-            >
-              Clear filters
-            </button>
-          </motion.div>
+          <EmptyState
+            icon={<Trophy className="h-6 w-6" />}
+            title={q || filter !== "all" ? "No hackathons match" : "No hackathons yet"}
+            description={
+              q || filter !== "all"
+                ? "Nothing matches your search or filter. Try a broader search or clear the filters."
+                : "There are no hackathons listed right now. Check back soon."
+            }
+            action={
+              <button
+                onClick={() => {
+                  setQ("");
+                  setFilter("all");
+                }}
+                className="inline-flex h-9 items-center rounded-md bg-[#111] px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#2A2A2A]"
+              >
+                Clear filters
+              </button>
+            }
+          />
         )}
       </div>
 
@@ -302,7 +305,7 @@ function HackathonCard({
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.35, delay: index * 0.04 }}
+      transition={{ duration: 0.35, delay: Math.min(index, 8) * 0.04 }}
     >
       <Link
         href={`/hackathons/${event.id}`}

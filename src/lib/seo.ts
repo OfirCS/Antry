@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const FALLBACK_URL = "https://gtafixnclean.ca";
+const FALLBACK_URL = "https://antry.com";
 
 export function siteUrl(): string {
   return (
@@ -39,7 +39,7 @@ export function ogImageUrl(params: {
 export function defaultOpenGraph(input: OgInput): Metadata["openGraph"] {
   return {
     type: "website",
-    siteName: "GTA Fix N Clean",
+    siteName: "Antry",
     locale: "en_US",
     url: absoluteUrl(input.path ?? "/"),
     title: input.title,
@@ -65,5 +65,7 @@ export function defaultTwitter(input: {
     title: input.title,
     description: input.description,
     images: [input.image ?? ogImageUrl({ title: input.title, subtitle: input.description })],
+    creator: "@antrynetwork",
+    site: "@antrynetwork",
   };
 }

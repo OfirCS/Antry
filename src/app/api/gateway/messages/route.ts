@@ -36,6 +36,8 @@ import {
   mockOutputTokensForTurn,
   mockToolsForTurn,
 } from "@/lib/receipts/gateway-mock";
+import { gatewayMessagesSchema } from "@/lib/schemas";
+import { zodErrorResponse } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -126,15 +128,20 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: GatewayRequest;
+  let rawBody: unknown;
   try {
-    body = (await req.json()) as GatewayRequest;
+    rawBody = await req.json();
   } catch {
     return NextResponse.json(
       { error: "invalid_json" },
       { status: 400, headers: corsHeaders(origin) }
     );
   }
+  const validated = gatewayMessagesSchema.safeParse(rawBody);
+  if (!validated.success) {
+    return zodErrorResponse(validated.error, corsHeaders(origin));
+  }
+  const body = validated.data as GatewayRequest;
 
   const token = body.attempt_token || req.headers.get("X-Antry-Lab-Session") || "";
   const session = verifyLabSession(token);
