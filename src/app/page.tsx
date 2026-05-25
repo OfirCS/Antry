@@ -1,517 +1,466 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check, Mail, MapPin, MessageSquareText } from "lucide-react";
+import { ArrowRight, Github, Twitter, Linkedin, Sparkles, ShieldCheck } from "lucide-react";
+import { Nav } from "@/components/Nav";
+import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
+import { demoReceipts, getDemoReceipt } from "@/lib/receipts/demo-data";
+import { LandingHeroAside } from "./_landing/LandingClient";
+import { ReceiptReveal } from "./_landing/ReceiptReveal";
 
-const TITLE = "GTA Fix N Clean | Window & Door Repair in the GTA";
+const TITLE = "Antry — Show your receipts.";
 const DESCRIPTION =
-  "Window and door repair, installation, sealing, hardware fixes, screens, clean finishing, and related property repairs across the Greater Toronto Area.";
-
-const CONTACT = {
-  email: "hello@gtafixnclean.ca",
-};
-
-const quoteMailto = `mailto:${CONTACT.email}?subject=${encodeURIComponent(
-  "GTA Fix N Clean quote request",
-)}`;
+  "Antry is the proof-of-work network for AI builders. Companies post Briefs. Builders solve them in an instrumented Lab. Antry mints a signed Receipt that captures not just what shipped — but how you got there.";
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/" },
-  keywords: [
-    "GTA window repair",
-    "GTA door repair",
-    "door installation Toronto",
-    "window installation Toronto",
-    "screen repair GTA",
-    "weatherstripping repair",
-    "door lock repair",
-    "glass door repair",
-    "property repair GTA",
-    "GTA Fix N Clean",
-  ],
-  openGraph: {
-    type: "website",
-    siteName: "GTA Fix N Clean",
+  openGraph: defaultOpenGraph({
     title: TITLE,
     description: DESCRIPTION,
-    url: "/",
-    images: [
-      {
-        url: "/gtafixnclean/white-door-after.jpeg",
-        width: 1536,
-        height: 2048,
-        alt: "Freshly repaired white exterior door by GTA Fix N Clean.",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: DESCRIPTION,
-    images: ["/gtafixnclean/white-door-after.jpeg"],
-  },
+    path: "/",
+    image: ogImageUrl({
+      title: "Show your receipts.",
+      subtitle: "GitHub showed what you ship. Antry shows how you think.",
+      eyebrow: "Antry",
+    }),
+  }),
+  twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
-const serviceLines = [
-  {
-    symbol: "door",
-    label: "Doors",
-    title: "Entry, storm, patio, and glass doors",
-    body: "Alignment, rubbing, hinges, closers, sweeps, thresholds, handles, locks, and new door installs.",
-  },
-  {
-    symbol: "window",
-    label: "Windows",
-    title: "Windows, screens, tracks, and seals",
-    body: "Drafts, tired caulking, loose hardware, damaged screens, sticky tracks, locks, and weather protection.",
-  },
-  {
-    symbol: "hardware",
-    label: "Hardware",
-    title: "Locks, handles, latches, and small fixes",
-    body: "Door hardware replacement, loose parts, rental turnover lists, condo touch-ups, and storefront details.",
-  },
-  {
-    symbol: "finish",
-    label: "Finish",
-    title: "Clean finishing after the repair",
-    body: "Trim lines, silicone removal, caulking, paint-ready edges, tidy cleanup, and details that do not look patched.",
-  },
-] as const;
-
-const workNotes = [
-  "Repair before replacement when the frame and hardware still have life.",
-  "Correct the closing action so the door feels solid every day.",
-  "Seal the edge cleanly for weather, drafts, and water protection.",
-  "Leave the opening, trim, and surrounding area ready to use.",
-];
-
-const areaRows = [
-  "Toronto",
-  "North York",
-  "Etobicoke",
-  "Scarborough",
-  "Mississauga",
-  "Brampton",
-  "Vaughan",
-  "Markham",
-  "Richmond Hill",
-  "Nearby GTA suburbs",
-];
-
 export default function Home() {
+  const heroReceipt = getDemoReceipt("rc_mara_anthropic_001") ?? demoReceipts[0];
+
   return (
-    <main className="gta-site bg-[#f1eee7] text-[#191814]">
-      <SiteHeader />
-      <Hero />
-      <PromiseBand />
-      <ServiceIndex />
-      <WorkSection />
-      <AreaAndQuote />
-      <SiteFooter />
-    </main>
+    <>
+      <Nav />
+      <main>
+        <Hero receipt={heroReceipt} />
+        <TheReceipt fingerprint={heroReceipt.fingerprint} />
+        <ForBuilders />
+        <ForCompanies />
+        <FinalCTA />
+        <SiteFooter />
+      </main>
+    </>
   );
 }
 
-function SiteHeader() {
+/* ─────────────────────────────────────────────
+   1. HERO — single artifact, single CTA
+   ───────────────────────────────────────────── */
+function Hero({ receipt }: { receipt: typeof demoReceipts[number] }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#191814]/86 text-white backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="#top" className="flex items-center gap-3" aria-label="GTA Fix N Clean home">
-          <LogoMark size="small" />
-          <span className="text-base font-black tracking-[0]">GTA Fix N Clean</span>
-        </Link>
-        <nav className="hidden items-center gap-7 text-sm font-bold text-white/68 md:flex">
-          <Link className="transition hover:text-white" href="#services">
-            Services
-          </Link>
-          <Link className="transition hover:text-white" href="#work">
-            Work
-          </Link>
-          <Link className="transition hover:text-white" href="#quote">
-            Quote
-          </Link>
-        </nav>
-        <a
-          href={quoteMailto}
-          className="hidden h-10 items-center gap-2 rounded-sm bg-[#c8102e] px-4 text-sm font-black text-white transition hover:bg-[#e4233e] md:inline-flex"
-        >
-          Email photos <Mail className="h-4 w-4" />
-        </a>
-      </div>
-    </header>
-  );
-}
-
-function Hero() {
-  return (
-    <section id="top" className="relative min-h-[100svh] overflow-hidden bg-[#191814] pt-16 text-white">
-      <Image
-        src="/gtafixnclean/glass-door-repair.jpeg"
-        alt="Glass door repair by GTA Fix N Clean."
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-[58%_50%]"
+    <section className="relative overflow-hidden" style={{ background: "#0A0A0A" }}>
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 50% 40% at 0% 0%, rgba(198,241,53,0.08) 0%, transparent 55%)",
+        }}
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(25,24,20,0.95)_0%,rgba(25,24,20,0.78)_42%,rgba(25,24,20,0.2)_100%)]" />
-      <div className="absolute left-0 top-16 h-[calc(100%-4rem)] w-2 bg-[#c8102e]" />
-      <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[0.98fr_0.72fr] lg:px-8">
-        <div className="gta-hero-copy">
-          <div className="mb-8">
-            <LogoMark size="large" />
-          </div>
-          <p className="mb-5 inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[#ff4057]">
-            <MapleLeaf className="h-4 w-4" />
-            GTA / Ontario / Canada
-          </p>
-          <h1 className="max-w-5xl text-[clamp(3.8rem,8vw,8.7rem)] font-black leading-[0.86] tracking-[0]">
-            Fixed clean.
-          </h1>
-          <p className="mt-6 max-w-2xl text-xl font-semibold leading-8 text-white/82">
-            Door and window repair across the GTA, done with straight answers, practical parts, and a finish that belongs on the property.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="#quote"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-sm bg-[#c8102e] px-5 text-base font-black text-white transition hover:-translate-y-0.5 hover:bg-[#e4233e]"
-            >
-              Start a quote <ArrowRight className="h-4 w-4" />
-            </Link>
-            <a
-              href={quoteMailto}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-sm border border-white/22 bg-white/8 px-5 text-base font-black text-white transition hover:-translate-y-0.5 hover:bg-white/14"
-            >
-              Send photos <MessageSquareText className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-        <div className="gta-hero-note hidden self-end border-l border-white/20 pl-5 text-white/72 lg:block">
-          <p className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-white/48">
-            <MapleLeaf className="h-4 w-4 text-[#ff4057]" />
-            Canadian weather calls
-          </p>
-          <p className="mt-3 text-2xl font-black leading-tight text-white">
-            A door sticks, a seal leaks, a lock fails, or a window lets the weather in.
-          </p>
-          <p className="mt-4 max-w-sm text-sm leading-6">
-            Send the photos first. The repair plan comes from the actual opening, not a generic package.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
 
-function PromiseBand() {
-  return (
-    <section className="border-y border-[#191814]/12 bg-[#fbf9f4]">
-      <div className="mx-auto grid max-w-7xl divide-y divide-[#191814]/12 px-4 sm:px-6 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-8">
-        <PromiseItem label="Repair first" text="Replace only when repair is not the better move." />
-        <PromiseItem label="Fit matters" text="Doors and windows should close, lock, and seal properly." />
-        <PromiseItem label="Leave it clean" text="Edges, caulking, trim, and cleanup are part of the job." />
-      </div>
-    </section>
-  );
-}
-
-function ServiceIndex() {
-  return (
-    <section id="services" className="bg-[#f1eee7] py-20 sm:py-28">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
+      <div className="relative mx-auto max-w-[1240px] px-6 sm:px-10 pt-24 pb-24 sm:pt-32 sm:pb-32 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-16 lg:gap-24 items-center">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.14em] text-[#c8102e]">What we take on</p>
-          <h2 className="mt-4 max-w-lg text-4xl font-black leading-[0.95] tracking-[0] text-[#191814] sm:text-6xl">
-            Not a showroom pitch. A repair list that gets handled.
+          <p
+            className="text-[11px] font-bold tracking-[0.28em] uppercase mb-7 inline-flex items-center gap-2"
+            style={{ color: "rgba(255,255,255,0.45)" }}
+          >
+            <span
+              className="inline-block w-1 h-1 rounded-full"
+              style={{ background: "#C6F135" }}
+            />
+            Proof of work for AI builders
+          </p>
+
+          <h1
+            className="font-display font-bold leading-[0.95] tracking-[-0.045em]"
+            style={{ color: "#FFFFFF", fontSize: "clamp(3rem, 7.5vw, 5.4rem)" }}
+          >
+            Show your <span style={{ color: "#C6F135" }}>receipts.</span>
+          </h1>
+
+          <p
+            className="mt-7 max-w-[480px] text-[18px] leading-[1.55]"
+            style={{ color: "rgba(255,255,255,0.66)" }}
+          >
+            Solve a Brief. Mint a Receipt. Get hired on{" "}
+            <span style={{ color: "rgba(255,255,255,0.95)" }}>how you think</span>,
+            not what your résumé says.
+          </p>
+
+          <div className="mt-10 flex items-center gap-x-6 gap-y-3 flex-wrap">
+            <Link
+              href="/briefs"
+              className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+              style={{
+                background: "#C6F135",
+                color: "#0A0A0A",
+                boxShadow: "0 12px 30px rgba(198,241,53,0.32)",
+              }}
+              data-cta="lime"
+            >
+              Browse Briefs <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/receipts/methodology"
+              className="text-[14px] font-semibold underline-offset-4 hover:underline transition-colors"
+              style={{ color: "rgba(255,255,255,0.85)" }}
+            >
+              How it works →
+            </Link>
+          </div>
+        </div>
+
+        <LandingHeroAside receipt={receipt} />
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   2. THE RECEIPT — what's actually in it
+   ───────────────────────────────────────────── */
+function TheReceipt({
+  fingerprint,
+}: {
+  fingerprint: typeof demoReceipts[number]["fingerprint"];
+}) {
+  return (
+    <section style={{ background: "#FAFAF7" }} className="py-24 sm:py-32">
+      <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
+        <div className="max-w-[640px] mb-16">
+          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
+            What&apos;s in a Receipt
+          </p>
+          <h2
+            className="font-display font-bold tracking-[-0.035em] text-black leading-[0.98]"
+            style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)" }}
+          >
+            Seven dimensions.
+            <br />
+            <span className="text-gray-400">Signed. Yours.</span>
           </h2>
-          <p className="mt-6 max-w-md text-lg leading-8 text-[#625d52]">
-            One visit can cover a door, a window, a lock, a screen, a draft, and the small finish work around it.
+          <p className="mt-6 text-[16px] leading-[1.6] text-gray-600 max-w-[520px]">
+            We instrument every prompt, tool call, and pivot in the Lab.
+            What comes out is a Fingerprint — how you actually think under
+            constraint.
           </p>
         </div>
-        <div className="divide-y divide-[#191814]/14 border-y border-[#191814]/14">
-          {serviceLines.map((item) => (
-            <article key={item.label} className="gta-service-line grid gap-5 py-7 sm:grid-cols-[96px_1fr]">
-              <ServiceSymbol kind={item.symbol} />
-              <div>
-                <p className="text-sm font-black uppercase tracking-[0.14em] text-[#c8102e]">{item.label}</p>
-                <h3 className="mt-2 text-2xl font-black tracking-[0] text-[#191814]">{item.title}</h3>
-                <p className="mt-3 max-w-2xl text-base leading-7 text-[#625d52]">{item.body}</p>
+
+        <ReceiptReveal fingerprint={fingerprint} />
+
+        <div className="mt-16 flex items-center gap-x-6 gap-y-2 flex-wrap text-[13px] text-gray-500">
+          <span className="inline-flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-black" />
+            SHA-256 + qualified timestamp
+          </span>
+          <span className="text-gray-300">·</span>
+          <Link
+            href="/receipts/methodology"
+            className="font-semibold text-black hover:underline underline-offset-4"
+          >
+            Read the methodology →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   3. FOR BUILDERS — Duolingo voice (playful, big pills)
+   ───────────────────────────────────────────── */
+function ForBuilders() {
+  const steps = [
+    { n: 1, t: "Pick a Brief.", d: "Real assignments from Anthropic, Vercel, Resend." },
+    { n: 2, t: "Solve it in the Lab.", d: "10 to 90 minutes. Instrumented. No timer panic." },
+    { n: 3, t: "Mint your Receipt.", d: "Pin it to your profile. Share it. Embed it." },
+  ];
+  return (
+    <section className="py-24 sm:py-32 relative overflow-hidden" style={{ background: "#FFFFFF" }}>
+      {/* Soft lime wash */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 60% at 50% 100%, rgba(198,241,53,0.12) 0%, transparent 60%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10">
+        <div className="text-center max-w-[640px] mx-auto mb-14">
+          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4 inline-flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3" style={{ color: "#0A0A0A" }} />
+            For builders
+          </p>
+          <h2
+            className="font-display font-bold tracking-[-0.03em] text-black leading-[1.02]"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
+          >
+            Three steps. Under an hour.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          {steps.map((s) => (
+            <div
+              key={s.n}
+              className="rounded-[24px] p-7 sm:p-8 bg-white relative group transition-transform duration-200 hover:-translate-y-1"
+              style={{
+                border: "1.5px solid #EBEBEB",
+                boxShadow: "0 1px 0 rgba(0,0,0,0.03)",
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center text-[20px] font-bold font-display mb-5"
+                style={{
+                  background: "#C6F135",
+                  color: "#0A0A0A",
+                }}
+              >
+                {s.n}
               </div>
-            </article>
+              <h3 className="text-[18px] font-bold tracking-[-0.015em] text-black leading-[1.3]">
+                {s.t}
+              </h3>
+              <p className="mt-2 text-[14px] leading-[1.55] text-gray-600">
+                {s.d}
+              </p>
+            </div>
           ))}
         </div>
+
+        <div className="mt-14 text-center">
+          <Link
+            href="/briefs"
+            className="inline-flex items-center justify-center gap-2 rounded-full px-8 h-[60px] text-[16px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: "#0A0A0A",
+              color: "#FFFFFF",
+              boxShadow: "0 12px 32px rgba(10,10,10,0.18)",
+            }}
+          >
+            Start your first Brief <ArrowRight className="w-4 h-4" />
+          </Link>
+          <p className="mt-4 text-[13px] text-gray-500">Free for builders. Always.</p>
+        </div>
       </div>
     </section>
   );
 }
 
-function WorkSection() {
+/* ─────────────────────────────────────────────
+   4. FOR COMPANIES — Wealthsimple voice (calm, generous, single decision)
+   ───────────────────────────────────────────── */
+function ForCompanies() {
   return (
-    <section id="work" className="bg-[#191814] py-20 text-white sm:py-28">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-          <div>
-            <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[#ff4057]">
-              <MapleLeaf className="h-4 w-4" />
-              Jobsite proof
-            </p>
-            <h2 className="mt-4 max-w-2xl text-4xl font-black leading-[0.96] tracking-[0] sm:text-6xl">
-              Real doors. Real frames. Real finish work.
-            </h2>
-          </div>
-          <ul className="grid gap-3 text-sm font-semibold leading-6 text-white/72 sm:grid-cols-2">
-            {workNotes.map((note) => (
-              <li key={note} className="flex gap-3">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#ff4057]" />
-                <span>{note}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+    <section className="py-24 sm:py-36" style={{ background: "#F4F1EA" }}>
+      <div className="mx-auto max-w-[920px] px-6 sm:px-10">
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-6">
+          For companies
+        </p>
 
-        <div className="mt-12 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <figure className="gta-work-photo relative min-h-[620px] overflow-hidden bg-white/5">
-            <Image
-              src="/gtafixnclean/white-door-after.jpeg"
-              alt="Completed exterior door repair with clean trim and threshold."
-              fill
-              sizes="(max-width: 1024px) 100vw, 58vw"
-              className="object-cover"
-            />
-            <PhotoCaption label="Door repair" text="After alignment, hardware, threshold, and clean edge work." />
-          </figure>
-          <div className="grid gap-4">
-            <figure className="gta-work-photo relative min-h-[302px] overflow-hidden bg-white/5">
-              <Image
-                src="/gtafixnclean/white-door-before.jpeg"
-                alt="Exterior door before repair and finishing."
-                fill
-                sizes="(max-width: 1024px) 100vw, 42vw"
-                className="object-cover"
-              />
-              <PhotoCaption label="Before" text="The opening tells you what the job actually needs." />
-            </figure>
-            <figure className="gta-work-photo relative min-h-[302px] overflow-hidden bg-white/5">
-              <Image
-                src="/gtafixnclean/site-entry-handle.jpeg"
-                alt="Commercial style entry door hardware and handle."
-                fill
-                sizes="(max-width: 1024px) 100vw, 42vw"
-                className="object-cover"
-              />
-              <PhotoCaption label="Hardware" text="Handles, locks, closers, sweeps, and daily-use details." />
-            </figure>
-          </div>
+        <h2
+          className="font-display font-bold tracking-[-0.04em] text-black leading-[0.98]"
+          style={{ fontSize: "clamp(2.4rem, 6vw, 4.2rem)" }}
+        >
+          Hire on output.
+          <br />
+          <span className="text-gray-500">Not résumés.</span>
+        </h2>
+
+        <p className="mt-10 max-w-[560px] text-[18px] sm:text-[20px] leading-[1.55] text-gray-700">
+          Post a Brief in 60 seconds. We host the Lab. You get Receipts ranked by composite Fingerprint — every score traceable, every signature verifiable.
+        </p>
+
+        <div className="mt-14 flex items-center gap-x-6 gap-y-3 flex-wrap">
+          <Link
+            href="/hackathons/new"
+            className="inline-flex items-center justify-center gap-2 rounded-[14px] px-6 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+            style={{
+              background: "#0A0A0A",
+              color: "#FFFFFF",
+              boxShadow: "0 8px 24px rgba(10,10,10,0.16)",
+            }}
+          >
+            Run a Vibe Hackathon <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-[14px] font-semibold text-black hover:underline underline-offset-4 inline-flex items-center gap-1.5"
+          >
+            See pricing →
+          </Link>
         </div>
       </div>
     </section>
   );
 }
 
-function AreaAndQuote() {
+/* ─────────────────────────────────────────────
+   5. FINAL CTA — minimal closer
+   ───────────────────────────────────────────── */
+function FinalCTA() {
   return (
-    <section id="quote" className="bg-[#fbf9f4] py-20 sm:py-28">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-        <div>
-          <p className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[#c8102e]">
-            <MapleLeaf className="h-4 w-4" />
-            GTA service
-          </p>
-          <h2 className="mt-4 max-w-xl text-4xl font-black leading-[0.96] tracking-[0] text-[#191814] sm:text-6xl">
-            Send photos. Get the right next move.
-          </h2>
-          <p className="mt-6 max-w-md text-lg leading-8 text-[#625d52]">
-            Include one close-up, one wider shot, the service area, and what is not working. That is enough to start.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-2">
-            {areaRows.map((area) => (
-              <span key={area} className="inline-flex items-center gap-2 border border-[#c8102e]/22 bg-white/50 px-3 py-2 text-sm font-black text-[#191814]">
-                <MapPin className="h-4 w-4 text-[#c8102e]" />
-                {area}
-              </span>
-            ))}
-          </div>
+    <section className="py-24 sm:py-32 text-center" style={{ background: "#0A0A0A" }}>
+      <div className="mx-auto max-w-[720px] px-6 sm:px-10">
+        <h2
+          className="font-display font-bold tracking-[-0.04em] leading-[1]"
+          style={{ color: "#FFFFFF", fontSize: "clamp(2rem, 5vw, 3.4rem)" }}
+        >
+          Show your <span style={{ color: "#C6F135" }}>receipts.</span>
+        </h2>
+        <div className="mt-10">
+          <Link
+            href="/briefs"
+            className="inline-flex items-center justify-center gap-2 rounded-full px-9 h-[64px] text-[17px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: "#C6F135",
+              color: "#0A0A0A",
+              boxShadow: "0 16px 40px rgba(198,241,53,0.35)",
+            }}
+            data-cta="lime"
+          >
+            Browse Briefs <ArrowRight className="w-5 h-5" />
+          </Link>
         </div>
-
-        <form action={quoteMailto} method="post" encType="text/plain" className="bg-[#191814] p-4 text-white sm:p-6 lg:p-8">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Name" name="name" placeholder="Your name" />
-            <Field label="Phone" name="phone" placeholder="Best callback number" />
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field label="Service area" name="area" placeholder="Toronto, Vaughan, etc." />
-            <label className="block">
-              <span className="text-sm font-black text-white">Job type</span>
-              <select
-                name="job"
-                className="mt-2 h-12 w-full rounded-none border border-white/14 bg-white px-3 text-base font-bold text-[#191814]"
-                defaultValue="Door repair"
-              >
-                <option>Door repair</option>
-                <option>Window repair</option>
-                <option>Installation</option>
-                <option>Weatherstripping / sealing</option>
-                <option>Cleaning / finishing</option>
-                <option>Other property fix</option>
-              </select>
-            </label>
-          </div>
-          <label className="mt-4 block">
-            <span className="text-sm font-black text-white">What needs fixing?</span>
-            <textarea
-              name="message"
-              rows={6}
-              placeholder="Describe the door, window, lock, screen, seal, trim, or cleanup issue."
-              className="mt-2 w-full resize-none rounded-none border border-white/14 bg-white px-3 py-3 text-base font-semibold leading-7 text-[#191814]"
-            />
-          </label>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="submit"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-sm bg-[#c8102e] px-5 text-base font-black text-white transition hover:-translate-y-0.5 hover:bg-[#e4233e]"
-            >
-              Open email quote <ArrowRight className="h-4 w-4" />
-            </button>
-            <a href={quoteMailto} className="inline-flex h-12 items-center justify-center gap-2 px-1 text-base font-black text-white/82 transition hover:text-white">
-              {CONTACT.email}
-            </a>
-          </div>
-        </form>
       </div>
     </section>
   );
 }
 
+/* ─────────────────────────────────────────────
+   FOOTER
+   ───────────────────────────────────────────── */
 function SiteFooter() {
+  const cols = [
+    {
+      title: "Receipts",
+      links: [
+        { label: "Briefs", href: "/briefs" },
+        { label: "Methodology", href: "/receipts/methodology" },
+        { label: "For companies", href: "/c/start" },
+      ],
+    },
+    {
+      title: "Network",
+      links: [
+        { label: "Discover", href: "/discover" },
+        { label: "Builders", href: "/builders" },
+        { label: "Hackathons", href: "/hackathons" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { label: "About", href: "/about" },
+        { label: "Pricing", href: "/pricing" },
+        { label: "Press", href: "/press" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [
+        { label: "Privacy", href: "/privacy" },
+        { label: "Terms", href: "/terms" },
+      ],
+    },
+  ];
+
   return (
-    <footer className="border-t border-[#191814]/12 bg-[#f1eee7]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        <Link href="#top" className="inline-flex items-center gap-3">
-          <LogoMark size="small" />
-          <span className="text-xl font-black tracking-[0] text-[#191814]">GTA Fix N Clean</span>
-        </Link>
-        <div className="flex flex-wrap gap-4 text-sm font-black text-[#625d52]">
-          <Link className="hover:text-[#191814]" href="/llm.txt">
-            llm.txt
-          </Link>
-          <Link className="hover:text-[#191814]" href="/llms.txt">
-            llms.txt
-          </Link>
-          <a className="hover:text-[#191814]" href={quoteMailto}>
-            {CONTACT.email}
-          </a>
+    <footer className="border-t border-gray-100 bg-white">
+      <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-16 sm:py-20">
+        <div className="grid grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,_1fr)] gap-10 sm:gap-12">
+          <div className="col-span-2 lg:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80">
+              <span
+                className="text-[20px] font-bold tracking-tight"
+                style={{ color: "#0A0A0A", fontFamily: "var(--font-display)" }}
+              >
+                antry
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#C6F135" }} />
+            </Link>
+            <p className="mt-4 text-[14px] leading-[1.6] text-gray-500 max-w-[280px]">
+              Proof of work for AI builders. Show your receipts.
+            </p>
+            <div className="mt-5 flex items-center gap-2">
+              <SocialIconLink href="https://github.com" label="GitHub">
+                <Github className="w-4 h-4" />
+              </SocialIconLink>
+              <SocialIconLink href="https://x.com" label="X / Twitter">
+                <Twitter className="w-4 h-4" />
+              </SocialIconLink>
+              <SocialIconLink href="https://linkedin.com" label="LinkedIn">
+                <Linkedin className="w-4 h-4" />
+              </SocialIconLink>
+            </div>
+          </div>
+
+          {cols.map((c) => (
+            <div key={c.title}>
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400 mb-4">
+                {c.title}
+              </p>
+              <ul className="space-y-2.5">
+                {c.links.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-[14px] text-gray-600 hover:text-black transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-14 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <p className="text-[12px] text-gray-400 tracking-wide">
+            © {new Date().getFullYear()} Antry. Built for the builders of tomorrow.
+          </p>
+          <p className="text-[12px] text-gray-400">
+            Status:{" "}
+            <span
+              className="inline-flex items-center gap-1.5 ml-1 font-semibold"
+              style={{ color: "#0A0A0A" }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ background: "#22C55E" }}
+              />
+              Gateway live
+            </span>
+          </p>
         </div>
       </div>
     </footer>
   );
 }
 
-function PromiseItem({ label, text }: { label: string; text: string }) {
-  return (
-    <div className="py-6 md:px-6">
-      <p className="text-sm font-black uppercase tracking-[0.14em] text-[#c8102e]">{label}</p>
-      <p className="mt-2 max-w-sm text-lg font-black leading-6 text-[#191814]">{text}</p>
-    </div>
-  );
-}
-
-function PhotoCaption({ label, text }: { label: string; text: string }) {
-  return (
-    <figcaption className="absolute inset-x-0 bottom-0 bg-[linear-gradient(0deg,rgba(25,24,20,0.84),rgba(25,24,20,0))] p-5 pt-20">
-      <p className="text-sm font-black uppercase tracking-[0.14em] text-[#ff4057]">{label}</p>
-      <p className="mt-1 max-w-md text-lg font-black leading-6 text-white">{text}</p>
-    </figcaption>
-  );
-}
-
-function Field({
+function SocialIconLink({
+  href,
   label,
-  name,
-  placeholder,
+  children,
 }: {
+  href: string;
   label: string;
-  name: string;
-  placeholder: string;
+  children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="text-sm font-black text-white">{label}</span>
-      <input
-        name={name}
-        placeholder={placeholder}
-        className="mt-2 h-12 w-full rounded-none border border-white/14 bg-white px-3 text-base font-bold text-[#191814]"
-      />
-    </label>
-  );
-}
-
-function LogoMark({ size }: { size: "small" | "large" }) {
-  const dimensions = size === "large" ? "h-20 w-20" : "h-10 w-10";
-
-  return (
-    <span className={`inline-flex ${dimensions} shrink-0 items-center justify-center rounded-sm bg-[#c8102e]`}>
-      <svg viewBox="0 0 64 64" aria-hidden="true" className="h-[76%] w-[76%]">
-        <path d="M12 10h22v44H12V10Z" fill="#191814" />
-        <path d="M17 15h12v34H17V15Z" fill="#f1eee7" />
-        <path d="M34 15h18v34H34V15Z" fill="#191814" />
-        <path d="M39 20h8v11h-8V20Zm0 16h8v8h-8v-8Z" fill="#f1eee7" />
-        <path d="M31 47c6.5 2.6 15.5 2.2 24-1.6" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" />
-        <path d="M25 7l2.3 5.1 5.4-1.6-2.7 5 4.8 2.9-5.6 1.1.6 5.6-4.8-3-4.8 3 .6-5.6-5.6-1.1 4.8-2.9-2.7-5 5.4 1.6L25 7Z" fill="#ffffff" />
-      </svg>
-    </span>
-  );
-}
-
-function ServiceSymbol({ kind }: { kind: (typeof serviceLines)[number]["symbol"] }) {
-  return (
-    <span className="gta-symbol flex h-20 w-20 items-center justify-center bg-[#191814] text-[#f1eee7]">
-      <svg viewBox="0 0 80 80" aria-hidden="true" className="h-16 w-16">
-        {kind === "door" ? (
-          <>
-            <path d="M22 14h34v52H22V14Z" fill="none" stroke="currentColor" strokeWidth="5" />
-            <path d="M31 20l18 5v36l-18-4V20Z" fill="#c8102e" />
-            <circle cx="45" cy="42" r="3" fill="#191814" />
-            <path d="M14 66h52" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
-          </>
-        ) : null}
-        {kind === "window" ? (
-          <>
-            <path d="M18 16h44v46H18V16Z" fill="none" stroke="currentColor" strokeWidth="5" />
-            <path d="M40 18v42M20 39h40" stroke="currentColor" strokeWidth="5" />
-            <path d="M25 57h30" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
-            <path d="M28 30l8-8M31 44l16-16" stroke="#c8102e" strokeWidth="4" strokeLinecap="round" />
-          </>
-        ) : null}
-        {kind === "hardware" ? (
-          <>
-            <rect x="17" y="13" width="22" height="54" rx="10" fill="currentColor" />
-            <path d="M28 33h35" stroke="#c8102e" strokeWidth="8" strokeLinecap="round" />
-            <circle cx="28" cy="33" r="10" fill="none" stroke="#f1eee7" strokeWidth="4" />
-            <path d="M26 51h8" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
-          </>
-        ) : null}
-        {kind === "finish" ? (
-          <>
-            <path d="M43 13l20 20-11 11-20-20 11-11Z" fill="currentColor" />
-            <path d="M25 29l25 25" stroke="#c8102e" strokeWidth="5" strokeLinecap="round" />
-            <path d="M18 58c9-8 22-9 37-5" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
-            <path d="M15 66c10-5 20-6 31-3" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" opacity=".74" />
-          </>
-        ) : null}
-      </svg>
-    </span>
-  );
-}
-
-function MapleLeaf({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path
-        fill="currentColor"
-        d="m12 2 1.58 4.34 4.34-1.36-2.02 4.07 3.86 2.12-4.33.88.43 4.48L12 14.1l-3.86 2.43.43-4.48-4.33-.88L8.1 9.05 6.08 4.98l4.34 1.36L12 2Z"
-      />
-    </svg>
+    <a
+      href={href}
+      aria-label={label}
+      target="_blank"
+      rel="noreferrer"
+      className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:text-black hover:bg-gray-50 transition-colors"
+    >
+      {children}
+    </a>
   );
 }
