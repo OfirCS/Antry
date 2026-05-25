@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Antry — Platform spec</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="doc-shell.css" />
+</head>
+<body>
+<div class="doc-shell">
+  <div class="doc-nav">
+    <a class="brand" href="../index.html">Antry</a>
+    <a href="../index.html#docs">← back to showcase</a>
+  </div>
+</div>
+
+<style>
+  .doc { max-width: 720px; margin: 0 auto; padding: 0 24px 60px; }
+  .doc-header { border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 24px; margin-bottom: 32px; }
+  .doc-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .doc-title { font-family: var(--font-display); font-size: 30px; font-weight: 500; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .doc-sub { font-size: 14px; color: var(--color-text-secondary); }
+  h2 { font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 36px 0 14px; }
+  h3 { font-family: var(--font-display); font-size: 15px; font-weight: 500; margin: 20px 0 6px; color: var(--color-text-primary); }
+  p { font-size: 14px; line-height: 1.7; color: var(--color-text-secondary); margin: 0 0 10px; }
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 24px; }
+  .feature-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 16px 18px; }
+  .feature-card h3 { font-size: 14px; margin: 0 0 6px; }
+  .feature-card p { font-size: 13px; margin: 0; line-height: 1.5; }
+  .phase { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 3px; padding: 2px 7px; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .stack-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 14px; }
+  .stack-row:last-child { border-bottom: none; }
+  .stack-label { color: var(--color-text-secondary); }
+  .stack-val { font-weight: 500; color: var(--color-text-primary); }
+  .priority { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 20px; }
+  .p-tag { font-size: 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 4px; padding: 3px 10px; color: var(--color-text-secondary); }
+  .p-tag.must { background: var(--color-background-primary); border-color: var(--color-border-primary); color: var(--color-text-primary); font-weight: 500; }
+  @media (max-width: 520px) { .feature-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="doc">
+  <div class="doc-header">
+    <div class="doc-tag">Antry — Platform Spec · March 2026</div>
+    <div class="doc-title">What to build</div>
+    <div class="doc-sub">MVP feature set, phased rollout, and recommended tech stack</div>
+  </div>
+
+  <h2>Philosophy</h2>
+  <p>Simple, visual, shareable. Every feature should be easy to market on social media. Each project a builder posts should be sharable as a standalone link with a beautiful preview image. The platform should feel like a gallery, not a dashboard.</p>
+
+  <h2>Phase 1 — MVP (Months 1–3)</h2>
+  <p>Start with the minimum needed to collect waitlist signups and run the first hackathon.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card"><div class="phase">Must have</div><h3>Waitlist page</h3><p>Email capture, counter showing signups, clean landing with value prop. Deploy in Week 1.</p></div>
+    <div class="feature-card"><div class="phase">Must have</div><h3>Builder profile</h3><p>Name, bio, skills, social links, and a gallery of project cards. Each profile has its own URL.</p></div>
+    <div class="feature-card"><div class="phase">Must have</div><h3>Project cards</h3><p>Title, description, live demo link, video embed, tech stack tags, build time. Auto-generated OG image for sharing.</p></div>
+    <div class="feature-card"><div class="phase">Must have</div><h3>Auth</h3><p>GitHub + Google login. Invite code system for early access control. Simple onboarding flow.</p></div>
+    <div class="feature-card"><div class="phase">Must have</div><h3>Hackathon page</h3><p>Event theme, rules, timeline, prizes. Submission flow with demo link + description. Basic leaderboard.</p></div>
+    <div class="feature-card"><div class="phase">Must have</div><h3>Discovery feed</h3><p>Browse projects by category (AI agents, web apps, tools). Trending + newest filters. Search by tags.</p></div>
+  </div>
+
+  <h2>Phase 2 — Community (Months 4–6)</h2>
+  <div class="feature-grid">
+    <div class="feature-card"><div class="phase">Phase 2</div><h3>Social features</h3><p>Like and save projects. Follow builders. Activity feed. Comment threads on project cards.</p></div>
+    <div class="feature-card"><div class="phase">Phase 2</div><h3>Sponsor dashboard</h3><p>Companies can create and manage hackathon events, set prizes, review submissions, and access builder profiles.</p></div>
+    <div class="feature-card"><div class="phase">Phase 2</div><h3>Featured profiles</h3><p>Premium tier for builders — featured placement in discovery, analytics on profile views, priority at events.</p></div>
+    <div class="feature-card"><div class="phase">Phase 2</div><h3>Builder analytics</h3><p>Profile views, project views, demo clicks. Helps builders understand their reach and improve showcasing.</p></div>
+  </div>
+
+  <h2>Phase 3 — Studio (Month 7+)</h2>
+  <div class="feature-grid">
+    <div class="feature-card"><div class="phase">Phase 3</div><h3>Studio applications</h3><p>Builders can submit ideas for studio validation. Application form, review queue, status tracking.</p></div>
+    <div class="feature-card"><div class="phase">Phase 3</div><h3>Cohort pages</h3><p>Public pages for each studio cohort. Timeline of their build. Updates and milestones. Good for PR.</p></div>
+  </div>
+
+  <h2>Design principles</h2>
+  <div class="priority">
+    <span class="p-tag must">Demo-first, not CV-first</span>
+    <span class="p-tag must">Shareable on social media</span>
+    <span class="p-tag must">Beautiful OG previews</span>
+    <span class="p-tag">Mobile-responsive</span>
+    <span class="p-tag">Fast page loads</span>
+    <span class="p-tag">Dark mode support</span>
+    <span class="p-tag">Invite-only early access</span>
+  </div>
+
+  <h2>Recommended tech stack</h2>
+  <div>
+    <div class="stack-row"><span class="stack-label">Frontend</span><span class="stack-val">Next.js (React)</span></div>
+    <div class="stack-row"><span class="stack-label">Backend & auth</span><span class="stack-val">Supabase (Postgres + Auth)</span></div>
+    <div class="stack-row"><span class="stack-label">Hosting</span><span class="stack-val">Vercel</span></div>
+    <div class="stack-row"><span class="stack-label">Media storage</span><span class="stack-val">Cloudinary or Supabase Storage</span></div>
+    <div class="stack-row"><span class="stack-label">OG image generation</span><span class="stack-val">Vercel OG (satori)</span></div>
+    <div class="stack-row"><span class="stack-label">Email</span><span class="stack-val">Resend</span></div>
+    <div class="stack-row"><span class="stack-label">Analytics</span><span class="stack-val">Posthog (self-serve)</span></div>
+    <div class="stack-row"><span class="stack-label">Payments (Phase 2)</span><span class="stack-val">Stripe</span></div>
+  </div>
+
+  <h2>MVP build estimate</h2>
+  <p>A solo developer or a small team of two can ship the Phase 1 MVP in 3–4 weeks. The waitlist page alone can go live in 1–2 days. Prioritize shipping the landing page and collecting social proof before building the full product.</p>
+
+  <h2>Week 1 priority</h2>
+  <p>Ship the landing page. Register antry.co. Set up email collection. Post to X / LinkedIn / relevant Discord communities. That's the entire Week 1 goal. Nothing else matters until you have 100 people on a waitlist.</p>
+</div>
+
+<div class="doc-shell">
+  <div class="doc-footer">Antry — Platform Spec · Ofir Sela · 2026</div>
+</div>
+</body>
+</html>
