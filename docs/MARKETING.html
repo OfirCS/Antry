@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; object-src 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <title>Antry — Marketing notes</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="doc-shell.css" />
@@ -34,83 +38,8 @@
   </div>
 </div>
 
-<div class="md" id="md"></div>
-
-<script>
-async function render() {
-  const res = await fetch('MARKETING.md');
-  const text = await res.text();
-  document.getElementById('md').innerHTML = mdToHtml(text);
-  document.title = (text.match(/^#\s+(.+)$/m) || [, 'Antry — Marketing'])[1];
-}
-
-function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-function inline(s) {
-  s = s.replace(/`([^`]+)`/g, (_, c) => '<code>' + esc(c) + '</code>');
-  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  s = s.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
-  return s;
-}
-
-function mdToHtml(text) {
-  const lines = text.split('\n');
-  const out = [];
-  let i = 0;
-  let inCode = false, codeBuf = [];
-  while (i < lines.length) {
-    const line = lines[i];
-    if (line.startsWith('```')) {
-      if (!inCode) { inCode = true; codeBuf = []; }
-      else { inCode = false; out.push('<pre><code>' + esc(codeBuf.join('\n')) + '</code></pre>'); }
-      i++; continue;
-    }
-    if (inCode) { codeBuf.push(line); i++; continue; }
-    if (/^#{1,6}\s+/.test(line)) {
-      const m = line.match(/^(#{1,6})\s+(.*)$/);
-      const lvl = m[1].length;
-      out.push('<h' + lvl + '>' + inline(esc(m[2])) + '</h' + lvl + '>');
-      i++; continue;
-    }
-    if (/^---+\s*$/.test(line)) { out.push('<hr/>'); i++; continue; }
-    if (/^>\s?/.test(line)) {
-      const buf = [];
-      while (i < lines.length && /^>\s?/.test(lines[i])) { buf.push(lines[i].replace(/^>\s?/, '')); i++; }
-      out.push('<blockquote><p>' + inline(esc(buf.join(' '))) + '</p></blockquote>');
-      continue;
-    }
-    if (/^\s*[-*]\s+/.test(line)) {
-      const buf = [];
-      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
-        buf.push('<li>' + inline(esc(lines[i].replace(/^\s*[-*]\s+/, ''))) + '</li>');
-        i++;
-      }
-      out.push('<ul>' + buf.join('') + '</ul>');
-      continue;
-    }
-    if (/^\s*\d+\.\s+/.test(line)) {
-      const buf = [];
-      while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
-        buf.push('<li>' + inline(esc(lines[i].replace(/^\s*\d+\.\s+/, ''))) + '</li>');
-        i++;
-      }
-      out.push('<ol>' + buf.join('') + '</ol>');
-      continue;
-    }
-    if (line.trim() === '') { i++; continue; }
-    const buf = [];
-    while (i < lines.length && lines[i].trim() !== '' && !/^(#{1,6}\s+|>\s|\s*[-*]\s+|\s*\d+\.\s+|```|---)/.test(lines[i])) {
-      buf.push(lines[i]);
-      i++;
-    }
-    out.push('<p>' + inline(esc(buf.join(' '))) + '</p>');
-  }
-  return out.join('\n');
-}
-
-render();
-</script>
+<div class="md" id="md" data-src="MARKETING.md"></div>
+<script src="render-md.js"></script>
 
 <div class="doc-shell">
   <div class="doc-footer">Antry — Marketing · Ofir Sela · 2026</div>

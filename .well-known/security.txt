@@ -1,0 +1,4 @@
+Contact: mailto:ofir938@gmail.com
+Preferred-Languages: en
+Canonical: https://ofircs.github.io/Antry/.well-known/security.txt
+Expires: 2027-05-25T00:00:00.000Z

@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <title>Antry — original landing draft</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="doc-shell.css" />
@@ -66,7 +70,7 @@
 
   <div class="waitlist">
     <input type="email" id="email" placeholder="your@email.com" />
-    <button onclick="joinWaitlist()">Join the colony</button>
+    <button id="joinBtn" type="button">Join the colony</button>
   </div>
   <p class="count"><strong id="counter">247</strong> builders already waiting</p>
   <p class="confirm" id="confirm">You're in. We'll be in touch soon.</p>
@@ -82,20 +86,6 @@
 
 <div class="bottom">antry.co &nbsp;·&nbsp; Built by builders, for builders</div>
 
-<script>
-  let count = 247;
-  function joinWaitlist() {
-    const email = document.getElementById('email').value;
-    if (!email || !email.includes('@')) {
-      document.getElementById('email').style.borderColor = '#dc2626';
-      return;
-    }
-    document.getElementById('email').style.borderColor = '';
-    count++;
-    document.getElementById('counter').textContent = count;
-    document.getElementById('email').value = '';
-    document.getElementById('confirm').classList.add('show');
-  }
-</script>
+<script src="landing.js"></script>
 </body>
 </html>
