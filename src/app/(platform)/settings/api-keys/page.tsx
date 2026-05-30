@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Cursor · Settings",
   description:
     "Manage your Antry MCP bearer tokens — mint, label, and revoke. Plaintext is shown once at mint time.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ApiKeysPage() {

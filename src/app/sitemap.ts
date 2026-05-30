@@ -21,6 +21,7 @@ const STATIC_ROUTES: {
   { path: "/builders", changeFrequency: "daily", priority: 0.85 },
   { path: "/agents", changeFrequency: "weekly", priority: 0.9 },
   { path: "/scout", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/for-companies", changeFrequency: "monthly", priority: 0.9 },
   { path: "/hackathons/new", changeFrequency: "weekly", priority: 0.85 },
   { path: "/receipts/methodology", changeFrequency: "monthly", priority: 0.8 },
   { path: "/claim-card", changeFrequency: "monthly", priority: 0.7 },
@@ -82,6 +83,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(ts),
       changeFrequency: "weekly",
       priority: 0.75,
+    });
+    // /builders/[username] is the parallel profile route — both are
+    // canonical surfaces today, so emit a sitemap entry for each.
+    entries.push({
+      url: `${base}/builders/${username}`,
+      lastModified: new Date(ts),
+      changeFrequency: "weekly",
+      priority: 0.7,
     });
   }
 

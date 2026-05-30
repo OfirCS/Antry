@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Portability · Settings",
   description:
     "Take your Receipts off Antry. Embed in GitHub READMEs, link from LinkedIn, export as PDF.",
+  robots: { index: false, follow: false },
 };
 
 /**

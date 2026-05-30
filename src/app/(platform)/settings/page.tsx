@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Settings",
   description:
     "Claim your identity: name, handle, bio, and the links that make a Receipt yours.",
+  robots: { index: false, follow: false },
 };
 
 /**
