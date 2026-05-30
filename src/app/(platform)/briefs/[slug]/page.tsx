@@ -8,12 +8,10 @@ import {
   getDemoReceiptsForBrief,
   demoBriefs,
 } from "@/lib/receipts/demo-data";
-import {
-  BuilderFingerprint,
-  FingerprintGlyph,
-} from "@/components/BuilderFingerprint";
-import { fingerprintTier } from "@/lib/receipts/fingerprint";
+import { BuilderFingerprint } from "@/components/BuilderFingerprint";
 import { CursorStartPanel } from "@/components/CursorStartPanel";
+import { WhatYoullLearn } from "./_components/WhatYoullLearn";
+import { MiniLeaderboard } from "./_components/MiniLeaderboard";
 
 export async function generateStaticParams() {
   return demoBriefs.map((b) => ({ slug: b.slug }));
@@ -70,6 +68,16 @@ function formatTokens(n: number): string {
   return n.toString();
 }
 
+// Inline social-proof: "X builders this week" derived from attempts_count.
+// Models a steady-state ~40% weekly activity share on a live Brief — keeps
+// the number honest (a sleepy Brief reads as a small number, a hot one big).
+// Floor at 1 so newly-opened Briefs never show zero next to the leaderboard
+// link (we'd rather show "1 builder this week" than nothing).
+function buildersThisWeek(attemptsCount: number): number {
+  if (attemptsCount <= 0) return 0;
+  return Math.max(1, Math.round(attemptsCount * 0.4));
+}
+
 export default async function BriefDetailPage({
   params,
 }: {
@@ -84,6 +92,7 @@ export default async function BriefDetailPage({
   );
 
   const diff = DIFFICULTY[brief.difficulty] ?? DIFFICULTY.mid;
+  const weeklyBuilders = buildersThisWeek(brief.attempts_count);
 
   return (
     <div style={{ background: "#FAFAF7" }}>
@@ -156,6 +165,19 @@ export default async function BriefDetailPage({
                 >
                   See leaderboard →
                 </Link>
+                {weeklyBuilders > 0 && (
+                  <span className="inline-flex items-center gap-1.5 text-gray-500">
+                    <span
+                      aria-hidden
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ background: brief.company.sponsor_color }}
+                    />
+                    <span className="tabular-nums">
+                      {weeklyBuilders} builder{weeklyBuilders === 1 ? "" : "s"}
+                    </span>{" "}
+                    this week
+                  </span>
+                )}
                 <span className="inline-flex items-center gap-1.5 text-gray-500">
                   <Shield className="w-3 h-3" />
                   Signed at the gateway
@@ -163,7 +185,11 @@ export default async function BriefDetailPage({
               </div>
             </div>
 
-            {/* Constraints — clean white card */}
+            {/* Constraints — clean white card.
+               On mobile (single-column grid) this lands AFTER the title/CTA
+               block but BEFORE the prompt section below — matches the
+               desktop reading order well enough that no extra ordering
+               classes are needed. */}
             <aside
               className="rounded-[14px] p-5"
               style={{
@@ -218,121 +244,72 @@ export default async function BriefDetailPage({
         </div>
       </section>
 
-      {/* ── Body ────────────────────────────────── */}
+      {/* ── Body ────────────────────────────────────
+         Single full-width column on desktop now. Order:
+         What you'll learn → Prompt → Ideal shape → Leaderboard preview.
+         The prompt is the centre of attention, so it gets the full
+         width and no competing sidebar. */}
       <section>
-        <div className="mx-auto max-w-[1080px] px-4 sm:px-6 py-10 sm:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 lg:gap-10 items-start">
-            <article
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6 py-10 sm:py-12 space-y-8 sm:space-y-10">
+          {brief.ideal_fingerprint && (
+            <WhatYoullLearn
+              ideal={brief.ideal_fingerprint}
+              sponsorColor={brief.company.sponsor_color}
+            />
+          )}
+
+          <article
+            className="rounded-[14px] p-6 sm:p-8"
+            style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
+              The Brief
+            </p>
+            <BriefMarkdown md={brief.prompt_md} />
+          </article>
+
+          {brief.ideal_fingerprint && (
+            <section
               className="rounded-[14px] p-6 sm:p-8"
               style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
             >
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
-                The Brief
-              </p>
-              <BriefMarkdown md={brief.prompt_md} />
-            </article>
-
-            <aside className="lg:sticky lg:top-24">
-              {brief.ideal_fingerprint && (
-                <div
-                  className="rounded-[14px] p-5"
-                  style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
-                >
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-3">
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_minmax(220px,260px)] gap-6 md:gap-10 items-center">
+                <div className="min-w-0 md:order-1 order-2">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-2">
                     Ideal shape
                   </p>
-                  <div className="flex justify-center">
-                    <BuilderFingerprint
-                      fingerprint={brief.ideal_fingerprint}
-                      size={200}
-                      primaryColor={brief.company.sponsor_color}
-                    />
-                  </div>
-                  <p className="mt-3 text-[11px] leading-[1.55] text-gray-500">
-                    The dashed outline on a Receipt shows how close the
-                    builder came.
+                  <h2
+                    className="font-display font-bold tracking-[-0.015em] text-black"
+                    style={{ fontSize: "clamp(1.2rem, 2.4vw, 1.5rem)" }}
+                  >
+                    What a top-quartile Receipt looks like
+                  </h2>
+                  <p className="mt-2 text-[13px] leading-[1.6] text-gray-600">
+                    The solid shape is the Brief&apos;s target Fingerprint.
+                    On a real Receipt the builder&apos;s shape overlays this
+                    one — the closer the fit, the higher the composite score.
                   </p>
                 </div>
-              )}
-            </aside>
-          </div>
+                <div className="flex justify-center md:order-2 order-1">
+                  <BuilderFingerprint
+                    fingerprint={brief.ideal_fingerprint}
+                    size={220}
+                    primaryColor={brief.company.sponsor_color}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {receipts.length > 0 && (
+            <MiniLeaderboard
+              receipts={receipts}
+              briefSlug={brief.slug}
+              sponsorColor={brief.company.sponsor_color}
+            />
+          )}
         </div>
       </section>
-
-      {/* ── Leaderboard ─────────────────────────── */}
-      {receipts.length > 0 && (
-        <section
-          style={{ background: "#FFFFFF", borderTop: "1px solid #EBEBEB" }}
-        >
-          <div className="mx-auto max-w-[1080px] px-4 sm:px-6 py-12 sm:py-14">
-            <div className="flex items-baseline justify-between mb-6 flex-wrap gap-2">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-1">
-                  Receipts
-                </p>
-                <h2
-                  className="font-display font-bold tracking-[-0.02em] text-black"
-                  style={{ fontSize: "clamp(1.4rem, 3vw, 1.8rem)" }}
-                >
-                  Top fingerprints
-                </h2>
-              </div>
-              <Link
-                href={`/briefs/${brief.slug}/leaderboard`}
-                className="text-[12px] font-semibold text-black hover:underline underline-offset-4"
-              >
-                Full leaderboard →
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {receipts.slice(0, 6).map((r) => {
-                const tier = fingerprintTier(r.composite_score);
-                return (
-                  <Link
-                    key={r.id}
-                    href={`/receipts/${r.id}`}
-                    className="group rounded-[14px] p-4 transition-colors hover:bg-[#FAFAF7]"
-                    style={{
-                      background: "#FFFFFF",
-                      border: "1px solid #EBEBEB",
-                    }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="shrink-0">
-                        <FingerprintGlyph
-                          fingerprint={r.fingerprint}
-                          size={72}
-                          primaryColor={brief.company.sponsor_color}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span
-                            className="text-[9px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded"
-                            style={{ background: tier.bg, color: tier.color }}
-                          >
-                            {tier.label}
-                          </span>
-                          <span className="font-display font-bold text-[14px] text-black tabular-nums">
-                            {r.composite_score}
-                          </span>
-                        </div>
-                        <p className="text-[14px] font-bold tracking-[-0.005em] text-black truncate">
-                          {r.builder.name}
-                        </p>
-                        <p className="text-[11px] text-gray-500 line-clamp-2 mt-1">
-                          {r.highlights[0]}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 }

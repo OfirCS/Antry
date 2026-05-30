@@ -10,13 +10,12 @@ import { AntryLogoFull } from "@/components/AntryLogo";
 /**
  * Slim nav for the social feed era.
  *
- * Three tabs only: Feed (/), Hackathons (/hackathons/new), Profile.
- * One persistent CTA: + Compose.
- * Avatar on the right opens settings/profile/logout (logged in) or
- * Sign in / Sign up (logged out).
- *
- * No mobile drawer — everything fits in the top bar at every viewport
- * because there are only ~5 elements.
+ * Desktop (sm+): logo + Feed / Hack / Scout tabs + Post CTA + avatar.
+ * Mobile (< sm): logo + Post + avatar only — the Feed/Hack/Scout tabs
+ * live in `MobileBottomNav` so we don't duplicate. A subtle "Sign in"
+ * chip fades in after the user scrolls a bit (logged-out only) so the
+ * top bar stays uncluttered at rest but gives signed-out users an
+ * always-reachable affordance once they start consuming the feed.
  */
 
 function isActive(pathname: string, href: string): boolean {
@@ -52,12 +51,13 @@ export function Nav() {
         <Link
           href="/"
           className="flex items-center hover:opacity-70 transition-opacity mr-2"
+          aria-label="Antry — Home"
         >
           <AntryLogoFull size={26} />
         </Link>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-0.5">
+        {/* Tabs — hidden on mobile (bottom nav owns those tabs there). */}
+        <div className="hidden sm:flex items-center gap-0.5">
           <NavTab
             href="/"
             label="Feed"
@@ -80,19 +80,41 @@ export function Nav() {
 
         {/* Right cluster */}
         <div className="ml-auto flex items-center gap-2">
+          {/* Scroll-aware Sign-in chip — mobile only, signed-out only.
+              Fades in once the user has scrolled past the hero so the
+              top bar can stay quiet at first paint. */}
+          {!user && (
+            <Link
+              href="/login"
+              className="sm:hidden inline-flex items-center justify-center rounded-full px-3 h-8 text-[12px] font-bold transition-opacity duration-200"
+              style={{
+                background: "#FAFAF7",
+                border: "1px solid #EBEBEB",
+                color: "#0A0A0A",
+                opacity: scrolled ? 1 : 0,
+                pointerEvents: scrolled ? "auto" : "none",
+              }}
+              aria-hidden={!scrolled}
+              tabIndex={scrolled ? 0 : -1}
+            >
+              Sign in
+            </Link>
+          )}
+
           <Link
             href="/compose"
-            className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 sm:px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 sm:px-4 min-w-[44px] h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
             style={{ background: "#0A0A0A", color: "#FFFFFF" }}
+            aria-label="Post"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
             <span className="hidden sm:inline">Post</span>
           </Link>
 
           {user ? (
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center w-9 h-9 rounded-full text-[12px] font-bold text-white transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center w-11 h-11 sm:w-9 sm:h-9 rounded-full text-[12px] font-bold text-white transition-all hover:-translate-y-0.5"
               style={{
                 background:
                   "linear-gradient(135deg, #FF6B35 0%, #C6F135 100%)",
@@ -102,13 +124,15 @@ export function Nav() {
               {(user.email ?? "?").charAt(0).toUpperCase()}
             </Link>
           ) : (
+            // Desktop sign-in (always visible at sm+). Mobile version is
+            // the scroll-aware chip above.
             <Link
               href="/login"
-              className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-9 text-[13px] font-bold transition-colors"
+              className="hidden sm:inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-9 text-[13px] font-bold transition-colors"
               style={{ color: "#0A0A0A" }}
             >
               <User className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sign in</span>
+              <span>Sign in</span>
             </Link>
           )}
         </div>
@@ -138,7 +162,7 @@ function NavTab({
       }}
     >
       {icon}
-      <span className="hidden sm:inline">{label}</span>
+      <span>{label}</span>
     </Link>
   );
 }

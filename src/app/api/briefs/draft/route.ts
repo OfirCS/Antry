@@ -14,6 +14,9 @@
  *
  * Without ANTHROPIC_API_KEY we return a deterministic stub so the UI
  * is testable in dev without burning API credits.
+ *
+ * Rate limited to 20 requests / 15 minutes / IP (in-memory bucket;
+ * resets on cold start — fine for v0).
  */
 
 import { NextResponse, type NextRequest } from "next/server";
@@ -37,28 +40,133 @@ type Draft = {
   ideal_fingerprint: Fingerprint;
 };
 
+// ---------- rate limiter ----------------------------------------------------
+// 20 requests / 15 min / IP, in-memory. Cold-start safe — buckets are GC'd
+// lazily on next hit. Good enough for v0; swap for Upstash when we scale.
+const RATE_LIMIT_MAX = 20;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const ipBuckets = new Map<string, number[]>();
+
+function rateLimit(ip: string): { ok: boolean; retryAfterSec: number } {
+  const now = Date.now();
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+  const prev = ipBuckets.get(ip) ?? [];
+  const recent = prev.filter((t) => t > cutoff);
+  if (recent.length >= RATE_LIMIT_MAX) {
+    const retryAfterMs = (recent[0] ?? now) + RATE_LIMIT_WINDOW_MS - now;
+    return { ok: false, retryAfterSec: Math.max(1, Math.ceil(retryAfterMs / 1000)) };
+  }
+  recent.push(now);
+  ipBuckets.set(ip, recent);
+  return { ok: true, retryAfterSec: 0 };
+}
+
+function getIp(req: NextRequest): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  const real = req.headers.get("x-real-ip");
+  if (real) return real.trim();
+  return "unknown";
+}
+
+function newRequestId(): string {
+  return `briefs_draft_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+// ---------- handler ---------------------------------------------------------
+
 export async function POST(req: NextRequest) {
+  const reqId = newRequestId();
+  const ip = getIp(req);
+  const startedAt = Date.now();
+
+  const rl = rateLimit(ip);
+  if (!rl.ok) {
+    console.warn(`[${reqId}] briefs/draft rate-limited ip=${ip}`);
+    return NextResponse.json(
+      {
+        error: "rate_limited",
+        message: `Too many drafts. Try again in ${rl.retryAfterSec}s.`,
+        request_id: reqId,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rl.retryAfterSec),
+          "X-Request-Id": reqId,
+        },
+      }
+    );
+  }
+
   let body: { problem?: string };
   try {
     body = (await req.json()) as { problem?: string };
   } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+    console.warn(`[${reqId}] briefs/draft invalid_json ip=${ip}`);
+    return NextResponse.json(
+      {
+        error: "invalid_json",
+        message: "Request body must be valid JSON.",
+        request_id: reqId,
+      },
+      { status: 400, headers: { "X-Request-Id": reqId } }
+    );
   }
   const problem = (body.problem ?? "").trim();
   if (problem.length < 10 || problem.length > 600) {
-    return NextResponse.json({ error: "invalid_problem" }, { status: 400 });
+    console.warn(
+      `[${reqId}] briefs/draft invalid_problem length=${problem.length} ip=${ip}`
+    );
+    return NextResponse.json(
+      {
+        error: "invalid_problem",
+        message:
+          problem.length < 10
+            ? "Problem must be at least 10 characters."
+            : "Problem must be at most 600 characters.",
+        request_id: reqId,
+      },
+      { status: 400, headers: { "X-Request-Id": reqId } }
+    );
   }
 
+  console.log(
+    `[${reqId}] briefs/draft start ip=${ip} problem_len=${problem.length}`
+  );
+
   if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ draft: stubDraft(problem) });
+    const draft = stubDraft(problem);
+    console.log(
+      `[${reqId}] briefs/draft done grader=stub ms=${Date.now() - startedAt}`
+    );
+    return NextResponse.json(
+      { draft, grader: "stub", request_id: reqId },
+      { headers: { "X-Request-Id": reqId } }
+    );
   }
 
   try {
     const draft = await claudeDraft(problem);
-    return NextResponse.json({ draft });
+    console.log(
+      `[${reqId}] briefs/draft done grader=claude-opus-4-7 ms=${Date.now() - startedAt}`
+    );
+    return NextResponse.json(
+      { draft, grader: "claude-opus-4-7", request_id: reqId },
+      { headers: { "X-Request-Id": reqId } }
+    );
   } catch (e) {
-    console.error("[briefs/draft] Claude failed:", e);
-    return NextResponse.json({ draft: stubDraft(problem) });
+    console.error(`[${reqId}] briefs/draft claude_failed`, e);
+    const draft = stubDraft(problem);
+    return NextResponse.json(
+      {
+        draft,
+        grader: "stub_fallback",
+        request_id: reqId,
+        warning: "Agent unavailable — showing heuristic draft.",
+      },
+      { headers: { "X-Request-Id": reqId } }
+    );
   }
 }
 

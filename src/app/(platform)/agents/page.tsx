@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Code2, Terminal, Lock, Zap, Bot, ArrowRight, Check } from "lucide-react";
+import {
+  ArrowRight,
+  Hash,
+  Fingerprint,
+  FileText,
+  BookOpen,
+  User,
+  Signature,
+} from "lucide-react";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
+import { InstallSnippet } from "./_components/InstallSnippet";
 
-const TITLE = "Antry MCP — work in your IDE, mint signed Receipts";
+const TITLE = "Antry MCP — install in 30 seconds";
 const DESCRIPTION =
-  "Antry's Model Context Protocol server lets candidates work on Briefs from inside Cursor or Claude Code. Every prompt, tool call, and pivot is signed at the Antry gateway. Submit, get a Receipt — minted from the trace of your real IDE, not a sandbox.";
+  "Install the Antry MCP in Cursor or Claude Code. Mint signed Receipts from your IDE.";
 
 export const metadata: Metadata = {
   title: "MCP integration",
@@ -16,508 +25,513 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     path: "/agents",
     image: ogImageUrl({
-      title: "Cursor + Antry MCP.",
-      subtitle: "Work in your real IDE. Sign every step. Mint Receipts.",
-      eyebrow: "Antry · Agent integration",
+      title: "Antry MCP.",
+      subtitle: "Install in 30 seconds. Mint signed Receipts.",
+      eyebrow: "Antry · MCP",
     }),
   }),
   twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
-const STEPS = [
-  {
-    n: 1,
-    title: "Pick a Brief",
-    body: "Browse Antry, find a Brief that matches the role. The Brief includes the rubric, allowed_tools, and time/token caps.",
-  },
-  {
-    n: 2,
-    title: "Open Cursor (or any MCP client)",
-    body: "Antry MCP installed via one config block. Your bearer token is set; no other setup required.",
-  },
-  {
-    n: 3,
-    title: "start_attempt",
-    body: "Cursor calls Antry's start_attempt tool. Returns a signed start timestamp + attempt_id. The clock starts.",
-  },
-  {
-    n: 4,
-    title: "Work normally",
-    body: "Edit, prompt, run tools — exactly as you would on any project. Cursor logs each step to Antry through log_event. The trace is signed at the gateway, not your machine.",
-  },
-  {
-    n: 5,
-    title: "submit_attempt",
-    body: "Done. Antry's grader reads the trace, computes the Builder Fingerprint, and mints a signed Receipt. Share the URL.",
-  },
-];
+type LifecycleTool = {
+  name: string;
+  sig: string;
+  desc: string;
+};
 
-const LIFECYCLE_TOOLS = [
+const LIFECYCLE: LifecycleTool[] = [
   {
     name: "start_attempt",
-    desc: "Begin an instrumented Brief attempt. Returns attempt_id + signed start timestamp.",
-    auth: true,
+    sig: "start_attempt(brief_slug)",
+    desc: "Begin a Brief attempt. Returns attempt_id + signed start timestamp.",
   },
   {
     name: "log_event",
-    desc: "Record one event (prompt, tool_call, file_edit, pivot, note). Cursor calls this from its own tool wrappers.",
-    auth: true,
+    sig: "log_event(attempt_id, type, payload)",
+    desc: "Record one step in the trace. Cursor calls this from its tool wrappers.",
   },
   {
     name: "submit_attempt",
-    desc: "Close attempt, run grader, mint signed Receipt. Returns receipt_id, composite score, full Fingerprint.",
-    auth: true,
+    sig: "submit_attempt(attempt_id)",
+    desc: "Close attempt, run grader, mint signed Receipt.",
   },
   {
     name: "get_attempt_status",
-    desc: "Poll: active / submitted / graded. Returns receipt_id once minted.",
-    auth: true,
+    sig: "get_attempt_status(attempt_id)",
+    desc: "Check status: active / submitted / graded.",
   },
 ];
 
-const READ_TOOLS = [
+const DISCOVERY: LifecycleTool[] = [
   {
     name: "search_briefs",
-    desc: "Filter Briefs by query, difficulty, category. Use this to discover what to attempt.",
+    sig: "search_briefs(query?, difficulty?, category?)",
+    desc: "Browse available Briefs. Filter by query, level, or category.",
   },
   {
     name: "get_brief",
-    desc: "Full Brief: prompt markdown, allowed_tools, ideal Fingerprint, caps.",
+    sig: "get_brief(slug)",
+    desc: "Full Brief: prompt, allowed tools, ideal Fingerprint, caps.",
   },
   {
     name: "get_receipt",
-    desc: "Public Receipt with builder, brief, composite score, Fingerprint, provenance.",
+    sig: "get_receipt(receipt_id)",
+    desc: "Public Receipt with builder, score, Fingerprint, provenance.",
   },
   {
     name: "verify_receipt",
-    desc: "Re-derive a Receipt's hash and signature server-side.",
+    sig: "verify_receipt(receipt_id)",
+    desc: "Re-derive the Receipt's hash and signature server-side.",
   },
   {
     name: "list_top_builders",
-    desc: "Builders ranked by composite or any single dimension.",
+    sig: "list_top_builders(dimension?, limit?)",
+    desc: "Builders ranked by composite, or by any Fingerprint dimension.",
   },
   {
     name: "get_builder",
-    desc: "Builder profile + their Receipts.",
+    sig: "get_builder(username)",
+    desc: "Builder profile + their public Receipts.",
+  },
+];
+
+const RECEIPT_PARTS = [
+  {
+    icon: Hash,
+    label: "composite_score",
+    value: "0–100 weighted from the 7 Fingerprint dimensions.",
+  },
+  {
+    icon: Fingerprint,
+    label: "Fingerprint",
+    value:
+      "7 dimensions: token economy, throughput, tool IQ, recovery, prompt discipline, verification, judgment.",
+  },
+  {
+    icon: FileText,
+    label: "Trace bundle",
+    value: "Every event you logged — prompts, tool calls, edits, pivots.",
+  },
+  {
+    icon: BookOpen,
+    label: "Brief reference",
+    value: "Slug, rubric, and ideal Fingerprint at attempt time.",
+  },
+  {
+    icon: User,
+    label: "Builder identity",
+    value: "Your verified handle. Public unless you mark the Receipt private.",
+  },
+  {
+    icon: Signature,
+    label: "Sponsor signature",
+    value: "HMAC-SHA256 over the canonical content hash, signed at our gateway.",
+  },
+];
+
+const FAQ = [
+  {
+    q: "Is my code uploaded?",
+    a: "No. Only the event metadata you log — type, timestamp, and the payload you pass. Source files stay on your machine.",
+  },
+  {
+    q: "Can I retry a Brief?",
+    a: "Yes. Only your most recent submission counts toward your Fingerprint.",
+  },
+  {
+    q: "What if I don't use Cursor?",
+    a: "Any MCP client works — Claude Code, custom agents, curl. The wire is JSON-RPC 2.0 over HTTP.",
+  },
+  {
+    q: "How is it graded?",
+    a: "An Agent-as-Judge reads your trace bundle against the Brief's rubric and ideal Fingerprint. The output is signed, not opinionated.",
+  },
+  {
+    q: "What's the privacy story?",
+    a: "Receipts are public by default — they're meant to be shared. You can mark a Receipt private; it still verifies, but the URL stops resolving for non-owners.",
   },
 ];
 
 export default function AgentsPage() {
   return (
-    <main>
-      {/* ── Hero — the why ──────────────────── */}
+    <main style={{ background: "#FAFAF7" }}>
+      {/* ── Header band ─────────────────────────────────── */}
       <section
-        className="relative overflow-hidden"
-        style={{ background: "#0A0A0A" }}
+        className="relative"
+        style={{
+          background: "#FFFFFF",
+          borderBottom: "1px solid #EBEBEB",
+        }}
       >
+        {/* Lime 3px accent stripe at top */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 50% 40% at 0% 0%, rgba(198,241,53,0.10) 0%, transparent 55%)",
-          }}
+          className="absolute inset-x-0 top-0 h-[3px]"
+          style={{ background: "#C6F135" }}
         />
-        <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-24 pb-20 sm:pt-32 sm:pb-24">
+
+        <div className="mx-auto max-w-[960px] px-6 sm:px-10 pt-20 pb-16 sm:pt-24 sm:pb-20">
           <p
-            className="text-[11px] font-bold uppercase tracking-[0.28em] mb-7 inline-flex items-center gap-2"
-            style={{ color: "rgba(255,255,255,0.55)" }}
+            className="text-[11px] font-bold uppercase tracking-[0.24em]"
+            style={{ color: "#737373" }}
           >
-            <Bot className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
-            Cursor + Antry MCP
+            MCP integration
           </p>
           <h1
-            className="font-display font-bold leading-[0.96] tracking-[-0.04em]"
-            style={{ color: "#FFFFFF", fontSize: "clamp(2.4rem, 6vw, 4.4rem)" }}
+            className="mt-4 font-display font-bold tracking-[-0.035em] leading-[1.02]"
+            style={{ color: "#0A0A0A", fontSize: "clamp(2.2rem, 5vw, 3.4rem)" }}
           >
-            Work in your <span style={{ color: "#C6F135" }}>real IDE</span>.
+            Install in 30 seconds.
             <br />
-            Mint a signed Receipt.
+            Mint signed Receipts from your IDE.
           </h1>
           <p
-            className="mt-7 max-w-[640px] text-[16px] sm:text-[18px] leading-[1.6]"
-            style={{ color: "rgba(255,255,255,0.7)" }}
+            className="mt-5 max-w-[600px] text-[16px] leading-[1.6]"
+            style={{ color: "#525252" }}
           >
-            HackerRank and CoderPad force candidates into a fake browser
-            sandbox. Antry doesn&apos;t. Install the MCP in Cursor (or any
-            MCP client), pick a Brief, work normally — every prompt, tool
-            call, and pivot is signed at the Antry gateway. The Receipt is
-            minted from the trace of your real development setup, not a
-            simulator.
+            One config block in Cursor or Claude Code. Three tool calls —
+            <code className="mx-1 font-mono text-[14px]" style={{ color: "#0A0A0A" }}>
+              start_attempt
+            </code>
+            <span style={{ color: "#A3A3A3" }}>→</span>
+            <code className="mx-1 font-mono text-[14px]" style={{ color: "#0A0A0A" }}>
+              log_event
+            </code>
+            <span style={{ color: "#A3A3A3" }}>→</span>
+            <code className="mx-1 font-mono text-[14px]" style={{ color: "#0A0A0A" }}>
+              submit_attempt
+            </code>
+            — and you have a signed, shareable Receipt.
           </p>
-          <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+
+          <div className="mt-8 flex items-center gap-5">
             <Link
               href="#install"
-              className="inline-flex items-center justify-center gap-2 rounded-[14px] px-7 h-[56px] text-[15px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-[12px] px-5 h-[44px] text-[14px] font-semibold whitespace-nowrap transition-transform hover:-translate-y-[1px]"
               style={{
-                background: "#C6F135",
-                color: "#0A0A0A",
-                boxShadow: "0 12px 30px rgba(198,241,53,0.32)",
+                background: "#0A0A0A",
+                color: "#FFFFFF",
               }}
-              data-cta="lime"
             >
-              Install in Cursor <ArrowRight className="w-4 h-4" />
+              Install <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/briefs"
+              href="#tools"
               className="text-[14px] font-semibold underline-offset-4 hover:underline transition-colors"
-              style={{ color: "rgba(255,255,255,0.85)" }}
+              style={{ color: "#0A0A0A" }}
             >
-              Browse Briefs →
+              Tool reference
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Why — the wedge ────────────────── */}
-      <section style={{ background: "#FAFAF7" }} className="py-24 sm:py-28">
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
-          <div className="max-w-[640px]">
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
-              Why MCP
-            </p>
-            <h2
-              className="font-display font-bold tracking-[-0.03em] text-black leading-[1.02]"
-              style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
-            >
-              The Lab is wherever
-              <br />
-              <span className="text-gray-400">you already work.</span>
-            </h2>
-            <p className="mt-6 text-[16px] leading-[1.6] text-gray-700">
-              Other eval platforms put the candidate in a browser sandbox.
-              You don&apos;t code in a browser sandbox. You code in your IDE
-              with your editor settings, your git config, your shell, your
-              models. The Antry MCP turns that environment into the Lab —
-              instrumented at the protocol level, signed at our gateway,
-              graded by an Agent-as-Judge.
-            </p>
-          </div>
+      {/* ── Quick install ──────────────────────────────── */}
+      <section id="install" className="mx-auto max-w-[960px] px-6 sm:px-10 pt-20 sm:pt-24">
+        <SectionHeader eyebrow="Quick install" title="Three steps." />
 
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <BenefitCard
-              icon={<Zap className="w-4 h-4" style={{ color: "#0A0A0A" }} />}
-              title="No context switch"
-              body="Cursor / Claude Code / your existing setup. Zero retraining for the candidate."
-            />
-            <BenefitCard
-              icon={<Lock className="w-4 h-4" style={{ color: "#0A0A0A" }} />}
-              title="Unforgeable trace"
-              body="Every event signed at the Antry gateway with HMAC-SHA256 + qualified timestamp. Same scheme as our hosted Lab."
-            />
-            <BenefitCard
-              icon={<Code2 className="w-4 h-4" style={{ color: "#0A0A0A" }} />}
-              title="Authentic Fingerprint"
-              body="The Fingerprint reflects how you actually code, not how you perform inside a sandbox."
-            />
-          </div>
-        </div>
+        <ol className="mt-10 flex flex-col gap-7">
+          <Step n={1} title="Get a token">
+            <p className="text-[14px] leading-[1.65]" style={{ color: "#525252" }}>
+              Generate a bearer token at{" "}
+              <Link
+                href="/settings/api-keys"
+                className="font-semibold underline underline-offset-2"
+                style={{ color: "#0A0A0A" }}
+              >
+                /settings/api-keys
+              </Link>
+              . Copy the{" "}
+              <code className="font-mono text-[13px]" style={{ color: "#0A0A0A" }}>
+                ant_…
+              </code>{" "}
+              string — you&apos;ll paste it in the next step.
+            </p>
+          </Step>
+
+          <Step n={2} title="Add to your MCP config">
+            <p className="text-[14px] leading-[1.65] mb-4" style={{ color: "#525252" }}>
+              Drop this into{" "}
+              <code className="font-mono text-[13px]" style={{ color: "#0A0A0A" }}>
+                ~/.cursor/mcp.json
+              </code>{" "}
+              or{" "}
+              <code className="font-mono text-[13px]" style={{ color: "#0A0A0A" }}>
+                ~/.claude.json
+              </code>
+              . Replace the placeholder with your token.
+            </p>
+            <InstallSnippet />
+          </Step>
+
+          <Step n={3} title="Restart your client">
+            <p className="text-[14px] leading-[1.65]" style={{ color: "#525252" }}>
+              Antry shows up in the tool list. In chat, try:
+            </p>
+            <pre
+              className="mt-3 rounded-[12px] px-4 py-3 text-[13px] leading-[1.55] font-mono overflow-x-auto whitespace-pre"
+              style={{ background: "#0A0A0A", color: "#FFFFFF" }}
+            >
+              Use Antry to start_attempt on streaming-rag-pipeline
+            </pre>
+          </Step>
+        </ol>
       </section>
 
-      {/* ── How — 5 step flow ──────────────── */}
-      <section style={{ background: "#FFFFFF" }} className="py-24 sm:py-28">
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
-            The flow
-          </p>
-          <h2
-            className="font-display font-bold tracking-[-0.03em] text-black leading-[1.02]"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
-          >
-            Five tool calls. One Receipt.
-          </h2>
+      {/* ── Tool reference ─────────────────────────────── */}
+      <section id="tools" className="mx-auto max-w-[960px] px-6 sm:px-10 pt-24">
+        <SectionHeader eyebrow="Tool reference" title="Ten tools, two groups." />
 
-          <ol className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-            {STEPS.map((s) => (
+        <ToolGroup label="Lifecycle" tools={LIFECYCLE} />
+        <ToolGroup label="Discovery" tools={DISCOVERY} className="mt-12" />
+      </section>
+
+      {/* ── Receipt anatomy ────────────────────────────── */}
+      <section className="mx-auto max-w-[960px] px-6 sm:px-10 pt-24">
+        <SectionHeader
+          eyebrow="The Receipt"
+          title="What gets signed."
+          subtitle="Every Receipt is HMAC-signed at our gateway. Verifiable forever, by anyone."
+        />
+
+        <ul
+          className="mt-10 grid grid-cols-1 sm:grid-cols-2 rounded-[14px] overflow-hidden"
+          style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+        >
+          {RECEIPT_PARTS.map((p, i) => {
+            const Icon = p.icon;
+            const isLastRow = i >= RECEIPT_PARTS.length - 2;
+            const isRightCol = i % 2 === 1;
+            return (
               <li
-                key={s.n}
-                className="rounded-[20px] p-5 sm:p-6 bg-white relative"
-                style={{ border: "1.5px solid #EBEBEB" }}
+                key={p.label}
+                className="p-5 sm:p-6 flex items-start gap-3.5"
+                style={{
+                  borderBottom: isLastRow ? "none" : "1px solid #EBEBEB",
+                  borderRight: isRightCol ? "none" : "1px solid #EBEBEB",
+                }}
               >
                 <span
-                  className="inline-flex items-center justify-center w-8 h-8 rounded-xl text-[14px] font-bold font-display mb-3"
-                  style={{ background: "#C6F135", color: "#0A0A0A" }}
+                  className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg mt-[1px]"
+                  style={{ background: "rgba(198,241,53,0.18)" }}
                 >
-                  {s.n}
+                  <Icon className="w-4 h-4" style={{ color: "#0A0A0A" }} />
                 </span>
-                <h3 className="text-[14px] font-bold tracking-[-0.005em] text-black leading-[1.3]">
-                  {s.title}
-                </h3>
-                <p className="mt-1.5 text-[12px] leading-[1.55] text-gray-600">
-                  {s.body}
-                </p>
+                <div>
+                  <p
+                    className="text-[13.5px] font-mono font-semibold"
+                    style={{ color: "#0A0A0A" }}
+                  >
+                    {p.label}
+                  </p>
+                  <p
+                    className="mt-1 text-[13px] leading-[1.55]"
+                    style={{ color: "#525252" }}
+                  >
+                    {p.value}
+                  </p>
+                </div>
               </li>
-            ))}
-          </ol>
-        </div>
+            );
+          })}
+        </ul>
       </section>
 
-      {/* ── Tools ───────────────────────────── */}
-      <section style={{ background: "#FAFAF7" }} className="py-24 sm:py-28">
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4">
-            Tools
-          </p>
-          <h2
-            className="font-display font-bold tracking-[-0.03em] text-black leading-[1.02]"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
-          >
-            Lifecycle + discovery.
-          </h2>
-          <p className="mt-5 max-w-[560px] text-[15px] leading-[1.6] text-gray-700">
-            Lifecycle tools (auth-gated, internal-only beta) drive the
-            attempt. Discovery tools are open and let you browse Briefs and
-            Receipts from anywhere.
-          </p>
+      {/* ── FAQ ─────────────────────────────────────────── */}
+      <section className="mx-auto max-w-[960px] px-6 sm:px-10 pt-24">
+        <SectionHeader eyebrow="FAQ" title="Common questions." />
 
-          {/* Lifecycle */}
-          <h3 className="mt-12 mb-5 text-[12px] font-bold uppercase tracking-[0.22em] text-black inline-flex items-center gap-2">
-            <Lock className="w-3 h-3" /> Lifecycle (auth required)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {LIFECYCLE_TOOLS.map((t) => (
-              <ToolCard
-                key={t.name}
-                name={t.name}
-                desc={t.desc}
-                auth={t.auth}
-              />
-            ))}
-          </div>
-
-          {/* Discovery */}
-          <h3 className="mt-12 mb-5 text-[12px] font-bold uppercase tracking-[0.22em] text-black">
-            Discovery (open)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {READ_TOOLS.map((t) => (
-              <ToolCard key={t.name} name={t.name} desc={t.desc} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Install ─────────────────────────── */}
-      <section
-        id="install"
-        className="py-24 sm:py-28"
-        style={{ background: "#FFFFFF" }}
-      >
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-4 inline-flex items-center gap-1.5">
-            <Terminal className="w-3 h-3" />
-            Install
-          </p>
-          <h2
-            className="font-display font-bold tracking-[-0.03em] text-black leading-[1.02] max-w-[640px]"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
-          >
-            One config block.
-          </h2>
-          <p className="mt-5 max-w-[560px] text-[15px] leading-[1.6] text-gray-700">
-            Get your bearer token from{" "}
-            <Link href="/settings/api-keys" className="font-semibold text-black underline">
-              /settings/api-keys
-            </Link>
-            . Paste into your client&apos;s MCP config. Restart and Antry
-            shows up in the tools list.
-          </p>
-
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <ClientCard
-              title="Cursor"
-              path="~/.cursor/mcp.json"
-              snippet={`{
-  "mcpServers": {
-    "antry": {
-      "url": "https://antry.com/api/mcp",
-      "headers": {
-        "Authorization": "Bearer ant_YOUR_TOKEN"
-      }
-    }
-  }
-}`}
-            />
-            <ClientCard
-              title="Claude Code"
-              path="~/.claude.json"
-              snippet={`{
-  "mcpServers": {
-    "antry": {
-      "type": "http",
-      "url": "https://antry.com/api/mcp",
-      "headers": {
-        "Authorization": "Bearer ant_YOUR_TOKEN"
-      }
-    }
-  }
-}`}
-            />
-            <ClientCard
-              title="Smoke test (curl)"
-              path="discovery, no auth"
-              snippet={`curl -X POST https://antry.com/api/mcp \\
-  -H "Content-Type: application/json" \\
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'`}
-            />
-            <ClientCard
-              title="Smoke test (curl, auth)"
-              path="lifecycle"
-              snippet={`curl -X POST https://antry.com/api/mcp \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer ant_YOUR_TOKEN" \\
-  -d '{
-    "jsonrpc":"2.0","id":1,
-    "method":"tools/call",
-    "params":{
-      "name":"start_attempt",
-      "arguments":{"brief_slug":"streaming-rag-pipeline"}
-    }
-  }'`}
-            />
-          </div>
-
-          <div
-            className="mt-12 rounded-[20px] p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] gap-5 items-center"
-            style={{
-              background: "rgba(198,241,53,0.06)",
-              border: "1px solid rgba(198,241,53,0.4)",
-            }}
-          >
+        <dl
+          className="mt-10 rounded-[14px] overflow-hidden"
+          style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+        >
+          {FAQ.map((item, i) => (
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{ background: "#0A0A0A" }}
+              key={item.q}
+              className="px-5 py-5 sm:px-7 sm:py-6"
+              style={{
+                borderBottom: i === FAQ.length - 1 ? "none" : "1px solid #EBEBEB",
+              }}
             >
-              <Check className="w-5 h-5" style={{ color: "#C6F135" }} />
+              <dt
+                className="text-[14.5px] font-semibold tracking-[-0.005em]"
+                style={{ color: "#0A0A0A" }}
+              >
+                {item.q}
+              </dt>
+              <dd
+                className="mt-1.5 text-[14px] leading-[1.6]"
+                style={{ color: "#525252" }}
+              >
+                {item.a}
+              </dd>
             </div>
-            <div>
-              <h3 className="text-[16px] font-bold tracking-[-0.01em] text-black">
-                Internal beta. Email for early access.
-              </h3>
-              <p className="mt-1 text-[14px] leading-[1.55] text-gray-700 max-w-[560px]">
-                Lifecycle endpoints are gated to private partners during the
-                beta. Discovery tools are open.{" "}
-                <a
-                  href="mailto:[email protected]"
-                  className="underline font-semibold text-black"
-                >
-                  [email protected]
-                </a>{" "}
-                for a token.
-              </p>
-            </div>
-            <Link
-              href="/receipts/methodology"
-              className="inline-flex items-center gap-1.5 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 self-start sm:self-center"
-              style={{ background: "#0A0A0A", color: "#fff" }}
+          ))}
+        </dl>
+      </section>
+
+      {/* ── CTA ─────────────────────────────────────────── */}
+      <section className="mx-auto max-w-[960px] px-6 sm:px-10 pt-24 pb-28">
+        <div
+          className="rounded-[20px] p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5"
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid #EBEBEB",
+          }}
+        >
+          <div>
+            <h2
+              className="font-display font-bold tracking-[-0.02em] leading-[1.1]"
+              style={{ color: "#0A0A0A", fontSize: "clamp(1.3rem, 2.5vw, 1.6rem)" }}
             >
-              Methodology
-            </Link>
+              Ready when you are.
+            </h2>
+            <p
+              className="mt-1.5 text-[14px] leading-[1.55]"
+              style={{ color: "#525252" }}
+            >
+              Generate a token, paste the snippet, ship your first Receipt today.
+            </p>
           </div>
+          <Link
+            href="/settings/api-keys"
+            className="inline-flex items-center gap-2 rounded-[12px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-transform hover:-translate-y-[1px] self-start sm:self-auto"
+            style={{
+              background: "#C6F135",
+              color: "#0A0A0A",
+            }}
+            data-cta="lime"
+          >
+            Get your token <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
     </main>
   );
 }
 
-function BenefitCard({
-  icon,
+/* ── Local building blocks ────────────────────────────── */
+
+function SectionHeader({
+  eyebrow,
   title,
-  body,
+  subtitle,
 }: {
-  icon: React.ReactNode;
+  eyebrow: string;
   title: string;
-  body: string;
+  subtitle?: string;
 }) {
   return (
-    <div
-      className="rounded-[20px] p-6 bg-white"
-      style={{ border: "1px solid #EBEBEB" }}
-    >
-      <span
-        className="inline-flex items-center justify-center w-8 h-8 rounded-xl mb-4"
-        style={{ background: "rgba(198,241,53,0.18)" }}
+    <div className="max-w-[640px]">
+      <p
+        className="text-[11px] font-bold uppercase tracking-[0.22em]"
+        style={{ color: "#737373" }}
       >
-        {icon}
-      </span>
-      <h3 className="text-[15px] font-bold tracking-[-0.01em] text-black">
+        {eyebrow}
+      </p>
+      <h2
+        className="mt-3 font-display font-bold tracking-[-0.025em] leading-[1.05]"
+        style={{ color: "#0A0A0A", fontSize: "clamp(1.6rem, 3.2vw, 2.1rem)" }}
+      >
         {title}
-      </h3>
-      <p className="mt-1.5 text-[13px] leading-[1.55] text-gray-600">{body}</p>
-    </div>
-  );
-}
-
-function ToolCard({
-  name,
-  desc,
-  auth = false,
-}: {
-  name: string;
-  desc: string;
-  auth?: boolean;
-}) {
-  return (
-    <div
-      className="rounded-[16px] p-5 sm:p-6 bg-white"
-      style={{ border: "1px solid #EBEBEB" }}
-    >
-      <div className="flex items-center gap-2 mb-2">
-        <span
-          className="inline-flex items-center justify-center w-7 h-7 rounded-lg"
-          style={{ background: "rgba(198,241,53,0.18)" }}
+      </h2>
+      {subtitle && (
+        <p
+          className="mt-3 text-[15px] leading-[1.6]"
+          style={{ color: "#525252" }}
         >
-          <Code2 className="w-3.5 h-3.5 text-black" />
-        </span>
-        <code className="text-[13px] font-mono font-semibold text-black">
-          {name}
-        </code>
-        {auth && (
-          <span
-            className="ml-auto inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.14em] px-1.5 py-0.5 rounded"
-            style={{
-              background: "#0A0A0A",
-              color: "#C6F135",
-            }}
-          >
-            <Lock className="w-2.5 h-2.5" />
-            Auth
-          </span>
-        )}
-      </div>
-      <p className="text-[13px] leading-[1.55] text-gray-600">{desc}</p>
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }
 
-function ClientCard({
+function Step({
+  n,
   title,
-  path,
-  snippet,
+  children,
 }: {
+  n: number;
   title: string;
-  path: string;
-  snippet: string;
+  children: React.ReactNode;
 }) {
   return (
-    <div
-      className="rounded-[20px] p-5 sm:p-6 flex flex-col"
-      style={{ background: "#FAFAF7", border: "1px solid #EBEBEB" }}
-    >
-      <div className="flex items-baseline justify-between gap-3 mb-3">
-        <h3 className="text-[15px] font-bold tracking-[-0.01em] text-black">
+    <li className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-6 items-start">
+      <span
+        className="inline-flex items-center justify-center w-9 h-9 rounded-full text-[14px] font-bold font-display"
+        style={{
+          background: "#C6F135",
+          color: "#0A0A0A",
+        }}
+        aria-hidden
+      >
+        {n}
+      </span>
+      <div className="min-w-0">
+        <h3
+          className="text-[16px] font-bold tracking-[-0.01em] mt-1"
+          style={{ color: "#0A0A0A" }}
+        >
           {title}
         </h3>
-        <code className="text-[11px] font-mono text-gray-500 truncate">
-          {path}
-        </code>
+        <div className="mt-2">{children}</div>
       </div>
-      <pre
-        className="rounded-[12px] p-4 text-[12px] leading-[1.55] font-mono text-gray-800 overflow-x-auto whitespace-pre"
+    </li>
+  );
+}
+
+function ToolGroup({
+  label,
+  tools,
+  className = "",
+}: {
+  label: string;
+  tools: LifecycleTool[];
+  className?: string;
+}) {
+  return (
+    <div className={`mt-10 ${className}`}>
+      <div className="flex items-center gap-3 mb-4">
+        <span
+          className="inline-block w-1.5 h-1.5 rounded-full"
+          style={{ background: "#C6F135" }}
+          aria-hidden
+        />
+        <h3
+          className="text-[12px] font-bold uppercase tracking-[0.22em]"
+          style={{ color: "#0A0A0A" }}
+        >
+          {label}
+        </h3>
+      </div>
+      <div
+        className="rounded-[14px] overflow-hidden"
         style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
       >
-        {snippet}
-      </pre>
+        {tools.map((t, i) => (
+          <div
+            key={t.name}
+            className="grid grid-cols-1 sm:grid-cols-[minmax(0,0.55fr)_minmax(0,1fr)] gap-2 sm:gap-6 px-5 py-4 sm:px-6 sm:py-5"
+            style={{
+              borderBottom: i === tools.length - 1 ? "none" : "1px solid #EBEBEB",
+            }}
+          >
+            <code
+              className="font-mono text-[13px] leading-[1.5] font-semibold break-words"
+              style={{ color: "#0A0A0A" }}
+            >
+              {t.sig}
+            </code>
+            <p
+              className="text-[13.5px] leading-[1.55]"
+              style={{ color: "#525252" }}
+            >
+              {t.desc}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

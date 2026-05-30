@@ -14,7 +14,12 @@ import type { Post, PostKind } from "@/components/feed/FeedCard";
 import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
 
-export function buildFeed(): Post[] {
+export type BuildFeedOptions = {
+  /** Restrict the synth feed to a single post kind. Omit for all. */
+  kind?: PostKind;
+};
+
+export function buildFeed(options: BuildFeedOptions = {}): Post[] {
   const posts: Post[] = [];
 
   // ── Receipts → "minted Receipt" posts ────────────────
@@ -71,6 +76,10 @@ export function buildFeed(): Post[] {
 
   // Sort newest-first (mostly — receipts/briefs are timestamped)
   posts.sort((a, b) => +new Date(b.at) - +new Date(a.at));
+
+  if (options.kind) {
+    return posts.filter((p) => p.kind === options.kind);
+  }
   return posts;
 }
 

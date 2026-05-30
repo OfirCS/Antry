@@ -49,6 +49,8 @@ export async function POST(req: NextRequest) {
     durationHours?: number;
     prize?: string;
     briefSlugs?: string[];
+    startsAt?: string | null;
+    endsAt?: string | null;
   };
   let body: Body;
   try {
@@ -92,6 +94,17 @@ export async function POST(req: NextRequest) {
     briefIds.push(b.id);
   }
 
+  // Schedule fields — optional. If startsAt is omitted/empty, the store
+  // defaults to "now"; endsAt then defaults to starts + durationHours.
+  function parseDate(input: string | null | undefined): string | null {
+    if (!input) return null;
+    const t = Date.parse(input);
+    if (Number.isNaN(t)) return null;
+    return new Date(t).toISOString();
+  }
+  const startsAt = parseDate(body.startsAt);
+  const endsAt = parseDate(body.endsAt);
+
   const record = await createHackathon({
     slug: slugify(name),
     name,
@@ -100,6 +113,8 @@ export async function POST(req: NextRequest) {
     prize: (body.prize ?? "").slice(0, 200),
     brief_ids: briefIds,
     host_user_id: hostUserId,
+    starts_at: startsAt,
+    ends_at: endsAt,
   });
 
   return NextResponse.json({

@@ -16,6 +16,8 @@ export type HackathonRecord = {
   host_user_id: string | null;
   status: "draft" | "live" | "closed";
   created_at: string;
+  starts_at: string | null;
+  ends_at: string | null;
 };
 
 declare global {
@@ -50,8 +52,18 @@ export async function createHackathon(input: {
   prize: string;
   brief_ids: string[];
   host_user_id: string | null;
+  starts_at?: string | null;
+  ends_at?: string | null;
 }): Promise<HackathonRecord> {
   const now = new Date().toISOString();
+  // Default window: starts now, ends at now + duration_hours. The host can
+  // override either side via the launcher's "Schedule" expander.
+  const starts_at = input.starts_at ?? now;
+  const ends_at =
+    input.ends_at ??
+    new Date(
+      new Date(starts_at).getTime() + input.duration_hours * 60 * 60 * 1000
+    ).toISOString();
   const record: HackathonRecord = {
     id: cryptoRandomId("hk"),
     slug: input.slug,
@@ -63,6 +75,8 @@ export async function createHackathon(input: {
     host_user_id: input.host_user_id,
     status: "live",
     created_at: now,
+    starts_at,
+    ends_at,
   };
 
   if (!dbAvailable()) {
@@ -88,14 +102,19 @@ export async function createHackathon(input: {
         brief_ids: record.brief_ids,
         host_user_id: record.host_user_id,
         status: "live",
+        starts_at: record.starts_at,
+        ends_at: record.ends_at,
       })
-      .select("id, created_at")
+      .select("id, created_at, starts_at, ends_at")
       .single();
 
     if (data) {
       record.id = data.id;
       record.slug = slug;
       record.created_at = data.created_at;
+      // Trust the DB's notion of starts_at/ends_at in case it rounded.
+      record.starts_at = data.starts_at ?? record.starts_at;
+      record.ends_at = data.ends_at ?? record.ends_at;
       return record;
     }
     if (error?.code === "23505") {
@@ -122,12 +141,20 @@ export async function getHackathonBySlug(
   const { data } = await sb
     .from("hackathons")
     .select(
-      "id, slug, name, vibe, duration_hours, prize, brief_ids, host_user_id, status, created_at"
+      "id, slug, name, vibe, duration_hours, prize, brief_ids, host_user_id, status, created_at, starts_at, ends_at"
     )
     .eq("slug", slug)
     .single();
   if (!data) return memStore.get(slug) ?? null;
-  return data as HackathonRecord;
+  // Backfill nullable schedule fields if the DB row predates migration 011.
+  const row = data as HackathonRecord;
+  if (!row.starts_at) row.starts_at = row.created_at;
+  if (!row.ends_at) {
+    row.ends_at = new Date(
+      new Date(row.starts_at).getTime() + row.duration_hours * 60 * 60 * 1000
+    ).toISOString();
+  }
+  return row;
 }
 
 function cryptoRandomId(prefix: string): string {

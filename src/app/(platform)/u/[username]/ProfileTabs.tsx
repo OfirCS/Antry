@@ -25,9 +25,13 @@ const TAB_DEFS: { key: TabKey; label: string }[] = [
 export function ProfileTabs({
   feed,
   totalReceipts,
+  closeToWin = 0,
 }: {
   feed: Post[];
   totalReceipts: number;
+  /** Receipts in the 70-79 composite band — used to phrase an
+      encouraging empty state on the Wins tab. */
+  closeToWin?: number;
 }) {
   const [active, setActive] = useState<TabKey>("feed");
 
@@ -96,7 +100,9 @@ export function ProfileTabs({
         {filtered.length === 0 ? (
           <p className="px-6 py-10 text-center text-[13px] text-gray-500">
             {active === "wins"
-              ? `No wins yet. ${totalReceipts} Receipt${totalReceipts === 1 ? "" : "s"} below 80 composite.`
+              ? closeToWin > 0
+                ? `Composite climbing — ${closeToWin} Receipt${closeToWin === 1 ? "" : "s"} close to win threshold.`
+                : `Composite climbing — ${totalReceipts} Receipt${totalReceipts === 1 ? "" : "s"} signed, building toward a leaderboard top.`
               : "Nothing here yet."}
           </p>
         ) : (

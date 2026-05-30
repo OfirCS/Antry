@@ -1,4 +1,5 @@
 import { Nav } from "@/components/Nav";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { AntryLogoFull } from "@/components/AntryLogo";
 import Link from "next/link";
 
@@ -26,12 +27,12 @@ export default function PlatformLayout({
 
       <Nav />
 
-      <main id="main" className="flex-1 pt-16">
+      <main id="main" className="flex-1 pt-16 pb-20 sm:pb-0">
         {children}
       </main>
 
       <footer
-        className="border-t"
+        className="border-t hidden sm:block"
         style={{ background: "#FFFFFF", borderColor: "#EBEBEB" }}
       >
         <div className="mx-auto max-w-[1240px] px-6 sm:px-10 py-6 flex items-center justify-between flex-wrap gap-3">
@@ -60,6 +61,8 @@ export default function PlatformLayout({
           </nav>
         </div>
       </footer>
+
+      <MobileBottomNav />
     </div>
   );
 }
