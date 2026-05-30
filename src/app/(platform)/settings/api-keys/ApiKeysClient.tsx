@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Key, Plus, Copy, Check, Trash2, Terminal, Shield } from "lucide-react";
+import { Copy, Check, Trash2, Terminal, Shield, Plus } from "lucide-react";
+import { SettingsCard } from "../_components/SettingsCard";
 
 export type ApiKeyRow = {
   id: string;
@@ -11,6 +12,14 @@ export type ApiKeyRow = {
   revoked_at: string | null;
 };
 
+/**
+ * Cursor tokens — mint, reveal, revoke.
+ *
+ * The dark reveal card autosizes around the secret and offers a single
+ * copy action. Revoked tokens stay visible (dimmed) so the audit trail
+ * is readable; they don't take a destructive action. "Test in Cursor"
+ * hint sits below the snippet to bridge the user to the IDE.
+ */
 export function ApiKeysClient({
   initialKeys,
 }: {
@@ -62,7 +71,8 @@ export function ApiKeysClient({
   };
 
   const revoke = async (id: string) => {
-    if (!confirm("Revoke this token? Cursor will lose access immediately.")) return;
+    if (!confirm("Revoke this token? Cursor will lose access immediately."))
+      return;
     const res = await fetch(`/api/api-keys?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
     });
@@ -86,76 +96,66 @@ export function ApiKeysClient({
   const revoked = keys.filter((k) => k.revoked_at);
 
   return (
-    <main className="min-h-screen" style={{ background: "#FAFAF7" }}>
-      <div className="mx-auto max-w-[920px] px-6 sm:px-10 py-12 sm:py-16">
-        <div className="mb-10">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-3 inline-flex items-center gap-2">
-            <Key className="w-3 h-3" />
-            API keys
-          </p>
-          <h1
-            className="font-display font-bold tracking-[-0.03em] text-black leading-[1.05]"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
-          >
-            Cursor MCP tokens
-          </h1>
-          <p className="mt-4 max-w-[560px] text-[15px] leading-[1.6] text-gray-700">
-            Each token authenticates your IDE against the Antry MCP gateway.
-            Plaintext is shown <span className="font-bold">once</span> at mint
-            time — copy it into your Cursor config immediately.
-          </p>
-        </div>
-
-        {/* Just-minted reveal */}
-        {justMinted && (
-          <div
-            className="mb-10 rounded-[20px] p-6"
-            style={{
-              background: "rgba(198,241,53,0.10)",
-              border: "1.5px solid rgba(198,241,53,0.5)",
-            }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-4 h-4 text-black" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-black">
-                New token · {justMinted.label}
+    <>
+      {/* Just-minted reveal — autosizing dark card */}
+      {justMinted && (
+        <SettingsCard
+          title="New token"
+          caption="Copy this now. We only store the HMAC — you can't retrieve it later."
+        >
+          <div className="p-6 sm:p-7">
+            <div className="mb-3 flex items-center gap-2">
+              <Shield className="h-3.5 w-3.5" style={{ color: "#0A0A0A" }} />
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                style={{ color: "#0A0A0A" }}
+              >
+                {justMinted.label}
               </span>
             </div>
-            <p className="text-[13px] text-gray-700 mb-3">
-              Copy this now. We only store the HMAC — you can&apos;t retrieve
-              it later.
-            </p>
             <div
-              className="rounded-[12px] p-3 flex items-center gap-2 mb-3"
+              className="flex items-start gap-2 rounded-[12px] p-3"
               style={{ background: "#0A0A0A" }}
             >
-              <code className="flex-1 font-mono text-[12px] text-white break-all">
+              <code
+                className="flex-1 break-all font-mono text-[12px] leading-[1.55]"
+                style={{ color: "#FFFFFF" }}
+              >
                 {justMinted.token}
               </code>
               <button
                 type="button"
                 onClick={copyToken}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-md transition-colors shrink-0"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-transform hover:-translate-y-0.5"
                 style={{ background: "#C6F135", color: "#0A0A0A" }}
-                aria-label="Copy"
+                aria-label="Copy token"
               >
                 {copied ? (
-                  <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} />
                 ) : (
-                  <Copy className="w-3.5 h-3.5" />
+                  <Copy className="h-3.5 w-3.5" />
                 )}
               </button>
             </div>
-            <details className="text-[13px]">
-              <summary className="cursor-pointer font-semibold text-black inline-flex items-center gap-1.5">
-                <Terminal className="w-3 h-3" />
+            <details className="mt-4 text-[13px]">
+              <summary
+                className="inline-flex cursor-pointer items-center gap-1.5 font-semibold"
+                style={{ color: "#0A0A0A" }}
+              >
+                <Terminal className="h-3 w-3" />
                 Paste into ~/.cursor/mcp.json
               </summary>
               <pre
-                className="mt-3 rounded-[12px] p-4 text-[11px] leading-[1.55] font-mono text-gray-800 overflow-x-auto whitespace-pre"
-                style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+                className="mt-3 overflow-x-auto rounded-[12px] p-4 text-[11px] leading-[1.55]"
+                style={{
+                  background: "#FAFAF7",
+                  border: "1px solid #EBEBEB",
+                  color: "#0A0A0A",
+                  fontFamily:
+                    "ui-monospace, SFMono-Regular, Menlo, monospace",
+                }}
               >
-                {`{
+{`{
   "mcpServers": {
     "antry": {
       "url": "https://antry.com/api/mcp",
@@ -166,88 +166,101 @@ export function ApiKeysClient({
   }
 }`}
               </pre>
+              <p
+                className="mt-3 text-[12px]"
+                style={{ color: "#737373" }}
+              >
+                Test in Cursor{" "}
+                <span aria-hidden="true">&rarr;</span> open the chat, ask
+                &ldquo;list my Antry receipts&rdquo;. If you see your feed, the
+                handshake worked.
+              </p>
             </details>
           </div>
-        )}
+        </SettingsCard>
+      )}
 
-        {/* Mint form */}
-        <div
-          className="rounded-[20px] p-6 sm:p-7 mb-8"
-          style={{ background: "white", border: "1px solid #EBEBEB" }}
-        >
-          <h2 className="text-[14px] font-bold tracking-[-0.005em] text-black mb-4">
-            Mint a new token
-          </h2>
+      {/* Mint form */}
+      <SettingsCard
+        title="Mint"
+        caption="Name a token for the surface that will use it (e.g. Cursor, work laptop, CI)."
+      >
+        <div className="p-6 sm:p-7">
           <div className="flex flex-wrap items-center gap-3">
             <input
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="Label (e.g. Cursor MCP)"
+              placeholder="Cursor MCP"
               maxLength={80}
-              className="flex-1 min-w-[200px] px-4 h-[44px] rounded-[12px] text-[14px] outline-none border-2 transition-colors"
-              style={{ borderColor: "#EBEBEB", background: "#FAFAF7" }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#0A0A0A")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#EBEBEB")}
+              className="h-[42px] min-w-[200px] flex-1 rounded-[10px] border bg-white px-4 text-[14px] font-medium outline-none transition-colors focus:border-[#0A0A0A]"
+              style={{ borderColor: "#EBEBEB" }}
             />
             <button
               type="button"
               onClick={mint}
-              disabled={minting}
-              className="inline-flex items-center justify-center gap-1.5 rounded-[12px] px-5 h-[44px] text-[13px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={minting || !label.trim()}
+              className="inline-flex h-[42px] items-center justify-center gap-1.5 rounded-full px-5 text-[13px] font-bold transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ background: "#0A0A0A", color: "#FFFFFF" }}
             >
               {minting ? (
                 "Minting…"
               ) : (
                 <>
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
                   Mint token
                 </>
               )}
             </button>
           </div>
           {error && (
-            <p className="mt-3 text-[13px] font-semibold text-red-600">
+            <p
+              className="mt-3 text-[13px] font-semibold"
+              style={{ color: "#dc2626" }}
+            >
               {error}
             </p>
           )}
         </div>
+      </SettingsCard>
 
-        {/* Active keys */}
-        <h2 className="text-[12px] font-bold uppercase tracking-[0.22em] text-gray-500 mb-3">
-          Active ({live.length})
-        </h2>
+      {/* Active keys */}
+      <SettingsCard title={`Active · ${live.length}`}>
         {live.length === 0 ? (
           <div
-            className="rounded-[16px] p-6 text-center text-[13px] text-gray-500 mb-10"
-            style={{ background: "white", border: "1px dashed #EBEBEB" }}
+            className="p-8 text-center"
+            style={{ color: "#737373" }}
           >
-            No active tokens. Mint one to start using Antry from Cursor.
+            <p className="text-[14px] font-semibold" style={{ color: "#0A0A0A" }}>
+              Mint your first token to connect Cursor.
+            </p>
+            <p className="mt-1.5 text-[12px]">
+              One token per surface. Revoke anytime.
+            </p>
           </div>
         ) : (
-          <ul className="space-y-2 mb-10">
+          <ul className="divide-y" style={{ borderColor: "#EBEBEB" }}>
             {live.map((k) => (
               <KeyRow key={k.id} k={k} onRevoke={() => revoke(k.id)} />
             ))}
           </ul>
         )}
+      </SettingsCard>
 
-        {/* Revoked keys */}
-        {revoked.length > 0 && (
-          <>
-            <h2 className="text-[12px] font-bold uppercase tracking-[0.22em] text-gray-400 mb-3">
-              Revoked ({revoked.length})
-            </h2>
-            <ul className="space-y-2 opacity-60">
-              {revoked.map((k) => (
-                <KeyRow key={k.id} k={k} disabled />
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-    </main>
+      {/* Revoked keys — dimmed, not hidden */}
+      {revoked.length > 0 && (
+        <SettingsCard title={`Revoked · ${revoked.length}`}>
+          <ul
+            className="divide-y opacity-60"
+            style={{ borderColor: "#EBEBEB" }}
+          >
+            {revoked.map((k) => (
+              <KeyRow key={k.id} k={k} disabled />
+            ))}
+          </ul>
+        </SettingsCard>
+      )}
+    </>
   );
 }
 
@@ -261,18 +274,23 @@ function KeyRow({
   disabled?: boolean;
 }) {
   return (
-    <li
-      className="rounded-[14px] p-4 grid grid-cols-[1fr_auto] items-center gap-3"
-      style={{ background: "white", border: "1px solid #EBEBEB" }}
-    >
+    <li className="grid grid-cols-[1fr_auto] items-center gap-3 px-6 py-4 sm:px-7">
       <div className="min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[14px] font-bold tracking-[-0.005em] text-black truncate">
+        <div className="flex items-center gap-2">
+          <span
+            className="truncate text-[14px] font-bold tracking-[-0.005em]"
+            style={{ color: "#0A0A0A" }}
+          >
             {k.label}
           </span>
-          <code className="text-[10px] font-mono text-gray-500">{k.id}</code>
+          <code
+            className="font-mono text-[10px]"
+            style={{ color: "#A3A3A3" }}
+          >
+            {k.id.slice(0, 8)}
+          </code>
         </div>
-        <p className="text-[11px] text-gray-500">
+        <p className="mt-1 text-[11px]" style={{ color: "#737373" }}>
           Created {new Date(k.created_at).toLocaleDateString()}
           {k.last_used_at
             ? ` · Last used ${new Date(k.last_used_at).toLocaleDateString()}`
@@ -286,10 +304,11 @@ function KeyRow({
         <button
           type="button"
           onClick={onRevoke}
-          className="inline-flex items-center justify-center w-9 h-9 rounded-md transition-colors text-gray-500 hover:text-red-600 hover:bg-red-50"
-          aria-label="Revoke"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-red-50 hover:text-red-600"
+          style={{ color: "#737373" }}
+          aria-label="Revoke token"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="h-3.5 w-3.5" />
         </button>
       )}
     </li>

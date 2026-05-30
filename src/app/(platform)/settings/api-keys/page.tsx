@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { SettingsNav } from "../_components/SettingsNav";
 import { ApiKeysClient, type ApiKeyRow } from "./ApiKeysClient";
 
 export const metadata: Metadata = {
-  title: "API keys",
+  title: "Cursor · Settings",
   description:
     "Manage your Antry MCP bearer tokens — mint, label, and revoke. Plaintext is shown once at mint time.",
 };
@@ -35,5 +36,36 @@ export default async function ApiKeysPage() {
     keys = [];
   }
 
-  return <ApiKeysClient initialKeys={keys} />;
+  return (
+    <div className="min-h-screen" style={{ background: "#FAFAF7" }}>
+      <div className="mx-auto max-w-[760px] px-6 sm:px-10 py-12 sm:py-16">
+        <header className="mb-8">
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.22em]"
+            style={{ color: "#737373" }}
+          >
+            Settings
+          </p>
+          <h1
+            className="mt-2 font-display font-bold tracking-[-0.03em]"
+            style={{ color: "#0A0A0A", fontSize: "clamp(2rem, 4.2vw, 2.5rem)" }}
+          >
+            Cursor.
+          </h1>
+          <p
+            className="mt-3 max-w-[560px] text-[14px] leading-[1.6]"
+            style={{ color: "#525252" }}
+          >
+            Bearer tokens authenticate your IDE against the Antry MCP gateway.
+            Plaintext is shown once at mint time — copy it into your Cursor
+            config immediately.
+          </p>
+        </header>
+
+        <SettingsNav />
+
+        <ApiKeysClient initialKeys={keys} />
+      </div>
+    </div>
+  );
 }

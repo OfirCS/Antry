@@ -739,7 +739,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
           </div>
 
           {/* Live preview column */}
-          <aside className="lg:sticky lg:top-24 self-start">
+          <aside className="hidden lg:block lg:sticky lg:top-24 self-start">
             <div
               className="rounded-[14px] overflow-hidden"
               style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}

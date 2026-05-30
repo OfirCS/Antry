@@ -20,7 +20,7 @@ import { Plus, TrendingUp, Trophy, Sparkles, Building2 } from "lucide-react";
 
 const TITLE = "Antry";
 const DESCRIPTION =
-  "The feed for vibe coders. Ship in public, mint Receipts, win hackathons.";
+  "Shipping replays, not interview replays. Mint signed Receipts as you build. One Receipt, every job board.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     path: "/",
     image: ogImageUrl({
       title: "Antry",
-      subtitle: "The feed for vibe coders.",
+      subtitle: "Shipping replays, not interview replays.",
       eyebrow: "ANTRY",
     }),
   }),
@@ -101,9 +101,9 @@ export default async function Home({
               />
               <Link
                 href="/compose"
-                className="flex-1 text-left text-[14px] text-gray-500 hover:text-gray-700 transition-colors"
+                className="flex-1 min-w-0 truncate text-left text-[14px] text-gray-500 hover:text-gray-700 transition-colors"
               >
-                Share what you&apos;re building…
+                Post a build, not a status…
               </Link>
               <Link
                 href="/compose"
@@ -200,7 +200,7 @@ export default async function Home({
             </RailCard>
 
             <RailCard
-              title="Companies hiring"
+              title="325 companies hiring"
               icon={<Building2 className="w-3 h-3" />}
             >
               <CompaniesRail />
@@ -273,8 +273,8 @@ function FeedEmpty({ filter }: { filter: FilterKey }) {
       </p>
       <p className="mt-1.5 text-[13px] text-gray-500 max-w-[36ch] mx-auto leading-[1.5]">
         {isFiltered
-          ? "Be the first to post in this category — your build shows up at the top."
-          : "Post what you're shipping today. The next visitor sees your build first."}
+          ? "First post wins the top slot. Receipts beat status updates."
+          : "Ship something today. Your Receipt lands above the fold."}
       </p>
       <div className="mt-4 inline-flex items-center gap-2">
         <Link

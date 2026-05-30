@@ -57,9 +57,9 @@ export function HeroStrip() {
         style={{ background: "#EBEBEB" }}
       />
       <p className="text-[13px] sm:text-[14px] leading-[1.45] text-[#0A0A0A] flex-1 min-w-0">
-        The resume for the AI era —{" "}
+        Shipping replays, not interview replays —{" "}
         <span className="text-gray-500">
-          ship in public, mint signed Receipts, get hired.
+          mint signed Receipts as you build. One Receipt, every job board.
         </span>
       </p>
       <button

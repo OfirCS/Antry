@@ -120,7 +120,7 @@ export default async function BriefDetailPage({
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8 lg:gap-12 items-start">
-            <div className="min-w-0">
+            <div className="min-w-0 order-1">
               {/* Sponsor + difficulty pill row */}
               <div className="flex items-center gap-2 mb-4 flex-wrap">
                 <span
@@ -178,7 +178,7 @@ export default async function BriefDetailPage({
                     this week
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1.5 text-gray-500">
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-gray-500">
                   <Shield className="w-3 h-3" />
                   Signed at the gateway
                 </span>
@@ -191,7 +191,7 @@ export default async function BriefDetailPage({
                desktop reading order well enough that no extra ordering
                classes are needed. */}
             <aside
-              className="rounded-[14px] p-5"
+              className="rounded-[14px] p-5 order-2"
               style={{
                 background: "#FAFAF7",
                 border: "1px solid #EBEBEB",

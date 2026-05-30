@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Share2 } from "lucide-react";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { demoReceipts } from "@/lib/receipts/demo-data";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
@@ -121,14 +122,16 @@ export default async function ProfilePage({ params }: PageProps) {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-[10px] px-4 h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                aria-label="Share"
+                className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 sm:px-4 h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
                 style={{
                   background: "#FFFFFF",
                   color: "#0A0A0A",
                   border: "1px solid #EBEBEB",
                 }}
               >
-                Share
+                <Share2 className="w-3.5 h-3.5 sm:hidden" />
+                <span className="hidden sm:inline">Share</span>
               </button>
               <button
                 type="button"

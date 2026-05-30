@@ -199,7 +199,7 @@ export function ComposeClient() {
                 role="tab"
                 aria-selected={on}
                 onClick={() => setKind(o.kind)}
-                className="inline-flex items-center gap-1.5 px-3 h-8 rounded-[10px] text-[12px] font-bold transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 h-10 rounded-[10px] text-[12px] font-bold transition-colors"
                 style={{
                   background: on ? c.bg : "transparent",
                   color: on ? c.fg : "#525252",

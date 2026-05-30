@@ -16,21 +16,21 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
         Welcome to Antry.
       </h1>
       <p className="mt-3 text-[15px] leading-[1.55] text-gray-600">
-        Show how you code with AI. Get hired on it.
+        Your Receipt is your resume. One Receipt, every job board.
       </p>
 
       <ul className="mt-7 space-y-3">
         <Bullet
           icon={<FileText className="w-3.5 h-3.5" />}
-          text="Pick a Brief — a real engineering task scoped by a hiring company."
+          text="Pick a Brief — real engineering scoped by a hiring company, not a take-home."
         />
         <Bullet
           icon={<Cpu className="w-3.5 h-3.5" />}
-          text="Solve it in your IDE with the Antry MCP — every step signed at our gateway."
+          text="Solve it in your IDE with the Antry MCP. Every step signed at our gateway."
         />
         <Bullet
           icon={<Trophy className="w-3.5 h-3.5" />}
-          text="Mint a signed Receipt that proves how you got there, not just what shipped."
+          text="Mint a signed Receipt — shipping replays, not interview replays."
         />
       </ul>
 

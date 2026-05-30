@@ -22,7 +22,7 @@ type SortKey = (typeof SORT_KEYS)[number];
 
 const TITLE = "Briefs — Antry";
 const DESCRIPTION =
-  "Real AI engineering missions from real companies. Ship in Cursor with the Antry MCP, mint a signed Receipt.";
+  "Real missions from 325 hiring companies. Ship in Cursor with the Antry MCP. Mint a signed Receipt.";
 
 export const metadata: Metadata = {
   title: "Briefs",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     path: "/briefs",
     image: ogImageUrl({
       title: "Briefs.",
-      subtitle: "Ship in Cursor. Mint a signed Receipt.",
+      subtitle: "Real work. Signed Receipts. Not take-homes.",
       eyebrow: "ANTRY",
     }),
   }),
@@ -140,8 +140,8 @@ export default async function BriefsPage({
               The resume for the AI era.
             </h1>
             <p className="mt-2 max-w-[520px] text-[14px] leading-[1.55] text-gray-600">
-              Pick a Brief. Start in Cursor with the Antry MCP. Mint a
-              signed Receipt that proves how you actually code.
+              Real work from 325 hiring companies. Opus 4.5 already broke
+              the take-home. Receipts measure how you collaborate with it.
             </p>
           </div>
           <Link

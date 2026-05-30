@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Telescope,
@@ -9,12 +10,20 @@ import {
   Bot,
   ArrowRight,
   Sparkles,
+  Check,
+  GitCompare,
 } from "lucide-react";
 import {
   DIMENSION_LABELS,
   type Fingerprint,
   type FingerprintDimension,
 } from "@/lib/receipts/types";
+
+// Multi-select cap for the compare drawer. 2 is the floor (you can't
+// "compare" one candidate); 3 is the ceiling because past that the
+// columns get too narrow on a 1280-wide laptop and the value tanks.
+const COMPARE_MIN = 2;
+const COMPARE_MAX = 3;
 
 type Match = {
   receipt_id: string;
@@ -64,12 +73,41 @@ const FILTERS: { key: FilterKey; label: string; predicate: (s: number) => boolea
 const SKELETON_ROWS = 5;
 
 export function ScoutClient() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [grader, setGrader] = useState<string>("");
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterKey>("all");
+  // Selected receipt_ids for the compare surface. A Set keeps toggle
+  // semantics cheap and dedupes for free.
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else if (next.size < COMPARE_MAX) {
+        next.add(id);
+      }
+      // If user is at the cap and clicks an unselected row, we silently
+      // no-op — the row's tooltip explains why.
+      return next;
+    });
+  };
+
+  const onCompare = () => {
+    if (selected.size < COMPARE_MIN) return;
+    // Preserve the order the matches were ranked in, not insertion order.
+    // It reads better in the compare view (#1 on the left).
+    const orderedIds =
+      matches
+        ?.map((m) => m.receipt_id)
+        .filter((id) => selected.has(id)) ?? [];
+    router.push(`/scout/compare?ids=${orderedIds.join(",")}`);
+  };
 
   const onSearch = async () => {
     if (query.trim().length < 10) return;
@@ -77,6 +115,7 @@ export function ScoutClient() {
     setError(null);
     setMatches(null);
     setFilter("all");
+    setSelected(new Set());
     try {
       const res = await fetch("/api/scout", {
         method: "POST",
@@ -184,8 +223,9 @@ export function ScoutClient() {
             Who do you need?
           </h1>
           <p className="mt-2 max-w-[560px] text-[14px] leading-[1.55] text-gray-600">
-            One sentence — JD, vibes, anything. Antry ranks Receipt-holders
-            who fit, with rationale on every match.
+            One sentence — JD, vibes, anything. Antry returns signed
+            Receipts, not LinkedIn profiles. 325 companies, 1,000+ roles
+            a month — the long tail Cursor&apos;s funnel never sees.
           </p>
         </div>
       </section>
@@ -277,7 +317,7 @@ export function ScoutClient() {
 
           {matches && !searching && matches.length === 0 && (
             <p className="text-[14px] text-gray-500">
-              No matches in the current Receipt pool.
+              No Receipts match yet. New ones mint every day.
             </p>
           )}
 
@@ -340,7 +380,7 @@ export function ScoutClient() {
                   No matches in this band. Try a different filter.
                 </p>
               ) : (
-                <ol className="space-y-2">
+                <ol className="space-y-2 pb-24">
                   {filtered.map((m, i) => (
                     <MatchRow
                       key={m.receipt_id}
@@ -354,6 +394,12 @@ export function ScoutClient() {
                         ) ?? i) + 1
                       }
                       revealDelayMs={i * 90}
+                      selected={selected.has(m.receipt_id)}
+                      capReached={
+                        selected.size >= COMPARE_MAX &&
+                        !selected.has(m.receipt_id)
+                      }
+                      onToggle={() => toggleSelect(m.receipt_id)}
                     />
                   ))}
                 </ol>
@@ -362,6 +408,81 @@ export function ScoutClient() {
           )}
         </div>
       </section>
+
+      {/* Sticky compare bar — slides in only when ≥2 are selected. The
+          fixed footer guarantees visibility even while the user is mid-
+          scroll. pb-24 on the list above leaves clearance. */}
+      <CompareBar
+        count={selected.size}
+        onCompare={onCompare}
+        onClear={() => setSelected(new Set())}
+      />
+    </div>
+  );
+}
+
+function CompareBar({
+  count,
+  onCompare,
+  onClear,
+}: {
+  count: number;
+  onCompare: () => void;
+  onClear: () => void;
+}) {
+  const visible = count >= COMPARE_MIN;
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 sm:bottom-4 z-30 pointer-events-none"
+      aria-hidden={!visible}
+    >
+      <div
+        className="mx-auto max-w-[560px] px-4 sm:px-0 transition-all duration-300 ease-out"
+        style={{
+          opacity: visible ? 1 : 0,
+          transform: visible ? "translateY(0)" : "translateY(120%)",
+          pointerEvents: visible ? "auto" : "none",
+        }}
+      >
+        <div
+          className="rounded-t-[14px] sm:rounded-[14px] flex items-center gap-3 p-3 pl-4"
+          style={{
+            background: "#0A0A0A",
+            color: "#FFFFFF",
+            boxShadow: "0 12px 32px -8px rgba(0,0,0,0.32)",
+          }}
+        >
+          <span
+            aria-hidden
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full shrink-0"
+            style={{ background: "#3B82F6" }}
+          >
+            <span className="font-display font-bold text-[13px] tabular-nums">
+              {count}
+            </span>
+          </span>
+          <p className="text-[13px] font-semibold flex-1 min-w-0">
+            <span className="hidden sm:inline">Selected for comparison</span>
+            <span className="sm:hidden">Selected</span>
+          </p>
+          <button
+            type="button"
+            onClick={onClear}
+            className="text-[12px] font-semibold opacity-60 hover:opacity-100 transition-opacity px-2 h-9"
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            onClick={onCompare}
+            className="inline-flex items-center gap-1.5 rounded-[10px] px-4 h-9 text-[12px] font-bold transition-transform hover:-translate-y-0.5 shrink-0"
+            style={{ background: "#3B82F6", color: "#FFFFFF" }}
+          >
+            <GitCompare className="w-3.5 h-3.5" />
+            Compare {count} <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -370,24 +491,62 @@ function MatchRow({
   match,
   rank,
   revealDelayMs,
+  selected,
+  capReached,
+  onToggle,
 }: {
   match: Match;
   rank: number;
   revealDelayMs: number;
+  selected: boolean;
+  capReached: boolean;
+  onToggle: () => void;
 }) {
   const tier = scoreTier(match.composite_score);
   const top3 = pickTopDimensions(match.fingerprint);
+  const checkboxDisabled = capReached && !selected;
 
   return (
     <li
       className="rounded-[14px] p-4 transition-colors hover:bg-[#FAFAF7] scout-rise"
       style={{
-        background: "#FFFFFF",
-        border: "1px solid #EBEBEB",
+        background: selected ? "#F5F8FF" : "#FFFFFF",
+        border: selected ? "1px solid #3B82F6" : "1px solid #EBEBEB",
         animationDelay: `${revealDelayMs}ms`,
       }}
     >
-      <div className="grid grid-cols-[32px_36px_1fr_auto] items-center gap-3">
+      <div className="grid grid-cols-[20px_28px_36px_1fr_auto] items-center gap-3">
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={selected}
+          aria-label={
+            selected
+              ? `Remove ${match.builder_name} from compare`
+              : capReached
+                ? `Compare full — deselect another candidate first`
+                : `Add ${match.builder_name} to compare`
+          }
+          title={
+            checkboxDisabled
+              ? `You can compare up to ${COMPARE_MAX} candidates at once`
+              : undefined
+          }
+          disabled={checkboxDisabled}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
+          className="inline-flex items-center justify-center rounded-[5px] transition-all disabled:cursor-not-allowed disabled:opacity-40"
+          style={{
+            width: 18,
+            height: 18,
+            background: selected ? "#3B82F6" : "#FFFFFF",
+            border: selected ? "1px solid #3B82F6" : "1px solid #D4D4D4",
+          }}
+        >
+          {selected && <Check className="w-3 h-3" style={{ color: "#FFFFFF" }} />}
+        </button>
         <div
           className="font-display font-bold text-[18px] tabular-nums"
           style={{ color: rank === 1 ? "#3B82F6" : "#0A0A0A" }}
@@ -515,7 +674,11 @@ function SkeletonRow({ index }: { index: number }) {
       }}
       aria-hidden
     >
-      <div className="grid grid-cols-[32px_36px_1fr_auto] items-center gap-3">
+      <div className="grid grid-cols-[20px_28px_36px_1fr_auto] items-center gap-3">
+        <div
+          className="rounded scout-skeleton"
+          style={{ height: 18, width: 18 }}
+        />
         <div
           className="rounded scout-skeleton"
           style={{ height: 18, width: 18 }}

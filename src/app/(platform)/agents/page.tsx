@@ -14,7 +14,7 @@ import { InstallSnippet } from "./_components/InstallSnippet";
 
 const TITLE = "Antry MCP — install in 30 seconds";
 const DESCRIPTION =
-  "Install the Antry MCP in Cursor or Claude Code. Mint signed Receipts from your IDE.";
+  "Protocol-signed proof-of-work for AI-native engineers. Install in Cursor or Claude Code. Mint signed Receipts from your IDE.";
 
 export const metadata: Metadata = {
   title: "MCP integration",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     path: "/agents",
     image: ogImageUrl({
       title: "Antry MCP.",
-      subtitle: "Install in 30 seconds. Mint signed Receipts.",
+      subtitle: "Proof-of-work for AI-native engineers.",
       eyebrow: "Antry · MCP",
     }),
   }),
@@ -189,7 +189,8 @@ export default function AgentsPage() {
             className="mt-5 max-w-[600px] text-[16px] leading-[1.6]"
             style={{ color: "#525252" }}
           >
-            One config block in Cursor or Claude Code. Three tool calls —
+            Native to the MCP ecosystem — 9,652 servers, 97M downloads
+            a month. One config block. Three tool calls —
             <code className="mx-1 font-mono text-[14px]" style={{ color: "#0A0A0A" }}>
               start_attempt
             </code>

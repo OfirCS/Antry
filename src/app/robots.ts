@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 
-// Robots policy. Block admin / dashboard / settings / auth + the *internal*
-// API routes that serve user data. Keep `/api/og` allowed so Twitter/LinkedIn
-// crawlers can fetch dynamic OG images, and keep `/api/v1/receipts/*/verify`
-// allowed because it's a public verifier (CORS-enabled).
+// Robots policy. Block admin / dashboard / settings / auth + the per-user
+// onboarding and compose flows + the *internal* API routes that serve user
+// data. Keep `/api/og` allowed so Twitter/LinkedIn crawlers can fetch
+// dynamic OG images, and keep `/api/v1/receipts/*/verify` allowed because
+// it's a public verifier (CORS-enabled).
 export default function robots(): MetadataRoute.Robots {
   const base = siteUrl();
   return {
@@ -16,6 +17,8 @@ export default function robots(): MetadataRoute.Robots {
           "/admin",
           "/dashboard",
           "/settings",
+          "/onboarding",
+          "/compose",
           "/auth",
           "/api/agent",
           "/api/discovery",

@@ -297,6 +297,28 @@ export async function listComments(input: {
   }));
 }
 
+// ── Synchronous read-only counters (for synth feed) ──
+
+/**
+ * Best-effort sync lookup of in-memory like/comment counts for a post id.
+ *
+ * Returns `null` when the post hasn't been touched yet (so callers can
+ * decide to fall back to a deterministic pseudo-value). Pure read, no
+ * I/O — safe to call from sync code paths like the synth feed builder.
+ *
+ * Note: this intentionally only consults the in-memory store. The DB
+ * path is async and already denormalizes counts onto the `posts` row,
+ * which `getPosts()` reads via the same async flow.
+ */
+export function getMemReactionCounts(
+  postId: string
+): { likes: number; comments: number } | null {
+  const row = countsMem.get(postId);
+  if (!row) return null;
+  if (row.likes === 0 && row.comments === 0) return null;
+  return { likes: row.likes, comments: row.comments };
+}
+
 // ── Anon handle helpers ───────────────────────────────
 
 /** Returns a deterministic anon display name from a stable cookie id. */

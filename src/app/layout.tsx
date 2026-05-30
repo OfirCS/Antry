@@ -101,7 +101,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#111111",
+  // Matches the homepage background so the mobile chrome blends in.
+  themeColor: "#FAFAF7",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,

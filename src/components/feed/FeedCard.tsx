@@ -461,12 +461,12 @@ export function FeedCard({
               {shared ? (
                 <>
                   <Check className="w-3 h-3" />
-                  Copied
+                  <span className="hidden sm:inline">Copied</span>
                 </>
               ) : (
                 <>
                   <Share2 className="w-3 h-3" />
-                  Share
+                  <span className="hidden sm:inline">Share</span>
                 </>
               )}
             </button>

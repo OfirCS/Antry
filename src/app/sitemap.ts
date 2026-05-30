@@ -5,10 +5,10 @@ import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 /**
  * Sitemap — focused on the canonical surfaces only.
  *
- * After the focus pass, /projects, /discover, /companies, /blog,
- * /showcase, /missions, /c, /press, /changelog, /faq, the old
- * /hackathons list, and /briefs/[slug]/lab were all removed.
- * The sitemap reflects that.
+ * Static routes only include paths whose page files actually exist.
+ * Dynamic routes cover every demo Brief, every public demo Receipt,
+ * and the unique set of demo Builders that have at least one Receipt
+ * — those are the shareable permalinks crawlers should learn about.
  */
 
 const STATIC_ROUTES: {
@@ -16,14 +16,13 @@ const STATIC_ROUTES: {
   changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
   priority: number;
 }[] = [
-  { path: "/", changeFrequency: "weekly", priority: 1.0 },
+  { path: "/", changeFrequency: "daily", priority: 1.0 },
   { path: "/briefs", changeFrequency: "daily", priority: 0.95 },
   { path: "/builders", changeFrequency: "daily", priority: 0.85 },
   { path: "/agents", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/scout", changeFrequency: "weekly", priority: 0.7 },
   { path: "/hackathons/new", changeFrequency: "weekly", priority: 0.85 },
   { path: "/receipts/methodology", changeFrequency: "monthly", priority: 0.8 },
-  { path: "/about", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/pricing", changeFrequency: "monthly", priority: 0.6 },
   { path: "/claim-card", changeFrequency: "monthly", priority: 0.7 },
   { path: "/login", changeFrequency: "yearly", priority: 0.3 },
   { path: "/signup", changeFrequency: "yearly", priority: 0.3 },
@@ -57,13 +56,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  // Public Receipts — most-shared permalink type on the platform.
   for (const r of demoReceipts) {
     if (r.display_visibility !== "public") continue;
     entries.push({
       url: `${base}/receipts/${r.id}`,
       lastModified: new Date(r.signed_at),
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.8,
+    });
+  }
+
+  // Builder profiles — one entry per unique username with at least
+  // one Receipt. lastModified tracks the builder's most recent Receipt
+  // so search engines re-crawl active profiles more often.
+  const builderLastMod = new Map<string, number>();
+  for (const r of demoReceipts) {
+    const ts = new Date(r.signed_at).getTime();
+    const prev = builderLastMod.get(r.builder.username) ?? 0;
+    if (ts > prev) builderLastMod.set(r.builder.username, ts);
+  }
+  for (const [username, ts] of builderLastMod) {
+    entries.push({
+      url: `${base}/u/${username}`,
+      lastModified: new Date(ts),
+      changeFrequency: "weekly",
+      priority: 0.75,
     });
   }
 
