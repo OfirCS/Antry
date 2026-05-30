@@ -44,174 +44,153 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
     (a, b) => b.composite_score - a.composite_score
   );
 
+  const accent = brief.company.sponsor_color;
+
   return (
-    <main style={{ background: "#0A0A0A" }} className="min-h-screen">
-      <section className="relative overflow-hidden">
-        <div
+    <div style={{ background: "#FAFAF7" }} className="min-h-screen">
+      {/* Header band */}
+      <section
+        className="relative"
+        style={{ background: "#FFFFFF", borderBottom: "1px solid #EBEBEB" }}
+      >
+        <span
           aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(198,241,53,0.10) 0%, transparent 60%)",
-          }}
+          className="absolute inset-x-0 top-0 h-[3px]"
+          style={{ background: accent }}
         />
-        <div className="relative mx-auto max-w-[1080px] px-6 sm:px-10 pt-14 pb-10">
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6 pt-10 pb-6">
           <Link
             href={`/briefs/${slug}`}
-            className="inline-flex items-center gap-1.5 text-[12px] font-semibold mb-7 transition-colors hover:text-white"
-            style={{ color: "rgba(255,255,255,0.55)" }}
+            className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-gray-500 hover:text-black transition-colors mb-4"
           >
             <ArrowLeft className="w-3 h-3" />
             Back to Brief
           </Link>
 
           <p
-            className="text-[11px] font-bold uppercase tracking-[0.28em] mb-5 inline-flex items-center gap-2"
-            style={{ color: "rgba(255,255,255,0.55)" }}
+            className="text-[10px] font-bold uppercase tracking-[0.22em] mb-2 inline-flex items-center gap-2"
+            style={{ color: accent }}
           >
-            <Trophy className="w-3.5 h-3.5" style={{ color: "#C6F135" }} />
+            <Trophy className="w-3 h-3" />
             Live leaderboard
           </p>
           <h1
-            className="font-display font-bold leading-[0.96] tracking-[-0.04em] text-white"
-            style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)" }}
+            className="font-display font-bold tracking-[-0.025em] text-black leading-[1.05]"
+            style={{ fontSize: "clamp(1.6rem, 3.6vw, 2.2rem)" }}
           >
             {brief.title}
           </h1>
-          <div
-            className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px]"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-          >
+
+          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13px] text-gray-600">
             <span>
-              <span className="text-white font-bold">
+              <span className="font-bold text-black tabular-nums">
                 {brief.attempts_count}
               </span>{" "}
               attempts
             </span>
             <span>
-              <span className="text-white font-bold">
+              <span className="font-bold text-black tabular-nums">
                 {brief.receipts_count}
               </span>{" "}
-              Receipts minted
+              Receipts
             </span>
             <span>
               Median{" "}
-              <span className="text-white font-bold">
+              <span className="font-bold text-black tabular-nums">
                 {brief.median_score ?? "—"}
               </span>
             </span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1.5 text-gray-500">
               <Shield className="w-3 h-3" />
-              All entries signed
+              All signed
             </span>
           </div>
         </div>
       </section>
 
-      <section
-        className="pb-24"
-        style={{
-          background: "linear-gradient(180deg, #0A0A0A 0%, #050505 100%)",
-        }}
-      >
-        <div className="mx-auto max-w-[1080px] px-6 sm:px-10">
+      <section className="py-8">
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
           {receipts.length === 0 ? (
             <div
-              className="rounded-[20px] p-10 text-center"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
+              className="rounded-[14px] px-6 py-10 text-center"
+              style={{ background: "#FAFAF7", border: "1px dashed #EBEBEB" }}
             >
-              <p className="text-[15px]" style={{ color: "rgba(255,255,255,0.7)" }}>
-                No public Receipts yet. Be the first to mint one.
+              <Trophy
+                className="w-6 h-6 mx-auto mb-3"
+                style={{ color: accent }}
+              />
+              <p className="text-[14px] text-gray-600">
+                No public Receipts yet. Be the first.
               </p>
               <Link
                 href={`/briefs/${slug}`}
-                className="mt-6 inline-flex items-center gap-2 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold transition-all hover:-translate-y-0.5"
-                style={{ background: "#C6F135", color: "#0A0A0A" }}
-                data-cta="lime"
+                className="mt-4 inline-flex items-center gap-1.5 rounded-[10px] px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                style={{ background: "#0A0A0A", color: "#FFFFFF" }}
               >
                 Start in Cursor
               </Link>
             </div>
           ) : (
-            <ol className="space-y-2.5">
+            <ol className="space-y-2">
               {receipts.map((r, idx) => (
                 <li
                   key={r.id}
-                  className="rounded-[18px] p-5 transition-colors hover:bg-white/[0.04]"
+                  className="rounded-[14px] transition-colors hover:bg-[#FAFAF7]"
                   style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: `1px solid ${idx === 0 ? "rgba(198,241,53,0.4)" : "rgba(255,255,255,0.08)"}`,
+                    background: "#FFFFFF",
+                    border: `1px solid ${idx === 0 ? accent : "#EBEBEB"}`,
                   }}
                 >
                   <Link
                     href={`/receipts/${r.id}`}
-                    className="grid grid-cols-[40px_1fr_auto] sm:grid-cols-[48px_1fr_auto_auto] items-center gap-4"
+                    className="grid grid-cols-[36px_1fr_auto] sm:grid-cols-[40px_1fr_auto_auto] items-center gap-3 p-4"
                   >
                     <div
-                      className="font-display font-bold text-[20px] sm:text-[24px]"
+                      className="font-display font-bold text-[18px] sm:text-[20px] tabular-nums"
                       style={{
                         color:
                           idx === 0
-                            ? "#C6F135"
+                            ? accent
                             : idx < 3
-                              ? "rgba(255,255,255,0.85)"
-                              : "rgba(255,255,255,0.4)",
+                              ? "#0A0A0A"
+                              : "#A3A3A3",
                       }}
                     >
                       {idx + 1}
                     </div>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
-                          style={{ background: r.builder.gradient }}
-                        >
-                          {r.builder.name.charAt(0)}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-[14px] font-bold tracking-[-0.005em] text-white truncate">
-                            {r.builder.name}
-                          </div>
-                          <div
-                            className="text-[11px] truncate"
-                            style={{ color: "rgba(255,255,255,0.45)" }}
-                          >
-                            @{r.builder.username} ·{" "}
-                            {new Date(r.signed_at).toLocaleDateString(
-                              undefined,
-                              { month: "short", day: "numeric" }
-                            )}
-                          </div>
-                        </div>
+                    <div className="min-w-0 flex items-center gap-2.5">
+                      <div
+                        className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white"
+                        style={{ background: r.builder.gradient }}
+                      >
+                        {r.builder.name.charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[14px] font-bold tracking-[-0.005em] text-black truncate">
+                          {r.builder.name}
+                        </p>
+                        <p className="text-[11px] text-gray-500 truncate">
+                          @{r.builder.username} ·{" "}
+                          {new Date(r.signed_at).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </p>
                       </div>
                     </div>
-
                     <div className="hidden sm:block">
-                      <FingerprintGlyph fingerprint={r.fingerprint} size={36} />
+                      <FingerprintGlyph fingerprint={r.fingerprint} size={32} />
                     </div>
-
                     <div className="text-right">
                       <div
-                        className="font-display font-bold text-[24px] leading-none"
+                        className="font-display font-bold text-[20px] leading-none tabular-nums"
                         style={{
-                          color:
-                            r.composite_score >= 80
-                              ? "#C6F135"
-                              : r.composite_score >= 60
-                                ? "rgba(255,255,255,0.9)"
-                                : "rgba(255,255,255,0.55)",
+                          color: r.composite_score >= 80 ? accent : "#0A0A0A",
                         }}
                       >
                         {r.composite_score}
                       </div>
-                      <div
-                        className="text-[10px] font-bold uppercase tracking-[0.18em] mt-0.5"
-                        style={{ color: "rgba(255,255,255,0.45)" }}
-                      >
+                      <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-gray-500 mt-0.5">
                         {fingerprintTier(r.composite_score).label}
                       </div>
                     </div>
@@ -222,45 +201,37 @@ export default async function BriefLeaderboardPage({ params }: PageProps) {
           )}
 
           <div
-            className="mt-12 rounded-[20px] p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-5"
-            style={{
-              background: "rgba(198,241,53,0.06)",
-              border: "1px solid rgba(198,241,53,0.3)",
-            }}
+            className="mt-8 rounded-[14px] p-5 flex items-center gap-4 flex-wrap"
+            style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
           >
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+              className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
               style={{ background: "#0A0A0A" }}
             >
-              <Zap className="w-5 h-5" style={{ color: "#C6F135" }} />
+              <Zap className="w-4 h-4" style={{ color: "#C6F135" }} />
             </div>
-            <div>
-              <h3 className="text-[16px] font-bold tracking-[-0.01em] text-white">
+            <div className="flex-1 min-w-[200px]">
+              <h3 className="text-[14px] font-bold tracking-[-0.005em] text-black">
                 Compete on this Brief
               </h3>
-              <p
-                className="mt-1 text-[13px] leading-[1.55] max-w-[480px]"
-                style={{ color: "rgba(255,255,255,0.65)" }}
-              >
+              <p className="mt-0.5 text-[12px] leading-[1.5] text-gray-600">
                 Install Antry MCP in Cursor, run{" "}
-                <code className="font-mono text-white">
+                <code className="font-mono text-black">
                   start_attempt(&quot;{slug}&quot;)
                 </code>
-                , and your Receipt will join this leaderboard the moment you
-                submit.
+                .
               </p>
             </div>
             <Link
               href={`/briefs/${slug}`}
-              className="inline-flex items-center gap-2 rounded-[14px] px-5 h-[48px] text-[14px] font-semibold whitespace-nowrap transition-all hover:-translate-y-0.5 self-start sm:self-center"
-              style={{ background: "#C6F135", color: "#0A0A0A" }}
-              data-cta="lime"
+              className="inline-flex items-center justify-center rounded-[10px] px-4 h-10 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+              style={{ background: "#0A0A0A", color: "#FFFFFF" }}
             >
               Start in Cursor
             </Link>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

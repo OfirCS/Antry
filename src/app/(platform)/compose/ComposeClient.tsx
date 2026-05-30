@@ -157,6 +157,54 @@ export function ComposeClient() {
         {error && (
           <p className="mt-3 text-[12px] text-red-600 font-semibold">{error}</p>
         )}
+
+        {!text && (
+          <div className="mt-6 space-y-2">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500">
+              Try
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {(kind === "build"
+                ? [
+                    "Adding citation discipline to my RAG agent",
+                    "Refactoring the multistep agent's retry logic",
+                    "Wiring Cursor → my hosted MCP",
+                  ]
+                : kind === "ship"
+                  ? [
+                      "Shipped v0.3 — Receipts now stream live",
+                      "Webhook idempotency under load: solved",
+                      "First Receipt minted from Cursor 🎉",
+                    ]
+                  : kind === "discuss"
+                    ? [
+                        "What's the right Tool-Choice IQ target for senior IC?",
+                        "How are folks tuning their grader prompts?",
+                        "Best Brief for testing recovery skill?",
+                      ]
+                    : [
+                        "Just minted — check the trace",
+                        "First top-quartile Receipt for me",
+                        "https://antry.com/receipts/...",
+                      ]
+              ).map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => setText(q)}
+                  className="text-left text-[12px] rounded-[10px] px-3 h-9 transition-colors hover:bg-[#FFFFFF]"
+                  style={{
+                    background: "#FFFFFF",
+                    border: "1px solid #EBEBEB",
+                    color: "#0A0A0A",
+                  }}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

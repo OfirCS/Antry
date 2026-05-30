@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sparkles, Clock, Cpu, Wand2 } from "lucide-react";
 
@@ -148,6 +149,37 @@ export function BriefAuthorClient() {
             </div>
           </div>
 
+          {/* Example chips when no draft yet */}
+          {!draft && !drafting && (
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500">
+                Try
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Ship a webhook receiver that handles 300 events with retries safely",
+                  "Optimize a 12-table query taking 8s p95 down to under 200ms",
+                  "Multi-step agent answers 20 research questions under a 4K-token budget",
+                  "Bug fix from one failing test — minimal diff, all tests green",
+                ].map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => setProblem(q)}
+                    className="text-left text-[12px] rounded-[10px] px-3 h-9 transition-colors hover:bg-[#FFFFFF]"
+                    style={{
+                      background: "#FFFFFF",
+                      border: "1px solid #EBEBEB",
+                      color: "#0A0A0A",
+                    }}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Preview */}
           {draft && (
             <div
@@ -242,9 +274,12 @@ export function BriefAuthorClient() {
                 >
                   Discard
                 </button>
-                <span className="text-[11px] text-gray-500 ml-auto">
-                  Publish flow lands once /api/briefs/publish ships.
-                </span>
+                <Link
+                  href={`/briefs/${draft.slug}`}
+                  className="text-[12px] font-semibold text-gray-500 hover:text-black transition-colors ml-auto"
+                >
+                  Preview as Brief →
+                </Link>
               </div>
             </div>
           )}

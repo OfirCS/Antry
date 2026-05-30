@@ -110,6 +110,37 @@ export function ScoutClient() {
             <p className="text-[13px] text-red-600 font-semibold">{error}</p>
           )}
 
+          {/* Empty state — example chips to seed action */}
+          {!matches && !searching && !error && (
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500">
+                Try
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Senior who can ship streaming RAG with strong verification",
+                  "Mid-level engineer who writes idempotent code under pressure",
+                  "Tool-Choice IQ ≥ 90 — they reach for grep before tokens",
+                  "Builder who topped a leaderboard on agent work",
+                ].map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => setQuery(q)}
+                    className="text-left text-[12px] rounded-[10px] px-3 h-9 transition-colors hover:bg-[#FFFFFF]"
+                    style={{
+                      background: "#FFFFFF",
+                      border: "1px solid #EBEBEB",
+                      color: "#0A0A0A",
+                    }}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {matches && matches.length === 0 && (
             <p className="text-[14px] text-gray-500">
               No matches in the current Receipt pool.
