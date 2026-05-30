@@ -121,7 +121,7 @@ export default async function ProfilePage({ params }: PageProps) {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-[10px] px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-[10px] px-4 h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
                 style={{
                   background: "#FFFFFF",
                   color: "#0A0A0A",
@@ -132,7 +132,7 @@ export default async function ProfilePage({ params }: PageProps) {
               </button>
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-[10px] px-4 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-[10px] px-4 h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
                 style={{ background: "#0A0A0A", color: "#FFFFFF" }}
               >
                 Follow

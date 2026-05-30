@@ -15,6 +15,7 @@ import {
 } from "@/components/home/FilterChips";
 import { FeedSkeleton } from "@/components/home/FeedSkeleton";
 import { CompaniesRail } from "@/components/home/CompaniesRail";
+import { HomeOnboardingBanner } from "@/app/(platform)/onboarding/_components/HomeOnboardingBanner";
 import { Plus, TrendingUp, Trophy, Sparkles, Building2 } from "lucide-react";
 
 const TITLE = "Antry";
@@ -80,6 +81,7 @@ export default async function Home({
         <div className="mx-auto max-w-[1240px] px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-10 pt-4 sm:pt-6">
           {/* ── Feed column ──────────────────────────── */}
           <section>
+            <HomeOnboardingBanner />
             <HeroStrip />
 
             {/* Compose chip */}
@@ -105,7 +107,7 @@ export default async function Home({
               </Link>
               <Link
                 href="/compose"
-                className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
                 style={{ background: "#0A0A0A", color: "#FFFFFF" }}
               >
                 <Plus className="w-3.5 h-3.5" /> Post

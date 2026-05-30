@@ -161,7 +161,7 @@ export default async function BriefDetailPage({
               <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px]">
                 <Link
                   href={`/briefs/${brief.slug}/leaderboard`}
-                  className="font-semibold text-black hover:underline underline-offset-4"
+                  className="inline-flex items-center font-semibold text-black hover:underline underline-offset-4 min-h-[44px] sm:min-h-0 py-2 sm:py-0 -my-2 sm:my-0"
                 >
                   See leaderboard →
                 </Link>

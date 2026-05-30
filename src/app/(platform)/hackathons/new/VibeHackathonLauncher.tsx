@@ -514,7 +514,7 @@ export function VibeHackathonLauncher({ briefs }: { briefs: BriefCard[] }) {
                           type="datetime-local"
                           value={scheduledStart}
                           onChange={(e) => setScheduledStart(e.target.value)}
-                          className="w-full sm:w-auto px-3 h-[36px] rounded-[8px] text-[13px] outline-none transition-colors"
+                          className="w-full sm:w-auto px-3 h-[44px] sm:h-[36px] rounded-[8px] text-[16px] sm:text-[13px] outline-none transition-colors"
                           style={{
                             background: "#FAFAF7",
                             border: "1.5px solid #EBEBEB",

@@ -3,6 +3,22 @@ import Link from "next/link";
 import { Wand2 } from "lucide-react";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { demoBriefs } from "@/lib/receipts/demo-data";
+import type { Brief, BriefDifficulty } from "@/lib/receipts/types";
+import {
+  BriefsFilter,
+  type CategoryFilter,
+  type DifficultyFilter,
+} from "./_components/BriefsFilter";
+import { SortMenu } from "./_components/SortMenu";
+import { BriefCard } from "./_components/BriefCard";
+
+// Inline the catalog dimensions so this Server Component never needs to
+// import iterable runtime values from "use client" modules (which Turbopack
+// proxies to non-iterable references at runtime).
+const DIFFICULTY_KEYS = ["intro", "mid", "senior", "staff"] as const;
+const CATEGORY_KEYS = ["ai-agents", "data-ml", "tools"] as const;
+const SORT_KEYS = ["newest", "most-attempted", "highest-median"] as const;
+type SortKey = (typeof SORT_KEYS)[number];
 
 const TITLE = "Briefs — Antry";
 const DESCRIPTION =
@@ -25,20 +41,82 @@ export const metadata: Metadata = {
   twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
-const DIFFICULTY_BG: Record<string, string> = {
-  intro: "#A7F3D0",
-  mid: "#3B82F6",
-  senior: "#8B5CF6",
-  staff: "#EC4899",
-};
-const DIFFICULTY_FG: Record<string, string> = {
-  intro: "#0A0A0A",
-  mid: "#FFFFFF",
-  senior: "#FFFFFF",
-  staff: "#FFFFFF",
-};
+const DIFFICULTY_SET = new Set<BriefDifficulty>(DIFFICULTY_KEYS);
+const CATEGORY_SET = new Set<string>(CATEGORY_KEYS);
+const SORT_SET = new Set<SortKey>(SORT_KEYS);
 
-export default function BriefsPage() {
+function pickOne(raw: string | string[] | undefined): string | undefined {
+  return Array.isArray(raw) ? raw[0] : raw;
+}
+
+function parseDifficulty(
+  raw: string | string[] | undefined,
+): DifficultyFilter {
+  const v = pickOne(raw);
+  if (v && DIFFICULTY_SET.has(v as BriefDifficulty)) {
+    return v as BriefDifficulty;
+  }
+  return "all";
+}
+
+function parseCategory(raw: string | string[] | undefined): CategoryFilter {
+  const v = pickOne(raw);
+  if (v && CATEGORY_SET.has(v)) return v as CategoryFilter;
+  return "all";
+}
+
+function parseSort(raw: string | string[] | undefined): SortKey {
+  const v = pickOne(raw);
+  if (v && SORT_SET.has(v as SortKey)) return v as SortKey;
+  return "newest";
+}
+
+function sortBriefs(briefs: Brief[], sort: SortKey): Brief[] {
+  const arr = [...briefs];
+  switch (sort) {
+    case "most-attempted":
+      arr.sort((a, b) => b.attempts_count - a.attempts_count);
+      break;
+    case "highest-median":
+      arr.sort(
+        (a, b) => (b.median_score ?? -1) - (a.median_score ?? -1),
+      );
+      break;
+    case "newest":
+    default:
+      arr.sort(
+        (a, b) =>
+          Date.parse(b.created_at) - Date.parse(a.created_at),
+      );
+      break;
+  }
+  return arr;
+}
+
+export default async function BriefsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const sp = await searchParams;
+  const difficulty = parseDifficulty(sp.difficulty);
+  const category = parseCategory(sp.category);
+  const sort = parseSort(sp.sort);
+
+  const visible = sortBriefs(
+    demoBriefs.filter((b) => {
+      if (difficulty !== "all" && b.difficulty !== difficulty) return false;
+      if (category !== "all" && b.category !== category) return false;
+      return true;
+    }),
+    sort,
+  );
+
+  const now = Date.now();
+  const totalCount = demoBriefs.length;
+  const visibleCount = visible.length;
+  const hasActiveFilters = difficulty !== "all" || category !== "all";
+
   return (
     <div style={{ background: "#FAFAF7" }} className="min-h-screen">
       <section
@@ -77,60 +155,65 @@ export default function BriefsPage() {
         </div>
       </section>
 
-      <section className="py-8">
-        <div className="mx-auto max-w-[1080px] px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-          {demoBriefs.map((b) => (
-            <Link
-              key={b.id}
-              href={`/briefs/${b.slug}`}
-              className="group rounded-[14px] p-5 transition-colors hover:bg-[#FAFAF7]"
+      <section className="pt-6 pb-3">
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex-1 min-w-[260px]">
+              <BriefsFilter
+                difficulty={difficulty}
+                category={category}
+                sort={sort}
+              />
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[11px] text-gray-500 tabular-nums hidden sm:inline">
+                {visibleCount} of {totalCount}
+              </span>
+              <SortMenu
+                active={sort}
+                difficulty={difficulty}
+                category={category}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="pb-12">
+        <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
+          {visible.length === 0 ? (
+            <div
+              className="rounded-[14px] py-12 px-6 flex flex-col items-center text-center"
               style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
             >
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <span
-                  className="text-[10px] font-bold uppercase tracking-[0.16em] inline-flex items-center gap-1.5"
-                  style={{ color: b.company.sponsor_color }}
-                >
-                  <span
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: b.company.sponsor_color }}
-                  />
-                  {b.company.name}
-                </span>
-                <span
-                  className="text-[10px] font-bold uppercase tracking-[0.16em] px-1.5 py-0.5 rounded"
-                  style={{
-                    background: DIFFICULTY_BG[b.difficulty],
-                    color: DIFFICULTY_FG[b.difficulty],
-                  }}
-                >
-                  {b.difficulty}
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.16em] text-gray-500 font-bold">
-                  {b.category}
-                </span>
-              </div>
-              <h3 className="text-[16px] font-bold tracking-[-0.005em] text-black leading-[1.3]">
-                {b.title}
-              </h3>
-              <p className="mt-1.5 text-[13px] leading-[1.5] text-gray-600 line-clamp-2">
-                {b.tagline}
+              <p className="text-[14px] text-gray-600 mb-3">
+                No Briefs match these filters.
               </p>
-              <div className="mt-3 flex items-center gap-4 text-[11px] text-gray-500">
-                <span>{b.attempts_count} attempts</span>
-                <span>{b.receipts_count} Receipts</span>
-                <span>
-                  Median{" "}
-                  <span className="text-black font-bold tabular-nums">
-                    {b.median_score ?? "—"}
-                  </span>
-                </span>
-                <span className="ml-auto">
-                  {Math.round(b.time_cap_seconds / 60)}m cap
-                </span>
-              </div>
-            </Link>
-          ))}
+              <Link
+                href="/briefs"
+                className="inline-flex items-center gap-1 text-[13px] font-bold text-black hover:gap-1.5 transition-all"
+              >
+                Clear filters
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {visible.map((b) => (
+                <BriefCard key={b.id} brief={b} now={now} />
+              ))}
+            </div>
+          )}
+          {hasActiveFilters && visible.length > 0 && (
+            <div className="mt-4 flex justify-center">
+              <Link
+                href="/briefs"
+                className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-500 hover:text-black transition-colors"
+              >
+                Clear filters
+              </Link>
+            </div>
+          )}
         </div>
       </section>
     </div>

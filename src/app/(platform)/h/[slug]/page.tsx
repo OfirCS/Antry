@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Sparkles, Trophy, Clock, Shield, ArrowRight, Code2 } from "lucide-react";
+import { Sparkles, Trophy, Clock, Shield, ArrowRight, Code2, Users, Receipt as ReceiptIcon } from "lucide-react";
 import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { FingerprintGlyph } from "@/components/BuilderFingerprint";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
 import { getHackathonBySlug } from "@/lib/hackathons/store";
+import { LiveStatus } from "./_components/LiveStatus";
+import { ShareButton } from "./_components/ShareButton";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -80,6 +82,22 @@ export default async function VibeHackathonPage({ params }: PageProps) {
     return true;
   });
 
+  // Per-brief Receipt count for the progress chip on each Brief card.
+  // For now we count all public Receipts on that brief (not filtered by
+  // this hackathon window) — the spec calls this out as intentional.
+  const receiptCountByBriefId = new Map<string, number>();
+  for (const r of demoReceipts) {
+    if (r.display_visibility !== "public") continue;
+    receiptCountByBriefId.set(
+      r.brief_id,
+      (receiptCountByBriefId.get(r.brief_id) ?? 0) + 1
+    );
+  }
+
+  // Participant + Receipt totals shown under the live indicator.
+  const builderCount = board.length;
+  const receiptCount = receipts.length;
+
   const totalMinutes = Math.round(
     briefs.reduce((s, b) => s + b.time_cap_seconds, 0) / 60
   );
@@ -102,16 +120,50 @@ export default async function VibeHackathonPage({ params }: PageProps) {
             style={{ color: accent }}
           >
             <Sparkles className="w-3 h-3" />
-            Vibe Hackathon · Live
+            Vibe Hackathon
           </p>
-          <h1
-            className="font-display font-bold tracking-[-0.025em] text-black leading-[1.05]"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
-          >
-            {headerName}
-          </h1>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <h1
+              className="font-display font-bold tracking-[-0.025em] text-black leading-[1.05] flex-1 min-w-0"
+              style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
+            >
+              {headerName}
+            </h1>
+            <div className="shrink-0">
+              <ShareButton
+                title={`${headerName} · Vibe Hackathon`}
+                text="Live leaderboard · signed Receipts"
+              />
+            </div>
+          </div>
 
-          <div className="mt-3 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-[13px] text-gray-600">
+          {/* Live · ends in / started ago — client component, ticks every 60s */}
+          <LiveStatus
+            startsAt={record?.starts_at ?? null}
+            endsAt={record?.ends_at ?? null}
+            accent={accent}
+          />
+
+          {/* Participant + Receipt count line */}
+          <p className="mt-1.5 text-[12px] text-gray-500 inline-flex items-center gap-x-3 gap-y-1 flex-wrap">
+            <span className="inline-flex items-center gap-1.5">
+              <Users className="w-3 h-3" />
+              <span className="font-semibold text-black tabular-nums">
+                {builderCount}
+              </span>{" "}
+              builder{builderCount === 1 ? "" : "s"}
+            </span>
+            <span className="text-gray-300">·</span>
+            <span className="inline-flex items-center gap-1.5">
+              <ReceiptIcon className="w-3 h-3" />
+              <span className="font-semibold text-black tabular-nums">
+                {receiptCount}
+              </span>{" "}
+              Receipt{receiptCount === 1 ? "" : "s"} minted
+            </span>
+          </p>
+
+          <div className="mt-4 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-[13px] text-gray-600">
             <span className="inline-flex items-center gap-1.5">
               <Code2 className="w-3.5 h-3.5" />
               {briefs.length} Brief{briefs.length === 1 ? "" : "s"}
@@ -124,15 +176,6 @@ export default async function VibeHackathonPage({ params }: PageProps) {
               <Shield className="w-3.5 h-3.5" />
               Gateway-signed
             </span>
-            {record?.prize && (
-              <span
-                className="inline-flex items-center gap-1.5 font-semibold"
-                style={{ color: "#0A0A0A" }}
-              >
-                <Trophy className="w-3.5 h-3.5" />
-                {record.prize}
-              </span>
-            )}
           </div>
 
           <div className="mt-6 flex items-center gap-3 flex-wrap">
@@ -165,33 +208,54 @@ export default async function VibeHackathonPage({ params }: PageProps) {
             Briefs in this hack
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {briefs.map((b) => (
-              <Link
-                key={b.id}
-                href={`/briefs/${b.slug}`}
-                className="group rounded-[14px] p-4 transition-colors hover:bg-[#FAFAF7]"
-                style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className="text-[10px] font-bold uppercase tracking-[0.16em]"
-                    style={{ color: accent }}
+            {briefs.map((b) => {
+              const minted = receiptCountByBriefId.get(b.id) ?? 0;
+              return (
+                <Link
+                  key={b.id}
+                  href={`/briefs/${b.slug}`}
+                  className="group rounded-[14px] p-4 transition-colors hover:bg-[#FAFAF7]"
+                  style={{ background: "#FFFFFF", border: "1px solid #EBEBEB" }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-[0.16em]"
+                      style={{ color: accent }}
+                    >
+                      {b.difficulty}
+                    </span>
+                    <span className="ml-auto text-[10px] inline-flex items-center gap-1 text-gray-500">
+                      <Clock className="w-2.5 h-2.5" />
+                      {Math.round(b.time_cap_seconds / 60)}m
+                    </span>
+                  </div>
+                  <h3 className="text-[14px] font-bold tracking-[-0.005em] text-black leading-[1.3]">
+                    {b.title}
+                  </h3>
+                  <p className="mt-1.5 text-[12px] leading-[1.5] text-gray-500 line-clamp-2">
+                    {b.tagline}
+                  </p>
+                  <div
+                    className="mt-3 pt-3 flex items-center justify-between text-[11px]"
+                    style={{ borderTop: "1px solid #F1F1F1" }}
                   >
-                    {b.difficulty}
-                  </span>
-                  <span className="ml-auto text-[10px] inline-flex items-center gap-1 text-gray-500">
-                    <Clock className="w-2.5 h-2.5" />
-                    {Math.round(b.time_cap_seconds / 60)}m
-                  </span>
-                </div>
-                <h3 className="text-[14px] font-bold tracking-[-0.005em] text-black leading-[1.3]">
-                  {b.title}
-                </h3>
-                <p className="mt-1.5 text-[12px] leading-[1.5] text-gray-500 line-clamp-2">
-                  {b.tagline}
-                </p>
-              </Link>
-            ))}
+                    <span className="inline-flex items-center gap-1.5 text-gray-600">
+                      <ReceiptIcon className="w-3 h-3" />
+                      <span className="font-bold text-black tabular-nums">
+                        {minted}
+                      </span>{" "}
+                      minted
+                    </span>
+                    <span
+                      className="font-bold uppercase tracking-[0.14em] text-[9px]"
+                      style={{ color: accent }}
+                    >
+                      Open →
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -202,6 +266,36 @@ export default async function VibeHackathonPage({ params }: PageProps) {
         style={{ background: "#FFFFFF", borderTop: "1px solid #EBEBEB" }}
       >
         <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
+          {/* Prize callout — small but distinctive. Sits above the leaderboard. */}
+          {record?.prize && (
+            <div
+              className="mb-5 rounded-[12px] px-4 py-3 inline-flex items-center gap-2.5"
+              style={{
+                background: "#FAFAF7",
+                border: `1px solid ${accent}`,
+              }}
+            >
+              <span
+                className="inline-flex items-center justify-center w-7 h-7 rounded-md shrink-0"
+                style={{ background: accent }}
+              >
+                <Trophy
+                  className="w-3.5 h-3.5"
+                  strokeWidth={2.5}
+                  style={{ color: "#0A0A0A" }}
+                />
+              </span>
+              <div className="leading-[1.25]">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-gray-500">
+                  Winner gets
+                </p>
+                <p className="text-[14px] font-bold tracking-[-0.005em] text-black">
+                  {record.prize}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-baseline justify-between mb-5 flex-wrap gap-2">
             <h2
               className="font-display font-bold tracking-[-0.02em] text-black"
