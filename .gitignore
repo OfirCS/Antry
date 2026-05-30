@@ -41,3 +41,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 shots.mjs
+shots-r1.mjs
+shots*.mjs
