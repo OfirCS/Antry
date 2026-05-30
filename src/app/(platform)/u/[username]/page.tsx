@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { demoReceipts } from "@/lib/receipts/demo-data";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
+import { getPosts } from "@/lib/posts/store";
 import { ProfileTabs } from "./ProfileTabs";
 import type { Post } from "@/components/feed/FeedCard";
 
@@ -50,8 +51,10 @@ export default async function ProfilePage({ params }: PageProps) {
   const median = sorted[Math.floor(sorted.length / 2)].composite_score;
   const tier = fingerprintTier(median);
 
-  // Synthesize the user's feed: their public Receipts as posts.
-  const feed: Post[] = sorted.map((r) => ({
+  // Real posts authored by this user (DB or memory) + synthesized
+  // Receipt posts. Real always on top.
+  const realPosts = await getPosts({ authorUsername: u, limit: 50 });
+  const synthFeed: Post[] = sorted.map((r) => ({
     id: `feed_p_${r.id}`,
     kind: r.composite_score >= 80 ? "hack-win" : "receipt",
     author: {
@@ -74,6 +77,7 @@ export default async function ProfilePage({ params }: PageProps) {
       comments: r.composite_score % 7,
     },
   }));
+  const feed = [...realPosts, ...synthFeed];
 
   return (
     <div style={{ background: "#FAFAF7" }} className="min-h-screen">

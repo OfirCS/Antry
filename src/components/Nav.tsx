@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { Plus, Home as HomeIcon, Trophy, User } from "lucide-react";
+import { Plus, Home as HomeIcon, Trophy, User, Telescope } from "lucide-react";
 import { AntryLogoFull } from "@/components/AntryLogo";
 
 /**
@@ -69,6 +69,12 @@ export function Nav() {
             label="Hack"
             icon={<Trophy className="w-3.5 h-3.5" />}
             active={isActive(pathname, "/hackathons")}
+          />
+          <NavTab
+            href="/scout"
+            label="Scout"
+            icon={<Telescope className="w-3.5 h-3.5" />}
+            active={isActive(pathname, "/scout")}
           />
         </div>
 

@@ -23,6 +23,7 @@ import {
   recordSubmission,
 } from "@/lib/mcp/store";
 import { gradeAttempt as runGrader } from "@/lib/mcp/grader";
+import { autoPostFromReceipt } from "@/lib/mcp/auto-post";
 import { receiptHmacSecret } from "@/lib/receipts/secret";
 import { createHash, createHmac } from "crypto";
 
@@ -530,6 +531,22 @@ async function callTool(
         contentHash: content_hash,
         signature,
       });
+
+      // Auto-post to the social feed — best-effort, fire-and-forget on
+      // a failure path so it never blocks Receipt mint.
+      const builderUsername = `u_${builderId.slice(0, 8)}`;
+      await autoPostFromReceipt({
+        builderId,
+        builderUsername,
+        builderName: builderUsername,
+        builderGradient:
+          "linear-gradient(135deg, #C6F135 0%, #8AB91D 100%)",
+        brief,
+        composite: grade.composite_score,
+        fingerprint: grade.fingerprint,
+        receiptId,
+      });
+
       return {
         attempt_id: id,
         receipt_id: receiptId,

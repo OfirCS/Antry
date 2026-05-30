@@ -42,13 +42,34 @@ export function ComposeClient() {
 
   const placeholder = KIND_OPTIONS.find((o) => o.kind === kind)?.placeholder ?? "";
 
+  const [error, setError] = useState<string | null>(null);
+
   const onSubmit = async () => {
     if (text.trim().length < 3) return;
     setPosting(true);
-    // v0: persistence not wired; round-trip to home so the user sees
-    // immediate feedback. Real version POSTs /api/posts and revalidates.
-    await new Promise((r) => setTimeout(r, 320));
-    router.push("/");
+    setError(null);
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind, headline: text.trim() }),
+      });
+      const j = (await res.json()) as { post?: unknown; error?: string };
+      if (!res.ok) {
+        if (res.status === 401) {
+          router.push("/login?redirect=/compose");
+          return;
+        }
+        setError(j.error ?? "Failed to post");
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Network error");
+    } finally {
+      setPosting(false);
+    }
   };
 
   return (
@@ -133,10 +154,9 @@ export function ComposeClient() {
           </div>
         </div>
 
-        <p className="mt-3 text-[11px] text-gray-500">
-          Persistence isn&apos;t wired yet. Posting redirects you home —
-          real flow lands once /api/posts ships.
-        </p>
+        {error && (
+          <p className="mt-3 text-[12px] text-red-600 font-semibold">{error}</p>
+        )}
       </div>
     </div>
   );

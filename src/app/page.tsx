@@ -4,6 +4,7 @@ import { Nav } from "@/components/Nav";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { buildFeed } from "@/lib/feed/build";
+import { getPosts } from "@/lib/posts/store";
 import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 import { Plus, TrendingUp, Trophy } from "lucide-react";
 
@@ -28,8 +29,13 @@ export const metadata: Metadata = {
   twitter: defaultTwitter({ title: TITLE, description: DESCRIPTION }),
 };
 
-export default function Home() {
-  const feed = buildFeed().slice(0, 30);
+export default async function Home() {
+  // Merge real posts (DB or in-memory) with synthesized demo posts.
+  // Real posts always go on top; synth backfills so the feed is never
+  // empty for new visitors.
+  const [realPosts] = await Promise.all([getPosts({ limit: 30 })]);
+  const synth = buildFeed();
+  const feed = [...realPosts, ...synth].slice(0, 40);
 
   // Right rail: top 4 builders by demo composite + active hackathons.
   const topBuilders = [...demoReceipts]
