@@ -23,7 +23,10 @@ export function HomeOnboardingBanner() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setShow(isFirstVisit() && !isOnboardingBannerDismissed());
+    const id = window.setTimeout(() => {
+      setShow(isFirstVisit() && !isOnboardingBannerDismissed());
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   if (!show) return null;

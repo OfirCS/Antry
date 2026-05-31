@@ -13,39 +13,57 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, floatingLabel, prefix, suffix, id, ...props }, ref) => {
+  (
+    {
+      className,
+      type,
+      floatingLabel,
+      prefix,
+      suffix,
+      id,
+      onFocus,
+      onBlur,
+      onChange,
+      value,
+      defaultValue,
+      placeholder,
+      ...props
+    },
+    ref
+  ) => {
     const [focused, setFocused] = React.useState(false);
     const [hasValue, setHasValue] = React.useState(false);
-    const inputId = id || React.useId();
+    const generatedId = React.useId();
+    const inputId = id || generatedId;
 
     const handleFocus = React.useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
         setFocused(true);
-        props.onFocus?.(e);
+        onFocus?.(e);
       },
-      [props.onFocus]
+      [onFocus]
     );
 
     const handleBlur = React.useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
         setFocused(false);
         setHasValue(e.target.value.length > 0);
-        props.onBlur?.(e);
+        onBlur?.(e);
       },
-      [props.onBlur]
+      [onBlur]
     );
 
     const handleChange = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         setHasValue(e.target.value.length > 0);
-        props.onChange?.(e);
+        onChange?.(e);
       },
-      [props.onChange]
+      [onChange]
     );
 
     // Floating label variant
     if (floatingLabel) {
-      const isLifted = focused || hasValue || !!props.value || !!props.defaultValue || !!props.placeholder;
+      const isLifted = focused || hasValue || !!value || !!defaultValue || !!placeholder;
 
       return (
         <div className={cn("relative w-full", prefix || suffix ? "flex items-center" : "")}>
@@ -72,6 +90,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onBlur={handleBlur}
             onChange={handleChange}
             placeholder={floatingLabel}
+            value={value}
+            defaultValue={defaultValue}
             {...props}
           />
           <label
@@ -121,6 +141,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            value={value}
+            defaultValue={defaultValue}
+            placeholder={placeholder}
             {...props}
           />
           {suffix && (
@@ -148,6 +171,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        value={value}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
         {...props}
       />
     );

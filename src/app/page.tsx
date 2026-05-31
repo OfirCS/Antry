@@ -297,7 +297,7 @@ async function FeedList({
   // by definition).
   const merged = [...realFiltered, ...synth];
   if (sort === "hot") {
-    const now = Date.now();
+    const now = latestPostTime(merged);
     merged.sort((a, b) => feedHotScore(b, now) - feedHotScore(a, now));
   }
   const feed = merged.slice(0, 40);
@@ -340,6 +340,13 @@ function feedHotScore(p: Post, now: number): number {
   const ageDays = ageMs / (1000 * 60 * 60 * 24);
   const recencyBoost = Math.max(0, 20 - ageDays * (20 / 7));
   return p.reactions.likes * 3 + p.reactions.comments * 2 + recencyBoost;
+}
+
+function latestPostTime(posts: Post[]): number {
+  return posts.reduce((latest, post) => {
+    const time = Date.parse(post.at);
+    return Number.isFinite(time) ? Math.max(latest, time) : latest;
+  }, 0);
 }
 
 /**

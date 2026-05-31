@@ -887,10 +887,9 @@ export async function loadAgentDatasetStrict(): Promise<AgentDataset | null> {
 }
 
 /**
- * Checks whether the message is a reasonable user query for the agent.
- * We intentionally allow almost everything through -- greetings, questions,
- * help requests, off-topic queries (the agent will redirect gracefully).
- * Only block obvious prompt-injection or spam patterns.
+ * Checks whether the message is a reasonable Antry-network query.
+ * Keep this gate broad enough for fuzzy user phrasing, but reject
+ * generic chat/off-topic prompts before loading Scout data.
  */
 export function isDomainScopedAgentQuery(message: string): boolean {
   const lower = message.toLowerCase().trim();
@@ -911,8 +910,7 @@ export function isDomainScopedAgentQuery(message: string): boolean {
   const urlCount = (message.match(/https?:\/\//g) || []).length;
   if (urlCount > 3) return false;
 
-  // Allow everything else -- the agent handles greetings, off-topic, etc. gracefully
-  return true;
+  return /\b(antry|scout|builder|builders|developer|developers|engineer|engineers|designer|designers|talent|profile|profiles|project|projects|demo|demos|brief|briefs|receipt|receipts|hackathon|hackathons|antathon|antathons|event|events|team|squad|crew|skill|skills|recruit|hire|hiring|stats|metrics|overview|discover|directory|likes|ship|shipped|shipping|sponsor|sponsors|company|companies|mcp)\b/.test(lower);
 }
 
 // ── Greeting / off-topic detection ─────────────────────────
@@ -1115,14 +1113,28 @@ function resolveIntentWithContext(
   history: AgentChatTurn[],
   classified: { intent: AgentIntent; confidence: number }
 ): { intent: AgentIntent; confidence: number } {
+  const contextual = isContextualFollowUp(message) || isShortFollowUp(message);
+  const priorIntent = contextual ? inferPriorIntent(history) : null;
+
+  if (
+    contextual &&
+    priorIntent === "find_builders" &&
+    classified.intent === "find_projects" &&
+    /\b(which one|the first|the second|the top|the best|most|any of them|from those|these|that one|from the list)\b/i.test(message)
+  ) {
+    return {
+      intent: priorIntent,
+      confidence: Math.max(classified.confidence, 0.56),
+    };
+  }
+
   // If the classifier is reasonably confident, trust it
   if (classified.confidence > 0.55 && classified.intent !== "help") {
     return classified;
   }
 
   // If it's a contextual follow-up, inherit the prior intent
-  if (isContextualFollowUp(message) || isShortFollowUp(message)) {
-    const priorIntent = inferPriorIntent(history);
+  if (contextual) {
     if (priorIntent) {
       return {
         intent: priorIntent,

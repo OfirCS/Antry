@@ -335,12 +335,12 @@ function BuilderReceipts({ username }: { username: string }) {
             New
           </span>
         </h2>
-        <a
+        <Link
           href="/briefs"
           className="text-[12px] font-semibold text-[#111111] hover:underline underline-offset-2"
         >
           Earn one →
-        </a>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

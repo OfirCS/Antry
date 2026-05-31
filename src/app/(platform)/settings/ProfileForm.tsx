@@ -30,9 +30,12 @@ export function ProfileForm({ initial }: { initial: Profile | null }) {
 
   useEffect(() => {
     if (state?.success) {
-      setSaved(true);
-      const t = setTimeout(() => setSaved(false), 2500);
-      return () => clearTimeout(t);
+      const show = window.setTimeout(() => setSaved(true), 0);
+      const hide = window.setTimeout(() => setSaved(false), 2500);
+      return () => {
+        window.clearTimeout(show);
+        window.clearTimeout(hide);
+      };
     }
   }, [state]);
 

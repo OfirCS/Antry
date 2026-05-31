@@ -44,6 +44,9 @@ export const metadata: Metadata = {
 const DIFFICULTY_SET = new Set<BriefDifficulty>(DIFFICULTY_KEYS);
 const CATEGORY_SET = new Set<string>(CATEGORY_KEYS);
 const SORT_SET = new Set<SortKey>(SORT_KEYS);
+const CATALOG_REFERENCE_NOW = Math.max(
+  ...demoBriefs.map((brief) => Date.parse(brief.created_at)).filter(Number.isFinite),
+);
 
 function pickOne(raw: string | string[] | undefined): string | undefined {
   return Array.isArray(raw) ? raw[0] : raw;
@@ -112,7 +115,6 @@ export default async function BriefsPage({
     sort,
   );
 
-  const now = Date.now();
   const totalCount = demoBriefs.length;
   const visibleCount = visible.length;
   const hasActiveFilters = difficulty !== "all" || category !== "all";
@@ -200,7 +202,7 @@ export default async function BriefsPage({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {visible.map((b) => (
-                <BriefCard key={b.id} brief={b} now={now} />
+                <BriefCard key={b.id} brief={b} now={CATALOG_REFERENCE_NOW} />
               ))}
             </div>
           )}

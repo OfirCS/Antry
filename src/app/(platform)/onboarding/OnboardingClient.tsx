@@ -40,11 +40,14 @@ export function OnboardingClient() {
   // on /onboarding directly probably *wants* the flow (they followed
   // the link), so we just put them back at the last step.
   useEffect(() => {
-    const s = getOnboardingState();
-    const clamped = Math.min(Math.max(s.step, 1), TOTAL_STEPS);
-    setStep(clamped);
-    setUsername(s.username);
-    setMounted(true);
+    const id = window.setTimeout(() => {
+      const s = getOnboardingState();
+      const clamped = Math.min(Math.max(s.step, 1), TOTAL_STEPS);
+      setStep(clamped);
+      setUsername(s.username);
+      setMounted(true);
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   const goTo = (next: number) => {

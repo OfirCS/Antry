@@ -30,6 +30,8 @@ import type { DiscoveredProject, ScanResult } from "@/lib/discovery/types";
 
 type Tab = "pending" | "approved" | "rejected" | "all";
 
+const RELATIVE_DATE_NOW = Date.now();
+
 export function DiscoveryQueueClient({
   projects: initialProjects,
 }: {
@@ -119,8 +121,7 @@ export function DiscoveryQueueClient({
   function formatDate(dateStr: string | null) {
     if (!dateStr) return "";
     const d = new Date(dateStr);
-    const now = Date.now();
-    const days = Math.floor((now - d.getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.floor((RELATIVE_DATE_NOW - d.getTime()) / (1000 * 60 * 60 * 24));
     if (days === 0) return "today";
     if (days === 1) return "1 day ago";
     if (days < 30) return `${days} days ago`;

@@ -19,11 +19,14 @@ export function HeroStrip() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    try {
-      if (localStorage.getItem(STORAGE_KEY) === "1") setDismissed(true);
-    } catch {
-      // localStorage unavailable (private mode, SSR) — leave visible.
-    }
+    const id = window.setTimeout(() => {
+      try {
+        if (localStorage.getItem(STORAGE_KEY) === "1") setDismissed(true);
+      } catch {
+        // localStorage unavailable (private mode, SSR) — leave visible.
+      }
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   if (dismissed) return null;
