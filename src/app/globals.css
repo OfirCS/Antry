@@ -14,15 +14,15 @@
   /* ── Color: Backgrounds ──────────────────────────────── */
   --color-bg: #ffffff;
   --color-bg-warm: #F7F8FA;
-  --color-bg-cream: #EEF6FF;
+  --color-bg-cream: #F2F4EA;
   --color-bg-sage: #ECFDF5;
   --color-bg-lavender: #F5F3FF;
   --color-bg-sky: #EFF6FF;
 
-  /* ── Accent: kept neutral for a sharper product surface ───────── */
-  --color-lime: #0A0A0A;
-  --color-lime-hover: #1A1A1A;
-  --color-lime-muted: rgba(10, 10, 10, 0.06);
+  /* ── Accent: proof-path green ─────────────────────────────────── */
+  --color-lime: #B8FF3D;
+  --color-lime-hover: #D7FF78;
+  --color-lime-muted: rgba(184, 255, 61, 0.12);
 
   /* ── Color: Cool Grays ───────────────────────────────── */
   --color-gray-50: #FAFAFA;
@@ -52,9 +52,9 @@
   --color-background-secondary: #F3F4F6;
   --color-background-tertiary: #E5E7EB;
   --color-surface: #ffffff;
-  --color-accent: #0A0A0A;
-  --color-accent-bright: #1A1A1A;
-  --color-accent-muted: rgba(10, 10, 10, 0.06);
+  --color-accent: #B8FF3D;
+  --color-accent-bright: #D7FF78;
+  --color-accent-muted: rgba(184, 255, 61, 0.12);
   --color-border-primary: #E5E7EB;
   --color-border-secondary: #D1D5DB;
   --color-border-tertiary: #F3F4F6;
@@ -100,7 +100,7 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
 }
@@ -156,7 +156,7 @@ h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
   color: inherit;
 }
 
@@ -164,7 +164,7 @@ h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 ::selection {
@@ -219,70 +219,6 @@ h4, h5, h6 {
   border-color: var(--color-border-strong);
 }
 
-/* GTA Fix N Clean marketing surface */
-.gta-site {
-  letter-spacing: 0;
-}
-
-.gta-site :is(h1, h2, h3, h4, h5, h6, p, a, span, button, input, textarea, select, summary, dt, dd) {
-  letter-spacing: 0;
-}
-
-.gta-hero-copy {
-  animation: gta-rise 720ms var(--ease-out-expo) both;
-  max-width: 17rem;
-}
-
-@media (min-width: 640px) {
-  .gta-hero-copy {
-    max-width: 48rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .gta-hero-copy {
-    max-width: 64rem;
-  }
-}
-
-.gta-service-line {
-  transition:
-    background-color 220ms var(--ease-out-expo),
-    padding-left 220ms var(--ease-out-expo);
-}
-
-.gta-service-line:hover {
-  background: rgba(200, 16, 46, 0.055);
-  padding-left: 0.75rem;
-}
-
-.gta-symbol,
-.gta-work-photo {
-  border-radius: 2px;
-}
-
-.gta-hero-note {
-  animation: gta-rise 820ms var(--ease-out-expo) 120ms both;
-}
-
-@keyframes gta-rise {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 640px) {
-  .gta-service-line:hover {
-    padding-left: 0;
-  }
-}
-
-
 .card-premium {
   background: var(--color-white);
   border: 1px solid var(--color-border);
@@ -303,7 +239,7 @@ h4, h5, h6 {
 /* Tinted card variants */
 .card-lime {
   background: var(--color-lime-muted);
-  border: 1px solid rgba(32, 245, 160, 0.18);
+  border: 1px solid rgba(184, 255, 61, 0.28);
   border-radius: var(--radius-lg);
   transition: box-shadow 0.3s var(--ease-out-expo);
 }

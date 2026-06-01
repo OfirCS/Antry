@@ -17,61 +17,37 @@ const sans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const TITLE = "GTA Fix N Clean | Window & Door Repair in the GTA";
+const TITLE = "Antry | Proof-of-work network for AI builders";
 const DESCRIPTION =
-  "GTA Fix N Clean repairs, installs, seals, adjusts, and cleans windows, doors, screens, locks, weatherstripping, and related property fixes across the Greater Toronto Area.";
+  "Antry turns AI build sessions into signed Receipts, so builders can prove how they think and companies can hire from verified work.";
 
 function siteJsonLd(base: string) {
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "LocalBusiness",
+        "@type": "Organization",
         "@id": `${base}/#organization`,
-        name: "GTA Fix N Clean",
+        name: "Antry",
         url: base,
-        logo: `${base}/logo.svg`,
-        image: `${base}/gtafixnclean/white-door-after.jpeg`,
+        logo: `${base}/antry-logo-mark.png`,
         description: DESCRIPTION,
-        areaServed: [
-          "Toronto",
-          "Mississauga",
-          "Brampton",
-          "Vaughan",
-          "Markham",
-          "Richmond Hill",
-          "North York",
-          "Etobicoke",
-          "Scarborough",
-          "Greater Toronto Area",
-        ],
-        knowsAbout: [
-          "door repair",
-          "window repair",
-          "door installation",
-          "window installation",
-          "screen repair",
-          "weatherstripping",
-          "lock hardware",
-          "caulking",
-          "property cleaning",
-        ],
-        makesOffer: {
-          "@type": "OfferCatalog",
-          name: "Window, door, cleaning, and property repair services",
-          itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Door repair and installation" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Window repair and sealing" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Screen, lock, and hardware repair" } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Clean finishing and small property fixes" } },
-          ],
-        },
       },
       {
         "@type": "WebSite",
         "@id": `${base}/#website`,
-        name: "GTA Fix N Clean",
+        name: "Antry",
         url: base,
+        publisher: { "@id": `${base}/#organization` },
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${base}/#app`,
+        name: "Antry",
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web",
+        url: base,
+        description: DESCRIPTION,
         publisher: { "@id": `${base}/#organization` },
       },
     ],
@@ -82,38 +58,36 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: {
     default: TITLE,
-    template: "%s · GTA Fix N Clean",
+    template: "%s - Antry",
   },
   description: DESCRIPTION,
-  applicationName: "GTA Fix N Clean",
+  applicationName: "Antry",
   keywords: [
-    "GTA Fix N Clean",
-    "GTA window repair",
-    "GTA door repair",
-    "Toronto window repair",
-    "Toronto door repair",
-    "door installation GTA",
-    "window installation GTA",
-    "screen repair GTA",
-    "weatherstripping repair",
-    "property repair GTA",
+    "Antry",
+    "AI builders",
+    "proof of work",
+    "builder receipts",
+    "AI hackathons",
+    "developer hiring",
+    "technical assessment",
+    "verifiable work",
   ],
-  authors: [{ name: "GTA Fix N Clean" }],
-  creator: "GTA Fix N Clean",
-  publisher: "GTA Fix N Clean",
+  authors: [{ name: "Antry" }],
+  creator: "Antry",
+  publisher: "Antry",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    siteName: "GTA Fix N Clean",
+    siteName: "Antry",
     title: TITLE,
     description: DESCRIPTION,
     url: "/",
     images: [
       {
-        url: "/gtafixnclean/white-door-after.jpeg",
-        width: 1536,
-        height: 2048,
-        alt: "GTA Fix N Clean completed exterior door repair.",
+        url: "/antry-logo-mark.png",
+        width: 1254,
+        height: 1254,
+        alt: "Antry logo.",
       },
     ],
   },
@@ -121,7 +95,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/gtafixnclean/white-door-after.jpeg"],
+    images: ["/antry-logo-mark.png"],
   },
   robots: {
     index: true,
@@ -135,14 +109,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/antry-logo-mark.png", type: "image/png" },
     ],
-    apple: "/logo.svg",
+    apple: "/antry-logo-mark.png",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#171614",
+  themeColor: "#070806",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -166,7 +140,7 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <Script
-          id="gtafixnclean-jsonld"
+          id="antry-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(siteJsonLd(base)),

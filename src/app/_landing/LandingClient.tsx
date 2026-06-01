@@ -9,141 +9,204 @@ import type { Receipt } from "@/lib/receipts/types";
 import { CountUp } from "@/components/design/CountUp";
 
 const ease = [0.16, 1, 0.3, 1] as const;
+const proofGreen = "#B8FF3D";
+const paper = "#F5F7EC";
 
-/** The hero's right-side aside: a real Receipt card, not a mockup. */
+/** The hero's right-side stage: a real Receipt artifact inside a proof path. */
 export function LandingHeroAside({ receipt }: { receipt: Receipt }) {
   const tier = fingerprintTier(receipt.composite_score);
+  const durationMinutes = Math.round(receipt.attempt_duration_seconds / 60);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease }}
-      className="relative"
+      initial={{ opacity: 0, y: 22, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.85, ease, delay: 0.12 }}
+      className="relative mx-auto w-full max-w-[560px] lg:max-w-none"
     >
-      {/* Soft white card glow underneath */}
       <div
-        className="absolute -inset-6 rounded-[28px] pointer-events-none"
+        aria-hidden
+        className="absolute -inset-8 pointer-events-none"
         style={{
           background:
-            "radial-gradient(60% 50% at 60% 40%, rgba(32,245,160,0.16) 0%, transparent 70%)",
-          filter: "blur(20px)",
+            "radial-gradient(50% 40% at 55% 44%, rgba(184,255,61,0.22) 0%, transparent 72%)",
+          filter: "blur(24px)",
         }}
       />
 
-      <Link
-        href={`/receipts/${receipt.id}`}
-        className="relative block rounded-[24px] bg-white overflow-hidden transition-transform duration-300 hover:-translate-y-1"
-        style={{
-          border: "1px solid rgba(255,255,255,0.06)",
-          boxShadow:
-            "0 32px 64px -24px rgba(0,0,0,0.45), 0 12px 24px -12px rgba(0,0,0,0.25)",
-        }}
+      <svg
+        aria-hidden
+        className="absolute inset-0 h-full w-full overflow-visible"
+        viewBox="0 0 560 520"
+        fill="none"
       >
-        {/* Sponsor strip */}
-        <div className="h-1.5" style={{ background: receipt.company.sponsor_color }} />
+        <path
+          d="M42 88H492M86 438H520M70 88V438M492 88V410"
+          stroke="rgba(245,247,236,0.1)"
+          strokeWidth="1"
+        />
+        <motion.path
+          d="M74 372C130 284 169 242 224 246C279 250 287 336 352 328C411 321 410 213 488 154"
+          stroke={proofGreen}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray="7 11"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 0.85 }}
+          transition={{ duration: 1.4, ease, delay: 0.45 }}
+        />
+        {[
+          [74, 372],
+          [224, 246],
+          [352, 328],
+          [488, 154],
+        ].map(([cx, cy], i) => (
+          <motion.circle
+            key={`${cx}-${cy}`}
+            cx={cx}
+            cy={cy}
+            r={i === 3 ? 8 : 5}
+            fill={i === 3 ? proofGreen : paper}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.65 + i * 0.12, duration: 0.35, ease }}
+          />
+        ))}
+      </svg>
 
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p
-              className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2"
-              style={{ color: receipt.company.sponsor_color }}
-            >
-              {receipt.company.name} Brief · 001
-            </p>
-            <h3 className="text-[16px] font-bold tracking-[-0.01em] text-black leading-[1.35]">
-              <span style={{ color: "#0A0A0A" }}>{receipt.brief_title}</span>
-            </h3>
-            <p className="mt-1.5 text-[12px] text-gray-500">
-              by{" "}
-              <span className="font-semibold text-gray-700">
-                {receipt.builder.name}
-              </span>{" "}
-              · @{receipt.builder.username}
-            </p>
-          </div>
-          <div className="text-right shrink-0">
-            <span
-              className="text-[10px] font-bold uppercase tracking-[0.16em] px-2 py-0.5 rounded inline-block mb-1"
-              style={{ background: tier.bg, color: tier.color }}
-            >
-              {tier.label}
-            </span>
+      <div className="relative grid min-h-[430px] items-center py-8 sm:min-h-[520px]">
+        <motion.div
+          className="absolute right-4 top-4 hidden rounded-[8px] border px-3 py-2 text-[11px] font-bold uppercase sm:block"
+          style={{
+            borderColor: "rgba(245,247,236,0.14)",
+            background: "rgba(245,247,236,0.06)",
+            color: "rgba(245,247,236,0.72)",
+            letterSpacing: 0,
+          }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease, delay: 0.7 }}
+        >
+          Lab trace armed
+        </motion.div>
+
+        <Link
+          href={`/receipts/${receipt.id}`}
+          className="group relative mx-auto block w-full max-w-[430px] overflow-hidden rounded-[10px] transition-transform duration-300 hover:-translate-y-1"
+          style={{
+            background: paper,
+            border: "1px solid rgba(245,247,236,0.18)",
+            boxShadow:
+              "0 34px 90px -42px rgba(184,255,61,0.55), 0 22px 54px -28px rgba(0,0,0,0.7)",
+          }}
+        >
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-1"
+            style={{ background: `linear-gradient(90deg, ${proofGreen}, ${receipt.company.sponsor_color})` }}
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.18]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(7,8,6,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(7,8,6,0.08) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+
+          <div className="relative p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p
+                  className="text-[10px] font-bold uppercase"
+                  style={{ color: "#5F6A42", letterSpacing: 0 }}
+                >
+                  {receipt.company.name} brief / 001
+                </p>
+                <h3 className="mt-2 max-w-[260px] text-[18px] font-bold leading-tight text-[#070806]">
+                  {receipt.brief_title}
+                </h3>
+                <p className="mt-2 text-[12px] text-[#59604E]">
+                  {receipt.builder.name} / @{receipt.builder.username}
+                </p>
+              </div>
+              <div className="shrink-0 text-right">
+                <span
+                  className="inline-block rounded-[6px] px-2 py-1 text-[10px] font-bold uppercase"
+                  style={{ background: tier.bg, color: tier.color, letterSpacing: 0 }}
+                >
+                  {tier.label}
+                </span>
+                <div
+                  className="mt-2 font-display text-[42px] font-bold leading-none tabular-nums text-[#070806]"
+                  style={{ letterSpacing: 0 }}
+                >
+                  <CountUp to={receipt.composite_score} durationMs={1100} />
+                  <span className="ml-1 text-[13px] text-[#7B826E]">/100</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="my-3 flex justify-center sm:my-1">
+              <BuilderFingerprint
+                fingerprint={receipt.fingerprint}
+                size={300}
+                primaryColor={proofGreen}
+              />
+            </div>
+
             <div
-              className="font-display font-bold tabular-nums leading-none"
-              style={{
-                color: "#0A0A0A",
-                fontSize: "clamp(2rem, 3.6vw, 2.8rem)",
-              }}
+              className="grid grid-cols-3 rounded-[8px] bg-[#070806] text-center text-white"
+              style={{ border: "1px solid rgba(7,8,6,0.1)" }}
             >
-              <CountUp to={receipt.composite_score} durationMs={1100} />
-              <span className="text-[14px] text-gray-400 ml-1">/100</span>
+              <Stat
+                icon={<Cpu className="h-3 w-3" />}
+                label="Tokens"
+                value={<CountUp to={receipt.tokens_spent} durationMs={1200} />}
+              />
+              <Stat
+                icon={<Clock className="h-3 w-3" />}
+                label="Duration"
+                value={
+                  <>
+                    <CountUp to={durationMinutes} durationMs={1000} />
+                    m
+                  </>
+                }
+                border
+              />
+              <Stat
+                icon={<Sparkles className="h-3 w-3" />}
+                label="Cost"
+                value={
+                  <>
+                    $
+                    <CountUp
+                      to={receipt.cost_usd_cents / 100}
+                      durationMs={1000}
+                      decimals={2}
+                    />
+                  </>
+                }
+              />
             </div>
           </div>
-        </div>
+        </Link>
 
-        {/* Fingerprint */}
-        <div className="px-6 pb-2 flex justify-center">
-          <BuilderFingerprint
-            fingerprint={receipt.fingerprint}
-            size={300}
-            primaryColor={receipt.company.sponsor_color}
-          />
-        </div>
-
-        {/* Stat bar */}
-        <div
-          className="grid grid-cols-3 text-center"
-          style={{ borderTop: "1px solid #E5E7EB" }}
+        <motion.p
+          className="mx-auto mt-4 max-w-[410px] text-center text-[12px] leading-relaxed"
+          style={{ color: "rgba(245,247,236,0.48)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease, delay: 1 }}
         >
-          <Stat
-            icon={<Cpu className="w-3 h-3" />}
-            label="Tokens"
-            value={
-              <CountUp to={receipt.tokens_spent} durationMs={1200} />
-            }
-          />
-          <Stat
-            icon={<Clock className="w-3 h-3" />}
-            label="Duration"
-            value={
-              <>
-                <CountUp
-                  to={Math.round(receipt.attempt_duration_seconds / 60)}
-                  durationMs={1000}
-                />
-                m
-              </>
-            }
-            border
-          />
-          <Stat
-            icon={<Sparkles className="w-3 h-3" />}
-            label="Cost"
-            value={
-              <>
-                $
-                <CountUp
-                  to={receipt.cost_usd_cents / 100}
-                  durationMs={1000}
-                  decimals={2}
-                />
-              </>
-            }
-          />
-        </div>
-      </Link>
-
-      {/* Caption underneath — anchors the metaphor */}
-      <p
-        className="mt-5 text-center text-[12px]"
-        style={{ color: "rgba(255,255,255,0.45)" }}
-      >
-        A real Receipt. Verifiable at{" "}
-        <span className="font-mono">
-          /api/v1/receipts/{receipt.id.slice(0, 12)}…/verify
-        </span>
-      </p>
+          Signed proof path /{" "}
+          <span className="font-mono">
+            /api/v1/receipts/{receipt.id.slice(0, 12)}.../verify
+          </span>
+        </motion.p>
+      </div>
     </motion.div>
   );
 }
@@ -161,17 +224,17 @@ function Stat({
 }) {
   return (
     <div
-      className="px-3 py-3.5"
+      className="px-2.5 py-3.5"
       style={{
-        borderLeft: border ? "1px solid #E5E7EB" : undefined,
-        borderRight: border ? "1px solid #E5E7EB" : undefined,
+        borderLeft: border ? "1px solid rgba(245,247,236,0.12)" : undefined,
+        borderRight: border ? "1px solid rgba(245,247,236,0.12)" : undefined,
       }}
     >
-      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400 inline-flex items-center gap-1 justify-center w-full">
+      <p className="inline-flex w-full items-center justify-center gap-1 text-[9px] font-bold uppercase text-white/[0.45]">
         {icon}
         {label}
       </p>
-      <p className="mt-1 text-[14px] font-bold tabular-nums text-black">{value}</p>
+      <p className="mt-1 text-[14px] font-bold tabular-nums text-white">{value}</p>
     </div>
   );
 }
@@ -253,11 +316,11 @@ function ReceiptCompareCard({
           <span className="text-[12px] tabular-nums font-bold text-black">
             {receipt.composite_score}
           </span>
-          <span className="text-gray-300">·</span>
+          <span className="text-gray-300">/</span>
           <span className="text-[12px] text-gray-500">
             {receipt.tokens_spent.toLocaleString()} tokens
           </span>
-          <span className="text-gray-300">·</span>
+          <span className="text-gray-300">/</span>
           <span className="text-[12px] text-gray-500">
             {Math.round(receipt.attempt_duration_seconds / 60)}m
           </span>
@@ -275,7 +338,7 @@ function ReceiptCompareCard({
               href={`/receipts/${receipt.id}`}
               className="mt-4 text-[13px] font-semibold text-black inline-flex items-center gap-1 hover:gap-2 transition-all"
             >
-              Open Receipt →
+              Open Receipt
             </Link>
           </div>
           <div className="shrink-0">

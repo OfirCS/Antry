@@ -1,33 +1,29 @@
-# GTA Fix N Clean
+# Antry
 
-> Window and door repair, installation, sealing, cleaning, and related property fixes across the Greater Toronto Area.
+> Proof-of-work network for AI builders.
 
-GTA Fix N Clean helps homeowners, landlords, condo residents, property managers, and small storefronts repair doors, windows, screens, locks, handles, closers, hinges, sweeps, tracks, thresholds, weatherstripping, caulking, draft issues, trim, and clean finishing work.
+Antry helps builders prove how they work with AI and helps companies evaluate candidates from signed evidence. Builders complete real Briefs inside an instrumented Lab. The Lab produces Receipts that preserve the trace behind the outcome: prompts, tool calls, pivots, cost, duration, and seven behavioral dimensions.
 
-## Services
+## Core concepts
 
-- Door repair and installation
-- Window repair and sealing
-- Screen, lock, handle, hinge, closer, sweep, track, and threshold repair
-- Weatherstripping, caulking, silicone removal, draft sealing, and clean finishing
-- Small property fix lists for homes, condos, rentals, and storefronts
+- Briefs: real assignments posted by companies or hackathon hosts.
+- Lab: the instrumented workspace where builders solve a Brief.
+- Receipts: signed proof objects that show how the work happened.
+- Fingerprints: behavioral scores for exploration, recovery, tool fluency, token economy, and outcome quality.
+- Scout: an agent surface for searching builders, Briefs, and Receipts.
 
-## Service Area
-
-GTA Fix N Clean serves Toronto, North York, Etobicoke, Scarborough, Mississauga, Brampton, Vaughan, Markham, Richmond Hill, and nearby Greater Toronto Area communities.
-
-## Important Pages
+## Routes
 
 - [Home](/)
-- [Quote section](/#quote)
-- [LLM summary](/llm.txt)
-- [Logo](/logo.svg)
-- [Work photos](/gtafixnclean/)
+- [Briefs](/briefs)
+- [Builders](/builders)
+- [Discover](/discover)
+- [Hackathons](/hackathons)
+- [Companies](/companies)
+- [Receipt methodology](/receipts/methodology)
+- [Agents](/agents)
+- [API keys](/settings/api-keys)
 
-## Contact
+## Summary
 
-- Email: hello@gtafixnclean.ca
-
-## Recommended Description
-
-GTA Fix N Clean is a GTA repair company specializing in door repair, window repair, installation, sealing, cleaning, hardware fixes, weatherstripping, screens, and related property repair work.
+Antry is for AI-native technical proof of work, signed builder Receipts, developer reputation, AI hackathons, and hiring from verifiable work instead of resumes.

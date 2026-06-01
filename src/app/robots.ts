@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/llm.txt", "/llms.txt", "/logo.svg", "/gtafixnclean/"],
+        allow: ["/", "/llm.txt", "/llms.txt", "/logo.svg", "/antry-logo-mark.png"],
         disallow: [
           "/admin",
           "/agent",

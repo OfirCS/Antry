@@ -44,6 +44,8 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const isHome = pathname === "/";
+  const transparent = isHome && !scrolled && !mobileOpen;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -75,7 +77,9 @@ export function Nav() {
       <nav
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-          scrolled
+          transparent
+            ? "bg-transparent border-b border-transparent"
+            : scrolled
             ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
             : "bg-white border-b border-transparent"
         )}
@@ -83,7 +87,7 @@ export function Nav() {
         <div className="mx-auto flex max-w-[1240px] items-center justify-between px-6 sm:px-10 h-[68px]">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" aria-label="Antry home">
-            <AntryLogoFull size={32} tone="dark" />
+            <AntryLogoFull size={32} tone={transparent ? "light" : "dark"} />
           </Link>
 
           {/* Center links - flat */}
@@ -98,12 +102,16 @@ export function Nav() {
                    className={cn(
                      "relative px-4 py-2 rounded-md text-[14px] font-semibold transition-colors duration-200",
                      isActive
-                       ? "text-black bg-gray-50"
-                       : "text-gray-500 hover:text-black hover:bg-gray-50"
+                       ? transparent
+                         ? "text-white bg-white/10"
+                         : "text-black bg-gray-50"
+                       : transparent
+                         ? "text-white/[0.65] hover:text-white hover:bg-white/10"
+                         : "text-gray-500 hover:text-black hover:bg-gray-50"
                    )}
                  >
                    {link.label}
-                   <LinkPendingIndicator pending={activePendingHref === link.href} />
+                   <LinkPendingIndicator light={transparent} pending={activePendingHref === link.href} />
                  </Link>
                );
             })}
@@ -115,12 +123,16 @@ export function Nav() {
                 className={cn(
                   "px-4 py-2 rounded-md text-[14px] font-semibold transition-colors duration-200",
                   isNavActive(pathname, "/admin")
-                    ? "text-black bg-gray-50"
-                    : "text-gray-500 hover:text-black hover:bg-gray-50"
+                    ? transparent
+                      ? "text-white bg-white/10"
+                      : "text-black bg-gray-50"
+                    : transparent
+                      ? "text-white/[0.65] hover:text-white hover:bg-white/10"
+                      : "text-gray-500 hover:text-black hover:bg-gray-50"
                 )}
               >
                 Admin
-                <LinkPendingIndicator pending={activePendingHref === "/admin/discovery"} />
+                <LinkPendingIndicator light={transparent} pending={activePendingHref === "/admin/discovery"} />
               </Link>
             )}
           </div>
@@ -136,23 +148,23 @@ export function Nav() {
                   onClick={() => markNavigation("/dashboard")}
                   className={cn(
                     "relative text-[14px] font-semibold transition-colors",
-                    "text-gray-500 hover:text-black"
+                    transparent ? "text-white/70 hover:text-white" : "text-gray-500 hover:text-black"
                   )}
                 >
                   Dashboard
-                  <LinkPendingIndicator pending={activePendingHref === "/dashboard"} />
+                  <LinkPendingIndicator light={transparent} pending={activePendingHref === "/dashboard"} />
                 </Link>
                 <Link
                   href="/submit"
                   onClick={() => markNavigation("/submit")}
                   className="relative inline-flex items-center justify-center rounded-md px-4 py-2.5 text-[14px] font-bold transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
                   style={{
-                    background: "#0A0A0A",
-                    color: "#ffffff",
+                    background: transparent ? "#B8FF3D" : "#0A0A0A",
+                    color: transparent ? "#070806" : "#ffffff",
                   }}
                 >
                   Submit project
-                  <LinkPendingIndicator light pending={activePendingHref === "/submit"} />
+                  <LinkPendingIndicator light={!transparent} pending={activePendingHref === "/submit"} />
                 </Link>
               </div>
             ) : (
@@ -162,23 +174,23 @@ export function Nav() {
                   onClick={() => markNavigation("/login")}
                   className={cn(
                     "relative px-2 text-[14px] font-semibold transition-colors",
-                    "text-gray-500 hover:text-black"
+                    transparent ? "text-white/70 hover:text-white" : "text-gray-500 hover:text-black"
                   )}
                 >
                   Log in
-                  <LinkPendingIndicator pending={activePendingHref === "/login"} />
+                  <LinkPendingIndicator light={transparent} pending={activePendingHref === "/login"} />
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => markNavigation("/signup")}
                   className="relative inline-flex items-center justify-center rounded-md px-5 py-2.5 text-[14px] font-bold transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
                   style={{
-                    background: "#0A0A0A",
-                    color: "#ffffff",
+                    background: transparent ? "#B8FF3D" : "#0A0A0A",
+                    color: transparent ? "#070806" : "#ffffff",
                   }}
                 >
                   Get started
-                  <LinkPendingIndicator light pending={activePendingHref === "/signup"} />
+                  <LinkPendingIndicator light={!transparent} pending={activePendingHref === "/signup"} />
                 </Link>
               </div>
             )}
@@ -188,7 +200,7 @@ export function Nav() {
               onClick={toggleMobile}
               className={cn(
                 "flex h-11 w-11 items-center justify-center rounded-md transition-colors lg:hidden",
-                "text-black hover:bg-gray-100"
+                transparent ? "text-white hover:bg-white/10" : "text-black hover:bg-gray-100"
               )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >

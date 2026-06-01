@@ -1,13 +1,10 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">GTA Fix N Clean logo</title>
-  <desc id="desc">A modern door, window, and clean sweep mark.</desc>
-  <rect width="512" height="512" rx="28" fill="#C8102E"/>
-  <path d="M103 80H276V432H103V80Z" fill="#191814"/>
-  <path d="M143 120H236V392H143V120Z" fill="#F1EEE7"/>
-  <path d="M276 120H418V392H276V120Z" fill="#191814"/>
-  <path d="M318 158H382V247H318V158Z" fill="#F1EEE7"/>
-  <path d="M318 286H382V352H318V286Z" fill="#F1EEE7"/>
-  <path d="M318 266H382" stroke="#F1EEE7" stroke-width="28" stroke-linecap="square"/>
-  <path d="M256 374C306 394 377 389 442 359" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round"/>
-  <path d="M214 54L233 111L291 94L263 146L315 177L257 188L263 247L214 216L165 247L171 188L113 177L165 146L137 94L195 111L214 54Z" fill="#FFFFFF"/>
+  <title id="title">Antry logo</title>
+  <desc id="desc">A compact receipt and proof-path monogram for Antry.</desc>
+  <rect width="512" height="512" rx="52" fill="#070806"/>
+  <path d="M256 48 432 148V396L256 496 80 396V148L256 48Z" fill="#F5F7EC"/>
+  <path d="M256 112 368 368H286.4L269.6 321.6H168.8L152 368H72L184.8 112H256Z" fill="#070806"/>
+  <path d="M218.4 194.4 188.8 264H248.8L218.4 194.4Z" fill="#F5F7EC"/>
+  <path d="M345.6 152.8C288 171.2 241.6 202.4 208 246.4C180 283.2 166.4 321.6 166.4 362.4" stroke="#F5F7EC" stroke-width="29.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="364" cy="145.6" r="43.2" fill="#B8FF3D"/>
 </svg>

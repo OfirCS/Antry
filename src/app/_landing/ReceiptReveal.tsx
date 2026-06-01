@@ -14,7 +14,7 @@ import { fadeUp, stagger, inViewOnce } from "@/lib/motion";
 /**
  * Scroll-tied progressive reveal of the Receipt artifact.
  * Wealthsimple-style: one big idea, big radar, dimensions reveal in
- * sequence as you read down. No autoplay timer — purely IntersectionObserver
+ * sequence as you read down. No autoplay timer - purely IntersectionObserver
  * via Framer Motion's whileInView.
  */
 export function ReceiptReveal({ fingerprint }: { fingerprint: Fingerprint }) {
@@ -30,15 +30,22 @@ export function ReceiptReveal({ fingerprint }: { fingerprint: Fingerprint }) {
           className="absolute inset-0 -z-0 rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(45% 45% at 50% 50%, rgba(32,245,160,0.18) 0%, transparent 70%)",
+              "radial-gradient(45% 45% at 50% 50%, rgba(184,255,61,0.18) 0%, transparent 70%)",
             filter: "blur(20px)",
           }}
         />
-        <div className="relative">
+        <div className="relative sm:hidden">
           <BuilderFingerprint
             fingerprint={fingerprint}
-            size={360}
-            primaryColor="#20F5A0"
+            size={250}
+            primaryColor="#B8FF3D"
+          />
+        </div>
+        <div className="relative hidden sm:block">
+          <BuilderFingerprint
+            fingerprint={fingerprint}
+            size={340}
+            primaryColor="#B8FF3D"
           />
         </div>
       </motion.div>
