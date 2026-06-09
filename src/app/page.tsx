@@ -9,7 +9,7 @@ import { buildFeed, type FeedSort } from "@/lib/feed/build";
 import { getPosts } from "@/lib/posts/store";
 import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 import { fingerprintTier } from "@/lib/receipts/fingerprint";
-import { HeroStrip } from "@/components/home/HeroStrip";
+import { HomeHero } from "@/components/home/HomeHero";
 import {
   FilterChips,
   type FilterKey,
@@ -19,11 +19,21 @@ import { CompaniesRail } from "@/components/home/CompaniesRail";
 import { SortToggle, type SortKey } from "@/components/home/SortToggle";
 import { TrendingRail } from "@/components/home/TrendingRail";
 import { HomeOnboardingBanner } from "@/app/(platform)/onboarding/_components/HomeOnboardingBanner";
-import { Pin, Plus, TrendingUp, Trophy, Sparkles, Building2, Hash } from "lucide-react";
+import {
+  Pin,
+  Plus,
+  TrendingUp,
+  Trophy,
+  Sparkles,
+  Building2,
+  Hash,
+  BadgeCheck,
+  ArrowRight,
+} from "lucide-react";
 
-const TITLE = "Antry";
+const TITLE = "Antry — Show receipts. Get hired.";
 const DESCRIPTION =
-  "Shipping replays, not interview replays. Mint signed Receipts as you build. One Receipt, every job board.";
+  "Builders take real challenges from hiring companies and mint signed Receipts — verifiable proof of how they build with AI. Companies hire on evidence, not resumes.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -34,8 +44,8 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     path: "/",
     image: ogImageUrl({
-      title: "Antry",
-      subtitle: "Shipping replays, not interview replays.",
+      title: "Show receipts. Get hired.",
+      subtitle: "Verifiable proof of how you build with AI.",
       eyebrow: "ANTRY",
     }),
   }),
@@ -102,7 +112,7 @@ export default async function Home({
           {/* ── Feed column ──────────────────────────── */}
           <section>
             <HomeOnboardingBanner />
-            <HeroStrip />
+            <HomeHero />
 
             {/* Compose chip */}
             <div
@@ -161,6 +171,45 @@ export default async function Home({
 
           {/* ── Right rail ───────────────────────────── */}
           <aside className="hidden lg:block space-y-4">
+            {/* "What is this?" stays reachable even after the hero is
+                dismissed — clarity shouldn't be a one-shot banner. */}
+            <RailCard
+              title="New here?"
+              icon={<BadgeCheck className="w-3 h-3" />}
+            >
+              <p className="text-[12px] leading-[1.55] text-gray-600">
+                Antry is proof-of-skill for the AI era.{" "}
+                <span className="font-semibold text-black">Builders</span>{" "}
+                ship real company challenges and mint signed{" "}
+                <span className="font-semibold text-black">Receipts</span> —
+                verifiable records of how they build with AI.{" "}
+                <span className="font-semibold text-black">Companies</span>{" "}
+                search those Receipts and hire on evidence, not resumes.
+              </p>
+              <div className="mt-3 flex flex-col gap-1.5">
+                <Link
+                  href="/briefs"
+                  className="inline-flex items-center justify-between rounded-[10px] px-3 h-9 text-[12px] font-bold transition-all hover:-translate-y-0.5"
+                  style={{ background: "#0A0A0A", color: "#FFFFFF" }}
+                >
+                  Browse Briefs
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+                <Link
+                  href="/for-companies"
+                  className="inline-flex items-center justify-between rounded-[10px] px-3 h-9 text-[12px] font-bold transition-colors hover:bg-[#FAFAF7]"
+                  style={{
+                    background: "#FFFFFF",
+                    border: "1px solid #EBEBEB",
+                    color: "#0A0A0A",
+                  }}
+                >
+                  Antry for companies
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </RailCard>
+
             <RailCard
               title="Hot Briefs"
               icon={<TrendingUp className="w-3 h-3" />}
@@ -257,6 +306,42 @@ export default async function Home({
             </RailCard>
           </aside>
         </div>
+
+        {/* Footer — the one-liner + key destinations, so "what is this?"
+            has an answer at the bottom of the scroll too. */}
+        <footer
+          className="mt-10 mx-auto max-w-[1240px] px-4 sm:px-6 pt-6"
+          style={{ borderTop: "1px solid #EBEBEB" }}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+            <p className="text-[12px] text-gray-500">
+              <span className="font-bold text-black">Antry</span> — verifiable
+              proof of how you build with AI.
+            </p>
+            <nav
+              aria-label="Footer"
+              className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:ml-auto"
+            >
+              {[
+                { href: "/briefs", label: "Briefs" },
+                { href: "/leaderboard", label: "Leaderboard" },
+                { href: "/scout", label: "Scout" },
+                { href: "/for-companies", label: "For companies" },
+                { href: "/receipts/methodology", label: "Methodology" },
+                { href: "/terms", label: "Terms" },
+                { href: "/privacy", label: "Privacy" },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="text-[12px] font-semibold text-gray-500 hover:text-black transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </footer>
       </main>
       <MobileBottomNav />
     </div>

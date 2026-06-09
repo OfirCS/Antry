@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home as HomeIcon, Trophy, Telescope, User, Plus } from "lucide-react";
+import { Home as HomeIcon, Sparkles, Telescope, User, Plus } from "lucide-react";
 import { useAuth } from "@/lib/supabase/auth-context";
 
 /**
  * Mobile-only bottom tab bar. Visible below the `sm` breakpoint (< 640px).
  *
- * Five items: Feed · Hack · Compose (center FAB) · Scout · Profile.
+ * Five items: Feed · Briefs · Compose (center FAB) · Scout · Profile.
  * The Compose button is intentionally prominent — circular, black, +
  * glyph, slight elevation — because Compose is the only "create" action
  * in the product and we want it thumb-reachable.
@@ -24,17 +24,13 @@ import { useAuth } from "@/lib/supabase/auth-context";
 
 type TabHref =
   | "/"
-  | "/hackathons/new"
+  | "/briefs"
   | "/scout"
   | "/dashboard"
   | "/login";
 
 function tabActive(pathname: string, href: TabHref): boolean {
   if (href === "/") return pathname === "/";
-  // Treat all `/hackathons/*` and `/h/*` as the Hack tab.
-  if (href === "/hackathons/new") {
-    return pathname.startsWith("/hackathons") || pathname.startsWith("/h/");
-  }
   const seg = pathname.split("/").filter(Boolean)[0];
   const targetSeg = href.split("/").filter(Boolean)[0];
   return seg === targetSeg;
@@ -66,10 +62,10 @@ export function MobileBottomNav() {
           active={tabActive(pathname, "/")}
         />
         <BottomTab
-          href="/hackathons/new"
-          label="Hack"
-          icon={<Trophy className="w-5 h-5" />}
-          active={tabActive(pathname, "/hackathons/new")}
+          href="/briefs"
+          label="Briefs"
+          icon={<Sparkles className="w-5 h-5" />}
+          active={tabActive(pathname, "/briefs")}
         />
 
         {/* Centerpiece Compose FAB */}

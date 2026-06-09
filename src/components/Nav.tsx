@@ -4,7 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { Plus, Home as HomeIcon, Trophy, User, Telescope } from "lucide-react";
+import {
+  Plus,
+  Home as HomeIcon,
+  Trophy,
+  User,
+  Telescope,
+  Sparkles,
+  Building2,
+} from "lucide-react";
 import { AntryLogoFull } from "@/components/AntryLogo";
 
 /**
@@ -56,7 +64,9 @@ export function Nav() {
           <AntryLogoFull size={26} />
         </Link>
 
-        {/* Tabs — hidden on mobile (bottom nav owns those tabs there). */}
+        {/* Tabs — hidden on mobile (bottom nav owns those tabs there).
+            Order mirrors the product loop: watch the Feed → take a
+            Brief → climb the Leaderboard → get found via Scout. */}
         <div className="hidden sm:flex items-center gap-0.5">
           <NavTab
             href="/"
@@ -65,10 +75,16 @@ export function Nav() {
             active={isActive(pathname, "/")}
           />
           <NavTab
-            href="/hackathons/new"
-            label="Hack"
+            href="/briefs"
+            label="Briefs"
+            icon={<Sparkles className="w-3.5 h-3.5" />}
+            active={isActive(pathname, "/briefs")}
+          />
+          <NavTab
+            href="/leaderboard"
+            label="Leaderboard"
             icon={<Trophy className="w-3.5 h-3.5" />}
-            active={isActive(pathname, "/hackathons")}
+            active={isActive(pathname, "/leaderboard")}
           />
           <NavTab
             href="/scout"
@@ -80,6 +96,16 @@ export function Nav() {
 
         {/* Right cluster */}
         <div className="ml-auto flex items-center gap-2">
+          {/* Companies-side entry point — quiet but always present, so
+              a hiring manager landing anywhere can find their lane. */}
+          <Link
+            href="/for-companies"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 h-9 rounded-[10px] text-[13px] font-bold transition-colors hover:bg-[#FAFAF7]"
+            style={{ color: "#525252" }}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>For companies</span>
+          </Link>
           {/* Scroll-aware Sign-in chip — mobile only, signed-out only.
               Fades in once the user has scrolled past the hero so the
               top bar can stay quiet at first paint. */}
