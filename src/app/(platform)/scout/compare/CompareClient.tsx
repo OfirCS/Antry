@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -15,6 +16,22 @@ import {
   type FingerprintDimension,
   type Receipt,
 } from "@/lib/receipts/types";
+import {
+  OutreachDrawer,
+  type OutreachTarget,
+} from "@/components/scout/OutreachDrawer";
+
+/** Map a full Receipt to the slim shape the outreach drawer needs. */
+function targetFromReceipt(r: Receipt): OutreachTarget {
+  return {
+    receipt_id: r.id,
+    builder_username: r.builder.username,
+    builder_name: r.builder.name,
+    builder_gradient: r.builder.gradient,
+    brief_title: r.brief_title,
+    composite_score: r.composite_score,
+  };
+}
 
 // Same palette as ScoutClient — keep in sync. The dimension dot color
 // here doubles as the bar-fill color for the horizontal meters below,
@@ -49,6 +66,8 @@ type Props = {
 };
 
 export function CompareClient({ columns, min }: Props) {
+  // Candidate currently open in the outreach drawer (null = closed).
+  const [outreachFor, setOutreachFor] = useState<OutreachTarget | null>(null);
   const validColumns = columns.filter(
     (c): c is Extract<CompareColumn, { kind: "receipt" }> => c.kind === "receipt",
   );
@@ -140,6 +159,7 @@ export function CompareClient({ columns, min }: Props) {
                   columns={columns}
                   winners={winners}
                   gridCols={gridCols}
+                  onReachOut={(r) => setOutreachFor(targetFromReceipt(r))}
                 />
               </div>
 
@@ -152,6 +172,7 @@ export function CompareClient({ columns, min }: Props) {
                     key={`${c.id}-${i}`}
                     column={c}
                     revealDelayMs={i * 100}
+                    onReachOut={(r) => setOutreachFor(targetFromReceipt(r))}
                   />
                 ))}
               </div>
@@ -159,6 +180,13 @@ export function CompareClient({ columns, min }: Props) {
           )}
         </div>
       </section>
+
+      {/* Outreach drawer — Claude drafts a first-contact message citing
+          the candidate's actual Receipt evidence. */}
+      <OutreachDrawer
+        target={outreachFor}
+        onClose={() => setOutreachFor(null)}
+      />
     </div>
   );
 }
@@ -169,10 +197,12 @@ function DesktopGrid({
   columns,
   winners,
   gridCols,
+  onReachOut,
 }: {
   columns: CompareColumn[];
   winners: WinnerMap;
   gridCols: string;
+  onReachOut: (r: Receipt) => void;
 }) {
   return (
     <div className="space-y-3">
@@ -287,12 +317,9 @@ function DesktopGrid({
                 </Link>
                 <button
                   type="button"
-                  // Placeholder — outreach flow lives in a different ticket.
-                  // We still surface the CTA so the recruiter sees the
-                  // shape of the funnel.
-                  onClick={() => {
-                    /* TODO: route to outreach drawer when wired up */
-                  }}
+                  // Opens the outreach drawer with this candidate's
+                  // Receipt evidence pre-loaded for the draft.
+                  onClick={() => onReachOut(r)}
                   className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-9 text-[12px] font-bold transition-transform hover:-translate-y-0.5"
                   style={{ background: "#3B82F6", color: "#FFFFFF" }}
                 >
@@ -529,9 +556,11 @@ function DimensionBar({ value, color }: { value: number; color: string }) {
 function MobileCard({
   column,
   revealDelayMs,
+  onReachOut,
 }: {
   column: CompareColumn;
   revealDelayMs: number;
+  onReachOut: (r: Receipt) => void;
 }) {
   if (column.kind === "missing") {
     return (
@@ -664,9 +693,7 @@ function MobileCard({
         </Link>
         <button
           type="button"
-          onClick={() => {
-            /* TODO: outreach */
-          }}
+          onClick={() => onReachOut(r)}
           className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 h-10 text-[12px] font-bold transition-transform hover:-translate-y-0.5"
           style={{ background: "#3B82F6", color: "#FFFFFF" }}
         >

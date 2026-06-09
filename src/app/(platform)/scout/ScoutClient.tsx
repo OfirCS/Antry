@@ -18,6 +18,10 @@ import {
   type Fingerprint,
   type FingerprintDimension,
 } from "@/lib/receipts/types";
+import {
+  OutreachDrawer,
+  type OutreachTarget,
+} from "@/components/scout/OutreachDrawer";
 
 // Multi-select cap for the compare drawer. 2 is the floor (you can't
 // "compare" one candidate); 3 is the ceiling because past that the
@@ -83,6 +87,8 @@ export function ScoutClient() {
   // Selected receipt_ids for the compare surface. A Set keeps toggle
   // semantics cheap and dedupes for free.
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  // Candidate currently open in the outreach drawer (null = closed).
+  const [outreachFor, setOutreachFor] = useState<OutreachTarget | null>(null);
 
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
@@ -400,6 +406,16 @@ export function ScoutClient() {
                         !selected.has(m.receipt_id)
                       }
                       onToggle={() => toggleSelect(m.receipt_id)}
+                      onReachOut={() =>
+                        setOutreachFor({
+                          receipt_id: m.receipt_id,
+                          builder_username: m.builder_username,
+                          builder_name: m.builder_name,
+                          builder_gradient: m.builder_gradient,
+                          brief_title: m.brief_title,
+                          composite_score: m.composite_score,
+                        })
+                      }
                     />
                   ))}
                 </ol>
@@ -416,6 +432,13 @@ export function ScoutClient() {
         count={selected.size}
         onCompare={onCompare}
         onClear={() => setSelected(new Set())}
+      />
+
+      {/* Outreach drawer — Claude drafts a first-contact message citing
+          the candidate's actual Receipt evidence. */}
+      <OutreachDrawer
+        target={outreachFor}
+        onClose={() => setOutreachFor(null)}
       />
     </div>
   );
@@ -494,6 +517,7 @@ function MatchRow({
   selected,
   capReached,
   onToggle,
+  onReachOut,
 }: {
   match: Match;
   rank: number;
@@ -501,6 +525,7 @@ function MatchRow({
   selected: boolean;
   capReached: boolean;
   onToggle: () => void;
+  onReachOut: () => void;
 }) {
   const tier = scoreTier(match.composite_score);
   const top3 = pickTopDimensions(match.fingerprint);
@@ -622,11 +647,9 @@ function MatchRow({
       <div className="mt-3 flex items-center justify-end">
         <button
           type="button"
-          // Placeholder — no real flow yet, but visually present so a
-          // hiring company immediately knows what the "next step" is.
-          onClick={() => {
-            /* TODO: route to outreach drawer when wired up */
-          }}
+          // Opens the outreach drawer — Claude drafts a personalized
+          // message citing this candidate's Receipt evidence.
+          onClick={onReachOut}
           className="inline-flex items-center gap-1.5 rounded-[10px] px-3 h-9 text-[12px] font-bold transition-all hover:-translate-y-0.5"
           style={{ background: "#3B82F6", color: "#FFFFFF" }}
         >
