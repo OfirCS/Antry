@@ -80,7 +80,8 @@ export default async function Home({
   // Resolve searchParams up-front — it's cheap and we need it for the
   // FilterChips active state (in the static shell). The feed itself
   // streams behind a Suspense boundary below.
-  const sp = await searchParams;
+  const sp: { [key: string]: string | string[] | undefined } =
+    process.env.STATIC_EXPORT === "1" ? {} : await searchParams;
   const active = parseFilter(sp.kind);
   const sort = parseSort(sp.sort);
   const topic = parseTopic(sp.topic);

@@ -4,8 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/supabase/auth-context";
-import { Plus, Home as HomeIcon, Trophy, User, Telescope } from "lucide-react";
+import { Plus, Home as HomeIcon, Trophy, User, Telescope, Github } from "lucide-react";
 import { AntryLogoFull } from "@/components/AntryLogo";
+
+// On the static GitHub Pages demo there's no auth server — swap the
+// sign-in affordances for a "Source" link to the repo.
+const IS_STATIC = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
+const REPO_URL = "https://github.com/OfirCS/Antry";
 
 /**
  * Slim nav for the social feed era.
@@ -83,7 +88,7 @@ export function Nav() {
           {/* Scroll-aware Sign-in chip — mobile only, signed-out only.
               Fades in once the user has scrolled past the hero so the
               top bar can stay quiet at first paint. */}
-          {!user && (
+          {!user && !IS_STATIC && (
             <Link
               href="/login"
               className="sm:hidden inline-flex items-center justify-center rounded-full px-3 h-8 text-[12px] font-bold transition-opacity duration-200"
@@ -101,15 +106,29 @@ export function Nav() {
             </Link>
           )}
 
-          <Link
-            href="/compose"
-            className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 sm:px-4 min-w-[44px] h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
-            style={{ background: "#0A0A0A", color: "#FFFFFF" }}
-            aria-label="Post"
-          >
-            <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
-            <span className="hidden sm:inline">Post</span>
-          </Link>
+          {IS_STATIC ? (
+            <a
+              href={REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 sm:px-4 min-w-[44px] h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+              style={{ background: "#0A0A0A", color: "#FFFFFF" }}
+              aria-label="View source on GitHub"
+            >
+              <Github className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+              <span className="hidden sm:inline">Source</span>
+            </a>
+          ) : (
+            <Link
+              href="/compose"
+              className="inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 sm:px-4 min-w-[44px] h-11 sm:h-9 text-[13px] font-bold transition-all hover:-translate-y-0.5"
+              style={{ background: "#0A0A0A", color: "#FFFFFF" }}
+              aria-label="Post"
+            >
+              <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+              <span className="hidden sm:inline">Post</span>
+            </Link>
+          )}
 
           {user ? (
             <Link
@@ -123,7 +142,7 @@ export function Nav() {
             >
               {(user.email ?? "?").charAt(0).toUpperCase()}
             </Link>
-          ) : (
+          ) : IS_STATIC ? null : (
             // Desktop sign-in (always visible at sm+). Mobile version is
             // the scroll-aware chip above.
             <Link

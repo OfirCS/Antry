@@ -18,6 +18,7 @@ import {
   type Fingerprint,
   type FingerprintDimension,
 } from "@/lib/receipts/types";
+import { rankScout, type ScoutReasoning } from "@/lib/agent/scout-client";
 
 // Multi-select cap for the compare drawer. 2 is the floor (you can't
 // "compare" one candidate); 3 is the ceiling because past that the
@@ -74,12 +75,19 @@ const SKELETON_ROWS = 5;
 
 export function ScoutClient() {
   const router = useRouter();
+  // On the static GitHub Pages export the server-rendered compare page
+  // isn't available, so the multi-select compare drawer is hidden there.
+  // Everything else on Scout works fully client-side.
+  const isStatic = Boolean(process.env.NEXT_PUBLIC_BASE_PATH);
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [grader, setGrader] = useState<string>("");
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterKey>("all");
+  // Agent reasoning trace — populated when ranking runs client-side
+  // (static demo / no server). Surfaces the "thinking" behind the rank.
+  const [reasoning, setReasoning] = useState<ScoutReasoning | null>(null);
   // Selected receipt_ids for the compare surface. A Set keeps toggle
   // semantics cheap and dedupes for free.
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
@@ -114,6 +122,7 @@ export function ScoutClient() {
     setSearching(true);
     setError(null);
     setMatches(null);
+    setReasoning(null);
     setFilter("all");
     setSelected(new Set());
     try {
@@ -122,6 +131,7 @@ export function ScoutClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: query.trim() }),
       });
+      if (!res.ok) throw new Error(`api_${res.status}`);
       const j = (await res.json()) as
         | { matches: Match[]; grader: string }
         | { error: string; message?: string };
@@ -131,8 +141,14 @@ export function ScoutClient() {
         setMatches(j.matches);
         setGrader(j.grader);
       }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Network error");
+    } catch {
+      // No server (static demo) — rank in the browser against the same
+      // signed-Receipt pool. Brief pause so the trace animates.
+      await new Promise((r) => setTimeout(r, 650));
+      const result = rankScout(query.trim());
+      setMatches(result.matches);
+      setReasoning(result.reasoning);
+      setGrader(result.grader);
     } finally {
       setSearching(false);
     }
@@ -329,14 +345,43 @@ export function ScoutClient() {
                   Ranked by{" "}
                   <span className="font-mono text-black">
                     {grader === "heuristic"
-                      ? "heuristic (set ANTHROPIC_API_KEY for real ranking)"
-                      : grader}
+                      ? "heuristic (set ANTHROPIC_API_KEY for LLM ranking)"
+                      : grader === "client-heuristic"
+                        ? "in-browser agent (no server, no keys)"
+                        : grader}
                   </span>
                 </p>
                 <p className="text-[11px] text-gray-500">
                   {filtered.length} of {matches.length}
                 </p>
               </div>
+
+              {/* Agent reasoning trace — shows how the rank was reached.
+                  Only present when ranking ran client-side. */}
+              {reasoning && (
+                <div
+                  className="rounded-[12px] p-4 scout-rise"
+                  style={{ background: "#0A0A0A", border: "1px solid #1f1f1f" }}
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#C6F135] inline-flex items-center gap-1.5 mb-3">
+                    <Sparkles className="w-3 h-3" />
+                    Agent trace
+                  </p>
+                  <ol className="space-y-1.5">
+                    {reasoning.steps.map((s, i) => (
+                      <li
+                        key={i}
+                        className="text-[12px] text-gray-300 font-mono flex items-start gap-2"
+                      >
+                        <span className="text-gray-600 tabular-nums">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
 
               {/* Filter chips */}
               <div
@@ -394,6 +439,7 @@ export function ScoutClient() {
                         ) ?? i) + 1
                       }
                       revealDelayMs={i * 90}
+                      selectable={!isStatic}
                       selected={selected.has(m.receipt_id)}
                       capReached={
                         selected.size >= COMPARE_MAX &&
@@ -412,11 +458,13 @@ export function ScoutClient() {
       {/* Sticky compare bar — slides in only when ≥2 are selected. The
           fixed footer guarantees visibility even while the user is mid-
           scroll. pb-24 on the list above leaves clearance. */}
-      <CompareBar
-        count={selected.size}
-        onCompare={onCompare}
-        onClear={() => setSelected(new Set())}
-      />
+      {!isStatic && (
+        <CompareBar
+          count={selected.size}
+          onCompare={onCompare}
+          onClear={() => setSelected(new Set())}
+        />
+      )}
     </div>
   );
 }
@@ -491,6 +539,7 @@ function MatchRow({
   match,
   rank,
   revealDelayMs,
+  selectable,
   selected,
   capReached,
   onToggle,
@@ -498,6 +547,7 @@ function MatchRow({
   match: Match;
   rank: number;
   revealDelayMs: number;
+  selectable: boolean;
   selected: boolean;
   capReached: boolean;
   onToggle: () => void;
@@ -516,37 +566,41 @@ function MatchRow({
       }}
     >
       <div className="grid grid-cols-[20px_28px_36px_1fr_auto] items-center gap-3">
-        <button
-          type="button"
-          role="checkbox"
-          aria-checked={selected}
-          aria-label={
-            selected
-              ? `Remove ${match.builder_name} from compare`
-              : capReached
-                ? `Compare full — deselect another candidate first`
-                : `Add ${match.builder_name} to compare`
-          }
-          title={
-            checkboxDisabled
-              ? `You can compare up to ${COMPARE_MAX} candidates at once`
-              : undefined
-          }
-          disabled={checkboxDisabled}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
-          className="inline-flex items-center justify-center rounded-[5px] transition-all disabled:cursor-not-allowed disabled:opacity-40"
-          style={{
-            width: 18,
-            height: 18,
-            background: selected ? "#3B82F6" : "#FFFFFF",
-            border: selected ? "1px solid #3B82F6" : "1px solid #D4D4D4",
-          }}
-        >
-          {selected && <Check className="w-3 h-3" style={{ color: "#FFFFFF" }} />}
-        </button>
+        {selectable ? (
+          <button
+            type="button"
+            role="checkbox"
+            aria-checked={selected}
+            aria-label={
+              selected
+                ? `Remove ${match.builder_name} from compare`
+                : capReached
+                  ? `Compare full — deselect another candidate first`
+                  : `Add ${match.builder_name} to compare`
+            }
+            title={
+              checkboxDisabled
+                ? `You can compare up to ${COMPARE_MAX} candidates at once`
+                : undefined
+            }
+            disabled={checkboxDisabled}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
+            className="inline-flex items-center justify-center rounded-[5px] transition-all disabled:cursor-not-allowed disabled:opacity-40"
+            style={{
+              width: 18,
+              height: 18,
+              background: selected ? "#3B82F6" : "#FFFFFF",
+              border: selected ? "1px solid #3B82F6" : "1px solid #D4D4D4",
+            }}
+          >
+            {selected && <Check className="w-3 h-3" style={{ color: "#FFFFFF" }} />}
+          </button>
+        ) : (
+          <span aria-hidden />
+        )}
         <div
           className="font-display font-bold text-[18px] tabular-nums"
           style={{ color: rank === 1 ? "#3B82F6" : "#0A0A0A" }}

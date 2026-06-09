@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Trophy, Shield, Zap } from "lucide-react";
-import { getDemoBrief, getDemoReceiptsForBrief } from "@/lib/receipts/demo-data";
+import { demoBriefs, getDemoBrief, getDemoReceiptsForBrief } from "@/lib/receipts/demo-data";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { ScoreDistribution } from "../_components/ScoreDistribution";
 import { SortableLeaderboard } from "../_components/SortableLeaderboard";
 
 type PageProps = { params: Promise<{ slug: string }> };
+
+// Static export: one leaderboard per Brief.
+export async function generateStaticParams() {
+  return demoBriefs.map((b) => ({ slug: b.slug }));
+}
 
 export async function generateMetadata({
   params,

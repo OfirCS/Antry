@@ -5,8 +5,15 @@ import {
   getBuilderProjects as getMockBuilderProjects,
   getBuilderAntathons as getMockBuilderAntathons,
 } from "@/lib/mock-data";
+import { builders as mockBuilders } from "@/lib/mock-data";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import BuilderProfileClient from "./BuilderProfileClient";
+
+// Static export: prebuild a profile page per known builder. With a live
+// Supabase the Vercel build serves the rest dynamically.
+export async function generateStaticParams() {
+  return mockBuilders.map((b) => ({ username: b.username }));
+}
 
 export async function generateMetadata({
   params,

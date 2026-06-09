@@ -101,7 +101,10 @@ export default async function BriefsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const sp = await searchParams;
+  // Static export can't read searchParams server-side — render defaults
+  // and let the client filter bar drive off the URL at runtime.
+  const sp: { [key: string]: string | string[] | undefined } =
+    process.env.STATIC_EXPORT === "1" ? {} : await searchParams;
   const difficulty = parseDifficulty(sp.difficulty);
   const category = parseCategory(sp.category);
   const sort = parseSort(sp.sort);

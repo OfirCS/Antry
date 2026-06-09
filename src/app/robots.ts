@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 
+// Generated at build time — required for `output: export`.
+export const dynamic = "force-static";
+
 // Robots policy. Block admin / dashboard / settings / auth + the per-user
 // onboarding and compose flows + the *internal* API routes that serve user
 // data. Keep `/api/og` allowed so Twitter/LinkedIn crawlers can fetch

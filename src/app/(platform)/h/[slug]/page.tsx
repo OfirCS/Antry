@@ -11,6 +11,18 @@ import { ShareButton } from "./_components/ShareButton";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
+// Static export: prebuild a representative set of vibe-hackathon pages.
+// Any slug renders (the store falls back to a prettified title), so this
+// is just the curated set shipped on the static demo.
+export async function generateStaticParams() {
+  return [
+    { slug: "agent-cup-summer" },
+    { slug: "speedrun-night" },
+    { slug: "weekend-build-mode" },
+    { slug: "build-night-rag" },
+  ];
+}
+
 /**
  * Vibe Hackathon landing + live leaderboard.
  *

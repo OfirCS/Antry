@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/seo";
 import { demoBriefs, demoReceipts } from "@/lib/receipts/demo-data";
 
+// Generated at build time — required for `output: export`.
+export const dynamic = "force-static";
+
 /**
  * Sitemap — focused on the canonical surfaces only.
  *

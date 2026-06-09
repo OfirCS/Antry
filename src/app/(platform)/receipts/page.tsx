@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import {
@@ -140,7 +141,8 @@ export default async function ReceiptsListPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const sp = await searchParams;
+  const sp: { [key: string]: string | string[] | undefined } =
+    process.env.STATIC_EXPORT === "1" ? {} : await searchParams;
   const difficulty = parseDifficulty(sp.difficulty);
   const category = parseCategory(sp.category);
   const sponsor = parseSponsor(sp.sponsor);
@@ -222,16 +224,18 @@ export default async function ReceiptsListPage({
       {/* FILTER BAR */}
       <section className="pt-6 pb-3">
         <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
-          <FilterBar
-            difficulty={difficulty}
-            category={category}
-            sponsor={sponsor}
-            sort={sort}
-            difficultyOptions={difficultyOptions}
-            categoryOptions={categoryOptions}
-            sponsorOptions={sponsorOptions}
-            sortOptions={sortOptions}
-          />
+          <Suspense fallback={null}>
+            <FilterBar
+              difficulty={difficulty}
+              category={category}
+              sponsor={sponsor}
+              sort={sort}
+              difficultyOptions={difficultyOptions}
+              categoryOptions={categoryOptions}
+              sponsorOptions={sponsorOptions}
+              sortOptions={sortOptions}
+            />
+          </Suspense>
           <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
             <span className="text-[11px] text-gray-500 tabular-nums">
               {visibleCount} of {totalCount} Receipts

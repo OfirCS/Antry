@@ -1,0 +1,73 @@
+name: Deploy showcase to GitHub Pages
+
+# Builds a fully static export of Antry's public showcase surface
+# (landing, Scout agent demo, Receipts, Leaderboard, Builders, Briefs,
+# Hackathons, MCP/agents) and publishes it to GitHub Pages.
+#
+# The Scout agent runs entirely client-side in this build — no server,
+# no API keys, no secrets. The full app (with every server feature) is
+# unaffected and still deploys to Vercel from the same source.
+
+on:
+  push:
+    branches:
+      - claude/blissful-thompson-kk9kca
+      - main
+  workflow_dispatch:
+
+# Allow the workflow to publish to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One in-flight Pages deployment at a time; don't cancel a running one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Strip server-only routes (static showcase)
+        run: node scripts/prepare-static.mjs
+
+      - name: Build static export
+        env:
+          STATIC_EXPORT: "1"
+        run: npx next build
+
+      - name: Add .nojekyll (serve _next/* directories)
+        run: touch out/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

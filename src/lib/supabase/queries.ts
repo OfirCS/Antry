@@ -15,6 +15,16 @@
 
 import { createClient } from "./server";
 
+// When Supabase isn't configured (e.g. the static GitHub Pages export or
+// local dev without env), short-circuit before touching `cookies()` so
+// these pages render statically against their mock-data fallback.
+function hasSupabase(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+}
+
 // ── Types ──────────────────────────────────────────────
 
 export interface BuilderRow {
@@ -92,6 +102,7 @@ export async function getBuilders(options?: {
   search?: string;
   skill?: string;
 }): Promise<BuilderRow[]> {
+  if (!hasSupabase()) return [];
   const supabase = await createClient();
 
   // Fetch profiles
@@ -153,6 +164,7 @@ export async function getBuilders(options?: {
  * Get single builder by username with their projects and hackathon participations.
  */
 export async function getBuilder(username: string) {
+  if (!hasSupabase()) return null;
   const supabase = await createClient();
 
   const { data: profile, error } = await supabase

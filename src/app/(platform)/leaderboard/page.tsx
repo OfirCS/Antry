@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { defaultOpenGraph, defaultTwitter, ogImageUrl } from "@/lib/seo";
 import { demoReceipts } from "@/lib/receipts/demo-data";
 import {
@@ -108,7 +109,8 @@ export default async function LeaderboardPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const sp = await searchParams;
+  const sp: { [key: string]: string | string[] | undefined } =
+    process.env.STATIC_EXPORT === "1" ? {} : await searchParams;
   const dimension = parseDimension(sp.dimension);
   const window = parseWindow(sp.window);
 
@@ -200,12 +202,14 @@ export default async function LeaderboardPage({
       {/* FILTER BAR */}
       <section className="pt-6 pb-3">
         <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
-          <LeaderboardFilter
-            dimension={dimension}
-            window={window}
-            dimensionOptions={dimensionOptions}
-            windowOptions={windowOptions}
-          />
+          <Suspense fallback={null}>
+            <LeaderboardFilter
+              dimension={dimension}
+              window={window}
+              dimensionOptions={dimensionOptions}
+              windowOptions={windowOptions}
+            />
+          </Suspense>
           <div className="mt-3 text-[11px] text-gray-500 tabular-nums">
             {ranked.length} builder{ranked.length === 1 ? "" : "s"} · ranking by{" "}
             <span className="font-bold text-[#262626]">{primaryLabel}</span> ·{" "}

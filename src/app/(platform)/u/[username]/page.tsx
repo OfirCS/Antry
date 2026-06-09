@@ -14,6 +14,14 @@ import type { Post } from "@/components/feed/FeedCard";
 
 type PageProps = { params: Promise<{ username: string }> };
 
+// Static export: one page per builder who holds a public demo Receipt.
+export async function generateStaticParams() {
+  const usernames = Array.from(
+    new Set(demoReceipts.map((r) => r.builder.username))
+  );
+  return usernames.map((username) => ({ username }));
+}
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
